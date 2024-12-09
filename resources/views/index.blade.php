@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('main_content')
-        
+
     <!--================ Start Home Banner Area =================-->
     <section class="home_banner_area">
       <div class="banner_inner">
@@ -33,9 +33,9 @@
         <div class="row justify-content-center">
           <div class="col-lg-5">
             <div class="main_title">
-              <h2 class="mb-3">Awesome Feature</h2>
+              <h2 class="mb-3">Our Values</h2>
               <p>
-                Replenish man have thing gathering lights yielding shall you
+                Core Values of Shiloh International Theological Seminary.
               </p>
             </div>
           </div>
@@ -43,12 +43,12 @@
         <div class="row">
           <div class="col-lg-4 col-md-6">
             <div class="single_feature">
-              <div class="icon"><span class="flaticon-student"></span></div>
+              <div class="icon"><span class="flaticon-eco-light"></span></div>
               <div class="desc">
-                <h4 class="mt-3 mb-2">Scholarship Facility</h4>
+                <h4 class="mt-3 mb-2">Sustainable</h4>
                 <p>
-                  One make creepeth, man bearing theira firmament won't great
-                  heaven
+                    We value Christian Stewardship, accountability
+                    and consideration of future generations in all we do.
                 </p>
               </div>
             </div>
@@ -58,10 +58,10 @@
             <div class="single_feature">
               <div class="icon"><span class="flaticon-book"></span></div>
               <div class="desc">
-                <h4 class="mt-3 mb-2">Sell Online Course</h4>
+                <h4 class="mt-3 mb-2">Accessible</h4>
                 <p>
-                  One make creepeth, man bearing theira firmament won't great
-                  heaven
+                    We value education being available based on character, hard work and merit,
+                    not on wealth, background or status.
                 </p>
               </div>
             </div>
@@ -71,10 +71,10 @@
             <div class="single_feature">
               <div class="icon"><span class="flaticon-earth"></span></div>
               <div class="desc">
-                <h4 class="mt-3 mb-2">Global Certification</h4>
+                <h4 class="mt-3 mb-2">Excellent</h4>
                 <p>
-                  One make creepeth, man bearing theira firmament won't great
-                  heaven
+                    We value a culture of continuous improvement through diligent
+                    preparation, gracious cheerfulness and humble reflection.
                 </p>
               </div>
             </div>
@@ -467,128 +467,10 @@
     </div>
     <!--================ End Events Area =================-->
 
-    <!--================ Start Testimonial Area =================-->
-    <div class="testimonial_area section_gap">
-      <div class="container">
-        <div class="row justify-content-center">
-          <div class="col-lg-5">
-            <div class="main_title">
-              <h2 class="mb-3">Client say about me</h2>
-              <p>
-                Replenish man have thing gathering lights yielding shall you
-              </p>
-            </div>
-          </div>
-        </div>
 
-        <div class="row">
-          <div class="testi_slider owl-carousel">
-            <div class="testi_item">
-              <div class="row">
-                <div class="col-lg-4 col-md-6">
-                  <img src="img/testimonials/t1.jpg" alt="" />
-                </div>
-                <div class="col-lg-8">
-                  <div class="testi_text">
-                    <h4>Elite Martin</h4>
-                    <p>
-                      Him, made can't called over won't there on divide there
-                      male fish beast own his day third seed sixth seas unto.
-                      Saw from
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="testi_item">
-              <div class="row">
-                <div class="col-lg-4 col-md-6">
-                  <img src="img/testimonials/t2.jpg" alt="" />
-                </div>
-                <div class="col-lg-8">
-                  <div class="testi_text">
-                    <h4>Davil Saden</h4>
-                    <p>
-                      Him, made can't called over won't there on divide there
-                      male fish beast own his day third seed sixth seas unto.
-                      Saw from
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="testi_item">
-              <div class="row">
-                <div class="col-lg-4 col-md-6">
-                  <img src="img/testimonials/t1.jpg" alt="" />
-                </div>
-                <div class="col-lg-8">
-                  <div class="testi_text">
-                    <h4>Elite Martin</h4>
-                    <p>
-                      Him, made can't called over won't there on divide there
-                      male fish beast own his day third seed sixth seas unto.
-                      Saw from
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="testi_item">
-              <div class="row">
-                <div class="col-lg-4 col-md-6">
-                  <img src="img/testimonials/t2.jpg" alt="" />
-                </div>
-                <div class="col-lg-8">
-                  <div class="testi_text">
-                    <h4>Davil Saden</h4>
-                    <p>
-                      Him, made can't called over won't there on divide there
-                      male fish beast own his day third seed sixth seas unto.
-                      Saw from
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="testi_item">
-              <div class="row">
-                <div class="col-lg-4 col-md-6">
-                  <img src="img/testimonials/t1.jpg" alt="" />
-                </div>
-                <div class="col-lg-8">
-                  <div class="testi_text">
-                    <h4>Elite Martin</h4>
-                    <p>
-                      Him, made can't called over won't there on divide there
-                      male fish beast own his day third seed sixth seas unto.
-                      Saw from
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="testi_item">
-              <div class="row">
-                <div class="col-lg-4 col-md-6">
-                  <img src="img/testimonials/t2.jpg" alt="" />
-                </div>
-                <div class="col-lg-8">
-                  <div class="testi_text">
-                    <h4>Davil Saden</h4>
-                    <p>
-                      Him, made can't called over won't there on divide there
-                      male fish beast own his day third seed sixth seas unto.
-                      Saw from
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!--================ End Testimonial Area =================-->
+
+    {{-- Testimonials --}}
+
+    @include('contacts.testimonials')
 
 @endsection
