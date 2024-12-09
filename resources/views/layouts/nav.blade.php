@@ -24,7 +24,7 @@
             <div class="container">
             <!-- Brand and toggle get grouped for better mobile display -->
             <a class="navbar-brand logo_h" href="index.html"
-                ><img src="img/logo.png" alt=""
+                ><img src="{{ asset('img/logo.png') }}" alt="SITS"
             /></a>
             <button
                 class="navbar-toggler"
@@ -46,61 +46,45 @@
                 <li class="nav-item active">
                     <a class="nav-link" href="{{ route('home')}}">Home</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('abouts.index')}}">About</a>
-                </li>
                 <li class="nav-item submenu dropdown">
-                    <a
-                    href="#"
-                    class="nav-link dropdown-toggle"
-                    data-toggle="dropdown"
-                    role="button"
-                    aria-haspopup="true"
-                    aria-expanded="false"
-                    >Pages</a
-                    >
+                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" >Programs</a>
                     <ul class="dropdown-menu">
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('courses.index')}}">Courses</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="course-details.html"
-                        >Course Details</a
-                        >
+                        <a class="nav-link" href="course-details.html" >Post Grad Programs</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('elements.index')}}">Elements</a>
+                        <a class="nav-link" href="{{ route('libraries.index')}}" >Book Library</a>
                     </li>
                     </ul>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('blogs.index')}}">Blog</a>
+                </li>
                 <li class="nav-item submenu dropdown">
-                    <a
-                    href="#"
-                    class="nav-link dropdown-toggle"
-                    data-toggle="dropdown"
-                    role="button"
-                    aria-haspopup="true"
-                    aria-expanded="false"
-                    >Blog</a
-                    >
+                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" >Blog</a>
                     <ul class="dropdown-menu">
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('blogs.index')}}">Blog</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="single-blog.html"
-                        >Blog Details</a
-                        >
+                        <a class="nav-link" href="single-blog.html" >Blog Details</a >
                     </li>
                     </ul>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('contacts.index')}}">Contact</a>
+                    <a class="nav-link" href="{{ route('contacts.index')}}">Contact Us</a>
                 </li>
                 <li class="nav-item">
                     <a href="#" class="nav-link search" id="search">
                     <i class="ti-search"></i>
                     </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('elements.index')}}">Elements</a>
                 </li>
                 </ul>
             </div>

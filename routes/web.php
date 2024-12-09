@@ -7,6 +7,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\TestimonialController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LibraryController;
 
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -38,3 +39,5 @@ Route::resource('contacts', ContactController::class);
 Route::resource('testimonials', TestimonialController::class);
 
 Route::resource('courses', CourseController::class);
+
+Route::resource('libraries', LibraryController::class);
