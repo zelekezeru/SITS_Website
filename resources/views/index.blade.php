@@ -41,40 +41,50 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-lg-4 col-md-6">
-            <div class="single_feature">
-              <div class="icon"><span class="flaticon-eco-light"></span></div>
-              <div class="desc">
-                <h4 class="mt-3 mb-2">Sustainable</h4>
-                <p>
-                    We value Christian Stewardship, accountability
-                    and consideration of future generations in all we do.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-lg-4 col-md-6">
-            <div class="single_feature">
-              <div class="icon"><span class="flaticon-book"></span></div>
-              <div class="desc">
-                <h4 class="mt-3 mb-2">Accessible</h4>
-                <p>
-                    We value education being available based on character, hard work and merit,
-                    not on wealth, background or status.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-lg-4 col-md-6">
+          <div class="col-lg-3 col-md-3">
             <div class="single_feature">
               <div class="icon"><span class="flaticon-earth"></span></div>
               <div class="desc">
+                <h4 class="mt-3 mb-2">Sustainable</h4>
+                <p>
+                  We value stewardship, accountability, and considering future generations in all our actions.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-3">
+            <div class="single_feature">
+              <div class="icon"><span class="flaticon-earth"></span></div>
+              <div class="desc">
+                <h4 class="mt-3 mb-2">Accessible</h4>
+                <p>
+                  We value education based on merit, character, and potential, not wealth or status.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-3">
+            <div class="single_feature">
+              <div class="icon"><i class="{{ asset('features.vital') }}"></i></div>
+              <div class="desc">
+                <h4 class="mt-3 mb-2">Vital</h4>
+                <p>
+                  We value knowing God through faith in Christ, empowered by the Holy Spirit.
+                </p>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="col-lg-3 col-md-3">
+            <div class="single_feature">
+              <div class="icon"><span class="flaticon-excellent"></span></div>
+              <div class="desc">
                 <h4 class="mt-3 mb-2">Excellent</h4>
                 <p>
-                    We value a culture of continuous improvement through diligent
-                    preparation, gracious cheerfulness and humble reflection.
+                  We value excellence in service to Christ, continuous improvement, humility, and preparation.
                 </p>
               </div>
             </div>

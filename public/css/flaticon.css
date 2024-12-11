@@ -22,7 +22,7 @@
 }
 
 [class^="flaticon-"]:before, [class*=" flaticon-"]:before,
-[class^="flaticon-"]:after, [class*=" flaticon-"]:after {   
+[class^="flaticon-"]:after, [class*=" flaticon-"]:after {
   font-family: Flaticon;
         font-size: 48px;
 font-style: normal;
@@ -33,3 +33,5 @@ color: #002347;
 .flaticon-student:before { content: "\f100"; }
 .flaticon-book:before { content: "\f101"; }
 .flaticon-earth:before { content: "\f102"; }
+
+.flaticon-heart:before { content: "\f103"; }
