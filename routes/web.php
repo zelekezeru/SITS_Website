@@ -30,7 +30,7 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 Route::get('/about', [HomeController::class, 'index'])->name('abouts.index');
 
-Route::get('/elements', [HomeController::class, 'index'])->name('elements.index');
+Route::get('/elements', [HomeController::class, 'elements'])->name('elements.index');
 
 Route::resource('blogs', BlogController::class);
 

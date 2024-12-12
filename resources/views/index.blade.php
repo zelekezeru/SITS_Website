@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('main_content')
-        
+
     <!--================ Start Home Banner Area =================-->
     <section class="home_banner_area">
       <div class="banner_inner">

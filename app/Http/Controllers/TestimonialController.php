@@ -13,7 +13,7 @@ class TestimonialController extends Controller
     public function index()
     {
         $testimonials = Testimonial::all();
-        
+
         return view('testimonials.index', compact('testimonials'));
     }
 
@@ -22,7 +22,9 @@ class TestimonialController extends Controller
      */
     public function create()
     {
-        //
+        $testimonial = new Testimonial;
+
+        return view('contacts.create_testimonials', compact('testimonial'));
     }
 
     /**

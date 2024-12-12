@@ -12,9 +12,9 @@
                         <div class="banner_content text-center">
                             <h2>Blog Details</h2>
                             <div class="page_link">
-                                <a href="index.html">Home</a>
+                                <a href="">Home</a>
                                 <a href="blog.html">Blog</a>
-                                <a href="single-blog.html">Blog Details</a>
+                                <a href="{{ route('blogs.index')}}">Blog Details</a>
                             </div>
                         </div>
                     </div>

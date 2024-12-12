@@ -12,8 +12,8 @@
               <div class="banner_content text-center">
                 <h2>Libraries</h2>
                 <div class="page_link">
-                  <a href="index.html">Home</a>
-                  <a href="libraries.html">Libraries</a>
+                  <a href="">Home</a>
+                  <a href="{{ route('librries.index')}}">Libraries</a>
                 </div>
               </div>
             </div>
