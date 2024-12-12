@@ -43,11 +43,11 @@
         <div class="row">
           <div class="col-lg-3 col-md-3">
             <div class="single_feature">
-              <div class="icon"><span class="flaticon-earth"></span></div>
+              <div class="icon center"><img src="{{ asset('img/features/sustainability.png') }}" alt="SITS" width="60px" /></div>
               <div class="desc">
                 <h4 class="mt-3 mb-2">Sustainable</h4>
                 <p>
-                  We value stewardship, accountability, and considering future generations in all our actions.
+                  We value stewardship, accountability, and considering future generations in everything.
                 </p>
               </div>
             </div>
@@ -55,7 +55,7 @@
 
           <div class="col-lg-3 col-md-3">
             <div class="single_feature">
-              <div class="icon"><span class="flaticon-earth"></span></div>
+              <div class="icon"><img src="{{ asset('img/features/accesibility.png') }}" alt="SITS" width="60px" /></div>
               <div class="desc">
                 <h4 class="mt-3 mb-2">Accessible</h4>
                 <p>
@@ -67,7 +67,7 @@
 
           <div class="col-lg-3 col-md-3">
             <div class="single_feature">
-              <div class="icon"><i class="{{ asset('features.vital') }}"></i></div>
+              <div class="icon"><img src="{{ asset('img/features/vital.png') }}" alt="SITS" width="60px" /></div>
               <div class="desc">
                 <h4 class="mt-3 mb-2">Vital</h4>
                 <p>
@@ -80,7 +80,7 @@
 
           <div class="col-lg-3 col-md-3">
             <div class="single_feature">
-              <div class="icon"><span class="flaticon-excellent"></span></div>
+              <div class="icon"><img src="{{ asset('img/features/excellent.png') }}" alt="SITS" width="60px" /></div>
               <div class="desc">
                 <h4 class="mt-3 mb-2">Excellent</h4>
                 <p>

@@ -8,6 +8,8 @@ use App\Http\Controllers\TestimonialController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LibraryController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ProgramController;
 
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -28,7 +30,7 @@ require __DIR__.'/auth.php';
 //Hotel
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-Route::get('/about', [HomeController::class, 'index'])->name('abouts.index');
+Route::get('/about', [HomeController::class, 'about'])->name('abouts.index');
 
 Route::get('/elements', [HomeController::class, 'elements'])->name('elements.index');
 
@@ -41,3 +43,7 @@ Route::resource('testimonials', TestimonialController::class);
 Route::resource('courses', CourseController::class);
 
 Route::resource('libraries', LibraryController::class);
+
+Route::resource('libraries', AdminController::class);
+
+Route::resource('programs', ProgramController::class);

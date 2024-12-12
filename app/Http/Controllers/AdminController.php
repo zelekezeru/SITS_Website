@@ -12,7 +12,10 @@ class AdminController extends Controller
      */
     public function index()
     {
-        
+        $admins = Admin::all();
+        dd('hit');
+
+        return view('admin.index', compact('admins'));
     }
 
     /**
