@@ -7,7 +7,7 @@
 @section('main_content')
 
     <!--================Home Banner Area =================-->
-    <section class="banner_area">
+    <section class="banner_area" data-aos="fade-up" data-aos-delay="200">
       <div class="banner_inner d-flex align-items-center">
         <div class="overlay"></div>
         <div class="container">
@@ -16,7 +16,7 @@
               <div class="banner_content text-center">
                 <h2>About Us</h2>
                 <div class="page_link">
-                  <a href="">Home</a>
+                  <a href="{{url("/")}}">Home</a>
                   <a href="{{ route('abouts.index')}}">About Us</a>
                 </div>
               </div>
@@ -32,13 +32,13 @@
       <div class="container">
         <div class="row h_blog_item">
           <div class="col-lg-6">
-            <div class="h_blog_img">
+            <div class="h_blog_img" data-aos="fade-right" data-aos-delay="200">
               <img class="img-fluid" src="img/about.png" alt="" />
             </div>
           </div>
           <div class="col-lg-6">
             <div class="h_blog_text">
-              <div class="h_blog_text_inner left right">
+              <div class="h_blog_text_inner left right" data-aos="fade-up" data-aos-delay="700">
                 <h4>About SITS</h4>
                 <p>
                     Shiloh International Theological Seminary (SITS) is a globally recognized institution dedicated to
@@ -66,11 +66,11 @@
     <!--================ End About Area =================-->
 
     <!--================ Start Feature Area =================-->
-    <section class="feature_area section_gap_top title-bg">
+    <section class="feature_area section_gap_top title-bg" data-aos="zoom-in" data-aos-delay="200">
       <div class="container">
         <div class="row justify-content-center">
           <div class="col-lg-6">
-            <div class="main_title">
+            <div class="main_title" data-aos="fade-up" data-aos-delay="200">
               <h2 class="mb-3 text-white">Our Distinctive Edge</h2>
               <p>
                 We deliver innovative, tailored solutions that set our clients up for success.
@@ -80,7 +80,7 @@
         </div>
         <div class="row">
           <div class="col-lg-4 col-md-6">
-            <div class="single_feature">
+            <div class="single_feature" data-aos="fade-up" data-aos-delay="300">
                 <div class="icon text-center"><img src="{{ asset('img/features/state.png') }}" alt="" width="50" /></span></div>
               <div class="desc">
                 <h4 class="mt-3 mb-2 text-center"> State of the Art <br>Academics </h4><br>
@@ -93,7 +93,7 @@
             </div>
           </div>
 
-          <div class="col-lg-4 col-md-6">
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="450">
             <div class="single_feature">
                 <div class="icon text-center"><img src="{{ asset('img/features/actea.png') }}" alt="" width="50" /></span></div>
               <div class="desc">
@@ -107,7 +107,7 @@
             </div>
           </div>
 
-          <div class="col-lg-4 col-md-6">
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="500">
             <div class="single_feature">
                 <div class="icon text-center"><img src="{{ asset('img/features/actea.png') }}" alt="" width="50" /></span></div>
               <div class="desc">

@@ -23,7 +23,7 @@
         <nav class="navbar navbar-expand-lg navbar-light">
             <div class="container">
             <!-- Brand and toggle get grouped for better mobile display -->
-            <a class="navbar-brand logo_h" href="index.html"><img src="{{ asset('img/logo.png') }}" alt="SITS"/></a>
+            <a class="navbar-brand logo_h" href="{{url("/")}}"><img src="{{ asset('img/logo.png') }}" alt="SITS"/></a>
             <button
                 class="navbar-toggler"
                 type="button"

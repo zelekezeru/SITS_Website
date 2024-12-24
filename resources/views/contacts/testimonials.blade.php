@@ -4,7 +4,7 @@
         <div class="container">
           <div class="row justify-content-center">
             <div class="col-lg-5">
-              <div class="main_title">
+              <div class="main_title" data-aos="fade-up" data-aos-delay="200">
                 <h2 class="mb-3">Testimonials about SITS</h2>
                 <p>
                     See what our clients have to say about their experience with SITS and the results we deliver.
@@ -13,7 +13,7 @@
             </div>
           </div>
 
-          <div class="row">
+          <div class="row" data-aos="fade-right" data-aos-delay="200">
             <div class="testi_slider owl-carousel">
               <div class="testi_item">
                 <div class="row">

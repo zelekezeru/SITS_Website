@@ -8,7 +8,7 @@
         <div class="container">
           <div class="row">
             <div class="col-lg-12">
-              <div class="banner_content text-center">
+              <div class="banner_content text-center animate__animated animate__backInUp">
                 <p class="text-uppercase">
                   Best online education service In the world
                 </p>
@@ -32,7 +32,7 @@
       <div class="container">
         <div class="row justify-content-center">
           <div class="col-lg-5">
-            <div class="main_title">
+            <div class="main_title" data-aos="fade-up" data-aos-delay="200">
               <h2 class="mb-3">Our Values</h2>
               <p>
                 Core Values of Shiloh International Theological Seminary.
@@ -41,7 +41,7 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-lg-3 col-md-3">
+          <div class="col-lg-3 col-md-3" data-aos="fade-up" data-aos-delay="220">
             <div class="single_feature">
               <div class="icon center"><img src="{{ asset('img/features/sustainability.png') }}" alt="SITS" width="60px" /></div>
               <div class="desc">
@@ -53,7 +53,7 @@
             </div>
           </div>
 
-          <div class="col-lg-3 col-md-3">
+          <div class="col-lg-3 col-md-3" data-aos="fade-up" data-aos-delay="230">
             <div class="single_feature">
               <div class="icon"><img src="{{ asset('img/features/accesibility.png') }}" alt="SITS" width="60px" /></div>
               <div class="desc">
@@ -65,7 +65,7 @@
             </div>
           </div>
 
-          <div class="col-lg-3 col-md-3">
+          <div class="col-lg-3 col-md-3" data-aos="fade-up" data-aos-delay="240">
             <div class="single_feature">
               <div class="icon"><img src="{{ asset('img/features/vital.png') }}" alt="SITS" width="60px" /></div>
               <div class="desc">
@@ -78,7 +78,7 @@
           </div>
 
 
-          <div class="col-lg-3 col-md-3">
+          <div class="col-lg-3 col-md-3" data-aos="fade-up" data-aos-delay="250">
             <div class="single_feature">
               <div class="icon"><img src="{{ asset('img/features/excellent.png') }}" alt="SITS" width="60px" /></div>
               <div class="desc">
@@ -99,7 +99,7 @@
       <div class="container">
         <div class="row justify-content-center">
           <div class="col-lg-5">
-            <div class="main_title">
+            <div class="main_title" data-aos="fade-up" data-aos-delay="200">
               <h2 class="mb-3">Our Popular Courses</h2>
               <p>
                 Replenish man have thing gathering lights yielding shall you
@@ -217,7 +217,7 @@
     <!--================ End Popular Courses Area =================-->
 
     <!--================ Start Registration Area =================-->
-    <div class="section_gap registration_area">
+    <div class="section_gap registration_area" data-aos="fade-left">
       <div class="container">
         <div class="row align-items-center">
           <div class="col-lg-7">
@@ -297,7 +297,7 @@
       <div class="container">
         <div class="row justify-content-center">
           <div class="col-lg-5">
-            <div class="main_title">
+            <div class="main_title" data-aos="fade-up" data-aos-delay="200">
               <h2 class="mb-3">Our Expert Trainers</h2>
               <p>
                 Replenish man have thing gathering lights yielding shall you
@@ -306,7 +306,7 @@
           </div>
         </div>
         <div class="row justify-content-center d-flex align-items-center">
-          <div class="col-lg-3 col-md-6 col-sm-12 single-trainer">
+          <div class="col-lg-3 col-md-6 col-sm-12 single-trainer" data-aos="fade-up" data-aos-delay="200">
             <div class="thumb d-flex justify-content-sm-center">
               <img class="img-fluid" src="img/trainer/t1.jpg" alt="" />
             </div>
@@ -328,7 +328,7 @@
             </div>
           </div>
 
-          <div class="col-lg-3 col-md-6 col-sm-12 single-trainer">
+          <div class="col-lg-3 col-md-6 col-sm-12 single-trainer" data-aos="fade-up" data-aos-delay="220">
             <div class="thumb d-flex justify-content-sm-center">
               <img class="img-fluid" src="img/trainer/t2.jpg" alt="" />
             </div>
@@ -350,7 +350,7 @@
             </div>
           </div>
 
-          <div class="col-lg-3 col-md-6 col-sm-12 single-trainer">
+          <div class="col-lg-3 col-md-6 col-sm-12 single-trainer" data-aos="fade-up" data-aos-delay="240">
             <div class="thumb d-flex justify-content-sm-center">
               <img class="img-fluid" src="img/trainer/t3.jpg" alt="" />
             </div>
@@ -372,7 +372,7 @@
             </div>
           </div>
 
-          <div class="col-lg-3 col-md-6 col-sm-12 single-trainer">
+          <div class="col-lg-3 col-md-6 col-sm-12 single-trainer" data-aos="fade-up" data-aos-delay="260">
             <div class="thumb d-flex justify-content-sm-center">
               <img class="img-fluid" src="img/trainer/t4.jpg" alt="" />
             </div>
@@ -399,7 +399,7 @@
     <!--================ End Trainers Area =================-->
 
     <!--================ Start Events Area =================-->
-    <div class="events_area">
+    <div class="events_area" data-aos="zoom-in" data-aos-delay="200">
       <div class="container">
         <div class="row justify-content-center">
           <div class="col-lg-5">
@@ -412,7 +412,7 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-lg-6 col-md-6">
+          <div class="col-lg-6 col-md-6" data-aos="fade-right" data-aos-delay="300">
             <div class="single_event position-relative">
               <div class="event_thumb">
                 <img src="img/event/e1.jpg" alt="" />
@@ -438,7 +438,7 @@
               </div>
             </div>
           </div>
-          <div class="col-lg-6 col-md-6">
+          <div class="col-lg-6 col-md-6" data-aos="fade-left" data-aos-delay="400">
             <div class="single_event position-relative">
               <div class="event_thumb">
                 <img src="img/event/e2.jpg" alt="" />
