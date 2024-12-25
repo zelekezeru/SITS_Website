@@ -41,10 +41,10 @@
               <div class="h_blog_text_inner left right" data-aos="fade-up" data-aos-delay="700">
                 <h4>About SITS</h4>
                 <p>
-                    Shiloh International Theological Seminary (SITS) is a globally recognized institution dedicated to
-                    equipping individuals with a deep understanding of biblical principles. At SITS, we are committed to fostering spiritual growth and academic excellence,
-                    empowering students to lead with integrity, wisdom, and faith.
-</p>
+                  Shiloh International Theological Seminary (SITS) is a globally recognized institution dedicated to
+                  equipping individuals with a deep understanding of biblical principles. At SITS, we are committed to fostering spiritual growth and academic excellence,
+                  empowering students to lead with integrity, wisdom, and faith.
+                </p>
                 <p>
                     With state-of-the-art facilities and innovative learning approaches and an extensive online library, we make theological
                     education accessible and impactful. connecting students to diverse perspectives and international networks.

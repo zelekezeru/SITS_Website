@@ -89,6 +89,19 @@
                     required=""
                   />
                 </div>
+                
+                <div class="form-group">
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="phone"
+                    name="phone"
+                    placeholder="Enter phone address"
+                    onfocus="this.placeholder = ''"
+                    onblur="this.placeholder = 'Enter phone Number'"
+                    required=""
+                  />
+                </div>
                 <div class="form-group">
                   <input
                     type="text"

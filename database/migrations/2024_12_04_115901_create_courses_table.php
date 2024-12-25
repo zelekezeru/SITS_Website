@@ -12,8 +12,19 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('courses', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+            $table->id(); // Auto-incremented unique ID
+            $table->string('title', 50); // Course name
+            $table->string('description', 255)->nullable(); // Course description
+            $table->string('category', 100); // Course category
+            $table->integer('credit_hours'); // Credit hours for the course
+            $table->decimal('amount_paid', 10, 2); // Amount paid for the course
+            $table->foreignId('program_id') // Foreign key linking to `contact_id`
+                  ->nullable()
+                  ->constrained('contacts')
+                  ->onDelete('set null');
+            $table->boolean('status')->default(true); // Active or inactive (default: active)
+            $table->boolean('visibility')->default(true); // Hidden or visible (default: visible)
+            $table->timestamps(); // Created_at and Updated_at timestamps
         });
     }
 

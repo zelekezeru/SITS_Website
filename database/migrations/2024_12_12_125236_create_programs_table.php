@@ -12,8 +12,19 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('programs', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+            $table->id(); // Auto-incremented unique ID
+            $table->string('name', 50); // Customer name
+            $table->string('email')->unique(); // Email address
+            $table->string('phone', 15); // Phone number
+            $table->string('title', 100); // Message title
+            $table->longText('message'); // Main message
+            $table->foreignId('reply') // Foreign key linking to `contact_id`
+                  ->nullable()
+                  ->constrained('contacts')
+                  ->onDelete('set null');
+            $table->boolean('status')->default(true); // Active or inactive (default: active)
+            $table->boolean('visibility')->default(true); // Hidden or visible (default: visible)
+            $table->timestamps(); // Created_at and Updated_at timestamps
         });
     }
 

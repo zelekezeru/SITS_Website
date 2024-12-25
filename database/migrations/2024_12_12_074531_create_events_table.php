@@ -12,8 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('events', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+            $table->id(); // Auto-incremented unique ID
+            $table->string('title', 50); // Event title
+            $table->string('description', 255)->nullable(); // Event description
+            $table->date('date'); // Event date
+            $table->time('start_time'); // Starting time
+            $table->time('end_time'); // Ending time
+            $table->string('location', 50); // Event held place
+            $table->string('remark', 50)->nullable(); // Remarks or reviews
+            $table->boolean('status'); // Active or inactive
+            $table->boolean('visibility'); // Hidden or visible
+            $table->timestamps(); // Created_at and Updated_at timestamps
         });
     }
 

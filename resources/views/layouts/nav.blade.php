@@ -61,16 +61,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('blogs.index')}}">Blog</a>
                 </li>
-                <li class="nav-item submenu dropdown">
-                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" >About</a>
-                    <ul class="dropdown-menu">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('abouts.index')}}">About SITS</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('testimonials.create')}}" >Testimonials</a >
-                    </li>
-                    </ul>
+                <li class="nav-item">
+                    <a href="{{ route('abouts.index')}}" class="nav-link" >About SITS</a>
+                    
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('contacts.index')}}">Contact Us</a>
