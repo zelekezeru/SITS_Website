@@ -217,7 +217,7 @@
     <!--================ End Popular Courses Area =================-->
 
     <!--================ Start Registration Area =================-->
-    <div class="section_gap registration_area" data-aos="fade-left">
+    <div class="section_gap registration_area" data-aos="zoom-in">
       <div class="container">
         <div class="row align-items-center">
           <div class="col-lg-7">
