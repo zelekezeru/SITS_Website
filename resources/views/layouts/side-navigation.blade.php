@@ -45,12 +45,12 @@
                     <div class="collapse" id="Course">
                         <ul class="nav nav-collapse">
                             <li>
-                                <a href="">
+                                <a href="{{ route('courses.create') }}">
                                     Add Course
                                 </a>
                             </li>
                             <li>
-                                <a href="">
+                                <a href="{{ route('courses.index') }}">
                                     Manage Course
                                 </a>
                             </li>
