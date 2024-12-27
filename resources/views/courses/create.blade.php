@@ -48,7 +48,7 @@
                             @error('amount_paid')
                                 <div class="form-text text-danger">{{ $message }}</div>
                             @enderror
-                        </div>                                            
+                        </div>
 
                     </div>
 

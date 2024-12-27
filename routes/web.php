@@ -44,6 +44,6 @@ Route::resource('courses', CourseController::class);
 
 Route::resource('libraries', LibraryController::class);
 
-Route::resource('libraries', AdminController::class);
+Route::resource('admins', AdminController::class);
 
 Route::resource('programs', ProgramController::class);

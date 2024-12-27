@@ -12,8 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('libraries', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+            $table->id(); // Auto-incremented unique ID
+            $table->string('title', 50); // Customer name
+            $table->longText('description')->unique(); // Email address
+            $table->string('image'); // Phone number
+            $table->string('other'); // Message title
+            $table->boolean('status')->default(true); // Active or inactive (default: active)
+            $table->boolean('visibility')->default(true); // Hidden or visible (default: visible)
+            $table->timestamps(); // Created_at and Updated_at timestamps
         });
     }
 

@@ -21,9 +21,17 @@
 
 <body>
     <div class="wrapper">
-        @include('layouts.side-navigation')
-        @include('layouts.navigation')
+
+        @if (Auth::user())
+
+        @include('layouts.admin.side-navigation')
+
+        @include('layouts.admin.navigation')
         <!-- Page Content -->
+
+        @endif
+
+
         <main>
             {{ $slot }}
         </main>

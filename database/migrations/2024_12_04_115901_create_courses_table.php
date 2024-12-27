@@ -22,8 +22,8 @@ return new class extends Migration
                   ->nullable()
                   ->constrained('contacts')
                   ->onDelete('set null');
-            // $table->boolean('status')->default(true); // Active or inactive (default: active)
-            // $table->boolean('visibility')->default(true); // Hidden or visible (default: visible)
+            $table->boolean('status')->default(true); // Active or inactive (default: active)
+            $table->boolean('visibility')->default(true); // Hidden or visible (default: visible)
             $table->timestamps(); // Created_at and Updated_at timestamps
         });
     }

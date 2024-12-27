@@ -13,6 +13,13 @@ return new class extends Migration
     {
         Schema::create('testimonials', function (Blueprint $table) {
             $table->id();
+            $table->string('name', 50); // Customer name
+            $table->string('email')->unique(); // Email address
+            $table->string('title'); // Phone number
+            $table->string('photo'); // Phone number
+            $table->longText('testimony'); // Main message
+            $table->boolean('status')->default(true); // Active or inactive (default: active)
+            $table->boolean('visibility')->default(true); // Hidden or visible (default: visible)
             $table->timestamps();
         });
     }
