@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendContactMail;
+use App\Mail\ContactMail;
 use App\Models\Contact;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class ContactController extends Controller
 {
@@ -30,7 +33,20 @@ class ContactController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // dd($request);
+        // Validate the form
+        $data = $request->validate([
+            'name' => 'required|string',
+            'email' => 'required|email',
+            'phone' => 'required',
+            'subject' => 'required|string',
+            'message' => 'required|string',
+        ]);
+    
+        // Dispatch the job to send the mail in the background 
+        SendContactMail::dispatch($data);   
+
+        return redirect()->back();
     }
 
     /**

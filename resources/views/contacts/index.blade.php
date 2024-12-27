@@ -73,11 +73,12 @@
           <div class="col-lg-9">
             <form
               class="row contact_form"
-              action="contact_process.php"
+              action="{{ route('contacts.store') }}"
               method="post"
               id="contactForm"
               novalidate="novalidate"
             >
+              @csrf
               <div class="col-md-6">
                 <div class="form-group">
                   <input
