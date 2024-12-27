@@ -57,6 +57,29 @@
                         </ul>
                     </div>
                 </li>
+
+                <li class="nav-item">
+                    <a data-bs-toggle="collapse" href="#Programs">
+                        <i class="fas fa-pen-square"></i>
+                        <p>Programs</p>
+                        <span class="caret"></span>
+                    </a>
+                    <div class="collapse" id="Programs">
+                        <ul class="nav nav-collapse">
+                            <li>
+                                <a href="{{ route('programs.create') }}">
+                                    Add Programs
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('programs.index') }}">
+                                    Manage Programs
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
                 <li class="nav-item">
                     <a data-bs-toggle="collapse" href="#Events">
                         <i class="fas fa-th-list"></i>
@@ -66,22 +89,23 @@
                     <div class="collapse" id="Events">
                         <ul class="nav nav-collapse">
                             <li>
-                                <a href="">
+                                <a href="{{ route('events.create') }}">
                                     Add Events
                                 </a>
                             </li>
                             <li>
-                                <a href="">
+                                <a href="{{ route('events.index') }}">
                                     Manage Events
                                 </a>
                             </li>
                         </ul>
                     </div>
                 </li>
+
                 <li class="nav-item">
                     <a data-bs-toggle="collapse" href="#Conatact">
                         <i class="fas fa-phone"></i>
-                        <p>Conatact</p>
+                        <p>Contact</p>
                         <span class="caret"></span>
                     </a>
                     <div class="collapse" id="Conatact">
@@ -99,27 +123,7 @@
                         </ul>
                     </div>
                 </li>
-                <li class="nav-item">
-                    <a data-bs-toggle="collapse" href="#Programs">
-                        <i class="fas fa-pen-square"></i>
-                        <p>Programs</p>
-                        <span class="caret"></span>
-                    </a>
-                    <div class="collapse" id="Programs">
-                        <ul class="nav nav-collapse">
-                            <li>
-                                <a href="">
-                                    Add Programs
-                                </a>
-                            </li>
-                            <li>
-                                <a href="">
-                                    Manage Programs
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
+                
                 <li class="nav-item">
                     <a data-bs-toggle="collapse" href="#Blog">
                         <i class="fas fa-th-list"></i>

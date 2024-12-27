@@ -20,8 +20,8 @@ return new class extends Migration
             $table->time('end_time'); // Ending time
             $table->string('location', 50); // Event held place
             $table->string('remark', 50)->nullable(); // Remarks or reviews
-            $table->boolean('status'); // Active or inactive
-            $table->boolean('visibility'); // Hidden or visible
+            $table->boolean('status')->default(true); // Active or inactive
+            $table->boolean('visibility')->default(true); // Hidden or visible
             $table->timestamps(); // Created_at and Updated_at timestamps
         });
     }

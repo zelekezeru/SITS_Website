@@ -10,7 +10,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LibraryController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProgramController;
-
+use App\Http\Controllers\EventController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -47,3 +47,5 @@ Route::resource('libraries', LibraryController::class);
 Route::resource('admins', AdminController::class);
 
 Route::resource('programs', ProgramController::class);
+
+Route::resource('events', EventController::class);

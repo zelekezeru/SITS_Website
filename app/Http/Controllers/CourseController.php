@@ -30,7 +30,7 @@ class CourseController extends Controller
      */
     public function create(): View
     {
-        $course = new COurse;
+        $course = new Course;
         return view('courses.create', compact('course'));
     }
 
