@@ -7,7 +7,7 @@
                     <h6 class="op-7 mb-2">Sits Admin Managment panel</h6>
                 </div>
                 <div class="ms-md-auto py-2 py-md-0">
-                    <a href="{{ route('courses.list') }}" class="btn btn-label-info btn-round me-2">Manage</a>
+                    <a href="{{ route('courses.index') }}" class="btn btn-label-info btn-round me-2">Manage</a>
                     <a href="{{ route('courses.create') }}" class="btn btn-primary btn-round">Add Course</a>
                 </div>
             </div>
