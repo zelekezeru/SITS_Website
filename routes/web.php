@@ -24,8 +24,14 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+// ADMIN ONLY ROUTES GO HERE
 
+Route::middleware(['auth'])-> group(function () {
+    Route::get('blogs/list', [BlogController::class, 'list'])->name("blogs.list");
+    Route::get('courses/list', [CourseController::class, 'list'])->name("courses.list");
+    Route::get('programs/list', [ProgramController::class, 'list'])->name("programs.list");
+    Route::get('events/list', [EventController::class, 'list'])->name("events.list");
+});
 
 //Hotel
 Route::get('/home', [HomeController::class, 'index'])->name('home');
@@ -49,3 +55,7 @@ Route::resource('admins', AdminController::class);
 Route::resource('programs', ProgramController::class);
 
 Route::resource('events', EventController::class);
+
+
+
+require __DIR__.'/auth.php';

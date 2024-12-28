@@ -21,6 +21,17 @@ class ProgramController extends Controller
 
         return view('programs.index', compact('programs'));
     }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function list(): View
+    {
+
+        $programs = Program::paginate(10); // Use pagination to avoid loading too many records at once
+
+        return view('programs.index', compact('programs'));
+    }
     /**
      * Show the form for creating a new resource.
      */

@@ -23,6 +23,18 @@ class CourseController extends Controller
 
     }
 
+    /**
+     * Display a listing of the resource.
+     */
+    public function list(): View
+    {
+
+    $courses = Course::paginate(10); // Use pagination to avoid loading too many records at once
+
+    return view('courses.list', compact('courses'));
+
+    }
+
 
 
     /**

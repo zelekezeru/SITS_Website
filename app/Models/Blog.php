@@ -9,5 +9,14 @@ class Blog extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'title',
+        'category',
+        'author',
+        'content',
+        'date',
+        'view',
+        'status',
+        'visibility',
+    ];
 }

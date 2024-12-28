@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('author', 25); // Program division
             $table->date('date'); // Posted date
             $table->integer('views')->default(0); // Number of readers, default is 0
-            $table->integer('comments')->default(0); // Number of comments, default is 0
+            $table->viewinteger('comments')->default(0); // Number of comments, default is 0
             $table->boolean('status')->default(true); // Active or inactive (default: active)
             $table->boolean('visibility')->default(true); // Hidden or visible (default: visible)
             $table->timestamps(); // Created_at and Updated_at timestamps

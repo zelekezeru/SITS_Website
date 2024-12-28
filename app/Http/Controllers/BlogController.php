@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Blog;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class BlogController extends Controller
@@ -18,11 +19,21 @@ class BlogController extends Controller
     }
 
     /**
+     * Display a listing of the resource.
+     */
+    public function list()
+    {
+        $blogs = Blog::paginate(10);
+        
+        return view('blogs.list', compact('blogs'));
+    }
+
+    /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        //
+        return view('blogs.create');
     }
 
     /**
@@ -30,7 +41,18 @@ class BlogController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            'title' => 'required|string|max:255',
+            'category' => 'required|string|max:255',
+            'author' => 'required|string|max:255',
+            'content' => 'required|string',
+        ]);
+
+        $data['date'] = Carbon::now();
+
+        $blog = Blog::create($data);
+
+        return redirect(route('blogs.list'));
     }
 
     /**
@@ -46,15 +68,22 @@ class BlogController extends Controller
      */
     public function edit(Blog $blog)
     {
-        //
+        return view("blogs.edit", compact('blog'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Blog $blog)
-    {
-        //
+    public function update(Request $request, Blog $blog) 
+    { 
+        $data = $request->validate([ 
+            'title' => 'required|string|max:255', 
+            'category' => 'required|string|max:255', 
+            'author' => 'required|string|max:255', 
+            'content' => 'required|string', 
+        ]); 
+        $blog->update($data); 
+        return redirect(route('blogs.list'))->with('message', 'Blog updated successfully!');
     }
 
     /**
@@ -62,6 +91,8 @@ class BlogController extends Controller
      */
     public function destroy(Blog $blog)
     {
-        //
+        $blog->delete();
+
+        return redirect(route('blogs.list'));
     }
 }

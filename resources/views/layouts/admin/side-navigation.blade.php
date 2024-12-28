@@ -50,7 +50,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="{{ route('courses.index') }}">
+                                <a href="{{ route('courses.list') }}">
                                     Manage Course
                                 </a>
                             </li>
@@ -72,7 +72,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="{{ route('programs.index') }}">
+                                <a href="{{ route('programs.list') }}">
                                     Manage Programs
                                 </a>
                             </li>
@@ -94,7 +94,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="{{ route('events.index') }}">
+                                <a href="{{ route('events.list') }}">
                                     Manage Events
                                 </a>
                             </li>
