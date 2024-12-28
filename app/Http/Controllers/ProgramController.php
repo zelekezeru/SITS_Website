@@ -30,7 +30,7 @@ class ProgramController extends Controller
 
         $programs = Program::paginate(10); // Use pagination to avoid loading too many records at once
 
-        return view('programs.index', compact('programs'));
+        return view('programs.list', compact('programs'));
     }
     /**
      * Show the form for creating a new resource.
