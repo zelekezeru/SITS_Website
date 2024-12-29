@@ -27,7 +27,7 @@
                 <li class="nav-item active">
                     <a href="{{ url('/dashboard') }}">
                         <i class="fas fa-home"></i>
-                        <p>Dashboard</p></span>
+                        <p>Dashboard</p>
                     </a>
                 </li>
                 <li class="nav-section">
@@ -38,7 +38,7 @@
                 </li>
                 <li class="nav-item">
                     <a data-bs-toggle="collapse" href="#Course">
-                        <i class="fas fa-layer-group"></i>
+                        <i class="fas fa-book"></i>
                         <p>Course</p>
                         <span class="caret"></span>
                     </a>
@@ -46,87 +46,83 @@
                         <ul class="nav nav-collapse">
                             <li>
                                 <a href="{{ route('courses.create') }}">
-                                    Add Course
+                                    <i class="fas fa-plus"></i>Add Course
                                 </a>
                             </li>
                             <li>
                                 <a href="{{ route('courses.list') }}">
-                                    Manage Course
+                                    <i class="fas fa-list"></i>Manage Course
                                 </a>
                             </li>
                         </ul>
                     </div>
                 </li>
-
                 <li class="nav-item">
                     <a data-bs-toggle="collapse" href="#Programs">
-                        <i class="fas fa-pen-square"></i>
-                        <p>Programs</p>
+                        <i class="fas fa-graduation-cap"></i>
+                        <p>Program</p>
                         <span class="caret"></span>
                     </a>
                     <div class="collapse" id="Programs">
                         <ul class="nav nav-collapse">
                             <li>
                                 <a href="{{ route('programs.create') }}">
-                                    Add Programs
+                                    <i class="fas fa-plus"></i>Add Programs
                                 </a>
                             </li>
                             <li>
                                 <a href="{{ route('programs.list') }}">
-                                    Manage Programs
+                                    <i class="fas fa-list"></i>Manage Programs
                                 </a>
                             </li>
                         </ul>
                     </div>
                 </li>
-
                 <li class="nav-item">
                     <a data-bs-toggle="collapse" href="#Events">
-                        <i class="fas fa-th-list"></i>
-                        <p>Events</p>
+                        <i class="fas fa-calendar-alt"></i>
+                        <p>Event</p>
                         <span class="caret"></span>
                     </a>
                     <div class="collapse" id="Events">
                         <ul class="nav nav-collapse">
                             <li>
                                 <a href="{{ route('events.create') }}">
-                                    Add Events
+                                    <i class="fas fa-plus"></i>Add Events
                                 </a>
                             </li>
                             <li>
                                 <a href="{{ route('events.list') }}">
-                                    Manage Events
+                                    <i class="fas fa-list"></i>Manage Events
                                 </a>
                             </li>
                         </ul>
                     </div>
                 </li>
-
                 <li class="nav-item">
                     <a data-bs-toggle="collapse" href="#Conatact">
-                        <i class="fas fa-phone"></i>
+                        <i class="fas fa-address-book"></i>
                         <p>Contact</p>
                         <span class="caret"></span>
                     </a>
                     <div class="collapse" id="Conatact">
                         <ul class="nav nav-collapse">
                             <li>
-                                <a href="">
-                                    Add Conatact
+                                <a href="#">
+                                    <i class="fas fa-plus"></i>Add Contact
                                 </a>
                             </li>
                             <li>
-                                <a href="">
-                                    Manage Conatact
+                                <a href="#">
+                                    <i class="fas fa-list"></i>Manage Contact
                                 </a>
                             </li>
                         </ul>
                     </div>
                 </li>
-                
                 <li class="nav-item">
                     <a data-bs-toggle="collapse" href="#Blog">
-                        <i class="fas fa-th-list"></i>
+                        <i class="fas fa-newspaper"></i>
                         <p>Blog</p>
                         <span class="caret"></span>
                     </a>
@@ -134,25 +130,55 @@
                         <ul class="nav nav-collapse">
                             <li>
                                 <a href="{{ route('blogs.list') }}">
-                                    Add Blog
+                                    <i class="fas fa-plus"></i>Add Blog
                                 </a>
                             </li>
                             <li>
                                 <a href="{{ route('blogs.create') }}">
-                                    Manage Blog
+                                    <i class="fas fa-list"></i>Manage Blog
                                 </a>
                             </li>
                         </ul>
                     </div>
                 </li>
-                
+                <li class="nav-item">
+                    <a data-bs-toggle="collapse" href="#PerformanceDropdown" aria-expanded="false">
+                        <i class="fas fa-chart-line"></i>
+                        <p>Performance Management</p>
+                        <span class="caret"></span>
+                    </a>
+                    <div class="collapse" id="PerformanceDropdown">
+                        <ul class="nav nav-collapse">
+                            <li class="nav-item">
+                                <a data-bs-toggle="collapse" href="#TaskManagementDropdown" aria-expanded="false">
+                                    <i class="fas fa-tasks"></i> Task Management
+                                    <span class="caret"></span>
+                                </a>
+                                <div class="collapse" id="TaskManagementDropdown">
+                                    <ul class="nav nav-collapse">
+                                        <li>
+                                            <a href="{{ route('tasks.create') }}">
+                                                <i class="fas fa-plus-circle"></i> Add Task
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="{{ route('tasks.list') }}">
+                                                <i class="fas fa-edit"></i> Manage Tasks
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
                 <li class="nav-item">
                     <a href="{{route('profile.edit')}}">
-                        <i class="fas fa-user"></i>
+                        <i class="fas fa-user-circle"></i>
                         <p>My Profile</p>
                     </a>
                 </li>
-            </ul>
+            </ul>            
         </div>
     </div>
 </div>

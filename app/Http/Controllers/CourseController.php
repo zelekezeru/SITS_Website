@@ -53,7 +53,7 @@ class CourseController extends Controller
     {
         Course::create($request->validated());
 
-        return redirect()->route('courses.index')
+        return redirect()->route('courses.list')
             ->with('success', 'Course created successfully.');
     }
 
@@ -79,9 +79,10 @@ class CourseController extends Controller
     public function update(CourseUpdateRequest $request, Course $course) : RedirectResponse
     {
         $data = $request->validated();
+        
         $course->update($data);
 
-        return redirect()->route('courses.index')
+        return redirect()->route('courses.list')
             ->with('success', 'Course updated successfully');
     }
 
@@ -92,7 +93,7 @@ class CourseController extends Controller
     {
         $course->delete();
 
-        return redirect()->route('courses.index')
+        return redirect()->route('courses.list')
             ->with('success', 'Course deleted successfully');
     }
 }

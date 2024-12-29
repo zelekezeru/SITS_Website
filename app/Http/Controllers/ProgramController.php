@@ -51,7 +51,7 @@ class ProgramController extends Controller
         Program::create($request->validated());
 
         // Redirect to the create page with a success message
-        return redirect()->route('programs.create')
+        return redirect()->route('programs.list')
             ->with('success', 'Program created successfully.');
     }
 
@@ -80,7 +80,7 @@ class ProgramController extends Controller
         $data = $request->validated();
         $program->update($data);
 
-        return redirect()->route('programs.index')
+        return redirect()->route('programs.list')
             ->with('success', 'Program updated successfully');
     }
 
@@ -91,7 +91,7 @@ class ProgramController extends Controller
     {
         $program->delete();
 
-        return redirect()->route('programs.index')
+        return redirect()->route('programs.list')
             ->with('success', 'Program deleted successfully');
     }
 }

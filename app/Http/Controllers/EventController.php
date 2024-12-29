@@ -54,7 +54,7 @@ class EventController extends Controller
         Event::create($request->validated());
 
         // Redirect to the create page with a success message
-        return redirect()->route('events.create')
+        return redirect()->route('events.list')
             ->with('success', 'Event created successfully.');
     }
 
@@ -83,7 +83,7 @@ class EventController extends Controller
         $data = $request->validated();
         $event->update($data);
 
-        return redirect()->route('events.index')
+        return redirect()->route('events.list')
             ->with('success', 'Event updated successfully');
     }
 
@@ -94,7 +94,7 @@ class EventController extends Controller
     {
         $event->delete();
 
-        return redirect()->route('events.index')
+        return redirect()->route('events.list')
             ->with('success', 'Event deleted successfully');
     }
 }
