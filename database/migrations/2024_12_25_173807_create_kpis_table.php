@@ -9,13 +9,18 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up()
     {
         Schema::create('kpis', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id');
+            $table->foreignId('task_id')->constrained()->onDelete('cascade');
+            $table->text('performance_indicators');
+            $table->text('qualitative');
+            $table->integer('quantitative');
+            $table->decimal('ratings', 5, 2);
             $table->timestamps();
         });
-    }
+    }    
 
     /**
      * Reverse the migrations.

@@ -13,15 +13,11 @@ return new class extends Migration
     {
         Schema::create('programs', function (Blueprint $table) {
             $table->id(); // Auto-incremented unique ID
-            $table->string('name', 50); // Customer name
-            $table->string('email')->unique(); // Email address
-            $table->string('phone', 15); // Phone number
-            $table->string('title', 100); // Message title
-            $table->longText('message'); // Main message
-            $table->foreignId('reply') // Foreign key linking to `contact_id`
-                  ->nullable()
-                  ->constrained('contacts')
-                  ->onDelete('set null');
+            $table->string('title', 50); // Title
+            $table->longtext('description'); // Description 
+            $table->string('code', 255); // Code
+            $table->string('division'); // Division
+            $table->string('language'); // Language
             $table->boolean('status')->default(true); // Active or inactive (default: active)
             $table->boolean('visibility')->default(true); // Hidden or visible (default: visible)
             $table->timestamps(); // Created_at and Updated_at timestamps

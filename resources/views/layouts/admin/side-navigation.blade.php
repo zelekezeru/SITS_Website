@@ -133,12 +133,12 @@
                     <div class="collapse" id="Blog">
                         <ul class="nav nav-collapse">
                             <li>
-                                <a href="">
+                                <a href="{{ route('blogs.list') }}">
                                     Add Blog
                                 </a>
                             </li>
                             <li>
-                                <a href="">
+                                <a href="{{ route('blogs.create') }}">
                                     Manage Blog
                                 </a>
                             </li>

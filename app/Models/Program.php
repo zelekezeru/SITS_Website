@@ -10,13 +10,10 @@ class Program extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name',
-        'email',
-        'phone',
         'title',
-        'message',
-        'reply',
-        'status',
-        'visibility',
+        'description',
+        'code',
+        'division',
+        'language',
     ];
 }

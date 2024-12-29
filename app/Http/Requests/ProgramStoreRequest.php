@@ -22,11 +22,11 @@ class ProgramStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:50',
-            'email' => 'required|email|unique:programs,email',
-            'phone' => 'required|string|max:15',
             'title' => 'required|string|max:100',
-            'message' => 'required|string',
+            'description' => 'required|string|max:255',
+            'code' => 'required|string|max:15',
+            'division' => 'required|string|max:15',
+            'language' => 'required|string|max:15',
         ];
     }
 }

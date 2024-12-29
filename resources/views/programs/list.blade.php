@@ -1,7 +1,7 @@
 <x-admin-layout>
     <div class="container topCard">
         <div class="card mt-5 pt-5">
-            <h2 class="card-header text-center">List Of Program</h2>
+            <h2 class="card-header text-center">List Of Programs</h2>
             <div class="card-body">
                     
                 @if(session('success'))
@@ -21,14 +21,11 @@
                         <thead>
                             <tr>
                                 <th width="80px">No</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Phone</th>
                                 <th>Title</th>
-                                <th>Message</th>
-                                <th>Reply</th>
-                                <th>Status</th>
-                                <th>Visibility</th>
+                                <th>Code</th>
+                                <th>Division</th>
+                                <th>Language</th>
+                                <th>Description</th>
                                 <th width="250px">Action</th>
                             </tr>
                         </thead>
@@ -36,14 +33,11 @@
                             @forelse ($programs as $program)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $program->name }}</td>
-                                    <td>{{ $program->email }}</td>
-                                    <td>{{ $program->phone }}</td>
                                     <td>{{ $program->title }}</td>
-                                    <td>{{ \Illuminate\Support\Str::limit($program->message, 50, '...') }}</td>
-                                    <td>{{ optional($program->reply)->id }}</td>
-                                    <td>{{ $program->status ? 'Active' : 'Inactive' }}</td>
-                                    <td>{{ $program->visibility ? 'Visible' : 'Hidden' }}</td>
+                                    <td>{{ $program->code }}</td>
+                                    <td>{{ $program->division }}</td>
+                                    <td>{{ $program->language }}</td>
+                                    <td>{{ \Illuminate\Support\Str::limit($program->description, 20, '...') }}</td>
                                     <td class="d-flex">
                                         <a class="btn btn-info btn-sm mx-2" href="{{ route('programs.show', $program->id) }}">
                                             <i class="fa-solid fa-list"></i> Show
@@ -62,12 +56,13 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="10">There are no data.</td>
+                                    <td colspan="7">There are no data.</td>
                                 </tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
+                
                 
   
                 {!! $programs->links() !!}

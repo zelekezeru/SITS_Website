@@ -21,6 +21,20 @@ class EventController extends Controller
 
         return view('events.index', compact('events'));
     }
+
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function list(): View
+    {
+
+        $events = Event::paginate(10); // Use pagination to avoid loading too many records at once
+
+        return view('events.list', compact('events'));
+    }
+
+    
     /**
      * Show the form for creating a new resource.
      */

@@ -1,7 +1,7 @@
 <x-admin-layout>
     <div class="container topCard">
         <div class="card mt-5 pt-5">
-            <h2 class="card-header text-center">List Of Courses</h2>
+            <h2 class="card-header text-center">List Of Events</h2>
             <div class="card-body">
                     
                 @if(session('success'))
@@ -11,8 +11,8 @@
                 @endif
   
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                    <a class="btn btn-success btn-sm" href="{{ route('courses.create') }}"> 
-                        <i class="fa fa-plus"></i> Create New Course
+                    <a class="btn btn-success btn-sm" href="{{ route('events.create') }}"> 
+                        <i class="fa fa-plus"></i> Create New Event
                     </a>
                 </div>
   
@@ -21,29 +21,29 @@
                         <thead>
                             <tr>
                                 <th width="80px">No</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
                                 <th>Title</th>
-                                <th>Description</th>
-                                <th>Category</th>
-                                <th>Credit Hours</th>
                                 <th width="250px">Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($courses as $course)
+                            @forelse ($events as $event)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $course->title }}</td>
-                                    <td>{{ $course->description }}</td>
-                                    <td>{{ $course->category }}</td>
-                                    <td>{{ $course->credit_hours }}</td>
+                                    <td>{{ $event->name }}</td>
+                                    <td>{{ $event->email }}</td>
+                                    <td>{{ $event->phone }}</td>
+                                    <td>{{ $event->title }}</td>
                                     <td class="d-flex">
-                                        <a class="btn btn-info btn-sm mx-2" href="{{ route('courses.show', $course->id) }}">
+                                        <a class="btn btn-info btn-sm mx-2" href="{{ route('events.show', $event->id) }}">
                                             <i class="fa-solid fa-list"></i> Show
                                         </a>
-                                        <a class="btn btn-primary btn-sm mx-2" href="{{ route('courses.edit', $course->id) }}">
+                                        <a class="btn btn-primary btn-sm mx-2" href="{{ route('events.edit', $event->id) }}">
                                             <i class="fa-solid fa-pen-to-square"></i> Edit
                                         </a>
-                                        <form action="{{ route('courses.destroy', $course->id) }}" method="POST" class="mx-2">
+                                        <form action="{{ route('events.destroy', $event->id) }}" method="POST" class="mx-2">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-danger btn-sm">
@@ -54,14 +54,15 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6">There are no data.</td>
+                                    <td colspan="10">There are no data.</td>
                                 </tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
+                
   
-                {!! $courses->links() !!}
+                {!! $events->links() !!}
             
             </div>
         </div>

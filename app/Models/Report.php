@@ -2,20 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Kpi extends Model
+class Report extends Model
 {
-    use HasFactory;
-
     // Fillable Properties
     protected $fillable = [
-        'task_id',
-        'performance_indicators',
-        'qualitative',
-        'quantitative',
-        'ratings'
+        'task_id', 'summary', 'performance_graph'
     ];
 
     // Relationship Functions
@@ -23,4 +16,5 @@ class Kpi extends Model
     {
         return $this->belongsTo(Task::class);
     }
+
 }
