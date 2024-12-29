@@ -64,7 +64,6 @@ class TaskController extends Controller
     {
         return view('tasks.show', compact('task'));
     }
-
     /**
      * Show the form for editing the specified resource.
      */

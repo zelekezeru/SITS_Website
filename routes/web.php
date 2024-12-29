@@ -11,6 +11,7 @@ use App\Http\Controllers\LibraryController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\KpiController;
 use App\Http\Controllers\TaskController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -59,6 +60,11 @@ Route::resource('programs', ProgramController::class);
 Route::resource('events', EventController::class);
 
 Route::resource('tasks', TaskController::class);
+
+// Store the KPI associated with the task
+Route::post('tasks/{task}/kpis', [KpiController::class, 'store'])->name('kpis.store');
+Route::put('kpis/{kpi}', [KpiController::class, 'update'])->name('kpis.update');
+Route::delete('kpis/{kpi}', [KpiController::class, 'destroy'])->name('kpis.destroy');
 
 
 
