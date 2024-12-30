@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Feedback;
 use App\Models\Task;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class FeedbackController extends Controller
 {
@@ -30,17 +31,26 @@ class FeedbackController extends Controller
     public function store(Request $request, Task $task)
     {
         // Validate request data
-        $request->validate([
+        $validatedData = $request->validate([
             'comment' => 'required|string',
         ]);
-    
-        // Manually add the task_id to the request data
-        $validatedData = $request->only('comment');
+        
         $validatedData['task_id'] = $task->id; // Explicitly set task_id
+        
+        $validatedData['user_id'] = Auth::user()->id; // Explicitly set task_id
+        if ($request->input('reply_to')) {
+            
+            $validatedData['feedback_id'] = $request->input('reply_to');
+            
+        }
+        // dd($validatedData);
+
         // Create FEEDBACK associated with the task
-        $task->feedbacks()->create($validatedData);
+
+        $feedback = Feedback::create($validatedData);
     
         // Redirect with success message
+
         return redirect()->route('tasks.show', $task->id)
                          ->with('success', 'Feedback added successfully.');
     }

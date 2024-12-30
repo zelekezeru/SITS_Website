@@ -11,21 +11,21 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('feedback', function (Blueprint $table) {
+        Schema::create('feedbacks', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->foreignId('task_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->text('comment')->nullable(false);
+            $table->text('comment');
+            $table->foreignId('feedback_id')->nullable()->constrained('feedbacks')->onDelete('set null'); // Referencing the feedbacks table itself
             $table->timestamps();
         });
     }
-    
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('feedback');
+        Schema::dropIfExists('feedbacks'); // Correct table name
     }
 };

@@ -22,7 +22,6 @@
                             <tr>
                                 <th width="80px">No</th>
                                 <th>Title</th>
-                                <th>Description</th>
                                 <th>Duration (hours)</th>
                                 <th>Budget</th>
                                 <th>Status</th>
@@ -34,7 +33,6 @@
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $task->title }}</td>
-                                    <td>{{ $task->description }}</td>
                                     <td>{{ $task->duration ?? 'N/A' }}</td>
                                     <td>${{ number_format($task->budget, 2) }}</td>
                                     <td>{{ $task->status }}</td>

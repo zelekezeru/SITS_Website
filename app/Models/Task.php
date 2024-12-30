@@ -29,7 +29,7 @@ class Task extends Model
         return $this->hasMany(Kpi::class);
     }
 
-    public function feedback()
+    public function feedbacks()
     {
         return $this->hasMany(Feedback::class);
     }
