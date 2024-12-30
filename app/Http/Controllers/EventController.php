@@ -50,8 +50,14 @@ class EventController extends Controller
      */
     public function store(EventStoreRequest $request): RedirectResponse
     {
+        $data = $request->validated();
 
-        Event::create($request->validated());
+        if ($request->hasFile('banner')) {
+            $bannerPath = $request->file('banner')->store('eventBanners', 'public');
+            $data['banner'] = $bannerPath;
+        }
+    
+        Event::create($data);
 
         // Redirect to the create page with a success message
         return redirect()->route('events.list')
@@ -81,6 +87,12 @@ class EventController extends Controller
     public function update(EventUpdateRequest $request, Event $event): RedirectResponse
     {
         $data = $request->validated();
+
+        if ($request->hasFile('banner')) {
+            $bannerPath = $request->file('banner')->store('banners', 'public');
+            $data['banner'] = $bannerPath;
+        }
+        
         $event->update($data);
 
         return redirect()->route('events.list')

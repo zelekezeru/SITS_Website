@@ -39,10 +39,15 @@
                 @foreach ($courses as $course)
                     <div class="col-lg-4 col-md-6">
                         <div class="single_course">
+                            <div class="course_head">
+                                <img class="img-fluid" src="{{ asset('storage/' . $course->banner) }}"
+                                    alt="{{ $course->title }}"
+                                    style="width: 100%; height: 250px; object-fit: cover;" />
+                            </div>
                             <div class="course_content">
                                 <span class="price">${{ $course->amount_paid }}</span>
-                                <span class="tag mb-4 d-inline-block">{{ $course->category }}</span>
-                                <h4 class="mb-3">
+                                <span class="tag mb-3 d-inline-block">{{ $course->category }}</span>
+                                <h4 class="mb-2">
                                     <a href="{{ route('courses.show', $course->id) }}">{{ $course->title }}</a>
                                 </h4>
                                 <p>
@@ -54,7 +59,7 @@
                                         <img src="img/courses/author1.png" alt="" />
                                         <span class="d-inline-block ml-2">Instructor</span>
                                     </div>
-                                    <div class="mt-lg-0 mt-3">
+                                    <div class="mt-lg-0 mt-2">
                                         <span class="meta_info mr-4">
                                             <a href="#"> <i class="ti-user mr-2"></i>25 </a>
                                         </span>
@@ -132,6 +137,6 @@
     <!--================ Start Feature Area =================-->
 
     @include('abouts.values')
-    
+
     <!--================ End Feature Area =================-->
 @endsection

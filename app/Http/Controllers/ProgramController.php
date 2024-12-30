@@ -8,18 +8,24 @@ use App\Http\Requests\ProgramStoreRequest;
 use App\Http\Requests\ProgramUpdateRequest;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\File;
+
 
 class ProgramController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(): View
+    public function index()
     {
-
-        $programs = Program::paginate(10); // Use pagination to avoid loading too many records at once
-
-        return view('programs.index', compact('programs'));
+        // Retrieve all programs from the database
+        $programs = Program::all();
+    
+        // Get all the banner image files from the 'public/assets/images/banners' directory
+        $bannerImages = collect(File::allFiles(public_path('images/banners')));
+    
+        // Return the view and pass the programs and the banner images
+        return view('programs.index', compact('programs', 'bannerImages'));
     }
 
     /**

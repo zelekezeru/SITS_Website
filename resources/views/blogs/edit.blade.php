@@ -4,7 +4,7 @@
           <h2 class="card-header text-center">Edit Blog</h2>
           <div class="card-body">
               <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                  <a class="btn btn-primary btn-sm" href="{{ route('blogs.index') }}"><i class="fa fa-arrow-left"></i> Back</a>
+                  <a class="btn btn-primary btn-sm" href="{{ route('blogs.list') }}"><i class="fa fa-arrow-left"></i> Back</a>
               </div>
 
               <form action="{{ route('blogs.update', $blog->id) }}" method="POST" enctype="multipart/form-data">

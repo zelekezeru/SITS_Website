@@ -129,12 +129,12 @@
                     <div class="collapse" id="Blog">
                         <ul class="nav nav-collapse">
                             <li>
-                                <a href="{{ route('blogs.list') }}">
+                                <a href="{{ route('blogs.create') }}">
                                     <i class="fas fa-plus"></i>Add Blog
                                 </a>
                             </li>
                             <li>
-                                <a href="{{ route('blogs.create') }}">
+                                <a href="{{ route('blogs.list') }}">
                                     <i class="fas fa-list"></i>Manage Blog
                                 </a>
                             </li>

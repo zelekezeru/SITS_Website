@@ -24,6 +24,7 @@ return new class extends Migration
                   ->onDelete('set null');
             $table->boolean('status')->default(true); // Active or inactive (default: active)
             $table->boolean('visibility')->default(true); // Hidden or visible (default: visible)
+            $table->string('banner')->nullable();
             $table->timestamps(); // Created_at and Updated_at timestamps
         });
     }

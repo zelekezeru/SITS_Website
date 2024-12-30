@@ -8,11 +8,37 @@
             <div class="card-body">
                 <h4 class="mb-3"><i class="fas fa-tasks"></i> {{ $task->title }}</h4>
                 <p><strong>Description:</strong> {{ $task->description }}</p>
-                <p><strong>Status:</strong> {{ ucfirst($task->status) }}</p>
-                {{-- <p><strong>Due Date:</strong> {{ $task->due_date->format('F j, Y') }}</p> --}}
+                <p><strong>Budget:</strong> {{ $task->budget }}</p>
+                <p>
+                    <strong>Status:</strong> 
+                    <span 
+                        class="badge 
+                            @if($task->status === 'pending') bg-warning 
+                            @elseif($task->status === 'in progress') bg-info 
+                            @elseif($task->status === 'completed') bg-success 
+                            @else bg-secondary 
+                            @endif">
+                        {{ ucfirst($task->status) }}
+                    </span>
+                </p>
+                
+                
+                <p><strong>Duration:</strong> {{ $task->duration }} Hours</p>
+            </div>
+            <div class="card-footer">
+                <a href="{{ route('tasks.edit', $task->id) }}" class="btn btn-warning btn-sm">
+                    <i class="fas fa-edit"></i> Edit Task
+                </a>
+                <form action="{{ route('tasks.destroy', $task->id) }}" method="POST" class="d-inline">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this task?')">
+                        <i class="fas fa-trash"></i> Delete Task
+                    </button>
+                </form>
             </div>
         </div>
-
+    
         <!-- Add New KPI Form (Collapsible) -->
         <div class="card mt-4">
             <div class="card-header d-flex justify-content-between align-items-center">

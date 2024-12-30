@@ -50,6 +50,14 @@
                             @enderror
                         </div>
 
+                        <div class="col-md-6 mb-3">
+                            <label for="inputBanner" class="form-label"><strong>Banner:</strong></label>
+                            <input type="file" name="banner" class="form-control @error('banner') is-invalid @enderror" id="inputBanner">
+                            @error('banner')
+                                <div class="form-text text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
                     </div>
 
                     <button type="submit" class="btn btn-success"><i class="fa-solid fa-floppy-disk"></i> Submit</button>

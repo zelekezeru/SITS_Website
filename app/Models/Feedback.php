@@ -13,7 +13,7 @@ class Feedback extends Model
     protected $fillable = [
         'task_id',
         'user_id',
-        'comments'
+        'comment'
     ];
 
     // Relationship Functions

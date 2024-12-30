@@ -16,6 +16,7 @@ class Course extends Model
         'credit_hours',
         'amount_paid',
         'program_id',
+        'banner',
         // 'status',
         // 'visibility',
     ];

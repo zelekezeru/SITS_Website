@@ -30,6 +30,7 @@ class EventUpdateRequest extends FormRequest
             'end_time' => 'required|date_format:H:i|after:start_time', // End time, required, must match the HH:mm format and be after start_time
             'location' => 'required|string|max:50', // Event location, required, string, max length of 50 characters
             'remark' => 'nullable|string|max:50', // Optional remark, string, max length of 50 characters
+            'banner' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ];
     }
 }

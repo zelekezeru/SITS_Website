@@ -19,5 +19,6 @@ class Event extends Model
         'remark',
         'status',
         'visibility',
+        'banner',
     ];
 }

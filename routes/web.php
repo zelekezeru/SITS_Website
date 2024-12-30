@@ -12,13 +12,12 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\KpiController;
+use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\TaskController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [HomeController::class, 'dashboard'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -65,6 +64,11 @@ Route::resource('tasks', TaskController::class);
 Route::post('tasks/{task}/kpis', [KpiController::class, 'store'])->name('kpis.store');
 Route::put('kpis/{kpi}', [KpiController::class, 'update'])->name('kpis.update');
 Route::delete('kpis/{kpi}', [KpiController::class, 'destroy'])->name('kpis.destroy');
+
+// Store the FEEDBACK associated with the task
+Route::post('tasks/{task}/feedbacks', [FeedbackController::class, 'store'])->name('feedbacks.store');
+Route::put('feedbacks/{feedback}', [FeedbackController::class, 'update'])->name('feedbacks.update');
+Route::delete('feedbacks/{feedback}', [FeedbackController::class, 'destroy'])->name('feedbacks.destroy');
 
 
 

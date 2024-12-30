@@ -1,6 +1,6 @@
 <x-admin-layout>
-    <div class="container topCard">
-        <div class="card mt-5 pt-5">
+    <div class="container topCard pt-5">
+        <div class="card mt-5 ">
             <h2 class="card-header text-center">List of Tasks</h2>
             <div class="card-body">
                     

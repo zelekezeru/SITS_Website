@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('remark', 50)->nullable(); // Remarks or reviews
             $table->boolean('status')->default(true); // Active or inactive
             $table->boolean('visibility')->default(true); // Hidden or visible
+            $table->string('banner')->nullable(); // Banner image path
             $table->timestamps(); // Created_at and Updated_at timestamps
         });
     }
