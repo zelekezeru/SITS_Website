@@ -1,0 +1,22 @@
+.full-height {
+    min-height: 100vh; /* Ensures the container takes at least full height of the viewport */
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%; /* Ensures the container fills the available space */
+}
+
+.form-title{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50%;
+    font-size: x-large;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.authform{
+    background: #5fb6d5a6;
+}
