@@ -78,7 +78,7 @@
     <!--================ End Popular Courses Area =================-->
 
     <!--================ Start Registration Area =================-->
-    <div class="section_gap registration_area">
+    <div class="section_gap registration_area mb-5 ">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-7">
@@ -134,9 +134,4 @@
     </div>
     <!--================ End Registration Area =================-->
 
-    <!--================ Start Feature Area =================-->
-
-    @include('abouts.values')
-
-    <!--================ End Feature Area =================-->
 @endsection

@@ -1,6 +1,6 @@
 
     <!--================ Start footer Area  =================-->
-    <footer class="footer-area section_gap" data-aos="fade-up" data-aos-delay="200">
+    <footer class="footer-area section_gap mt-5" data-aos="fade-up" data-aos-delay="200">
         <div class="container">
           <div class="row">
             <div class="col-lg-2 col-md-6 single-footer-widget">
