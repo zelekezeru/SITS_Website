@@ -1,7 +1,7 @@
 <x-guest-layout>
     <div class="container d-flex justify-content-center align-items-center vh-100 full-height ">
         <div class="card shadow w-50 p-4">
-            <h2 class="text-center mb-4">Confirm Password</h2>
+            <h2 class="mb-4 text-info text-center">Confirm Password</h2>
             <p class="text-center mb-3">For your security, please confirm your password to proceed.</p>
             @if ($errors->any())
                 <div class="alert alert-danger">

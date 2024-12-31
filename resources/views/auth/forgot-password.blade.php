@@ -1,7 +1,7 @@
 <x-guest-layout>
     <div class="container d-flex justify-content-center align-items-center vh-100 full-height ">
         <div class="card shadow w-50 p-4">
-            <h2 class="text-center mb-4">Forgot Password</h2>
+            <h2 class="mb-4 text-info text-center">Forgot Password</h2>
             <p class="text-center">Enter your email address, and we'll send you a reset link.</p>
             @if (session('status'))
                 <div class="alert alert-success">

@@ -3,15 +3,15 @@
         <div class="row w-75 shadow rounded-4">
 
             <div class="col-md-6 p-4 bg-primary text-white rounded-start">
-                <a href="{{ url('/') }}" class="d-flex justify-content-center align-items-center mt-5">
+                <a href="{{ url('/') }}" class="d-flex justify-content-center align-items-center mt-3">
                     <img src="{{ asset('img/logo.png') }}" alt="navbar brand"
-                        height="100" />
+                        height="70" />
                 </a>
                 <h1 class="form-title text-center">Welcome to Shiloh International Theological Seminary</h1>
             </div>
 
             <div class="col-md-6 p-4 bg-white rounded-end">
-                <h2 class="mb-4 text-xl text-center">Sign Up</h2>
+                <h2 class="mb-4 text-info text-center">Sign Up</h2>
                 <form method="POST" action="{{ route('register') }}">
                     @csrf
                     <div class="form-group">

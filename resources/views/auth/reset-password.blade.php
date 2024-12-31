@@ -1,7 +1,7 @@
 <x-guest-layout>
     <div class="container d-flex justify-content-center align-items-center vh-100 full-height ">
         <div class="card shadow w-50 p-4">
-            <h2 class="text-center mb-4">Reset Password</h2>
+            <h2 class="mb-4 text-info text-center">Reset Password</h2>
             @if ($errors->any())
                 <div class="alert alert-danger">
                     <ul class="mb-0">

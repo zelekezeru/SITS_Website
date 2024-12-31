@@ -1,7 +1,7 @@
 <x-guest-layout>
     <div class="container d-flex justify-content-center align-items-center vh-100 full-height ">
         <div class="card shadow w-50 p-4">
-            <h2 class="text-center mb-4">Verify Your Email</h2>
+            <h2 class="mb-4 text-info text-center">Verify Your Email</h2>
             @if (session('status') == 'verification-link-sent')
                 <div class="alert alert-success">
                     A new verification link has been sent to your email.
