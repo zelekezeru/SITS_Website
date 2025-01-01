@@ -60,8 +60,10 @@ class TaskController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Task $task) : View
+    public function show($id) : View
     {
+        // Eager load for performance
+        $task = Task::findOrFail($id)->with('kpis', 'feedbacks')->get()->first();
         return view('tasks.show', compact('task'));
     }
     /**

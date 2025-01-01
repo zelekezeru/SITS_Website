@@ -20,7 +20,7 @@
                             <p><strong>Duration:</strong> {{ $task->duration ?? 'N/A' }} Hours</p>
                         </div>
                         <div class="card-footer">
-                            <button class="btn btn-secondary btn-sm" data-bs-toggle="modal"
+                            <button class="btn btn-secondary btn-sm" id="showFeedbackModal" data-bs-toggle="modal"
                                 data-bs-target="#feedbackModal">
                                 <i class="fas fa-comments"></i> Show Feedback
                             </button>
@@ -288,4 +288,16 @@
                         </div>
                     </div>
                 </div>
+
+
+                {{-- CLICK ON MODAL TOGGLER BUTTON IF THE PAGE IS APPEARING RIGHT AFTER A USER SENDS A FEEDBACK --}}
+
+                
+                @if (session('showFeedback'))
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            document.getElementById('showFeedbackModal').click();
+                        });
+                    </script>
+                @endif            
 </x-admin-layout>
