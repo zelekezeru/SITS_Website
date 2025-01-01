@@ -4621,6 +4621,19 @@ h6 {
         margin-top: 20px;
     }
 }
+.toggle-reply-btn {
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+}
+
+.toggle-reply-btn:before {
+    content: "\f075"; /* FontAwesome chat icon */
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    margin-right: 5px;
+    color: #434850;
+}
 
 
 /*---------------------------------------------------- */

@@ -1,14 +1,11 @@
 <x-guest-layout>
     <div class="container d-flex justify-content-center align-items-center full-height">
-        <div class="row w-75 shadow rounded-4">
+        <div class="row w-75 shadow rounded-5">
             
-            <div class="col-md-6 p-4 bg-primary text-white rounded-start">
-                <a href="{{ url('/') }}" class="d-flex justify-content-center align-items-center mt-3">
-                    <img src="{{ asset('img/logo.png') }}" alt="navbar brand"
-                        height="50" />
-                </a>
-                <h1 class="form-title text-center">Welcome to Shiloh International Theological Seminary</h1>
+            <div class="col-md-6 cardbg text-white rounded-start">
+                <img src="{{asset('img/study.jpg')}}" alt="" srcset="">
             </div>
+            
 
             <div class="col-md-6 p-4 bg-white rounded-end">
                 <h2 class="mb-4 text-info text-center">Login</h2>

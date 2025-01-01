@@ -18,5 +18,16 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 .authform{
-    background: #5fb6d5a6;
+    background: #1b272ba6;
+}
+.cardbg {
+    background-size: cover; /* Ensure the image covers the entire div */
+    background-position: center; /* Center the image */
+    background: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.cardbg img{ 
+    width: 100%;
 }

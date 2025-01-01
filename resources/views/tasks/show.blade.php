@@ -10,245 +10,282 @@
                             <a href="#" class="btn btn-primary btn-sm float-end">Back to Tasks</a>
                         </div>
                         <div class="card-body">
-                            <h4 class="mb-3"><i class="fas fa-tasks"></i> Task Title</h4>
-                            <p><strong>Description:</strong> Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                            <p><strong>Budget:</strong> $500.00</p>
+                            <h4 class="mb-3"><i class="fas fa-tasks"></i> Task Title: {{ $task->title }}</h4>
+                            <p><strong>Description:</strong> {{ $task->description }}</p>
+                            <p><strong>Budget:</strong> ${{ number_format($task->budget, 2) }}</p>
                             <p>
                                 <strong>Status:</strong>
-                                <span class="badge bg-info">In Progress</span>
+                                <span class="badge bg-info">{{ $task->status }}</span>
                             </p>
-                            <p><strong>Duration:</strong> 8 Hours</p>
+                            <p><strong>Duration:</strong> {{ $task->duration ?? 'N/A' }} Hours</p>
                         </div>
                         <div class="card-footer">
-                            <button class="btn btn-secondary btn-sm" id="toggleFeedbackBtn">
+                            <button class="btn btn-secondary btn-sm" data-bs-toggle="modal"
+                                data-bs-target="#feedbackModal">
                                 <i class="fas fa-comments"></i> Show Feedback
                             </button>
-                            <a href="#" class="btn btn-warning btn-sm">
+                            <a href="{{ route('tasks.edit', $task->id) }}" class="btn btn-warning btn-sm">
                                 <i class="fas fa-edit"></i> Edit Task
                             </a>
-                            <button type="button" class="btn btn-danger btn-sm" onclick="alert('Delete functionality not implemented yet!')">
+                            <button type="button" class="btn btn-danger btn-sm"
+                                onclick="alert('Delete functionality not implemented yet!')">
                                 <i class="fas fa-trash"></i> Delete Task
                             </button>
                         </div>
                     </div>
-        
-                    <!-- Feedback Section -->
-                    <div class="card mt-3 d-none" id="feedbackSection">
-                        <div class="card-header">
-                            <h3 class="card-title">Feedback</h3>
+
+                    @if (session('success'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                aria-label="Close"></button>
                         </div>
-                        <div class="card-body">
-                            <!-- Feedback Form -->
-                            <form class="mb-3" method="POST" action="{{ route('feedbacks.store', $task) }}">
-                                @csrf
-                                <div class="mb-3">
-                                    <label for="feedback" class="form-label">Your Feedback</label>
-                                    <textarea class="form-control" id="feedback" name="comment" rows="4" placeholder="Write your feedback here..."></textarea>
-                                    @error('comment')
-                                        <div class="text-danger">{{ $message }}</div>
-                                    @enderror
+                    @endif
+
+                    <!-- Feedback Modal -->
+                    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header bg-primary text-white">
+                                    <h5 class="modal-title" id="feedbackModalLabel">Feedback</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
                                 </div>
-                                <button type="submit" class="btn btn-primary btn-sm">Post Feedback</button>
-                            </form>
-        
-                            <hr>
-        
-                            <!-- Feedback List -->
-                            <div class="feedback-section" style="max-height: 300px; overflow-y: auto;">
-                                <h5>Recent Feedback</h5>
-                                <div class="feedback-list">
-                                    <!-- Feedback Item -->
-                                    @forelse ($task->feedbacks as $feedback)
-                                        @if ($feedback->feedback_id == null) 
-                                            <div class="feedback-item mb-3 p-3" style="border: 1px solid #ddd; border-radius: 8px; background-color: #f9f9f9;">
-                                                <strong>{{ $feedback->user->name }}</strong>
-                                                <small class="text-muted">2 hours ago</small>
-                                                <p>{{ $feedback->comment }}</p>
-        
-                                                <!-- Reply Toggle -->
-                                                <a href="javascript:void(0);" class="text-decoration-underline toggle-reply-btn" style="cursor: pointer;">Reply</a>
-        
-                                                <!-- Reply Section -->
-                                                <div class="reply-section d-none mt-3 ps-4">
-                                                    <!-- Reply Form -->
-                                                    <form action="{{ route('feedbacks.store', $task) }}" method="POST">
-                                                        @csrf
-                                                        <textarea class="form-control" name="comment" rows="2" placeholder="Reply to this feedback..."></textarea>
-                                                        @error('comment')
-                                                            <div class="text-danger">{{ $message }}</div>
-                                                        @enderror
-                                                        <input type="hidden" value="{{ $feedback->id}}" name="reply_to">
-                                                        <button type="submit" class="btn btn-primary btn-sm">Post Reply</button>
-                                                    </form>
-        
-                                                    <!-- Replies -->
-                                                    <div class="mt-3">
-                                                        <h6>Replies:</h6>
-                                                        @forelse ($feedback->replies as $reply)
-                                                            <div class="reply-item border-start ps-3 mb-2">
-                                                                <strong>{{ $reply->user->name }}</strong>
-                                                                <small class="text-muted">1 hour ago</small>
-                                                                <p>{{ $reply->comment }}</p>
+                                <div class="modal-body">
+                                    <!-- Feedback Form -->
+                                    <form class="mb-3" method="POST" action="{{ route('feedbacks.store', $task) }}">
+                                        @csrf
+                                        <div class="input-group">
+                                            <textarea class="form-control" id="feedback" name="comment" rows="1" placeholder="Write your feedback..."></textarea>
+                                            <button type="submit" class="btn btn-primary">Send</button>
+                                        </div>
+                                        @error('comment')
+                                            <div class="text-danger mt-2">{{ $message }}</div>
+                                        @enderror
+                                    </form>
+
+                                    <hr>
+
+                                    <!-- Feedback Chat -->
+                                    <div class="feedback-section" style="max-height: 400px; overflow-y: auto;">
+                                        <h5 class="mb-3">Recent Feedback</h5>
+                                        <div class="feedback-list">
+                                            <!-- Feedback Item -->
+                                            @forelse ($task->feedbacks as $feedback)
+                                                @if ($feedback->feedback_id == null)
+                                                    <div class="feedback-item mb-4">
+                                                        <div class="d-flex align-items-start">
+                                                            <div class="avatar me-3">
+                                                                <img src="{{ $feedback->user->avatar_url ?? 'default-avatar.png' }}"
+                                                                    alt="{{ $feedback->user->name }}"
+                                                                    class="rounded-circle"
+                                                                    style="width: 40px; height: 40px;">
                                                             </div>
-                                                        @empty
-                                                            <p>No replies yet!</p>
-                                                        @endforelse
+                                                            <div class="chat-bubble">
+                                                                <strong>{{ $feedback->user->name }}</strong>
+                                                                <small
+                                                                    class="text-muted ms-2">{{ $feedback->created_at->diffForHumans() }}</small>
+                                                                <p class="mb-2">{{ $feedback->comment }}</p>
+
+                                                                <!-- Reply Toggle with Counter -->
+                                                                <a href="javascript:void(0);"
+                                                                    class="text-primary toggle-reply-btn"
+                                                                    style="font-size: 0.9rem;">
+                                                                    {{ $feedback->replies->count() }}
+                                                                    {{ Str::plural('Reply', $feedback->replies->count()) }}
+                                                                </a>
+
+                                                                <!-- Reply Section -->
+                                                                <div class="reply-section d-none mt-3">
+                                                                    <!-- Reply Form -->
+                                                                    <form
+                                                                        action="{{ route('feedbacks.store', $task) }}"
+                                                                        method="POST" class="d-flex">
+                                                                        @csrf
+                                                                        <input type="hidden"
+                                                                            value="{{ $feedback->id }}"
+                                                                            name="reply_to">
+                                                                        <textarea class="form-control me-2" name="comment" rows="1" placeholder="Reply..."></textarea>
+                                                                        <button type="submit"
+                                                                            class="btn btn-primary btn-sm">Send</button>
+                                                                    </form>
+                                                                    @error('comment')
+                                                                        <div class="text-danger mt-2">{{ $message }}
+                                                                        </div>
+                                                                    @enderror
+
+                                                                    <!-- Replies -->
+                                                                    <div class="mt-3">
+                                                                        @forelse ($feedback->replies as $reply)
+                                                                            <div
+                                                                                class="reply-item border-start ps-3 mb-2">
+                                                                                <strong>{{ $reply->user->name }}</strong>
+                                                                                <small
+                                                                                    class="text-muted">{{ $reply->created_at->diffForHumans() }}</small>
+                                                                                <p>{{ $reply->comment }}</p>
+                                                                            </div>
+                                                                        @empty
+                                                                            <p class="text-muted">No replies yet.</p>
+                                                                        @endforelse
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </div>
-                                        @endif
-                                    @empty
-                                        <p>No feedbacks available yet.</p>
-                                    @endforelse
+                                                @endif
+                                            @empty
+                                                <p class="text-muted">No feedbacks available yet.</p>
+                                            @endforelse
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    <script>
+                        // Toggle reply section visibility
+                        document.querySelectorAll('.toggle-reply-btn').forEach(link => {
+                            link.addEventListener('click', function() {
+                                const replySection = this.nextElementSibling; // Target the reply section
+                                replySection.classList.toggle('d-none');
+                            });
+                        });
+                    </script>
+
+
+
+                    <!-- Add New KPI Form (Collapsible) -->
+                    <div class="card mt-4">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h3 class="card-title">Add New KPI</h3>
+                            <button class="btn btn-primary btn-sm" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#addKPIForm">
+                                Add KPI
+                            </button>
+                        </div>
+                        <div id="addKPIForm" class="collapse">
+                            <div class="card-body">
+                                <form action="{{ route('kpis.store', $task->id) }}" method="POST">
+                                    @csrf
+                                    <div class="mb-3">
+                                        <label for="performance_indicators" class="form-label">Performance
+                                            Indicators</label>
+                                        <textarea name="performance_indicators" id="performance_indicators" class="form-control" rows="2" required></textarea>
+                                        @error('performance_indicators')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="qualitative" class="form-label">Qualitative</label>
+                                        <textarea name="qualitative" id="qualitative" class="form-control" rows="2" required></textarea>
+                                        @error('qualitative')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="quantitative" class="form-label">Quantitative</label>
+                                        <input type="number" name="quantitative" id="quantitative"
+                                            class="form-control" required>
+                                        @error('quantitative')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="ratings" class="form-label">Ratings (0-5)</label>
+                                        <input type="number" name="ratings" id="ratings" class="form-control"
+                                            step="0.1" min="0" max="5" required>
+                                        @error('ratings')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <button type="submit" class="btn btn-success btn-sm">Submit KPI</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    @if (session('error'))
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            {{ session('error') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                aria-label="Close"></button>
+                        </div>
+                    @endif
+
+                    <!-- List of Existing KPIs -->
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h3 class="card-title">Key Performance Indicators (KPIs)</h3>
+                        </div>
+                        <div class="card-body">
+                            @if ($task->kpis->isEmpty())
+                                <p>No KPIs have been added yet for this task.</p>
+                            @else
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Performance Indicators</th>
+                                            <th>Qualitative</th>
+                                            <th>Quantitative</th>
+                                            <th>Ratings</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($task->kpis as $kpi)
+                                            <tr>
+                                                <td>{{ $loop->iteration }}</td>
+                                                <!-- Editable fields -->
+                                                <form action="{{ route('kpis.update', $kpi->id) }}" method="POST">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <td>
+                                                        <input type="text" name="performance_indicators"
+                                                            class="form-control"
+                                                            value="{{ $kpi->performance_indicators }}" required>
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" name="qualitative" class="form-control"
+                                                            value="{{ $kpi->qualitative }}" required>
+                                                    </td>
+                                                    <td>
+                                                        <input type="number" name="quantitative"
+                                                            class="form-control" value="{{ $kpi->quantitative }}"
+                                                            required>
+                                                    </td>
+                                                    <td>
+                                                        <input type="number" name="ratings" class="form-control"
+                                                            value="{{ $kpi->ratings }}" step="0.1"
+                                                            min="0" max="5" required>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex">
+                                                            <button type="submit"
+                                                                class="btn btn-success btn-sm me-2">Update</button>
+                                                        </div>
+                                                    </td>
+                                                </form>
+                                                <!-- Delete Form -->
+                                                <td>
+                                                    <form action="{{ route('kpis.destroy', $kpi->id) }}"
+                                                        method="POST" style="display:inline-block;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-danger btn-sm"
+                                                            onclick="return confirm('Are you sure you want to delete this KPI?')">Delete</button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            @endif
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-
-        <script>
-            // Toggle feedback section visibility
-            document.getElementById('toggleFeedbackBtn').addEventListener('click', function () {
-                const feedbackSection = document.getElementById('feedbackSection');
-                feedbackSection.classList.toggle('d-none');
-                this.textContent = feedbackSection.classList.contains('d-none') ? 'Show Feedback' : 'Hide Feedback';
-            });
-
-            // Toggle reply section visibility
-            document.querySelectorAll('.toggle-reply-btn').forEach(link => {
-                link.addEventListener('click', function () {
-                    const replySection = this.nextElementSibling; // Target the reply section
-                    replySection.classList.toggle('d-none');
-                });
-            });
-        </script>
-        
-        <!-- Add New KPI Form (Collapsible) -->
-        <div class="card mt-4">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h3 class="card-title">Add New KPI</h3>
-                <button class="btn btn-primary btn-sm" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#addKPIForm">
-                    Add KPI
-                </button>
-            </div>
-            <div id="addKPIForm" class="collapse">
-                <div class="card-body">
-                    <form action="{{ route('kpis.store', $task->id) }}" method="POST">
-                        @csrf
-                        <div class="mb-3">
-                            <label for="performance_indicators" class="form-label">Performance Indicators</label>
-                            <textarea name="performance_indicators" id="performance_indicators" class="form-control" rows="2" required></textarea>
-                            @error('performance_indicators')
-                                <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="mb-3">
-                            <label for="qualitative" class="form-label">Qualitative</label>
-                            <textarea name="qualitative" id="qualitative" class="form-control" rows="2" required></textarea>
-                            @error('qualitative')
-                                <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="mb-3">
-                            <label for="quantitative" class="form-label">Quantitative</label>
-                            <input type="number" name="quantitative" id="quantitative" class="form-control" required>
-                            @error('quantitative')
-                                <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="mb-3">
-                            <label for="ratings" class="form-label">Ratings (0-5)</label>
-                            <input type="number" name="ratings" id="ratings" class="form-control" step="0.1"
-                                min="0" max="5" required>
-                            @error('ratings')
-                                <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <button type="submit" class="btn btn-success btn-sm">Submit KPI</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-
-        @if (session('error'))
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-
-        <!-- List of Existing KPIs -->
-        <div class="card mt-4">
-            <div class="card-header">
-                <h3 class="card-title">Key Performance Indicators (KPIs)</h3>
-            </div>
-            <div class="card-body">
-                @if ($task->kpis->isEmpty())
-                    <p>No KPIs have been added yet for this task.</p>
-                @else
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Performance Indicators</th>
-                                <th>Qualitative</th>
-                                <th>Quantitative</th>
-                                <th>Ratings</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($task->kpis as $kpi)
-                                <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <!-- Editable fields -->
-                                    <form action="{{ route('kpis.update', $kpi->id) }}" method="POST">
-                                        @csrf
-                                        @method('PUT')
-                                        <td>
-                                            <input type="text" name="performance_indicators" class="form-control" value="{{ $kpi->performance_indicators }}" required>
-                                        </td>
-                                        <td>
-                                            <input type="text" name="qualitative" class="form-control" value="{{ $kpi->qualitative }}" required>
-                                        </td>
-                                        <td>
-                                            <input type="number" name="quantitative" class="form-control" value="{{ $kpi->quantitative }}" required>
-                                        </td>
-                                        <td>
-                                            <input type="number" name="ratings" class="form-control" value="{{ $kpi->ratings }}" step="0.1" min="0" max="5" required>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex">
-                                                <button type="submit" class="btn btn-success btn-sm me-2">Update</button>
-                                            </div>
-                                        </td>
-                                    </form>
-                                    <!-- Delete Form -->
-                                    <td>
-                                        <form action="{{ route('kpis.destroy', $kpi->id) }}" method="POST"
-                                            style="display:inline-block;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm"
-                                                onclick="return confirm('Are you sure you want to delete this KPI?')">Delete</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                @endif
-            </div>
-        </div>
-    </div>
 </x-admin-layout>
