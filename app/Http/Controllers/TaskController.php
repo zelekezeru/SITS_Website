@@ -11,15 +11,18 @@ use Illuminate\View\View;
 
 // Import this for the middlware protection based on roles to work
 use Illuminate\Routing\Controller;
+use Spatie\Permission\Middleware\RoleMiddleware;
 
 class TaskController extends Controller
 {
-    // public function __construct()
-    // {
-    //     $this->middleware('role:admin')->only(['create', 'store', 'edit', 'update', 'destroy']);
 
-    //     $this->middleware('role:staff,admin')->only(['index', 'list', 'show']);
-    // }
+    public function __construct()
+    {
+        $this->middleware(RoleMiddleware::class.':ADMIN')->only(['create', 'store', 'edit', 'update', 'destroy']);
+
+        $this->middleware(RoleMiddleware::class.':STAFF, ADMIN')->only(['index', 'list', 'show']);
+    }
+
     /**
      * Display a listing of the resource.
      */

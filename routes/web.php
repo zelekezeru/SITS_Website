@@ -36,6 +36,17 @@ Route::middleware(['auth'])->group(function () {
     Route::get('events/list', [EventController::class, 'list'])->name("events.list");
     Route::get('tasks/list', [TaskController::class, 'list'])->name("tasks.list");
     Route::get('users/list', [UserController::class, 'list'])->name("users.list")->middleware(RoleMiddleware::class.':ADMIN');
+
+    // Store the KPI associated with the task
+    Route::post('tasks/{task}/kpis', [KpiController::class, 'store'])->name('kpis.store');
+    Route::put('kpis/{kpi}', [KpiController::class, 'update'])->name('kpis.update');
+    Route::delete('kpis/{kpi}', [KpiController::class, 'destroy'])->name('kpis.destroy');
+
+    // Store the FEEDBACK associated with the task
+    Route::post('tasks/{task}/feedbacks', [FeedbackController::class, 'store'])->name('feedbacks.store');
+    Route::put('feedbacks/{feedback}', [FeedbackController::class, 'update'])->name('feedbacks.update');
+    Route::delete('feedbacks/{feedback}', [FeedbackController::class, 'destroy'])->name('feedbacks.destroy');
+
 });
 
 //Hotel
@@ -65,15 +76,6 @@ Route::resource('events', EventController::class);
 
 Route::resource('tasks', TaskController::class);
 
-// Store the KPI associated with the task
-Route::post('tasks/{task}/kpis', [KpiController::class, 'store'])->name('kpis.store');
-Route::put('kpis/{kpi}', [KpiController::class, 'update'])->name('kpis.update');
-Route::delete('kpis/{kpi}', [KpiController::class, 'destroy'])->name('kpis.destroy');
-
-// Store the FEEDBACK associated with the task
-Route::post('tasks/{task}/feedbacks', [FeedbackController::class, 'store'])->name('feedbacks.store');
-Route::put('feedbacks/{feedback}', [FeedbackController::class, 'update'])->name('feedbacks.update');
-Route::delete('feedbacks/{feedback}', [FeedbackController::class, 'destroy'])->name('feedbacks.destroy');
 
 
 

@@ -29,14 +29,14 @@
                         <i class="fas fa-home"></i>
                         <p>Dashboard</p>
                     </a>
-                </li>  
-                
+                </li>
+
                 <li class="nav-item">
                     <a data-bs-toggle="collapse" href="#PerformanceDropdown" aria-expanded="false">
                         <i class="fas fa-chart-line"></i>
                         <p>Performance Management</p>
                         <span class="caret"></span>
-                    </a>                       
+                    </a>
                     <div class="collapse" id="PerformanceDropdown">
                         <ul class="nav nav-collapse">
                             <li class="nav-item">
@@ -61,13 +61,20 @@
                             </li>
                         </ul>
                     </div>
-                </li>               
-                <li class="nav-item">
-                    <a href="{{route('users.list')}}">
-                        <i class="fas fa-user-circle"></i>
-                        <p>Users</p>
-                    </a>
                 </li>
+
+                {{-- ONLY FOR ADMIN USERS --}}
+                @if(request()->user()->hasRole('ADMIN'))
+
+                    <li class="nav-item">
+                        <a href="{{route('users.list')}}">
+                            <i class="fas fa-user-circle"></i>
+                            <p>Users</p>
+                        </a>
+                    </li>
+
+                @endif
+
                 <li class="nav-section">
                     <span class="sidebar-mini-icon">
                         <i class="fa fa-ellipsis-h"></i>
@@ -179,7 +186,7 @@
                         </ul>
                     </div>
                 </li>
-            </ul>            
+            </ul>
         </div>
     </div>
 </div>

@@ -37,22 +37,25 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'role' => ['required', 'string', 'exists:roles,name'], // Validate role name
         ]);
-    
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
-    
+
         if ($request->input('role')) {
             $user->assignRole($request->input('role')); // Assign by role name
         }
-    
+
+        $redirectTo = 'users.list';
         event(new Registered($user));
-    
-        Auth::login($user);
-    
-        return redirect(route('dashboard', absolute: false));
+        if (User::count() === 0) {
+            Auth::login($user);
+            $redirectTo = 'dashboard';
+        }
+
+        return redirect(route($redirectTo, absolute: false));
     }
-    
+
 }
