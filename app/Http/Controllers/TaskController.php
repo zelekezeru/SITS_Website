@@ -71,11 +71,9 @@ class TaskController extends Controller
      */
     public function show(Task $task) : View
     {
-<<<<<<< HEAD
         // Eager load for performance
-        $task = Task::with(['kpis', 'feedbacks'])->findOrFail($id);
-=======
->>>>>>> parent of b715e16 (feedback modal stays on after send)
+        $task = Task::with(['kpis', 'feedbacks'])->findOrFail($task->id);
+
         return view('tasks.show', compact('task'));
     }
     /**
@@ -92,7 +90,7 @@ class TaskController extends Controller
     public function update(TaskUpdateRequest $request, Task $task) : RedirectResponse
     {
         $data = $request->validated();
-        
+
         $task->update($data);
 
         return redirect()->route('tasks.list')
