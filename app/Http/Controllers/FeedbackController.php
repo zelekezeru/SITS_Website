@@ -7,8 +7,18 @@ use App\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+use Illuminate\Routing\Controller;
+
 class FeedbackController extends Controller
 {
+
+    // public function __construct()
+    // {
+    //     $this->middleware('role:admin')->only(['destroy']);
+
+    //     $this->middleware('role:staff,admin')->only(['index', 'list', 'show', 'create', 'store', 'edit', 'update']);
+    // }
+
     /**
      * Display a listing of the resource.
      */
@@ -30,11 +40,11 @@ class FeedbackController extends Controller
      */
     public function store(Request $request, Task $task)
     {
+        // $this->authorize('belongsToTask', $task);
         // Validate request data
         $validatedData = $request->validate([
             'comment' => 'required|string',
         ]);
-        
         $validatedData['task_id'] = $task->id; // Explicitly set task_id
         
         $validatedData['user_id'] = Auth::user()->id; // Explicitly set task_id
@@ -43,8 +53,6 @@ class FeedbackController extends Controller
             $validatedData['feedback_id'] = $request->input('reply_to');
             
         }
-        // dd($validatedData);
-
         // Create FEEDBACK associated with the task
 
         $feedback = Feedback::create($validatedData);

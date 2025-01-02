@@ -29,6 +29,44 @@
                         <i class="fas fa-home"></i>
                         <p>Dashboard</p>
                     </a>
+                </li>  
+                
+                <li class="nav-item">
+                    <a data-bs-toggle="collapse" href="#PerformanceDropdown" aria-expanded="false">
+                        <i class="fas fa-chart-line"></i>
+                        <p>Performance Management</p>
+                        <span class="caret"></span>
+                    </a>                       
+                    <div class="collapse" id="PerformanceDropdown">
+                        <ul class="nav nav-collapse">
+                            <li class="nav-item">
+                                <a data-bs-toggle="collapse" href="#TaskManagementDropdown" aria-expanded="false">
+                                    <i class="fas fa-tasks"></i> Task Management
+                                    <span class="caret"></span>
+                                </a>
+                                <div class="collapse" id="TaskManagementDropdown">
+                                    <ul class="nav nav-collapse">
+                                        <li>
+                                            <a href="{{ route('tasks.create') }}">
+                                                <i class="fas fa-plus-circle"></i> Add Task
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="{{ route('tasks.list') }}">
+                                                <i class="fas fa-edit"></i> Manage Tasks
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </li>               
+                <li class="nav-item">
+                    <a href="{{route('users.list')}}">
+                        <i class="fas fa-user-circle"></i>
+                        <p>Users</p>
+                    </a>
                 </li>
                 <li class="nav-section">
                     <span class="sidebar-mini-icon">
@@ -140,43 +178,6 @@
                             </li>
                         </ul>
                     </div>
-                </li>
-                <li class="nav-item">
-                    <a data-bs-toggle="collapse" href="#PerformanceDropdown" aria-expanded="false">
-                        <i class="fas fa-chart-line"></i>
-                        <p>Performance Management</p>
-                        <span class="caret"></span>
-                    </a>
-                    <div class="collapse" id="PerformanceDropdown">
-                        <ul class="nav nav-collapse">
-                            <li class="nav-item">
-                                <a data-bs-toggle="collapse" href="#TaskManagementDropdown" aria-expanded="false">
-                                    <i class="fas fa-tasks"></i> Task Management
-                                    <span class="caret"></span>
-                                </a>
-                                <div class="collapse" id="TaskManagementDropdown">
-                                    <ul class="nav nav-collapse">
-                                        <li>
-                                            <a href="{{ route('tasks.create') }}">
-                                                <i class="fas fa-plus-circle"></i> Add Task
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="{{ route('tasks.list') }}">
-                                                <i class="fas fa-edit"></i> Manage Tasks
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a href="{{route('profile.edit')}}">
-                        <i class="fas fa-user-circle"></i>
-                        <p>My Profile</p>
-                    </a>
                 </li>
             </ul>            
         </div>

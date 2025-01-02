@@ -9,8 +9,17 @@ use App\Http\Requests\TaskUpdateRequest;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
+// Import this for the middlware protection based on roles to work
+use Illuminate\Routing\Controller;
+
 class TaskController extends Controller
 {
+    // public function __construct()
+    // {
+    //     $this->middleware('role:admin')->only(['create', 'store', 'edit', 'update', 'destroy']);
+
+    //     $this->middleware('role:staff,admin')->only(['index', 'list', 'show']);
+    // }
     /**
      * Display a listing of the resource.
      */
@@ -63,7 +72,7 @@ class TaskController extends Controller
     public function show($id) : View
     {
         // Eager load for performance
-        $task = Task::findOrFail($id)->with('kpis', 'feedbacks')->get()->first();
+        $task = Task::with(['kpis', 'feedbacks'])->findOrFail($id);
         return view('tasks.show', compact('task'));
     }
     /**

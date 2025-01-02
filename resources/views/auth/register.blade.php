@@ -3,7 +3,7 @@
         <div class="row w-75 shadow rounded-4">
 
             <div class="col-md-6 cardbg text-white rounded-start">
-                <img src="{{asset('img/study.jpg')}}" alt="" srcset="">
+                <img src="{{asset('img/banner/knowledge.jpg')}}" alt="" srcset="">
             </div>
 
             <div class="col-md-6 p-4 bg-white rounded-end">
@@ -26,6 +26,14 @@
                         <label for="password_confirmation" class="form-label">Confirm Password</label>
                         <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" required>
                     </div>
+                    <label for="role" class="form-label">Role</label>
+                    <select class="form-control mb-3" id="role" name="role" required>
+                        <option value="" disabled selected>Choose a role</option>
+                        @foreach ($roles as $role)
+                            <option value="{{ $role->name }}">{{ $role->name }}</option> <!-- Pass role name -->
+                        @endforeach
+                    </select>
+                    
                     <button type="submit" class="btn btn-primary w-100 mb-3">Sign Up</button>
                     <div class="text-center">
                         <a href="{{ route('login') }}">Already have an account? Login</a>

@@ -14,6 +14,8 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\KpiController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\UserController;
+use Spatie\Permission\Middleware\RoleMiddleware;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -27,12 +29,13 @@ Route::middleware('auth')->group(function () {
 
 // ADMIN ONLY ROUTES GO HERE
 
-Route::middleware(['auth'])-> group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::get('blogs/list', [BlogController::class, 'list'])->name("blogs.list");
     Route::get('courses/list', [CourseController::class, 'list'])->name("courses.list");
     Route::get('programs/list', [ProgramController::class, 'list'])->name("programs.list");
     Route::get('events/list', [EventController::class, 'list'])->name("events.list");
     Route::get('tasks/list', [TaskController::class, 'list'])->name("tasks.list");
+    Route::get('users/list', [UserController::class, 'list'])->name("users.list")->middleware(RoleMiddleware::class.':ADMIN');
 });
 
 //Hotel
@@ -41,6 +44,8 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::get('/about', [HomeController::class, 'about'])->name('abouts.index');
 
 Route::get('/elements', [HomeController::class, 'elements'])->name('elements.index');
+
+Route::resource('users', UserController::class);
 
 Route::resource('blogs', BlogController::class);
 
@@ -72,4 +77,4 @@ Route::delete('feedbacks/{feedback}', [FeedbackController::class, 'destroy'])->n
 
 
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

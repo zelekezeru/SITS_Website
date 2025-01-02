@@ -3,7 +3,7 @@
         <div class="row w-75 shadow rounded-5">
             
             <div class="col-md-6 cardbg text-white rounded-start">
-                <img src="{{asset('img/study.jpg')}}" alt="" srcset="">
+                <img src="{{asset('img/banner/knowledge.jpg')}}" alt="" srcset="">
             </div>
             
 
