@@ -69,10 +69,13 @@ class TaskController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id) : View
+    public function show(Task $task) : View
     {
+<<<<<<< HEAD
         // Eager load for performance
         $task = Task::with(['kpis', 'feedbacks'])->findOrFail($id);
+=======
+>>>>>>> parent of b715e16 (feedback modal stays on after send)
         return view('tasks.show', compact('task'));
     }
     /**

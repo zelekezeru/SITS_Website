@@ -60,8 +60,7 @@ class FeedbackController extends Controller
         // Redirect with success message
 
         return redirect()->route('tasks.show', $task->id)
-                         ->with('success', 'Feedback added successfully.')
-                         ->with('showFeedback', true);
+                         ->with('success', 'Feedback added successfully.');
     }
     /**
      * Display the specified resource.
