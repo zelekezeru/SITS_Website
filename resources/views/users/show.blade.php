@@ -1,7 +1,7 @@
 <x-admin-layout>    
     <div class="container mt-5">
         <div class="card shadow-sm">
-            <div class="card-header bg-info text-white text-center">
+            <div class="card-header mt-5 bg-info text-white text-center">
                 <h3>User Details</h3>
             </div>
             <div class="card-body">
