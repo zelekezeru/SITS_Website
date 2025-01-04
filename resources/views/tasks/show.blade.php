@@ -17,7 +17,7 @@
                                 <strong>Status:</strong>
                                 <span class="badge bg-info">{{ $task->status }}</span>
                             </p>
-                            <p><strong>Duration:</strong> {{ $task->duration ?? 'N/A' }} Hours</p>
+                            <p><strong>Duration:</strong> {{ $task->duration ?? 'N/A' }} Days</p>
                         </div>
                         <div class="card-footer">
                             <button class="btn btn-secondary btn-sm" data-bs-toggle="modal"

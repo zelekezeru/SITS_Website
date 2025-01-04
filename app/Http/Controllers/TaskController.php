@@ -18,9 +18,9 @@ class TaskController extends Controller
 
     public function __construct()
     {
-        $this->middleware(RoleMiddleware::class.':ADMIN')->only(['create', 'store', 'edit', 'update', 'destroy']);
+        // $this->middleware(RoleMiddleware::class.':ADMIN')->only(['create', 'store', 'edit', 'update', 'destroy']);
 
-        $this->middleware(RoleMiddleware::class.':STAFF, ADMIN')->only(['index', 'list', 'show']);
+        // $this->middleware(RoleMiddleware::class.':STAFF, ADMIN')->only(['index', 'list', 'show']);
     }
 
     /**

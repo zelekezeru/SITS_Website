@@ -49,40 +49,49 @@
                 <!-- single course -->
                 <div class="col-lg-12">
                     <div class="owl-carousel active_course">
-                        @foreach ($courses as $course)
-                            <div class="single_course">
-                              <div class="course_head">
-                                <img class="img-fluid" src="{{ asset('storage/' . $course->banner) }}" 
-                                alt="{{ $course->title }}" 
-                                style="width: 100%; height: 250px; object-fit: cover;"/>
-                              </div>
-                                <div class="course_content">
-                                    <span class="price">${{ $course->amount_paid }}</span>
-                                    <span class="tag mb-2 d-inline-block">{{ $course->category }}</span>
-                                    <h4 class="mb-2">
-                                        <a href="{{ route('courses.show', $course->id) }}">{{ $course->title }}</a>
-                                    </h4>
-                                    <p>
-                                        {{ $course->description }}
-                                    </p>
-                                    <div
-                                        class="course_meta d-flex justify-content-lg-between align-items-lg-center flex-lg-row flex-column mt-4">
-                                        <div class="authr_meta">
-                                          <img src="img/courses/author1.png" alt="" />
-                                            <span class="d-inline-block ml-2">Instructor</span>
-                                        </div>
-                                        <div class="mt-lg-0 mt-2">
-                                            <span class="meta_info mr-4">
-                                                <a href="#"> <i class="ti-user mr-2"></i>25 </a>
-                                            </span>
-                                            <span class="meta_info">
-                                                <a href="#"> <i class="ti-heart mr-2"></i>35 </a>
-                                            </span>
+                        @if($courses->isEmpty())
+                            <div class="col-lg-12">
+                                <div class="text-center">
+                                    <h3>No courses available at the moment</h3>
+                                </div>
+                        @else
+
+                            @foreach ($courses as $course)
+                                <div class="single_course">
+                                <div class="course_head">
+                                    <img class="img-fluid" src="{{ asset('storage/' . $course->banner) }}"
+                                    alt="{{ $course->title }}"
+                                    style="width: 100%; height: 250px; object-fit: cover;"/>
+                                </div>
+                                    <div class="course_content">
+                                        <span class="price">${{ $course->amount_paid }}</span>
+                                        <span class="tag mb-2 d-inline-block">{{ $course->category }}</span>
+                                        <h4 class="mb-2">
+                                            <a href="{{ route('courses.show', $course->id) }}">{{ $course->title }}</a>
+                                        </h4>
+                                        <p>
+                                            {{ $course->description }}
+                                        </p>
+                                        <div
+                                            class="course_meta d-flex justify-content-lg-between align-items-lg-center flex-lg-row flex-column mt-4">
+                                            <div class="authr_meta">
+                                            <img src="img/courses/author1.png" alt="" />
+                                                <span class="d-inline-block ml-2">Instructor</span>
+                                            </div>
+                                            <div class="mt-lg-0 mt-2">
+                                                <span class="meta_info mr-4">
+                                                    <a href="#"> <i class="ti-user mr-2"></i>25 </a>
+                                                </span>
+                                                <span class="meta_info">
+                                                    <a href="#"> <i class="ti-heart mr-2"></i>35 </a>
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        @endforeach
+                            @endforeach
+                        @endif
+
                     </div>
                 </div>
             </div>
@@ -254,7 +263,7 @@
     <!--================ End Trainers Area =================-->
 
     <!--================ Start Events Area =================-->
-    
+
       <div class="events_area" data-aos="zoom-in" data-aos-delay="200">
           <div class="container">
               <div class="row justify-content-center">
@@ -266,34 +275,41 @@
                   </div>
               </div>
               <div class="row" data-aos="fade-up" data-aos-delay="300">
+                @if ($events->isEmpty())
+                    <div class="col-lg-12">
+                        <div class="text-center">
+                            <h3>No events available at the moment</h3>
+                        </div>
+                    </div>
+                @else
                   @foreach ($events as $event)
                       <div class="col-lg-6 col-md-6" >
                           <div class="single_event position-relative">
                               <!-- Event Thumbnail -->
                               <div class="event_thumb">
-                                  <img 
-                                      src="{{ asset('storage/' . $event->banner) }}" 
-                                      alt="{{ $event->title }}" 
-                                      class="img-fluid" 
-                                      style="height: 250px; object-fit: cover;" 
+                                  <img
+                                      src="{{ asset('storage/' . $event->banner) }}"
+                                      alt="{{ $event->title }}"
+                                      class="img-fluid"
+                                      style="height: 250px; object-fit: cover;"
                                   />
                               </div>
-  
+
                               <!-- Event Details -->
                               <div class="event_details">
                                   <div class="d-flex mb-4">
                                       <div class="date">
-                                          <span>{{ \Carbon\Carbon::parse($event->date)->format('d') }}</span> 
+                                          <span>{{ \Carbon\Carbon::parse($event->date)->format('d') }}</span>
                                           {{ \Carbon\Carbon::parse($event->date)->format('M') }}
                                       </div>
                                       <div class="time-location">
                                           <p>
-                                              <span class="ti-time mr-2"></span> 
-                                              {{ \Carbon\Carbon::parse($event->start_time)->format('h:i A') }} - 
+                                              <span class="ti-time mr-2"></span>
+                                              {{ \Carbon\Carbon::parse($event->start_time)->format('h:i A') }} -
                                               {{ \Carbon\Carbon::parse($event->end_time)->format('h:i A') }}
                                           </p>
                                           <p>
-                                              <span class="ti-location-pin mr-2"></span> 
+                                              <span class="ti-location-pin mr-2"></span>
                                               {{ $event->location }}
                                           </p>
                                       </div>
@@ -303,8 +319,8 @@
                               </div>
                           </div>
                       </div>
-                  @endforeach
-  
+                    @endforeach
+
                   <!-- View All Events Link -->
                   <div class="col-lg-12">
                       <div class="text-center pt-lg-5 pt-3">
@@ -313,10 +329,13 @@
                           </a>
                       </div>
                   </div>
+
+                @endif
+
               </div>
           </div>
       </div>
-  
+
     <!--================ End Events Area =================-->
 
 

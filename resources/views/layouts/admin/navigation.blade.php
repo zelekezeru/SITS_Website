@@ -255,7 +255,6 @@
                                     class="avatar-img rounded-circle" />
                             </div>
                             <span class="profile-username">
-                                <span class="op-7">Hi,</span>
                                 <span class="fw-bold">{{ Auth::user()->name }}</span>
                             </span>
                         </a>

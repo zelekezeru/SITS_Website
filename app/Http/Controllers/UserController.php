@@ -18,7 +18,7 @@ class UserController extends Controller
 
     public function index(): View
     {
-        $users = User::where('id', '!=', Auth::id())->paginate(10);
+        $users = User::where('id', '!=', Auth::id())->orderBy('name', 'asc')->paginate(10); // Use pagination to avoid loading too many records at once
 
         return view('users.list', compact('users'));
     }
@@ -29,7 +29,7 @@ class UserController extends Controller
     public function list(): View
     {
 
-        $users = User::where('id', '!=', Auth::id())->paginate(10); // Use pagination to avoid loading too many records at once
+        $users = User::where('id', '!=', Auth::id())->orderBy('name', 'asc')->paginate(10); // Use pagination to avoid loading too many records at once
 
         return view('users.list', compact('users'));
     }

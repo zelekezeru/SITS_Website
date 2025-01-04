@@ -3,19 +3,19 @@
         <div class="card mt-5 ">
             <h2 class="card-header text-center">List of Tasks</h2>
             <div class="card-body">
-                    
+
                 @if(session('success'))
                     <div class="alert alert-success" role="alert">
                         {{ session('success') }}
                     </div>
                 @endif
-  
+
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                    <a class="btn btn-success btn-sm" href="{{ route('tasks.create') }}"> 
+                    <a class="btn btn-success btn-sm" href="{{ route('tasks.create') }}">
                         <i class="fa fa-plus"></i> Create New Task
                     </a>
                 </div>
-  
+
                 <div class="table-responsive mt-4">
                     <table class="table table-bordered table-striped">
                         <thead>
@@ -50,7 +50,7 @@
                                                 <i class="fa-solid fa-trash"></i> Delete
                                             </button>
                                         </form>
-                                    </td>                                  
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>
@@ -60,9 +60,9 @@
                         </tbody>
                     </table>
                 </div>
-                
+
                 {!! $tasks->links() !!}
-            
+
             </div>
         </div>
     </div>

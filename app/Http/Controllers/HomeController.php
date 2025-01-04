@@ -7,6 +7,7 @@ use App\Models\Program;
 use App\Models\Task;
 use App\Models\Blog;
 use App\Models\Event;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -15,6 +16,7 @@ class HomeController extends Controller
     {
         $courses = Course::all();
         $events = Event::latest()->take(2)->get();
+
         return view('index', compact('courses', 'events'));
     }
     public function dashboard()
@@ -25,18 +27,19 @@ class HomeController extends Controller
         $eventsCount = Event::count(); // Count events
         $blogsCount = Blog::count(); // Count blogs
         $tasksCount = Task::count(); // Count tasks
+        $usersCount = User::count(); // Count users
 
         // Pass the counts to the dashboard view
-        return view('dashboard', compact('coursesCount', 'programsCount', 'eventsCount', 'blogsCount', 'tasksCount'));
+        return view('dashboard', compact('coursesCount', 'programsCount', 'eventsCount', 'blogsCount', 'tasksCount', 'usersCount'));
     }
 
     public function about()
-    {        
+    {
         return view('abouts.about');
     }
 
     public function elements()
-    {        
+    {
         return view('layouts.elements');
     }
 }

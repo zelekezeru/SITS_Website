@@ -40,7 +40,7 @@
 
                         <!-- Task Duration -->
                         <div class="col-md-6 mb-3">
-                            <label for="inputDuration" class="form-label"><strong>Duration (hours):</strong></label>
+                            <label for="inputDuration" class="form-label"><strong>Duration (days):</strong></label>
                             <input type="number" name="duration" class="form-control @error('duration') is-invalid @enderror" id="inputDuration" placeholder="Duration" value="{{ old('duration') }}">
                             @error('duration')
                                 <div class="form-text text-danger">{{ $message }}</div>
