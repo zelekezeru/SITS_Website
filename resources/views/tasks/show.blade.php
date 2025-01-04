@@ -20,7 +20,7 @@
                             <p><strong>Duration:</strong> {{ $task->duration ?? 'N/A' }} Days</p>
                         </div>
                         <div class="card-footer">
-                            <button class="btn btn-secondary btn-sm" data-bs-toggle="modal"
+                            <button class="btn btn-secondary btn-sm" data-bs-toggle="modal" id="showFeedbackModal"
                                 data-bs-target="#feedbackModal">
                                 <i class="fas fa-comments"></i> Show Feedback
                             </button>
@@ -160,8 +160,7 @@
                     <div class="card mt-4">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h3 class="card-title">Add New KPI</h3>
-                            <button class="btn btn-primary btn-sm" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#addKPIForm">
+                            <button class="btn btn-primary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#addKPIForm">
                                 Add KPI
                             </button>
                         </div>
@@ -170,41 +169,83 @@
                                 <form action="{{ route('kpis.store', $task->id) }}" method="POST">
                                     @csrf
                                     <div class="mb-3">
-                                        <label for="performance_indicators" class="form-label">Performance
-                                            Indicators</label>
+                                        <label for="performance_indicators" class="form-label">Performance Indicators</label>
                                         <textarea name="performance_indicators" id="performance_indicators" class="form-control" rows="2" required></textarea>
                                         @error('performance_indicators')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
+                        
+                                    <!-- Selection for KPI Type -->
                                     <div class="mb-3">
+                                        <label for="kpi_type" class="form-label">KPI Type</label>
+                                        <select name="kpi_type" id="kpi_type" class="form-control" required>
+                                            <option value="" disabled selected>Select KPI Type</option>
+                                            <option value="qualitative">Qualitative</option>
+                                            <option value="quantitative">Quantitative</option>
+                                        </select>
+                                        @error('kpi_type')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                        
+                                    <!-- Qualitative Input -->
+                                    <div class="mb-3 d-none" id="qualitative-container">
                                         <label for="qualitative" class="form-label">Qualitative</label>
-                                        <textarea name="qualitative" id="qualitative" class="form-control" rows="2" required></textarea>
+                                        <textarea name="qualitative" id="qualitative" class="form-control" rows="2"></textarea>
                                         @error('qualitative')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                    <div class="mb-3">
+                        
+                                    <!-- Quantitative Input -->
+                                    <div class="mb-3 d-none" id="quantitative-container">
                                         <label for="quantitative" class="form-label">Quantitative</label>
-                                        <input type="number" name="quantitative" id="quantitative"
-                                            class="form-control" required>
+                                        <input type="number" name="quantitative" id="quantitative" class="form-control">
                                         @error('quantitative')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                    <div class="mb-3">
+                        
+                                    <!-- Ratings Input -->
+                                    <div class="mb-3 d-none" id="ratings-container">
                                         <label for="ratings" class="form-label">Ratings (0-5)</label>
-                                        <input type="number" name="ratings" id="ratings" class="form-control"
-                                            step="0.1" min="0" max="5" required>
+                                        <input type="number" name="ratings" id="ratings" class="form-control" step="0.1" min="0" max="5">
                                         @error('ratings')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
+                        
                                     <button type="submit" class="btn btn-success btn-sm">Submit KPI</button>
                                 </form>
                             </div>
                         </div>
-                    </div>
+                        
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                const kpiType = document.getElementById('kpi_type');
+                                const qualitativeContainer = document.getElementById('qualitative-container');
+                                const quantitativeContainer = document.getElementById('quantitative-container');
+                                const ratingsContainer = document.getElementById('ratings-container');
+                        
+                                kpiType.addEventListener('change', function () {
+                                    if (this.value === 'qualitative') {
+                                        qualitativeContainer.classList.remove('d-none');
+                                        quantitativeContainer.classList.add('d-none');
+                                        ratingsContainer.classList.add('d-none');
+                                    } else if (this.value === 'quantitative') {
+                                        qualitativeContainer.classList.add('d-none');
+                                        quantitativeContainer.classList.remove('d-none');
+                                        ratingsContainer.classList.remove('d-none');
+                                    } else {
+                                        qualitativeContainer.classList.add('d-none');
+                                        quantitativeContainer.classList.add('d-none');
+                                        ratingsContainer.classList.add('d-none');
+                                    }
+                                });
+                            });
+                        </script>
+                        
 
 
 
@@ -288,4 +329,15 @@
                         </div>
                     </div>
                 </div>
+
+                {{-- CLICK ON MODAL TOGGLER BUTTON IF THE PAGE IS APPEARING RIGHT AFTER A USER SENDS A FEEDBACK --}}
+
+                
+                @if (session('showFeedback'))
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            document.getElementById('showFeedbackModal').click();
+                        });
+                    </script>
+                @endif  
 </x-admin-layout>

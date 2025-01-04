@@ -28,7 +28,6 @@ Route::middleware('auth')->group(function () {
 });
 
 // ADMIN ONLY ROUTES GO HERE
-
 Route::middleware(['auth'])->group(function () {
     Route::get('blogs/list', [BlogController::class, 'list'])->name("blogs.list");
     Route::get('courses/list', [CourseController::class, 'list'])->name("courses.list");
@@ -75,6 +74,7 @@ Route::resource('programs', ProgramController::class);
 Route::resource('events', EventController::class);
 
 Route::resource('tasks', TaskController::class);
+
 
 
 

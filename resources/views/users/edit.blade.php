@@ -1,6 +1,6 @@
 <x-admin-layout>
     <div class="container d-flex justify-content-center align-items-center vh-100 full-height">
-        <div class="row w-50 shadow rounded-4 bg-white p-4">
+        <div class="row w-50 mt-5 shadow rounded-4 bg-white p-4">
             <h2 class="mb-4 text-info text-center">Edit User</h2>
             <form method="POST" action="{{ route('users.update', $user->id) }}">
                 @csrf
