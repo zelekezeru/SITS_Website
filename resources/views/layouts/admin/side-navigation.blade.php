@@ -146,20 +146,20 @@
                 </li>
                 <li class="nav-item">
                     <a data-bs-toggle="collapse" href="#Conatact">
-                        <i class="fas fa-address-book"></i>
-                        <p>Contact</p>
+                        <i class="fas fa-chalkboard-teacher"></i>
+                        <p>Trainers</p>
                         <span class="caret"></span>
                     </a>
                     <div class="collapse" id="Conatact">
                         <ul class="nav nav-collapse">
                             <li>
-                                <a href="#">
-                                    <i class="fas fa-plus"></i>Add Contact
+                                <a href="{{ route('trainers.create') }}">
+                                    <i class="fas fa-plus"></i>Add Trainers
                                 </a>
                             </li>
                             <li>
-                                <a href="#">
-                                    <i class="fas fa-list"></i>Manage Contact
+                                <a href="{{ route('trainers.list') }}">
+                                    <i class="fas fa-list"></i>Manage Trainers
                                 </a>
                             </li>
                         </ul>

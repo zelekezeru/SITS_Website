@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
+use App\Models\Trainer;
 use App\Models\Program;
 use App\Models\Task;
 use App\Models\Blog;
@@ -15,14 +16,16 @@ class HomeController extends Controller
     public function index()
     {
         $courses = Course::all();
+        $trainers = Trainer::all();
         $events = Event::latest()->take(2)->get();
 
-        return view('index', compact('courses', 'events'));
+        return view('index', compact('courses', 'events', 'trainers'));
     }
     public function dashboard()
     {
         // Get the counts of each model
         $coursesCount = Course::count(); // Count courses
+        $trainersCount = Trainer::count(); // Count Trrainer
         $programsCount = Program::count(); // Count programs
         $eventsCount = Event::count(); // Count events
         $blogsCount = Blog::count(); // Count blogs
@@ -30,7 +33,7 @@ class HomeController extends Controller
         $usersCount = User::count(); // Count users
 
         // Pass the counts to the dashboard view
-        return view('dashboard', compact('coursesCount', 'programsCount', 'eventsCount', 'blogsCount', 'tasksCount', 'usersCount'));
+        return view('dashboard', compact('coursesCount', 'programsCount', 'eventsCount', 'trainersCount', 'blogsCount', 'tasksCount', 'usersCount'));
     }
 
     public function about()

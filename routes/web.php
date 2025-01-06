@@ -15,6 +15,8 @@ use App\Http\Controllers\KpiController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\TrainerController;
+use App\Models\Trainer;
 use Spatie\Permission\Middleware\RoleMiddleware;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -35,6 +37,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('events/list', [EventController::class, 'list'])->name("events.list");
     Route::get('tasks/list', [TaskController::class, 'list'])->name("tasks.list");
     Route::get('users/list', [UserController::class, 'list'])->name("users.list")->middleware(RoleMiddleware::class.':ADMIN');
+    Route::get('trainers/list', [TrainerController::class, 'list'])->name("trainers.list")->middleware(RoleMiddleware::class.':ADMIN');
 
     // Store the KPI associated with the task
     Route::post('tasks/{task}/kpis', [KpiController::class, 'store'])->name('kpis.store');
@@ -74,6 +77,8 @@ Route::resource('programs', ProgramController::class);
 Route::resource('events', EventController::class);
 
 Route::resource('tasks', TaskController::class);
+
+Route::resource('trainers', TrainerController::class);
 
 
 

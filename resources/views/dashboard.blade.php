@@ -14,15 +14,15 @@
                 </div>
             </div>
             <div class="row">
-                <!-- Courses Card -->
+                <!-- Users Card -->
                 <div class="col-sm-6 col-md-3">
-                    <a href="{{ route('courses.list') }}">
+                    <a href="{{ route('users.list') }}">
                         <div class="card card-stats card-round">
                             <div class="card-body">
                                 <div class="row align-items-center">
                                     <div class="col-icon">
                                         <div class="icon-big text-center icon-primary bubble-shadow-small">
-                                            <i class="fas fa-chalkboard-teacher"></i>
+                                            <i class="fas fa-user"></i>
                                         </div>
                                     </div>
                                     <div class="col col-stats ms-3 ms-sm-0">
@@ -44,7 +44,7 @@
                                 <div class="row align-items-center">
                                     <div class="col-icon">
                                         <div class="icon-big text-center icon-primary bubble-shadow-small">
-                                            <i class="fas fa-chalkboard-teacher"></i>
+                                            <i class="fas fa-book"></i>
                                         </div>
                                     </div>
                                     <div class="col col-stats ms-3 ms-sm-0">
@@ -74,6 +74,29 @@
                                         <div class="numbers">
                                             <p class="card-category">Programs</p>
                                             <h4 class="card-title">{{ $programsCount }}</h4> <!-- Display real count -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Trainers Card -->
+                <div class="col-sm-6 col-md-3">
+                    <a href="{{ route('trainers.list') }}">
+                        <div class="card card-stats card-round">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-icon">
+                                        <div class="icon-big text-center icon-info bubble-shadow-small">
+                                            <i class="fas fa-chalkboard-teacher"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col col-stats ms-3 ms-sm-0">
+                                        <div class="numbers">
+                                            <p class="card-category">Trainers</p>
+                                            <h4 class="card-title">{{ $trainersCount }}</h4> <!-- Display real count -->
                                         </div>
                                     </div>
                                 </div>

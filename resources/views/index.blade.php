@@ -49,47 +49,46 @@
                 <!-- single course -->
                 <div class="col-lg-12">
                     <div class="owl-carousel active_course">
-                        @if($courses->isEmpty())
+                        @if ($courses->isEmpty())
                             <div class="col-lg-12">
                                 <div class="text-center">
                                     <h3>No courses available at the moment</h3>
                                 </div>
-                        @else
-
-                            @foreach ($courses as $course)
-                                <div class="single_course">
-                                <div class="course_head">
-                                    <img class="img-fluid" src="{{ asset('storage/' . $course->banner) }}"
-                                    alt="{{ $course->title }}"
-                                    style="width: 100%; height: 250px; object-fit: cover;"/>
-                                </div>
-                                    <div class="course_content">
-                                        <span class="price">${{ $course->amount_paid }}</span>
-                                        <span class="tag mb-2 d-inline-block">{{ $course->category }}</span>
-                                        <h4 class="mb-2">
-                                            <a href="{{ route('courses.show', $course->id) }}">{{ $course->title }}</a>
-                                        </h4>
-                                        <p>
-                                            {{ $course->description }}
-                                        </p>
-                                        <div
-                                            class="course_meta d-flex justify-content-lg-between align-items-lg-center flex-lg-row flex-column mt-4">
-                                            <div class="authr_meta">
-                                            <img src="img/courses/author1.png" alt="" />
-                                                <span class="d-inline-block ml-2">Instructor</span>
-                                            </div>
-                                            <div class="mt-lg-0 mt-2">
-                                                <span class="meta_info mr-4">
-                                                    <a href="#"> <i class="ti-user mr-2"></i>25 </a>
-                                                </span>
-                                                <span class="meta_info">
-                                                    <a href="#"> <i class="ti-heart mr-2"></i>35 </a>
-                                                </span>
+                            @else
+                                @foreach ($courses as $course)
+                                    <div class="single_course">
+                                        <div class="course_head">
+                                            <img class="img-fluid" src="{{ asset('storage/' . $course->banner) }}"
+                                                alt="{{ $course->title }}"
+                                                style="width: 100%; height: 250px; object-fit: cover;" />
+                                        </div>
+                                        <div class="course_content">
+                                            <span class="price">${{ $course->amount_paid }}</span>
+                                            <span class="tag mb-2 d-inline-block">{{ $course->category }}</span>
+                                            <h4 class="mb-2">
+                                                <a href="{{ route('courses.show', $course->id) }}">{{ $course->title }}</a>
+                                            </h4>
+                                            <p>
+                                                {{ $course->description }}
+                                            </p>
+                                            <div
+                                                class="course_meta d-flex justify-content-lg-between align-items-lg-center flex-lg-row flex-column mt-4">
+                                                <div class="authr_meta">
+                                                    <img src="img/courses/author1.png" alt="" />
+                                                    <span class="d-inline-block ml-2">Instructor</span>
+                                                </div>
+                                                <div class="mt-lg-0 mt-2">
+                                                    <span class="meta_info mr-4">
+                                                        <a href="#"> <i class="ti-user mr-2"></i>25 </a>
+                                                    </span>
+                                                    <span class="meta_info">
+                                                        <a href="#"> <i class="ti-heart mr-2"></i>35 </a>
+                                                    </span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            @endforeach
+                                @endforeach
                         @endif
 
                     </div>
@@ -170,93 +169,30 @@
                 </div>
             </div>
             <div class="row justify-content-center d-flex align-items-center">
-                <div class="col-lg-3 col-md-6 col-sm-12 single-trainer" data-aos="fade-up" data-aos-delay="200">
-                    <div class="thumb d-flex justify-content-sm-center">
-                        <img class="img-fluid" src="img/trainer/t1.jpg" alt="" />
-                    </div>
-                    <div class="meta-text text-sm-center">
-                        <h4>Mated Nithan</h4>
-                        <p class="designation">Sr. web designer</p>
-                        <div class="mb-4">
-                            <p>
-                                If you are looking at blank cassettes on the web, you may be
-                                very confused at the.
-                            </p>
-                        </div>
-                        <div class="align-items-center justify-content-center d-flex">
-                            <a href="#"><i class="ti-facebook"></i></a>
-                            <a href="#"><i class="ti-twitter"></i></a>
-                            <a href="#"><i class="ti-linkedin"></i></a>
-                            <a href="#"><i class="ti-pinterest"></i></a>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="col-lg-3 col-md-6 col-sm-12 single-trainer" data-aos="fade-up" data-aos-delay="220">
-                    <div class="thumb d-flex justify-content-sm-center">
-                        <img class="img-fluid" src="img/trainer/t2.jpg" alt="" />
-                    </div>
-                    <div class="meta-text text-sm-center">
-                        <h4>David Cameron</h4>
-                        <p class="designation">Sr. web designer</p>
-                        <div class="mb-4">
-                            <p>
-                                If you are looking at blank cassettes on the web, you may be
-                                very confused at the.
-                            </p>
+                @foreach ($trainers as $trainer)
+                    <div class="col-lg-3 col-md-6 col-sm-12 single-trainer" data-aos="fade-up" data-aos-delay="200">
+                        <div class="thumb d-flex justify-content-sm-center">
+                            <img class="img-fluid" src="{{ asset('storage/' . $trainer->image) }}" alt="{{ $trainer->name }}" alt="" />
                         </div>
-                        <div class="align-items-center justify-content-center d-flex">
-                            <a href="#"><i class="ti-facebook"></i></a>
-                            <a href="#"><i class="ti-twitter"></i></a>
-                            <a href="#"><i class="ti-linkedin"></i></a>
-                            <a href="#"><i class="ti-pinterest"></i></a>
+                        <div class="meta-text text-sm-center">
+                            <h4>{{ $trainer->name }}</h4>
+                            <p class="designation">{{ $trainer->position }}</p>
+                            <div class="mb-4">
+                                <p>
+                                    {{ $trainer->description }}
+                                </p>
+                            </div>
+                            <div class="align-items-center justify-content-center d-flex">
+                                <a href="#"><i class="ti-facebook"></i></a>
+                                <a href="#"><i class="ti-twitter"></i></a>
+                                <a href="#"><i class="ti-linkedin"></i></a>
+                                <a href="#"><i class="ti-pinterest"></i></a>
+                            </div>
                         </div>
                     </div>
-                </div>
+                @endforeach
 
-                <div class="col-lg-3 col-md-6 col-sm-12 single-trainer" data-aos="fade-up" data-aos-delay="240">
-                    <div class="thumb d-flex justify-content-sm-center">
-                        <img class="img-fluid" src="img/trainer/t3.jpg" alt="" />
-                    </div>
-                    <div class="meta-text text-sm-center">
-                        <h4>Jain Redmel</h4>
-                        <p class="designation">Sr. Faculty Data Science</p>
-                        <div class="mb-4">
-                            <p>
-                                If you are looking at blank cassettes on the web, you may be
-                                very confused at the.
-                            </p>
-                        </div>
-                        <div class="align-items-center justify-content-center d-flex">
-                            <a href="#"><i class="ti-facebook"></i></a>
-                            <a href="#"><i class="ti-twitter"></i></a>
-                            <a href="#"><i class="ti-linkedin"></i></a>
-                            <a href="#"><i class="ti-pinterest"></i></a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-3 col-md-6 col-sm-12 single-trainer" data-aos="fade-up" data-aos-delay="260">
-                    <div class="thumb d-flex justify-content-sm-center">
-                        <img class="img-fluid" src="img/trainer/t4.jpg" alt="" />
-                    </div>
-                    <div class="meta-text text-sm-center">
-                        <h4>Nathan Macken</h4>
-                        <p class="designation">Sr. web designer</p>
-                        <div class="mb-4">
-                            <p>
-                                If you are looking at blank cassettes on the web, you may be
-                                very confused at the.
-                            </p>
-                        </div>
-                        <div class="align-items-center justify-content-center d-flex">
-                            <a href="#"><i class="ti-facebook"></i></a>
-                            <a href="#"><i class="ti-twitter"></i></a>
-                            <a href="#"><i class="ti-linkedin"></i></a>
-                            <a href="#"><i class="ti-pinterest"></i></a>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </section>
@@ -264,17 +200,17 @@
 
     <!--================ Start Events Area =================-->
 
-      <div class="events_area" data-aos="zoom-in" data-aos-delay="200">
-          <div class="container">
-              <div class="row justify-content-center">
-                  <div class="col-lg-5">
-                      <div class="main_title">
-                          <h2 class="mb-3 text-white">Upcoming Events</h2>
-                          <p>Don't miss out on our latest events!</p>
-                      </div>
-                  </div>
-              </div>
-              <div class="row" data-aos="fade-up" data-aos-delay="300">
+    <div class="events_area" data-aos="zoom-in" data-aos-delay="200">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-5">
+                    <div class="main_title">
+                        <h2 class="mb-3 text-white">Upcoming Events</h2>
+                        <p>Don't miss out on our latest events!</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row" data-aos="fade-up" data-aos-delay="300">
                 @if ($events->isEmpty())
                     <div class="col-lg-12">
                         <div class="text-center">
@@ -282,59 +218,55 @@
                         </div>
                     </div>
                 @else
-                  @foreach ($events as $event)
-                      <div class="col-lg-6 col-md-6" >
-                          <div class="single_event position-relative">
-                              <!-- Event Thumbnail -->
-                              <div class="event_thumb">
-                                  <img
-                                      src="{{ asset('storage/' . $event->banner) }}"
-                                      alt="{{ $event->title }}"
-                                      class="img-fluid"
-                                      style="height: 250px; object-fit: cover;"
-                                  />
-                              </div>
+                    @foreach ($events as $event)
+                        <div class="col-lg-6 col-md-6">
+                            <div class="single_event position-relative">
+                                <!-- Event Thumbnail -->
+                                <div class="event_thumb">
+                                    <img src="{{ asset('storage/' . $event->banner) }}" alt="{{ $event->title }}"
+                                        class="img-fluid" style="height: 250px; object-fit: cover;" />
+                                </div>
 
-                              <!-- Event Details -->
-                              <div class="event_details">
-                                  <div class="d-flex mb-4">
-                                      <div class="date">
-                                          <span>{{ \Carbon\Carbon::parse($event->date)->format('d') }}</span>
-                                          {{ \Carbon\Carbon::parse($event->date)->format('M') }}
-                                      </div>
-                                      <div class="time-location">
-                                          <p>
-                                              <span class="ti-time mr-2"></span>
-                                              {{ \Carbon\Carbon::parse($event->start_time)->format('h:i A') }} -
-                                              {{ \Carbon\Carbon::parse($event->end_time)->format('h:i A') }}
-                                          </p>
-                                          <p>
-                                              <span class="ti-location-pin mr-2"></span>
-                                              {{ $event->location }}
-                                          </p>
-                                      </div>
-                                  </div>
-                                  <p>{{ $event->description }}</p>
-                                  <a href="{{ route('events.show', $event->id) }}" class="primary-btn rounded-0 mt-3">View Details</a>
-                              </div>
-                          </div>
-                      </div>
+                                <!-- Event Details -->
+                                <div class="event_details">
+                                    <div class="d-flex mb-4">
+                                        <div class="date">
+                                            <span>{{ \Carbon\Carbon::parse($event->date)->format('d') }}</span>
+                                            {{ \Carbon\Carbon::parse($event->date)->format('M') }}
+                                        </div>
+                                        <div class="time-location">
+                                            <p>
+                                                <span class="ti-time mr-2"></span>
+                                                {{ \Carbon\Carbon::parse($event->start_time)->format('h:i A') }} -
+                                                {{ \Carbon\Carbon::parse($event->end_time)->format('h:i A') }}
+                                            </p>
+                                            <p>
+                                                <span class="ti-location-pin mr-2"></span>
+                                                {{ $event->location }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <p>{{ $event->description }}</p>
+                                    <a href="{{ route('events.show', $event->id) }}"
+                                        class="primary-btn rounded-0 mt-3">View Details</a>
+                                </div>
+                            </div>
+                        </div>
                     @endforeach
 
-                  <!-- View All Events Link -->
-                  <div class="col-lg-12">
-                      <div class="text-center pt-lg-5 pt-3">
-                          <a href="{{ route('events.index') }}" class="event-link">
-                              View All Events <img src="img/next.png" alt="" />
-                          </a>
-                      </div>
-                  </div>
-
+                    <!-- View All Events Link -->
+                    <div class="col-lg-12">
+                        <div class="text-center pt-lg-5 pt-3">
+                            <a href="{{ route('events.index') }}" class="event-link">
+                                View All Events <img src="img/next.png" alt="" />
+                            </a>
+                        </div>
+                    </div>
                 @endif
 
-              </div>
-          </div>
-      </div>
+            </div>
+        </div>
+    </div>
 
     <!--================ End Events Area =================-->
 
@@ -343,4 +275,5 @@
     {{-- Testimonials --}}
 
     @include('contacts.testimonials')
+
 @endsection
