@@ -54,6 +54,7 @@
                                 <div class="text-center">
                                     <h3>No courses available at the moment</h3>
                                 </div>
+
                             @else
                                 @foreach ($courses as $course)
                                     <div class="single_course">
@@ -86,6 +87,40 @@
                                                     </span>
                                                 </div>
                                             </div>
+
+                        @else
+
+                            @foreach ($courses as $course)
+                                <div class="single_course">
+                                <div class="course_head">
+                                    <img class="img-fluid" src="{{ asset('storage/' . $course->banner) }}"
+                                    alt="{{ $course->title }}"
+                                    style="width: 100%; height: 250px; object-fit: cover;"/>
+                                </div>
+                                    <div class="course_content">
+                                        <span class="price">${{ $course->amount_paid }}</span>
+                                        <span class="tag mb-2 d-inline-block">{{ $course->category }}</span>
+                                        <h4 class="mb-2">
+                                            <a href="{{ route('courses.show', $course->id) }}">{{ $course->title }}</a>
+                                        </h4>
+                                        <p>
+                                            {{ $course->description }}
+                                        </p>
+                                        <div
+                                            class="course_meta d-flex justify-content-lg-between align-items-lg-center flex-lg-row flex-column mt-4">
+                                            <div class="authr_meta">
+                                            <img src="img/courses/author1.png" alt="" />
+                                                <span class="d-inline-block ml-2">By Field Experts</span>
+                                            </div>
+                                            {{-- <div class="mt-lg-0 mt-2">
+                                                <span class="meta_info mr-4">
+                                                    <a href="#"> <i class="ti-user mr-2"></i>25 </a>
+                                                </span>
+                                                <span class="meta_info">
+                                                    <a href="#"> <i class="ti-heart mr-2"></i>35 </a>
+                                                </span>
+                                            </div> --}}
+                                            
                                         </div>
                                     </div>
                                 @endforeach

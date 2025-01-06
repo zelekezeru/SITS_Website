@@ -15,8 +15,12 @@ class HomeController extends Controller
 {
     public function index()
     {
+
         $courses = Course::all();
         $trainers = Trainer::all();
+
+        $courses = Course::get();
+
         $events = Event::latest()->take(2)->get();
 
         return view('index', compact('courses', 'events', 'trainers'));
