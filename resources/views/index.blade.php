@@ -169,29 +169,37 @@
                 </div>
             </div>
             <div class="row justify-content-center d-flex align-items-center">
-
-                @foreach ($trainers as $trainer)
-                    <div class="col-lg-3 col-md-6 col-sm-12 single-trainer" data-aos="fade-up" data-aos-delay="200">
-                        <div class="thumb d-flex justify-content-sm-center">
-                            <img class="img-fluid" src="{{ asset('storage/' . $trainer->image) }}" alt="{{ $trainer->name }}" alt="" />
+                @if ($trainers->isEmpty())
+                    <div class="col-lg-12">
+                        <div class="text-center">
+                            <h3>No Trainers available at the moment</h3>
                         </div>
-                        <div class="meta-text text-sm-center">
-                            <h4>{{ $trainer->name }}</h4>
-                            <p class="designation">{{ $trainer->position }}</p>
-                            <div class="mb-4">
-                                <p>
-                                    {{ $trainer->description }}
-                                </p>
+                    @else
+                        @foreach ($trainers as $trainer)
+                            <div class="col-lg-3 col-md-6 col-sm-12 single-trainer" data-aos="fade-up"
+                                data-aos-delay="200">
+                                <div class="thumb d-flex justify-content-sm-center">
+                                    <img class="img-fluid" src="{{ asset('storage/' . $trainer->image) }}"
+                                        alt="{{ $trainer->name }}" alt="" />
+                                </div>
+                                <div class="meta-text text-sm-center">
+                                    <h4>{{ $trainer->name }}</h4>
+                                    <p class="designation">{{ $trainer->position }}</p>
+                                    <div class="mb-4">
+                                        <p>
+                                            {{ $trainer->description }}
+                                        </p>
+                                    </div>
+                                    <div class="align-items-center justify-content-center d-flex">
+                                        <a href="#"><i class="ti-facebook"></i></a>
+                                        <a href="#"><i class="ti-twitter"></i></a>
+                                        <a href="#"><i class="ti-linkedin"></i></a>
+                                        <a href="#"><i class="ti-pinterest"></i></a>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="align-items-center justify-content-center d-flex">
-                                <a href="#"><i class="ti-facebook"></i></a>
-                                <a href="#"><i class="ti-twitter"></i></a>
-                                <a href="#"><i class="ti-linkedin"></i></a>
-                                <a href="#"><i class="ti-pinterest"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
+                        @endforeach
+                @endif
 
             </div>
         </div>
@@ -214,7 +222,7 @@
                 @if ($events->isEmpty())
                     <div class="col-lg-12">
                         <div class="text-center">
-                            <h3>No events available at the moment</h3>
+                            <h3 class=" text-white">No events available at the moment</h3>
                         </div>
                     </div>
                 @else
