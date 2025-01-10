@@ -111,12 +111,12 @@
             <div class="single_feature">
                 <div class="icon text-center"><img src="{{ asset('img/features/actea.png') }}" alt="" width="50" /></span></div>
               <div class="desc">
-                <h4 class="mt-3 mb-2 text-center"> ACTEA Accredited <br> (Amharic) </h4><br>
+                <h4 class="mt-3 mb-2 text-center"> Courses in <br> Other Languages <br>  </h4><br>
 
-                <h6 class=""> . BA in Theology </h6> <br>
-                <h6 class=""> . MA in Biblical & Theological Studies </h6> <br>
-                <h6 class=""> . Masters of Devinity </h6> <br>
-                <h6 class=""> . Pioneering educational model </h6> <br>
+                <h6 class=""> . BA in Theology - Amharic </h6> <br>
+                <h6 class=""> . MA in Biblical & Theological Studies - Amharic </h6> <br>
+                <h6 class=""> . Masters of Devinity - Amharic </h6> <br>
+                <h6 class=""> . Pioneering educational model - Amharic </h6> <br>
 
               </div>
             </div>
