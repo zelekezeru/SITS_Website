@@ -251,9 +251,9 @@
                         <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#"
                             aria-expanded="false">
                             <div class="avatar-sm">
-                                <img src="{{ asset('img/avatar.png') }}" alt="..."
+                                <img src="{{ auth()->user()->profile_image ? Storage::url(auth()->user()->profile_image) : 'avatar.png' }}" alt="Profile Image"
                                     class="avatar-img rounded-circle" />
-                            </div>
+                            </div>  
                             <span class="profile-username">
                                 <span class="fw-bold">{{ Auth::user()->name }}</span>
                             </span>
@@ -263,8 +263,8 @@
                                 <li>
                                     <div class="user-box">
                                         <div class="avatar-lg">
-                                            <img src="{{ asset('img/avatar.png') }}" alt="image profile"
-                                                class="avatar-img rounded" />
+                                            <img class="avatar-img rounded" src="{{ auth()->user()->profile_image ? Storage::url(auth()->user()->profile_image) : 'avatar.png' }}" alt="Profile Image">
+
                                         </div>
                                         <div class="u-text">
                                             <h4>{{ Auth::user()->name }}</h4>
