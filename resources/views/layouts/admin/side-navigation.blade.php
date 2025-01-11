@@ -47,13 +47,13 @@
                                 <div class="collapse" id="TaskManagementDropdown">
                                     <ul class="nav nav-collapse">
                                         <li>
-                                            <a href="{{ route('tasks.create') }}">
-                                                <i class="fas fa-plus-circle"></i> Add Task
+                                            <a href="{{ route('tasks.list') }}">
+                                                <i class="fas fa-edit"></i> Manage Tasks
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="{{ route('tasks.list') }}">
-                                                <i class="fas fa-edit"></i> Manage Tasks
+                                            <a href="{{ route('tasks.create') }}">
+                                                <i class="fas fa-plus-circle"></i> Add Task
                                             </a>
                                         </li>
                                     </ul>
@@ -61,6 +61,13 @@
                             </li>
                         </ul>
                     </div>
+                </li>
+
+                <li class="nav-section">
+                    <span class="sidebar-mini-icon">
+                        <i class="fa fa-ellipsis-h"></i>
+                    </span>
+                    <h4 class="text-section">Components</h4>
                 </li>
 
                 {{-- ONLY FOR ADMIN USERS --}}
@@ -75,12 +82,6 @@
 
                 @endif
 
-                <li class="nav-section">
-                    <span class="sidebar-mini-icon">
-                        <i class="fa fa-ellipsis-h"></i>
-                    </span>
-                    <h4 class="text-section">Components</h4>
-                </li>
                 <li class="nav-item">
                     <a data-bs-toggle="collapse" href="#Course">
                         <i class="fas fa-book"></i>
@@ -90,13 +91,13 @@
                     <div class="collapse" id="Course">
                         <ul class="nav nav-collapse">
                             <li>
-                                <a href="{{ route('courses.create') }}">
-                                    <i class="fas fa-plus"></i>Add Course
+                                <a href="{{ route('courses.list') }}">
+                                    <i class="fas fa-list"></i>Manage Course
                                 </a>
                             </li>
                             <li>
-                                <a href="{{ route('courses.list') }}">
-                                    <i class="fas fa-list"></i>Manage Course
+                                <a href="{{ route('courses.create') }}">
+                                    <i class="fas fa-plus"></i>Add Course
                                 </a>
                             </li>
                         </ul>
@@ -111,13 +112,13 @@
                     <div class="collapse" id="Programs">
                         <ul class="nav nav-collapse">
                             <li>
-                                <a href="{{ route('programs.create') }}">
-                                    <i class="fas fa-plus"></i>Add Programs
+                                <a href="{{ route('programs.list') }}">
+                                    <i class="fas fa-list"></i>Manage Programs
                                 </a>
                             </li>
                             <li>
-                                <a href="{{ route('programs.list') }}">
-                                    <i class="fas fa-list"></i>Manage Programs
+                                <a href="{{ route('programs.create') }}">
+                                    <i class="fas fa-plus"></i>Add Programs
                                 </a>
                             </li>
                         </ul>
@@ -132,13 +133,13 @@
                     <div class="collapse" id="Events">
                         <ul class="nav nav-collapse">
                             <li>
-                                <a href="{{ route('events.create') }}">
-                                    <i class="fas fa-plus"></i>Add Events
+                                <a href="{{ route('events.list') }}">
+                                    <i class="fas fa-list"></i>Manage Events
                                 </a>
                             </li>
                             <li>
-                                <a href="{{ route('events.list') }}">
-                                    <i class="fas fa-list"></i>Manage Events
+                                <a href="{{ route('events.create') }}">
+                                    <i class="fas fa-plus"></i>Add Events
                                 </a>
                             </li>
                         </ul>
@@ -153,13 +154,13 @@
                     <div class="collapse" id="Conatact">
                         <ul class="nav nav-collapse">
                             <li>
-                                <a href="{{ route('trainers.create') }}">
-                                    <i class="fas fa-plus"></i>Add Trainers
+                                <a href="{{ route('trainers.list') }}">
+                                    <i class="fas fa-list"></i>Manage Trainers
                                 </a>
                             </li>
                             <li>
-                                <a href="{{ route('trainers.list') }}">
-                                    <i class="fas fa-list"></i>Manage Trainers
+                                <a href="{{ route('trainers.create') }}">
+                                    <i class="fas fa-plus"></i>Add Trainers
                                 </a>
                             </li>
                         </ul>
@@ -174,13 +175,34 @@
                     <div class="collapse" id="Blog">
                         <ul class="nav nav-collapse">
                             <li>
+                                <a href="{{ route('blogs.list') }}">
+                                    <i class="fas fa-list"></i>Manage Blog
+                                </a>
+                            </li>
+                            <li>
                                 <a href="{{ route('blogs.create') }}">
                                     <i class="fas fa-plus"></i>Add Blog
                                 </a>
                             </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a data-bs-toggle="collapse" href="#Contact">
+                        <i class="fas fa-newspaper"></i>
+                        <p>Contact</p>
+                        <span class="caret"></span>
+                    </a>
+                    <div class="collapse" id="Contact">
+                        <ul class="nav nav-collapse">
                             <li>
-                                <a href="{{ route('blogs.list') }}">
-                                    <i class="fas fa-list"></i>Manage Blog
+                                <a href="{{ route('contacts.list') }}">
+                                    <i class="fas fa-list"></i>Manage Contact
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('contacts.list') }}">
+                                    <i class="fas fa-plus"></i>Add Contact
                                 </a>
                             </li>
                         </ul>

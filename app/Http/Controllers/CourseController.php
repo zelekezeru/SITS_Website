@@ -52,18 +52,18 @@ class CourseController extends Controller
     public function store(CourseStoreRequest $request) : RedirectResponse
     {
         $data = $request->validated();
-    
+
         if ($request->hasFile('banner')) {
             $bannerPath = $request->file('banner')->store('courseBanners', 'public');
             $data['banner'] = $bannerPath;
         }
-    
+
         Course::create($data);
-    
+
         return redirect()->route('courses.list')
             ->with('success', 'Course created successfully.');
     }
-    
+
     /**
      * Display the specified resource.
      */
@@ -97,7 +97,7 @@ class CourseController extends Controller
         return redirect()->route('courses.list')
             ->with('success', 'Course updated successfully');
     }
-    
+
     /**
      * Remove the specified resource from storage.
      */

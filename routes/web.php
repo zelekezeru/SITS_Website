@@ -38,6 +38,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('tasks/list', [TaskController::class, 'list'])->name("tasks.list");
     Route::get('users/list', [UserController::class, 'list'])->name("users.list")->middleware(RoleMiddleware::class.':ADMIN');
     Route::get('trainers/list', [TrainerController::class, 'list'])->name("trainers.list")->middleware(RoleMiddleware::class.':ADMIN');
+    Route::get('contacts/list', [ContactController::class, 'list'])->name("contacts.list");
 
     // Store the KPI associated with the task
     Route::post('tasks/{task}/kpis', [KpiController::class, 'store'])->name('kpis.store');

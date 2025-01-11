@@ -16,8 +16,20 @@ class ContactController extends Controller
     public function index()
     {
         $contacts = Contact::all();
-        
+
         return view('contacts.index', compact('contacts'));
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function list()
+    {
+
+    $contacts = Contact::paginate(10); // Use pagination to avoid loading too many records at once
+
+    return view('contacts.list', compact('contacts'));
+
     }
 
     /**
@@ -33,18 +45,19 @@ class ContactController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request);
         // Validate the form
         $data = $request->validate([
             'name' => 'required|string',
             'email' => 'required|email',
             'phone' => 'required',
-            'subject' => 'required|string',
+            'title' => 'required|string',
             'message' => 'required|string',
         ]);
-    
-        // Dispatch the job to send the mail in the background 
-        SendContactMail::dispatch($data);   
+
+        $contact = Contact::create($data);
+
+        // Dispatch the job to send the mail in the background
+        SendContactMail::dispatch($data);
 
         return redirect()->back();
     }
@@ -54,7 +67,7 @@ class ContactController extends Controller
      */
     public function show(Contact $contact)
     {
-        //
+        return view('contacts.show', compact('contact'));
     }
 
     /**

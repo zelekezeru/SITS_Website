@@ -3,39 +3,30 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-2 col-md-6 single-footer-widget">
-                <h4>Top Products</h4>
+                <h4>Our Values</h4>
                 <ul>
-                    <li><a href="#">Managed Website</a></li>
-                    <li><a href="#">Manage Reputation</a></li>
-                    <li><a href="#">Power Tools</a></li>
-                    <li><a href="#">Marketing Service</a></li>
+                    <li><a href="#">Sustainable</a></li>
+                    <li><a href="#">Accessible</a></li>
+                    <li><a href="#">Vital</a></li>
+                    <li><a href="#">Excellent</a></li>
                 </ul>
             </div>
-            <div class="col-lg-2 col-md-6 single-footer-widget">
-                <h4>Quick Links</h4>
-                <ul>
-                    <li><a href="#">Jobs</a></li>
-                    <li><a href="#">Brand Assets</a></li>
-                    <li><a href="#">Investor Relations</a></li>
-                    <li><a href="#">Terms of Service</a></li>
-                </ul>
-            </div>
-            <div class="col-lg-2 col-md-6 single-footer-widget">
-                <h4>Features</h4>
-                <ul>
-                    <li><a href="#">Jobs</a></li>
-                    <li><a href="#">Brand Assets</a></li>
-                    <li><a href="#">Investor Relations</a></li>
-                    <li><a href="#">Terms of Service</a></li>
-                </ul>
-            </div>
-            <div class="col-lg-2 col-md-6 single-footer-widget">
+            <div class="col-lg-3 col-md-6 single-footer-widget">
                 <h4>Resources</h4>
                 <ul>
-                    <li><a href="#">Guides</a></li>
-                    <li><a href="#">Research</a></li>
-                    <li><a href="#">Experts</a></li>
-                    <li><a href="#">Agencies</a></li>
+                    <li><a href="#">Digital Library</a></li>
+                    <li><a href="#">Physical Library</a></li>
+                    <li><a href="#">Advanced Materials</a></li>
+                    <li><a href="#">Research Publications</a></li>
+                </ul>
+            </div>
+            <div class="col-lg-3 col-md-6 single-footer-widget">
+                <h4>Accessiblity</h4>
+                <ul>
+                    <li><a href="#">Online Courses</a></li>
+                    <li><a href="#">Distance Program</a></li>
+                    <li><a href="#">Advanced Materials</a></li>
+                    <li><a href="#">International Connections</a></li>
                 </ul>
             </div>
             <div class="col-lg-4 col-md-6 single-footer-widget">
@@ -73,10 +64,10 @@
                 <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
             </p>
             <div class="col-lg-4 col-sm-12 footer-social">
-                <a href="#"><i class="ti-facebook"></i></a>
-                <a href="#"><i class="ti-twitter"></i></a>
-                <a href="#"><i class="ti-dribbble"></i></a>
-                <a href="#"><i class="ti-linkedin"></i></a>
+                <a href="#"><i class="ti-facebook" target="_blank"></i></a>
+                <a href="{{ url('https://x.com/sitsethiopia')}}" target="_blank"><i class="ti-twitter"></i></a>
+                <a href="{{ url('https://www.linkedin.com/in/shiloh-intermational-theological-seminary-4a0536346?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_contact_details%3BVQ01XUv0Sy24tCYjbvo6dQ%3D%3D')}}" target="_blank"><i class="ti-linkedin"></i></a>
+                <a href="{{ url('https://www.tiktok.com/@sitsethiopia?is_from_webapp=1&sender_device=pc') }}" target="_blank"><i class="ti-tiktok"></i></a>
             </div>
         </div>
 

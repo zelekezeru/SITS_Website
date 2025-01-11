@@ -9,7 +9,7 @@
             <div class="card-body">
                 <!-- Course Title -->
                 <h4 class="mb-3"><i class="fas fa-book"></i> {{ $course->title }}</h4>
-                
+
                 <!-- Course Details -->
                 <div class="row">
                     <div class="col-md-6">
