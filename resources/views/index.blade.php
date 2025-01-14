@@ -9,10 +9,10 @@
                     <div class="col-lg-12">
                         <div class="banner_content text-center animate__animated animate__backInUp">
                             <p class="text-uppercase">
-                                Best online education service In the world
+                                Convinient Theological Education
                             </p>
                             <h2 class="text-uppercase mt-4 mb-5">
-                                One Step Ahead This Season
+                                Theological Education in a Digital and Convinient Way
                             </h2>
                             <div>
                                 <a href="{{ route('abouts.index')}}" class="primary-btn2 mb-3 mb-sm-0">learn more</a>
@@ -137,22 +137,27 @@
                 </div>
                 <div class="col-lg-4 offset-lg-1">
                     <div class="register_form">
-                        <h3>Courses for Free</h3>
-                        <p>It is high time for learning</p>
-                        <form class="form_area" id="myForm" action="mail.html" method="post">
+                        <h3>Enroll Now!</h3>
+                        <p>Online Theological Education at SITS</p>
+
+                        <form action="{{ route('subscriptions.store') }}" method="POST" enctype="multipart/form-data">
+                            @csrf
                             <div class="row">
                                 <div class="col-lg-12 form_group">
                                     <input name="name" placeholder="Your Name" required="" type="text" />
-                                    <input name="name" placeholder="Your Phone Number" required="" type="tel" />
+                                    <input name="phone" placeholder="Your Phone Number" required="" type="tel" />
                                     <input name="email" placeholder="Your Email Address"
                                         pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{1,63}$" required=""
                                         type="email" />
+                                        <input name="address" placeholder="Your Living Address" required="" type="text" />
+                                    <input type="text" name="type" required="" value="subscribe" hidden/>
                                 </div>
                                 <div class="col-lg-12 text-center">
-                                    <button class="primary-btn">Submit</button>
+                                    <button class="primary-btn" type="submit">Submit</button>
                                 </div>
                             </div>
                         </form>
+
                     </div>
                 </div>
             </div>

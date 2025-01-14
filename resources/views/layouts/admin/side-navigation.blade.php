@@ -207,6 +207,21 @@
                             </li>
                         </ul>
                     </div>
+                </li><li class="nav-item">
+                    <a data-bs-toggle="collapse" href="#Subscription">
+                        <i class="fas fa-newspaper"></i>
+                        <p>Subscription</p>
+                        <span class="caret"></span>
+                    </a>
+                    <div class="collapse" id="Subscription">
+                        <ul class="nav nav-collapse">
+                            <li>
+                                <a href="{{ route('subscriptions.index') }}">
+                                    <i class="fas fa-list"></i>Manage Subscriptions
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </li>
             </ul>
         </div>

@@ -16,6 +16,7 @@ use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TrainerController;
+use App\Http\Controllers\SubscriptionController;
 use App\Models\Trainer;
 use Spatie\Permission\Middleware\RoleMiddleware;
 
@@ -80,6 +81,8 @@ Route::resource('events', EventController::class);
 Route::resource('tasks', TaskController::class);
 
 Route::resource('trainers', TrainerController::class);
+
+Route::resource('subscriptions', SubscriptionController::class);
 
 
 

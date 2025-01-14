@@ -109,7 +109,7 @@
 
           <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="500">
             <div class="single_feature">
-                <div class="icon text-center"><img src="{{ asset('img/features/actea.png') }}" alt="" width="50" /></span></div>
+                <div class="icon text-center"><img src="{{ asset('img/features/language.jpg') }}" alt="" width="50" /></span></div>
               <div class="desc">
                 <h4 class="mt-3 mb-2 text-center"> Courses in <br> Other Languages <br>  </h4><br>
 
