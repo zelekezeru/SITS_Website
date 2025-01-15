@@ -62,6 +62,7 @@ class UserController extends Controller
     {
         // Eager load for performance
         $user = User::findOrFail($id);
+        
         return view('users.show', compact('user'));
     }
     /**

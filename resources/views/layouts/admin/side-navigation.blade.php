@@ -200,11 +200,6 @@
                                     <i class="fas fa-list"></i>Manage Contact
                                 </a>
                             </li>
-                            <li>
-                                <a href="{{ route('contacts.list') }}">
-                                    <i class="fas fa-plus"></i>Add Contact
-                                </a>
-                            </li>
                         </ul>
                     </div>
                 </li><li class="nav-item">

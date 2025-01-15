@@ -21,6 +21,7 @@ class RegisteredUserController extends Controller
     public function create(): View
     {
         $roles = Role::all();
+
         return view('auth.register', compact('roles'));
     }
 
@@ -55,7 +56,17 @@ class RegisteredUserController extends Controller
             $user->assignRole($request->input('role')); // Assign by role name
         }
 
-        $redirectTo = 'users.list';
+
+        $user = User::count();
+
+        if ($user == 1) {
+            $redirectTo = ('login');
+        }
+
+        else {
+            $redirectTo = 'users.list';
+        }
+
         event(new Registered($user));
         if (User::count() === 0) {
             Auth::login($user);

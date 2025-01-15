@@ -1,6 +1,6 @@
 <x-admin-layout>
     <div class="container mt-5 pt-5">
-        <div class="card mt-5">
+        <div class="card mt-5 col-6">
             <h2 class="card-header text-center">Add New user</h2>
             <div class="card-body">
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">

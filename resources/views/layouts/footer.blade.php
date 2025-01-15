@@ -67,7 +67,7 @@
                 <a href="#"><i class="ti-facebook" target="_blank"></i></a>
                 <a href="{{ url('https://x.com/sitsethiopia')}}" target="_blank"><i class="ti-twitter"></i></a>
                 <a href="{{ url('https://www.linkedin.com/in/shiloh-intermational-theological-seminary-4a0536346?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_contact_details%3BVQ01XUv0Sy24tCYjbvo6dQ%3D%3D')}}" target="_blank"><i class="ti-linkedin"></i></a>
-                <a href="{{ url('https://www.tiktok.com/@sitsethiopia?is_from_webapp=1&sender_device=pc') }}" target="_blank"><i class="ti-tiktok"></i></a>
+                {{-- <a href="{{ url('https://www.tiktok.com/@sitsethiopia?is_from_webapp=1&sender_device=pc') }}" target="_blank"><i class="ti-twitter"></i></a> --}}
             </div>
         </div>
 

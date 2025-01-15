@@ -8,6 +8,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use App\Models\User;
+use Spatie\Permission\Models\Role;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -16,7 +18,21 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): View
     {
-        return view('auth.login');
+        $user = User::first();
+
+        if ($user == null) {
+
+            $roles = Role::all();
+
+            $user = new User();
+
+            return view('auth.superadmin', compact('roles','user'));
+
+        }
+        else {
+            return view('auth.login');
+        }
+
     }
 
     /**

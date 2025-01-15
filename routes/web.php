@@ -60,6 +60,8 @@ Route::get('/about', [HomeController::class, 'about'])->name('abouts.index');
 
 Route::get('/elements', [HomeController::class, 'elements'])->name('elements.index');
 
+// Resource routes
+
 Route::resource('users', UserController::class);
 
 Route::resource('blogs', BlogController::class);
@@ -83,9 +85,6 @@ Route::resource('tasks', TaskController::class);
 Route::resource('trainers', TrainerController::class);
 
 Route::resource('subscriptions', SubscriptionController::class);
-
-
-
 
 
 require __DIR__ . '/auth.php';

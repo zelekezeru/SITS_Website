@@ -111,7 +111,7 @@
             <div class="single_feature">
                 <div class="icon text-center"><img src="{{ asset('img/features/language.jpg') }}" alt="" width="50" /></span></div>
               <div class="desc">
-                <h4 class="mt-3 mb-2 text-center"> Courses in <br> Other Languages <br>  </h4><br>
+                <h4 class="mt-3 mb-2 text-center"> Other Languages <br> Amharic, Affan Oromo <br>  </h4><br>
 
                 <h6 class=""> . BA in Theology - Amharic </h6> <br>
                 <h6 class=""> . MA in Biblical & Theological Studies - Amharic </h6> <br>

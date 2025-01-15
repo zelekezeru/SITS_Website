@@ -253,7 +253,7 @@
                             <div class="avatar-sm">
                                 <img src="{{ auth()->user()->profile_image ? Storage::url(auth()->user()->profile_image) : 'avatar.png' }}" alt="Profile Image"
                                     class="avatar-img rounded-circle" />
-                            </div>  
+                            </div>
                             <span class="profile-username">
                                 <span class="fw-bold">{{ Auth::user()->name }}</span>
                             </span>
@@ -268,8 +268,8 @@
                                         </div>
                                         <div class="u-text">
                                             <h4>{{ Auth::user()->name }}</h4>
-                                            <p class="text-muted">hello@example.com</p>
-                                            <a href="{{route('profile.edit')}}" class="btn btn-xs btn-secondary btn-sm">View
+                                            <p class="text-muted">{{ Auth::user()->email }}</p>
+                                            <a href="{{ route('users.show', Auth::user()->id) }}" class="btn btn-xs btn-secondary btn-sm">View
                                                 Profile</a>
                                         </div>
                                     </div>
@@ -277,9 +277,7 @@
                                 <li>
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="{{route('profile.edit')}}">My Profile</a>
-                                    <a class="dropdown-item" href="#">My Balance</a>
                                     <a class="dropdown-item" href="#">Inbox</a>
-                                    <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="#">Account Setting</a>
                                     <div class="dropdown-divider"></div>
                                     <form method="POST" action="{{ route('logout') }}">
@@ -288,7 +286,7 @@
                                         <x-responsive-nav-link :href="route('logout')"
                                             onclick="event.preventDefault();
                                                             this.closest('form').submit();">
-                                            <div class="dropdown-item">
+                                            <div class="btn bnt-sm btn-danger btn-sm">
                                                 {{ __('Log Out') }}
                                             </div>
                                         </x-responsive-nav-link>

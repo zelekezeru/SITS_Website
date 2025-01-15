@@ -27,23 +27,7 @@
                                 @csrf
                                 @method('PUT')
 
-                                <div class="mb-3">
-                                    <label for="name" class="form-label">Name</label>
-                                    <input type="text" id="name" name="name" class="form-control @error('name') is-invalid @enderror"
-                                           value="{{ old('name', auth()->user()->name) }}" required autocomplete="name" autofocus>
-                                    @error('name')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="email" class="form-label">Email</label>
-                                    <input type="email" id="email" name="email" class="form-control @error('email') is-invalid @enderror"
-                                           value="{{ old('email', auth()->user()->email) }}" required autocomplete="email">
-                                    @error('email')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
+                                @include('users.form')
 
                                 <button type="submit" class="btn btn-primary w-100">Update Profile</button>
                             </form>
@@ -51,7 +35,7 @@
                     </div>
 
                     <!-- Update Password Form -->
-                    <div class="card shadow-sm mb-4">
+                    {{-- <div class="card shadow-sm mb-4">
                         <div class="card-header bg-info text-white">
                             <h5 class="card-title mb-0">Update Your Password</h5>
                         </div>
@@ -84,9 +68,9 @@
                                 <button type="submit" class="btn btn-info w-100">Update Password</button>
                             </form>
                         </div>
-                    </div>
+                    </div> --}}
 
-                    <!-- Delete Account Form -->
+                    {{-- <!-- Delete Account Form -->
                     <div class="card shadow-sm mb-4">
                         <div class="card-header bg-danger text-white">
                             <h5 class="card-title mb-0">Delete Account</h5>
@@ -97,11 +81,11 @@
                                 @method('DELETE')
 
                                 <p class="text-danger">Once you delete your account, all of its resources and data will be permanently deleted. Please be certain.</p>
-                                
+
                                 <button type="submit" class="btn btn-danger w-100" onclick="return confirm('Are you sure you want to delete your account?')">Delete Account</button>
                             </form>
                         </div>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
         </div>

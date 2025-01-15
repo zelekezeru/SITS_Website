@@ -10,11 +10,11 @@
                     </div>
                 @endif
 
-                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                {{-- <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                     <a class="btn btn-success btn-sm" href="{{ route('contacts.create') }}">
                         <i class="fa fa-plus"></i> Create New Contact
                     </a>
-                </div>
+                </div> --}}
 
                 <div class="table-responsive mt-4">
                     <table class="table table-bordered table-striped">
