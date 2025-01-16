@@ -202,7 +202,8 @@
                             </li>
                         </ul>
                     </div>
-                </li><li class="nav-item">
+                </li>
+                <li class="nav-item">
                     <a data-bs-toggle="collapse" href="#Subscription">
                         <i class="fas fa-newspaper"></i>
                         <p>Subscription</p>
@@ -213,6 +214,27 @@
                             <li>
                                 <a href="{{ route('subscriptions.index') }}">
                                     <i class="fas fa-list"></i>Manage Subscriptions
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a data-bs-toggle="collapse" href="#Library">
+                        <i class="fas fa-newspaper"></i>
+                        <p>Library</p>
+                        <span class="caret"></span>
+                    </a>
+                    <div class="collapse" id="Library">
+                        <ul class="nav nav-collapse">
+                            <li>
+                                <a href="{{ route('libraries.list') }}">
+                                    <i class="fas fa-list"></i>Manage libraries
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('libraries.create') }}">
+                                    <i class="fas fa-plus"></i>Add Library
                                 </a>
                             </li>
                         </ul>

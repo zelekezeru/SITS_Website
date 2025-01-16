@@ -32,14 +32,15 @@ Route::middleware('auth')->group(function () {
 
 // ADMIN ONLY ROUTES GO HERE
 Route::middleware(['auth'])->group(function () {
-    Route::get('blogs/list', [BlogController::class, 'list'])->name("blogs.list");
-    Route::get('courses/list', [CourseController::class, 'list'])->name("courses.list");
-    Route::get('programs/list', [ProgramController::class, 'list'])->name("programs.list");
-    Route::get('events/list', [EventController::class, 'list'])->name("events.list");
-    Route::get('tasks/list', [TaskController::class, 'list'])->name("tasks.list");
+    Route::get('blogs/list', [BlogController::class, 'list'])->name("blogs.list")->middleware(RoleMiddleware::class.':ADMIN');
+    Route::get('courses/list', [CourseController::class, 'list'])->name("courses.list")->middleware(RoleMiddleware::class.':ADMIN');
+    Route::get('programs/list', [ProgramController::class, 'list'])->name("programs.list")->middleware(RoleMiddleware::class.':ADMIN');
+    Route::get('events/list', [EventController::class, 'list'])->name("events.list")->middleware(RoleMiddleware::class.':ADMIN');
+    Route::get('tasks/list', [TaskController::class, 'list'])->name("tasks.list")->middleware(RoleMiddleware::class.':ADMIN');
     Route::get('users/list', [UserController::class, 'list'])->name("users.list")->middleware(RoleMiddleware::class.':ADMIN');
     Route::get('trainers/list', [TrainerController::class, 'list'])->name("trainers.list")->middleware(RoleMiddleware::class.':ADMIN');
-    Route::get('contacts/list', [ContactController::class, 'list'])->name("contacts.list");
+    Route::get('contacts/list', [ContactController::class, 'list'])->name("contacts.list")->middleware(RoleMiddleware::class.':ADMIN,SUPERADMIN');
+    Route::get('libraries/list', [LibraryController::class, 'list'])->name("libraries.list");
 
     // Store the KPI associated with the task
     Route::post('tasks/{task}/kpis', [KpiController::class, 'store'])->name('kpis.store');
