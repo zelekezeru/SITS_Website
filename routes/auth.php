@@ -12,16 +12,16 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use Spatie\Permission\Middleware\RoleMiddleware;
+use Illuminate\Support\Facades\Schema;
 
 
-if (count(User::all()) !== 0 ) {
+if (Schema::hasTable('users') && User::count() !== 0) {
     Route::middleware(RoleMiddleware::class.':ADMIN')->group(function () {
         Route::get('register', [RegisteredUserController::class, 'create'])
             ->name('register');
     
         Route::post('register', [RegisteredUserController::class, 'store']);
     });
-    
 } else {
     Route::middleware('guest')->group(function () {
         Route::get('register', [RegisteredUserController::class, 'create'])
@@ -29,7 +29,6 @@ if (count(User::all()) !== 0 ) {
     
         Route::post('register', [RegisteredUserController::class, 'store']);
     });
-    
 }
 
 
