@@ -68,25 +68,35 @@ class LibraryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Library $library)
+    public function show(Library $library) : View
     {
-        //
+        return view('libraries.show', compact('library'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Library $library)
+    public function edit(Library $library) : View
     {
-        //
+        return view('libraries.edit', compact('library'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Library $library)
+    public function update(LibraryUpdateRequest $request, Library $library): RedirectResponse
     {
-        //
+        $data = $request->validated();
+
+        if ($request->hasFile('banner')) {
+            $bannerPath = $request->file('banner')->store('banners', 'public');
+            $data['banner'] = $bannerPath;
+        }
+
+        $library->update($data);
+
+        return redirect()->route('libraries.list')
+            ->with('success', 'library updated successfully');
     }
 
     /**
@@ -94,6 +104,9 @@ class LibraryController extends Controller
      */
     public function destroy(Library $library)
     {
-        //
+        $library->delete();
+
+        return redirect()->route('libraries.list')
+            ->with('success', 'library deleted successfully');
     }
 }
