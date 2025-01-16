@@ -22,11 +22,7 @@ class AuthenticatedSessionController extends Controller
 
         if ($user == null) {
 
-            $roles = Role::all();
-
-            $user = new User();
-
-            return view('auth.superadmin', compact('roles','user'));
+            return redirect(route('register'));
 
         }
         else {

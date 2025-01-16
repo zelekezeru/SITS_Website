@@ -36,10 +36,9 @@
                       
                       <div class="col-md-12 mb-3">
                         <label for="inputContent" class="form-label"><strong>Content:</strong></label>
-                        <textarea name="content" class="form-control @error('content') is-invalid @enderror" id="inputContent"
-                            placeholder="Content" required></textarea>
+                        <textarea name="content" id="editor"></textarea>
                         @error('content')
-                            <div class="form-text text-danger">{{ $content }}</div>
+                            <div class="form-text text-danger">{{ $message }}</div>
                         @enderror
                       </div>
 
@@ -51,4 +50,19 @@
           </div>
       </div>
   </div>
+  <script src="https://cdn.ckeditor.com/ckeditor5/34.0.0/classic/ckeditor.js">{{old('content')}}</script>
+
+  <script>
+    // Initialize CKEditor
+    ClassicEditor
+        .create(document.querySelector('#editor'),{ ckfinder: {
+          uploadUrl: "{{ route('ckeditor.blog.upload', ['_token'=>csrf_token()]) }}"
+        }})
+        .then(editor => {
+            console.log('Editor was initialized', editor);
+        })
+        .catch(error => {
+            console.error('Error during initialization of the editor', error);
+        });
+  </script>
 </x-admin-layout>

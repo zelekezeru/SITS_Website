@@ -4643,4 +4643,28 @@ h6 {
 /*---------------------------------------------------- */
 
 
+
+figure.image {
+    width: 60%;
+    margin: auto;
+}
+
+@media screen and (max-width: 500px) {
+    figure.image {
+        width: 100%;
+    }
+}
+
+
+.image-style-side {
+    float: right;
+    width: 50%;
+}
+
+.image img {
+    width: 100%;
+    object-fit: cover;
+}
+
+
 /*# sourceMappingURL=style.css.map */

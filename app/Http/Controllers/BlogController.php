@@ -13,7 +13,7 @@ class BlogController extends Controller
      */
     public function index()
     {
-        $blogs = Blog::all();
+        $blogs = Blog::paginate(5);
         
         return view('blogs.index', compact('blogs'));
     }
@@ -34,6 +34,18 @@ class BlogController extends Controller
     public function create()
     {
         return view('blogs.create');
+    }
+
+    /*
+    * Store text editors upload
+    */
+
+    public function upload(Request $request)
+    {
+        $path = $request->file('upload')->store('blog_images/', 'public');
+        $url = asset('storage/' . $path);
+
+        return response()->json(['url' => $url, 'uploaded' => 1]);
     }
 
     /**
@@ -60,7 +72,7 @@ class BlogController extends Controller
      */
     public function show(Blog $blog)
     {
-        //
+        return view("blogs.show", compact('blog'));
     }
 
     /**

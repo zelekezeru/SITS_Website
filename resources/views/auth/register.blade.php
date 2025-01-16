@@ -8,6 +8,11 @@
 
             <div class="col-md-6 p-4 bg-white rounded-end">
                 <h2 class="mb-4 text-info text-center">Sign Up</h2>
+
+                @if ($firstUser)
+                    <h6 class="mb-4 text-warning text-center">You're the first User to the System, You'll automatically be assigned to the <br> <span class="text-success">Role of Superadmin!</span></h6>
+                @endif
+                
                 <form method="POST" action="{{ route('register') }}"  enctype="multipart/form-data">
                     @csrf
 
@@ -31,28 +36,39 @@
                         <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" required>
                     </div>
 
-                    <div>
+                    <div class="form-group">
+                        <label for="role" class="form-label">Role</label>
+                        @if ($firstUser)
+                            <input type="text" class="form-control" readonly name="role" value="SUPERADMIN">
+                        @else
+                            <select class="form-control mb-3" id="role" name="role" required>
+                                <option value="" disabled selected>Choose a role</option>
+                                @foreach ($roles as $role)
+                                    <option value="{{ $role->name }}" {{ old('role') == $role->name ? 'selected' : '' }}>
+                                        {{ $role->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('role')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        @endif
+                    </div>
+
+                    <div class="form-group">
                         <label for="profile_image">Profile Image (Optional)</label>
-                        <input type="file" name="profile_image" id="profile_image" accept="image/*">
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" name="profile_image" id="profile_image" accept="image/*">
+                            <label class="custom-file-label" for="profile_image">
+                                <i class="fa fa-upload"></i> <i class="ti-twitter"></i> Choose file
+                            </label>
+                        </div>
                         @error('profile_image')
                             <span class="text-red-500">{{ $message }}</span>
                         @enderror
                     </div>
 
-                    <label for="role" class="form-label">Role</label>
-
-                    @if ($roles == 'SUPERADMIN')
-                        <input type="hidden" name="role" value="SUPERADMIN">
-                    @else
-                        <select class="form-control mb-3" id="role" name="role" required>
-                            <option value="" disabled selected>Choose a role</option>
-                            @foreach ($roles as $role)
-                                <option value="{{ $role->name }}">{{ $role->name }}</option> <!-- Pass role name -->
-                            @endforeach
-                        </select>
-                    @endif
-
-                    <button type="submit" class="btn btn-primary w-100 mb-3">Sign Up</button>
+                    <button type="submit" class="btn btn-primary w-100 mb-3 mt-3">Sign Up</button>
                     <div class="text-center">
                         <a href="{{ route('login') }}">Already have an account? Login</a>
                     </div>
@@ -61,3 +77,4 @@
         </div>
     </div>
 </x-guest-layout>
+

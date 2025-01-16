@@ -26,13 +26,13 @@ class CreateRolesCommand extends Command
      */
     public function handle()
     {
+        Role::create(['name' => 'SUPERADMIN', 'guard_name' => 'web']);
+
         Role::create(['name' => 'ADMIN', 'guard_name' => 'web']);
 
         Role::create(['name' => 'STAFF', 'guard_name' => 'web']);
 
         Role::create(['name' => 'EDITOR', 'guard_name' => 'web']);
-        
-        Role::create(['name' => 'SUPERADMIN', 'guard_name' => 'web']);
         
         Role::create(['name' => 'DEPARTMENT_HEAD', 'guard_name' => 'web']);
         

@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Schema;
 
 
 if (Schema::hasTable('users') && User::count() !== 0) {
-    Route::middleware(RoleMiddleware::class.':ADMIN')->group(function () {
+    Route::middleware(RoleMiddleware::class.':SUPERADMIN')->group(function () {
         Route::get('register', [RegisteredUserController::class, 'create'])
             ->name('register');
     

@@ -32,13 +32,13 @@ Route::middleware('auth')->group(function () {
 
 // ADMIN ONLY ROUTES GO HERE
 Route::middleware(['auth'])->group(function () {
-    Route::get('blogs/list', [BlogController::class, 'list'])->name("blogs.list")->middleware(RoleMiddleware::class.':ADMIN');
-    Route::get('courses/list', [CourseController::class, 'list'])->name("courses.list")->middleware(RoleMiddleware::class.':ADMIN');
-    Route::get('programs/list', [ProgramController::class, 'list'])->name("programs.list")->middleware(RoleMiddleware::class.':ADMIN');
-    Route::get('events/list', [EventController::class, 'list'])->name("events.list")->middleware(RoleMiddleware::class.':ADMIN');
-    Route::get('tasks/list', [TaskController::class, 'list'])->name("tasks.list")->middleware(RoleMiddleware::class.':ADMIN');
-    Route::get('users/list', [UserController::class, 'list'])->name("users.list")->middleware(RoleMiddleware::class.':ADMIN');
-    Route::get('trainers/list', [TrainerController::class, 'list'])->name("trainers.list")->middleware(RoleMiddleware::class.':ADMIN');
+    Route::get('blogs/list', [BlogController::class, 'list'])->name("blogs.list")->middleware(RoleMiddleware::class.':ADMIN|SUPERADMIN');
+    Route::get('courses/list', [CourseController::class, 'list'])->name("courses.list")->middleware(RoleMiddleware::class.':ADMIN|SUPERADMIN');
+    Route::get('programs/list', [ProgramController::class, 'list'])->name("programs.list")->middleware(RoleMiddleware::class.':ADMIN|SUPERADMIN');
+    Route::get('events/list', [EventController::class, 'list'])->name("events.list")->middleware(RoleMiddleware::class.':ADMIN|SUPERADMIN');
+    Route::get('tasks/list', [TaskController::class, 'list'])->name("tasks.list")->middleware(RoleMiddleware::class.':ADMIN|SUPERADMIN');
+    Route::get('users/list', [UserController::class, 'list'])->name("users.list")->middleware(RoleMiddleware::class.':ADMIN|SUPERADMIN');
+    Route::get('trainers/list', [TrainerController::class, 'list'])->name("trainers.list")->middleware(RoleMiddleware::class.':ADMIN|SUPERADMIN');
     Route::get('contacts/list', [ContactController::class, 'list'])->name("contacts.list")->middleware(RoleMiddleware::class.':ADMIN,SUPERADMIN');
     Route::get('libraries/list', [LibraryController::class, 'list'])->name("libraries.list");
 
@@ -52,6 +52,7 @@ Route::middleware(['auth'])->group(function () {
     Route::put('feedbacks/{feedback}', [FeedbackController::class, 'update'])->name('feedbacks.update');
     Route::delete('feedbacks/{feedback}', [FeedbackController::class, 'destroy'])->name('feedbacks.destroy');
 
+    Route::post('/ckfinder-upload', [BlogController::class, 'upload'])->name('ckeditor.blog.upload');
 });
 
 //Hotel
