@@ -30,7 +30,7 @@ class LibraryStoreRequest extends FormRequest
             'description' => 'nullable|string',
             'link' => 'nullable|string',
             'category' => 'nullable|string',
-            'banner' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'banner' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,bmp,webp,tiff|max:2048',
             'file' => 'nullable|file|mimes:pdf,doc,docx,epub,txt,rtf|max:10000'
         ];
     }
