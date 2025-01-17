@@ -15,8 +15,8 @@
 </div>
 
 <div class="col-md-6 mb-3">
-    <label for="inputCategory" class="form-label"><strong>Category:</strong></label>
-    <input type="text" name="category" class="form-control @error('category') is-invalid @enderror" id="inputCategory" value="{{ old('category') }}" placeholder="Category" required>
+    <label for="inputcategory" class="form-label"><strong>Category:</strong></label>
+    <input type="text" name="category" class="form-control @error('category') is-invalid @enderror" id="inputcategory" value="{{ old('category') }}" placeholder="Category" required>
     @error('category')
         <div class="form-text text-danger">{{ $message }}</div>
     @enderror
@@ -37,12 +37,13 @@
         <div class="form-text text-danger">{{ $message }}</div>
     @enderror
 </div>
-{{-- <div class="col-md-6 mb-3">
+
+<div class="col-md-6 mb-3">
     <label for="inputFile" class="form-label"><strong>Upload File (Optional):</strong></label>
     <input type="file" name="file" value="{{ old('file') }}" class="form-control @error('file') is-invalid @enderror" id="inputFile">
     @error('file')
         <div class="form-text text-danger">{{ $message }}</div>
     @enderror
-</div> --}}
+</div>
 
 </div>

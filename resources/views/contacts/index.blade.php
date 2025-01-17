@@ -64,24 +64,24 @@
                 @csrf
                 <div class="col-md-6">
                   <div class="form-group">
-                    <input type="text" class="form-control" id="name" name="name" placeholder="Enter your name"
+                    <input type="text" class="form-control" id="name" name="name" value="{{ old('name') }}" placeholder="Enter your name"
                       onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your name'" required=""/>
                   </div>
                   <div class="form-group">
-                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter email address" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter email address'" required="" />
+                    <input type="email" class="form-control" id="email" name="email" value="{{ old('email') }}" placeholder="Enter email address" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter email address'" required="" />
                   </div>
                   <div class="form-group">
-                    <input type="text" class="form-control" id="phone" name="phone" placeholder="Enter phone address"
+                    <input type="text" class="form-control" id="phone" name="phone" value="{{ old('phone') }}" placeholder="Enter phone address"
                       onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter phone Number'" required=""/>
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="form-group">
-                    <input type="text" class="form-control" id="title" name="title" placeholder="Enter Subject"
+                    <input type="text" class="form-control" id="title" name="title" value="{{ old('title') }}" placeholder="Enter Subject"
                       onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter Subject'" required="" />
                   </div>
                   <div class="form-group">
-                    <textarea class="form-control" name="message" id="message" rows="3" placeholder="Enter Message"
+                    <textarea class="form-control" name="message" id="message" rows="3" value="{{ old('message') }}" placeholder="Enter Message"
                       onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter Message'" required=""></textarea>
                   </div>
                 </div>

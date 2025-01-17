@@ -9,6 +9,7 @@ use App\Models\Task;
 use App\Models\Blog;
 use App\Models\Event;
 use App\Models\User;
+use App\Models\Library;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -16,8 +17,9 @@ class HomeController extends Controller
     public function index()
     {
 
-        $courses = Course::all();
-        $trainers = Trainer::all();
+        $courses = Course::get();
+
+        $trainers = Trainer::get();
 
         $courses = Course::get();
 
@@ -35,9 +37,10 @@ class HomeController extends Controller
         $blogsCount = Blog::count(); // Count blogs
         $tasksCount = Task::count(); // Count tasks
         $usersCount = User::count(); // Count users
+        $librariesCount = Library::count(); // Count libraries
 
         // Pass the counts to the dashboard view
-        return view('dashboard', compact('coursesCount', 'programsCount', 'eventsCount', 'trainersCount', 'blogsCount', 'tasksCount', 'usersCount'));
+        return view('dashboard', compact('coursesCount', 'programsCount', 'eventsCount', 'trainersCount', 'blogsCount', 'tasksCount', 'usersCount', 'librariesCount'));
     }
 
     public function about()

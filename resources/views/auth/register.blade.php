@@ -12,18 +12,18 @@
                 @if ($firstUser)
                     <h6 class="mb-4 text-warning text-center">You're the first User to the System, You'll automatically be assigned to the <br> <span class="text-success">Role of Superadmin!</span></h6>
                 @endif
-                
+
                 <form method="POST" action="{{ route('register') }}"  enctype="multipart/form-data">
                     @csrf
 
                     <div class="form-group">
                         <label for="name" class="form-label">Full Name</label>
-                        <input type="text" class="form-control" id="name" name="name" required>
+                        <input type="text" class="form-control" id="name" name="name"  value="{{ old('category') }}" required>
                     </div>
 
                     <div class="form-group">
                         <label for="email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="email" name="email" required>
+                        <input type="email" class="form-control" id="email" name="email" value="{{ old('category') }}" required>
                     </div>
 
                     <div class="form-group">

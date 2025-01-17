@@ -14,19 +14,26 @@ class LibraryStoreRequest extends FormRequest
         return true;
     }
 
+        /**
+         * Get the validation rules that apply to the request.
+         *
+         * @return array
+         */
+
     /**
      * Get the validation rules that apply to the request.
      */
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
+            'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'other' => 'nullable|string',
-            'image' => 'nullable|string',
-            'catagory' => 'nullable|string',
-            'banner' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'file' => 'nullable|file|mimes:pdf,epub,doc,docx|max:10000',
+            'link' => 'nullable|string',
+            'category' => 'nullable|string',
+            'banner' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'file' => 'nullable|file|mimes:pdf,doc,docx,epub,txt,rtf|max:10000'
         ];
     }
+    // ...existing code...
 }
+// ...existing code...

@@ -22,7 +22,13 @@ class AuthenticatedSessionController extends Controller
 
         if ($user == null) {
 
-            return redirect(route('register'));
+            $roles = Role::all();
+
+            $user = User::first();
+
+            $firstUser = $user === null;
+
+            return view('auth.register', compact('roles', 'firstUser'));
 
         }
         else {

@@ -15,8 +15,10 @@ return new class extends Migration
             $table->id(); // Auto-incremented unique ID
             $table->string('title', 50); // Customer name
             $table->longText('description')->unique(); // Email address
-            $table->string('image'); // Phone number
-            $table->string('other'); // Message title
+            $table->string('banner'); // Phone number
+            $table->string('link'); // Message title
+            $table->string('category'); // Message category
+            $table->string('file'); // Message file
             $table->boolean('status')->default(true); // Active or inactive (default: active)
             $table->boolean('visibility')->default(true); // Hidden or visible (default: visible)
             $table->timestamps(); // Created_at and Updated_at timestamps

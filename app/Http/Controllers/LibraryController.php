@@ -50,13 +50,18 @@ class LibraryController extends Controller
      */
     public function store(LibraryStoreRequest $request) : RedirectResponse
     {
-        dd($request->all());
+
 
         $data = $request->validated();
 
         if ($request->hasFile('banner')) {
             $bannerPath = $request->file('banner')->store('libraryBanners', 'public');
             $data['banner'] = $bannerPath;
+        }
+
+        if ($request->hasFile('file')) {
+            $filePath = $request->file('file')->store('files', 'public');
+            $data['file'] = $bannerPath;
         }
 
         Library::create($data);
@@ -89,8 +94,13 @@ class LibraryController extends Controller
         $data = $request->validated();
 
         if ($request->hasFile('banner')) {
-            $bannerPath = $request->file('banner')->store('banners', 'public');
+            $bannerPath = $request->file('banner')->store('libraryBanners', 'public');
             $data['banner'] = $bannerPath;
+        }
+
+        if ($request->hasFile('file')) {
+            $filePath = $request->file('file')->store('files', 'public');
+            $data['file'] = $bannerPath;
         }
 
         $library->update($data);

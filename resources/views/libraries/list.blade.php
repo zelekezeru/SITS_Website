@@ -23,6 +23,7 @@
                                 <th width="80px">No</th>
                                 <th>Title</th>
                                 <th>Image</th>
+                                <th>Category</th>
                                 <th>Description</th>
                                 <th width="250px">Action</th>
                             </tr>
@@ -32,7 +33,14 @@
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $library->title }}</td>
-                                    <td>{{ $library->image }}</td>
+                                    <td>
+                                        @if($library->banner)
+                                            <img src="{{ asset('storage/' . $library->banner) }}" alt="{{ $library->title }}" width="60">
+                                        @else
+                                            No Image
+                                        @endif
+                                    </td>
+                                    <td>{{ $library->category }}</td>
                                     <td>{{ $library->description }}</td>
                                     <td class="d-flex">
                                         <a class="btn btn-info btn-sm mx-2" href="{{ route('libraries.show', $library->id) }}">

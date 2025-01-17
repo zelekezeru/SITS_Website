@@ -4,7 +4,7 @@
             <h2 class="card-header text-center">Add New Library</h2>
             <div class="card-body">
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                    <a class="btn btn-primary btn-sm" href="{{ route('libraries.index') }}"><i class="fa fa-arrow-left"></i> Back</a>
+                    <a class="btn btn-primary btn-sm" href="{{ route('libraries.list') }}"><i class="fa fa-arrow-left"></i> Back</a>
                 </div>
 
                 <form action="{{ route('libraries.store') }}" method="POST" enctype="multipart/form-data">
