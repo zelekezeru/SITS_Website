@@ -11,9 +11,6 @@ use App\Http\Controllers\LibraryController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\EventController;
-use App\Http\Controllers\KpiController;
-use App\Http\Controllers\FeedbackController;
-use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TrainerController;
 use App\Http\Controllers\SubscriptionController;
@@ -36,21 +33,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('courses/list', [CourseController::class, 'list'])->name("courses.list")->middleware(RoleMiddleware::class.':ADMIN|SUPERADMIN');
     Route::get('programs/list', [ProgramController::class, 'list'])->name("programs.list")->middleware(RoleMiddleware::class.':ADMIN|SUPERADMIN');
     Route::get('events/list', [EventController::class, 'list'])->name("events.list")->middleware(RoleMiddleware::class.':ADMIN|SUPERADMIN');
-    Route::get('tasks/list', [TaskController::class, 'list'])->name("tasks.list")->middleware(RoleMiddleware::class.':ADMIN|SUPERADMIN');
     Route::get('users/list', [UserController::class, 'list'])->name("users.list")->middleware(RoleMiddleware::class.':ADMIN|SUPERADMIN');
     Route::get('trainers/list', [TrainerController::class, 'list'])->name("trainers.list")->middleware(RoleMiddleware::class.':ADMIN|SUPERADMIN');
     Route::get('contacts/list', [ContactController::class, 'list'])->name("contacts.list")->middleware(RoleMiddleware::class.':ADMIN,SUPERADMIN');
     Route::get('libraries/list', [LibraryController::class, 'list'])->name("libraries.list");
-
-    // Store the KPI associated with the task
-    Route::post('tasks/{task}/kpis', [KpiController::class, 'store'])->name('kpis.store');
-    Route::put('kpis/{kpi}', [KpiController::class, 'update'])->name('kpis.update');
-    Route::delete('kpis/{kpi}', [KpiController::class, 'destroy'])->name('kpis.destroy');
-
-    // Store the FEEDBACK associated with the task
-    Route::post('tasks/{task}/feedbacks', [FeedbackController::class, 'store'])->name('feedbacks.store');
-    Route::put('feedbacks/{feedback}', [FeedbackController::class, 'update'])->name('feedbacks.update');
-    Route::delete('feedbacks/{feedback}', [FeedbackController::class, 'destroy'])->name('feedbacks.destroy');
 
     Route::post('/ckfinder-upload', [BlogController::class, 'upload'])->name('ckeditor.blog.upload');
 });
@@ -81,8 +67,6 @@ Route::resource('admins', AdminController::class);
 Route::resource('programs', ProgramController::class);
 
 Route::resource('events', EventController::class);
-
-Route::resource('tasks', TaskController::class);
 
 Route::resource('trainers', TrainerController::class);
 
