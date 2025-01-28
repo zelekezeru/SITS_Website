@@ -45,7 +45,7 @@
                                     style="width: 100%; height: 250px; object-fit: cover;" />
                             </div>
                             <div class="course_content">
-                                <span class="price">${{ $course->amount_paid }}</span>
+                                <span class="price">{{ $course->amount_paid }} Br</span>
                                 <span class="tag mb-3 d-inline-block">{{ $course->category }}</span>
                                 <h4 class="mb-2">
                                     <a href="{{ route('courses.show', $course->id) }}">{{ $course->title }}</a>

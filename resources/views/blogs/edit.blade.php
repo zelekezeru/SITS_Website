@@ -34,7 +34,18 @@
                               <div class="form-text text-danger">{{ $message }}</div>
                           @enderror
                       </div>
-                      
+
+
+                    <div class="col-md-6 mb-3">
+                        <label for="inputImage" class="form-label"><strong>Image:</strong></label>
+                        <input type="file" name="image" class="form-control @error('image') is-invalid @enderror" id="inputImage">
+                        <div class="form-text">Current Image:</div>
+                        <img src="{{ asset('storage/' . $blog->image) }}" alt="{{ $blog->title }}" style="max-width: 100px; max-height: 100px;">
+                        @error('image')
+                            <div class="form-text text-danger">{{ $message }}</div>
+                        @enderror
+                    </div>
+
                       <div class="col-md-12 mb-3">
                         <label for="inputContent" class="form-label"><strong>Content:</strong></label>
                         <textarea name="content" id="editor">{{ old('content', $blog->content) }}</textarea>

@@ -14,7 +14,7 @@ class BlogController extends Controller
     public function index()
     {
         $blogs = Blog::paginate(5);
-        
+
         return view('blogs.index', compact('blogs'));
     }
 
@@ -24,7 +24,7 @@ class BlogController extends Controller
     public function list()
     {
         $blogs = Blog::paginate(10);
-        
+
         return view('blogs.list', compact('blogs'));
     }
 
@@ -33,7 +33,9 @@ class BlogController extends Controller
      */
     public function create()
     {
-        return view('blogs.create');
+        $blog = new Blog();
+
+        return view('blogs.create', compact('blog'));
     }
 
     /*
@@ -64,6 +66,11 @@ class BlogController extends Controller
 
         $blog = Blog::create($data);
 
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('blog_images', 'public');
+            $blog->update(['image' => $imagePath]);
+        }
+
         return redirect(route('blogs.list'));
     }
 
@@ -86,15 +93,20 @@ class BlogController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Blog $blog) 
-    { 
-        $data = $request->validate([ 
-            'title' => 'required|string|max:255', 
-            'category' => 'required|string|max:255', 
-            'author' => 'required|string|max:255', 
-            'content' => 'required|string', 
-        ]); 
-        $blog->update($data); 
+    public function update(Request $request, Blog $blog)
+    {
+        $data = $request->validate([
+            'title' => 'required|string|max:255',
+            'category' => 'required|string|max:255',
+            'author' => 'required|string|max:255',
+            'content' => 'required|string',
+        ]);
+        $blog->update($data);
+
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('blog_images', 'public');
+            $blog->update(['image' => $imagePath]);
+        }
         return redirect(route('blogs.list'))->with('message', 'Blog updated successfully!');
     }
 

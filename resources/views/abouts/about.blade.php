@@ -33,9 +33,10 @@
         <div class="row h_blog_item">
           <div class="col-lg-6">
             <div class="h_blog_img" data-aos="fade-right" data-aos-delay="200">
-              <img class="img-fluid" src="img/about.png" alt="" />
+              <img class="img-fluid" src="{{ asset('img/about.png') }}" alt="" />
             </div>
           </div>
+
           <div class="col-lg-6">
             <div class="h_blog_text">
               <div class="h_blog_text_inner left right" data-aos="fade-up" data-aos-delay="700">
@@ -64,6 +65,12 @@
       </div>
     </section>
     <!--================ End About Area =================-->
+
+    <!--================ Start Testimonial Area =================-->
+
+    @include('abouts.galary')
+
+    <!--================ End Testimonial Area =================-->
 
     <!--================ Start Feature Area =================-->
     <section class="feature_area section_gap_top title-bg" data-aos="zoom-in" data-aos-delay="200">

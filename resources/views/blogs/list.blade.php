@@ -3,7 +3,7 @@
         <div class="card mt-5 ">
           <h2 class="card-header text-center">List Of Blogs</h2>
           <div class="card-body">
-                  
+
               @if(session('success'))
                   <div class="alert alert-success" role="alert">
                       {{ session('success') }}
@@ -11,7 +11,7 @@
               @endif
 
               <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                  <a class="btn btn-success btn-sm" href="{{ route('blogs.create') }}"> 
+                  <a class="btn btn-success btn-sm" href="{{ route('blogs.create') }}">
                       <i class="fa fa-plus"></i> Create New Blog
                   </a>
               </div>
@@ -22,11 +22,9 @@
                         <tr>
                             <th width="80px">No</th>
                             <th>Title</th>
-                            <th>Content</th>
                             <th>Category</th>
                             <th>Author</th>
                             <th>Date</th>
-                            <th>Views</th>
                             <th>Comments</th>
                             <th width="250px">Action</th>
                         </tr>
@@ -36,11 +34,9 @@
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $blog->title }}</td>
-                                <td>{{ \Illuminate\Support\Str::limit($blog->content, 20, '...') }}</td>
                                 <td>{{ $blog->category }}</td>
                                 <td>{{ $blog->author }}</td>
                                 <td>{{ $blog->date }}</td>
-                                <td>{{ $blog->views }}</td>
                                 <td>{{ $blog->comments }}</td>
                                 <td class="d-flex">
                                     <a class="btn btn-info btn-sm mx-2" href="{{ route('blogs.show', $blog->id) }}">
@@ -56,7 +52,7 @@
                                             <i class="fa-solid fa-trash"></i> Delete
                                         </button>
                                     </form>
-                                </td>                                    
+                                </td>
                             </tr>
                         @empty
                             <tr>
@@ -66,10 +62,10 @@
                     </tbody>
                 </table>
             </div>
-            
-            
+
+
               {!! $blogs->links() !!}
-          
+
           </div>
       </div>
   </div>

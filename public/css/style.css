@@ -495,7 +495,7 @@ button:focus {
     z-index: 1;
     min-height: 900px;
     position: relative;
-    background: url(../img/banner/home-banner.jpg) no-repeat center;
+    background: url(../img/banner/home-banner.svg) no-repeat center;
     background-size: cover;
 }
 
@@ -603,7 +603,7 @@ button:focus {
     right: 0;
     top: 0;
     bottom: 0;
-    background: rgba(0, 35, 71, 0.8);
+    background: rgba(77, 100, 91, 0.8);
 }
 
 .banner_area .banner_inner .banner_content {
@@ -861,7 +861,7 @@ button:focus {
 .single_course .price {
     position: absolute;
     top: -34px;
-    right: 15px;
+    right: 25px;
     z-index: 2;
     color: #002347;
     display: inline-block;
@@ -869,11 +869,11 @@ button:focus {
     line-height: 65px;
     width: 65px;
     text-align: center;
-    border-radius: 50px;
+    border-radius: 70px;
     background: #fdc632;
     font-family: "Rubik", sans-serif;
     font-weight: 500;
-    font-size: 20px;
+    font-size: 12px;
     -webkit-transition: all 0.3s ease 0s;
     -moz-transition: all 0.3s ease 0s;
     -o-transition: all 0.3s ease 0s;
@@ -4638,7 +4638,7 @@ h6 {
 .login-btn {
     background: #d4c42c;
     padding: 10px;
-    
+
 }
 /*---------------------------------------------------- */
 

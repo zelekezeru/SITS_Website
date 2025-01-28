@@ -33,7 +33,22 @@
                               <div class="form-text text-danger">{{ $message }}</div>
                           @enderror
                       </div>
-                      
+
+                      <div class="col-md-6 mb-3">
+                        <label for="image">Blog Cover Picture</label>
+                        <div class="custom-file">
+                            <input type="file" name="image" class="form-control custom-file-input" id="image">
+                        </div>
+                        @error('image')
+                            <div class="form-text text-danger">{{ $message }}</div>
+                        @enderror
+                        @if ($blog->image)
+                            <img src="{{ $blog->image }}" alt="Blog Image" class="img-thumbnail mt-2" width="150">
+                        @else
+                            <img src="{{ old('image') }}" alt="Blog Image" class="img-thumbnail mt-2" width="150">
+                        @endif
+                      </div>
+
                       <div class="col-md-12 mb-3">
                         <label for="inputContent" class="form-label"><strong>Content:</strong></label>
                         <textarea name="content" id="editor"></textarea>
