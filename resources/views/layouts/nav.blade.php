@@ -60,9 +60,6 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('contacts.index')}}">Contact Us</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('elements.index')}}">Elements</a>
-                        </li>
                         @if (Auth::check())
                             <li class="nav-item submenu dropdown">
                                 <a class="nav-link dropdown-toggle profile-pic d-flex align-items-center" data-toggle="dropdown" href="#" aria-expanded="false">

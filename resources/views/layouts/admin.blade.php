@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>SITS Admin Dashboard</title>
     <meta content="width=device-width, initial-scale=1.0, shrink-to-fit=no" name="viewport" />
-    <link rel="icon" href="{{ asset('img/kaiadmin/favicon.ico') }}" type="image/x-icon" />
+    <link rel="icon" href="{{ asset('img/logo.png') }}" type="image/png" />
     <!-- Fonts and icons -->
     <script src="{{ asset('js/plugin/webfont/webfont.min.js') }}"></script>
     <!-- CSS Files -->
@@ -36,7 +36,7 @@
             {{ $slot }}
         </main>
     </div>
-        
+
     <script>
         function confirmDelete(ItemId) {
             Swal.fire({

@@ -39,6 +39,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('libraries/list', [LibraryController::class, 'list'])->name("libraries.list");
 
     Route::post('/ckfinder-upload', [BlogController::class, 'upload'])->name('ckeditor.blog.upload');
+    Route::post('/profile/upload-profile-image', [ProfileController::class, 'uploadProfileImage'])->name('profile.uploadProfileImage');
 });
 
 //Hotel
