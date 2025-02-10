@@ -48,7 +48,7 @@ class SubscriptionController extends Controller
         ]);
 
         return redirect()->back()
-            ->with('success', 'User created successfully.');
+            ->with('status', 'User created successfully.');
     }
 
     /**

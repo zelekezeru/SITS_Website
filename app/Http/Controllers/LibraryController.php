@@ -67,7 +67,7 @@ class LibraryController extends Controller
         Library::create($data);
 
         return redirect()->route('libraries.list')
-            ->with('success', 'Library created successfully.');
+            ->with('status', 'Library created successfully.');
     }
 
     /**
@@ -106,7 +106,7 @@ class LibraryController extends Controller
         $library->update($data);
 
         return redirect()->route('libraries.list')
-            ->with('success', 'library updated successfully');
+            ->with('status', 'library updated successfully');
     }
 
     /**
@@ -117,6 +117,6 @@ class LibraryController extends Controller
         $library->delete();
 
         return redirect()->route('libraries.list')
-            ->with('success', 'library deleted successfully');
+            ->with('status', 'library deleted successfully');
     }
 }

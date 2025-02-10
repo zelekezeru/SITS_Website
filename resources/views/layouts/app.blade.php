@@ -31,6 +31,24 @@
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+        
+    <script>
+        function confirmDelete(ItemId) {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "Once deleted, this Item cannot be recovered!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('delete-form-' + ItemId).submit();
+                }
+            });
+        }
+    </script>
     <script src="{{ asset('js/aos.js') }}"></script>
     <script src="{{ asset('js/jquery-3.2.1.min.js') }}"></script>
     <script src="{{ asset('js/popper.js') }}"></script>
@@ -47,6 +65,7 @@
     <script>
         AOS.init();
     </script>
+       <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{ asset('js/gmaps.min.js') }}"></script>
     <script src="{{ asset('js/theme.js') }}"></script>
 </body>

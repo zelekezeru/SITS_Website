@@ -71,7 +71,7 @@ class BlogController extends Controller
             $blog->update(['image' => $imagePath]);
         }
 
-        return redirect(route('blogs.list'));
+        return redirect(route('blogs.list'))->with('status', 'Blog Created successfully!');
     }
 
     /**
@@ -107,7 +107,7 @@ class BlogController extends Controller
             $imagePath = $request->file('image')->store('blog_images', 'public');
             $blog->update(['image' => $imagePath]);
         }
-        return redirect(route('blogs.list'))->with('message', 'Blog updated successfully!');
+        return redirect(route('blogs.list'))->with('status', 'Blog updated successfully!');
     }
 
     /**
@@ -117,6 +117,6 @@ class BlogController extends Controller
     {
         $blog->delete();
 
-        return redirect(route('blogs.list'));
+        return redirect(route('blogs.list'))->with('status', 'Blog Deleted successfully!');
     }
 }

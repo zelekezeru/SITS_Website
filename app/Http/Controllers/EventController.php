@@ -61,7 +61,7 @@ class EventController extends Controller
 
         // Redirect to the create page with a success message
         return redirect()->route('events.list')
-            ->with('success', 'Event created successfully.');
+            ->with('status', 'Event created successfully.');
     }
 
 
@@ -96,7 +96,7 @@ class EventController extends Controller
         $event->update($data);
 
         return redirect()->route('events.list')
-            ->with('success', 'Event updated successfully');
+            ->with('status', 'Event updated successfully');
     }
 
     /**
@@ -107,6 +107,6 @@ class EventController extends Controller
         $event->delete();
 
         return redirect()->route('events.list')
-            ->with('success', 'Event deleted successfully');
+            ->with('status', 'Event deleted successfully');
     }
 }

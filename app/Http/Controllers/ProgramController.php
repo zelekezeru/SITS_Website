@@ -58,7 +58,7 @@ class ProgramController extends Controller
 
         // Redirect to the create page with a success message
         return redirect()->route('programs.list')
-            ->with('success', 'Program created successfully.');
+            ->with('status', 'Program created successfully.');
     }
 
 
@@ -87,7 +87,7 @@ class ProgramController extends Controller
         $program->update($data);
 
         return redirect()->route('programs.list')
-            ->with('success', 'Program updated successfully');
+            ->with('status', 'Program updated successfully');
     }
 
     /**
@@ -98,6 +98,6 @@ class ProgramController extends Controller
         $program->delete();
 
         return redirect()->route('programs.list')
-            ->with('success', 'Program deleted successfully');
+            ->with('status', 'Program deleted successfully');
     }
 }

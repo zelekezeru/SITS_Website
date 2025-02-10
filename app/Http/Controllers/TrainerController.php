@@ -61,7 +61,7 @@ class TrainerController extends Controller
         Trainer::create($data);
     
         return redirect()->route('trainers.list')
-            ->with('success', 'Trainer created successfully.');
+            ->with('status', 'Trainer created successfully.');
     }
     
     /**
@@ -95,7 +95,7 @@ class TrainerController extends Controller
         $trainer->update($data);
 
         return redirect()->route('trainers.list')
-            ->with('success', 'Trainer updated successfully');
+            ->with('status', 'Trainer updated successfully');
     }
     
     /**
@@ -106,6 +106,6 @@ class TrainerController extends Controller
         $trainer->delete();
 
         return redirect()->route('trainers.list')
-            ->with('success', 'Trainer deleted successfully');
+            ->with('status', 'Trainer deleted successfully');
     }
 }

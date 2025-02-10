@@ -61,7 +61,7 @@ class CourseController extends Controller
         Course::create($data);
 
         return redirect()->route('courses.list')
-            ->with('success', 'Course created successfully.');
+            ->with('status', 'Course created successfully.');
     }
 
     /**
@@ -95,7 +95,7 @@ class CourseController extends Controller
         $course->update($data);
 
         return redirect()->route('courses.list')
-            ->with('success', 'Course updated successfully');
+            ->with('status', 'Course updated successfully');
     }
 
     /**
@@ -106,6 +106,6 @@ class CourseController extends Controller
         $course->delete();
 
         return redirect()->route('courses.list')
-            ->with('success', 'Course deleted successfully');
+            ->with('status', 'Course deleted successfully');
     }
 }

@@ -1,31 +1,18 @@
 <x-admin-layout>
-    <div class="container topCard pt-5">
-        <div class="card mt-5 ">
-            <h2 class="card-header text-center">List of subscriptions</h2>
+    <div class="col-md-12 pt-5 mt-5 container">
+        <div class="card">
+            <h2 class="card-header text-center">List of Subscriptions</h2>
             <div class="card-body">
 
-                @if(session('success'))
-                    <div class="alert alert-success" role="alert">
-                        {{ session('success') }}
-                    </div>
-                @endif
-
-                {{-- <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                    <a class="btn btn-success btn-sm" href="{{ route('subscriptions.create') }}">
-                        <i class="fa fa-plus"></i> Create New Subscription
-                    </a>
-                </div> --}}
-
-                <div class="table-responsive mt-4">
-                    <table class="table table-bordered table-striped">
-                        <thead>
+                <div class="table-responsive">
+                    <table id="add-row" class="display table table-bordered table-striped table-hover">
+                        <thead class="thead-dark">
                             <tr>
-                                <th width="80px">No</th>
+                                <th>#</th>
                                 <th>Name</th>
                                 <th>Phone</th>
                                 <th>Email</th>
-                                <th>Address</th>
-                                <th width="250px">Action</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -35,35 +22,45 @@
                                     <td>{{ $subscription->name }}</td>
                                     <td>{{ $subscription->phone }}</td>
                                     <td>{{ $subscription->email }}</td>
-                                    <td>{{ $subscription->address }}</td>
-                                    <td class="d-flex">
-                                        {{-- <a class="btn btn-info btn-sm mx-2" href="{{ route('subscriptions.show', $subscription->id) }}">
-                                            <i class="fa-solid fa-list"></i> Show
-                                        </a> --}}
-                                        {{-- <a class="btn btn-primary btn-sm mx-2" href="{{ route('subscriptions.edit', $subscription->id) }}">
-                                            <i class="fa-solid fa-pen-to-square"></i> Edit
-                                        </a> --}}
-                                        <form action="{{ route('subscriptions.destroy', $subscription->id) }}" method="POST" class="mx-2">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm">
-                                                <i class="fa-solid fa-trash"></i> Delete
+                                    <td class="text-center">
+                                        <div class="form-button-action">
+                                            <!-- Delete Button -->
+                                            <button type="button" class="btn btn-link btn-danger" data-bs-toggle="tooltip" title="Delete" onclick="confirmDelete({{ $subscription->id }})">
+                                                <i class="fa fa-trash"></i>
                                             </button>
-                                        </form>
+                                            <!-- Delete Form -->
+                                            <form id="delete-form-{{ $subscription->id }}" action="{{ route('subscriptions.destroy', $subscription->id) }}" method="POST" style="display: none;">
+                                                @csrf
+                                                @method('DELETE')
+                                            </form>
+                                        </div>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6">There are no data.</td>
+                                    <td colspan="6" class="text-center">No subscriptions found.</td>
                                 </tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
 
-                {!! $subscriptions->links() !!}
+                <!-- SweetAlert Success Notifications -->
+                @if (session('status'))
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        Swal.fire({
+                            icon: 'success',
+                            title: '{{ ucfirst(session('status')) }}',
+                            text: '{{ session('status') }}.',
+                            confirmButtonText: 'Okay'
+                        });
+                    });
+                </script>
+                @endif
 
+                {!! $subscriptions->links() !!}
             </div>
         </div>
     </div>
-  </x-admin-layout>
+</x-admin-layout>
