@@ -38,7 +38,7 @@ class HomeController extends Controller
         $librariesCount = Library::count(); // Count libraries
 
         // Pass the counts to the dashboard view
-        return view('dashboard', compact('coursesCount', 'programsCount', 'eventsCount', 'trainersCount', 'blogsCount', 'tasksCount', 'usersCount', 'librariesCount'));
+        return view('dashboard', compact('coursesCount', 'programsCount', 'eventsCount', 'trainersCount', 'blogsCount', 'usersCount', 'librariesCount'));
     }
 
     public function about()
