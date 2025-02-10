@@ -29,13 +29,13 @@ Route::middleware('auth')->group(function () {
 
 // ADMIN ONLY ROUTES GO HERE
 Route::middleware(['auth'])->group(function () {
-    Route::get('blogs/list', [BlogController::class, 'list'])->name("blogs.list")->middleware(RoleMiddleware::class.':ADMIN|SUPERADMIN');
-    Route::get('courses/list', [CourseController::class, 'list'])->name("courses.list")->middleware(RoleMiddleware::class.':ADMIN|SUPERADMIN');
-    Route::get('programs/list', [ProgramController::class, 'list'])->name("programs.list")->middleware(RoleMiddleware::class.':ADMIN|SUPERADMIN');
-    Route::get('events/list', [EventController::class, 'list'])->name("events.list")->middleware(RoleMiddleware::class.':ADMIN|SUPERADMIN');
-    Route::get('users/list', [UserController::class, 'list'])->name("users.list")->middleware(RoleMiddleware::class.':ADMIN|SUPERADMIN');
-    Route::get('trainers/list', [TrainerController::class, 'list'])->name("trainers.list")->middleware(RoleMiddleware::class.':ADMIN|SUPERADMIN');
-    Route::get('contacts/list', [ContactController::class, 'list'])->name("contacts.list")->middleware(RoleMiddleware::class.':ADMIN,SUPERADMIN');
+    Route::get('blogs/list', [BlogController::class, 'list'])->name("blogs.list");
+    Route::get('courses/list', [CourseController::class, 'list'])->name("courses.list");
+    Route::get('programs/list', [ProgramController::class, 'list'])->name("programs.list");
+    Route::get('events/list', [EventController::class, 'list'])->name("events.list");
+    Route::get('users/list', [UserController::class, 'list'])->name("users.list");
+    Route::get('trainers/list', [TrainerController::class, 'list'])->name("trainers.list");
+    Route::get('contacts/list', [ContactController::class, 'list'])->name("contacts.list");
     Route::get('libraries/list', [LibraryController::class, 'list'])->name("libraries.list");
 
     Route::post('/ckfinder-upload', [BlogController::class, 'upload'])->name('ckeditor.blog.upload');

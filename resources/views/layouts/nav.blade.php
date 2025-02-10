@@ -62,32 +62,18 @@
                             <a class="nav-link" href="{{ route('contacts.index')}}">Contact Us</a>
                         </li>
 
-                        <li class="nav-item">
-<<<<<<< Updated upstream
-                            <a href="#" class="nav-link search" id="search">
-                            <i class="ti-search"></i>
-                            </a>
-=======
-                            <a class="nav-link" href="{{ route('elements.index')}}">Elements</a>
->>>>>>> Stashed changes
-                        </li>
-
-                        @if (Auth::check())
+                        @if (Auth::user() == true)
                             <li class="nav-item submenu dropdown">
-                                <a class="nav-link dropdown-toggle profile-pic" data-toggle="dropdown" href="#" aria-expanded="false">
-                                    <div class="avatar-sm">
-                                        <img src="{{ auth()->user()->profile_image ? Storage::url(auth()->user()->profile_image) : asset('img/user.png') }}" alt="Profile Image" class="avatar-img rounded-circle" style="width: 40px; height: 40px; object-fit: cover;" />
-                                    </div>
-                                    <span class="profile-username">
-                                        <span class="fw-bold">{{ Auth::user()->name }}</span>
-                                    </span>
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                    <img class="avatar-img rounded-circle" src="{{ auth()->user()->profile_image ? Storage::url(auth()->user()->profile_image) : 'avatar.png' }}" alt="Profile Image" style="width: 30px; height: 30px;">
+                                    {{ Auth::user()->name }}
                                 </a>
                                 <ul class="dropdown-menu dropdown-user animated fadeIn">
-                                    <div class="dropdown-user-scroll scrollbar-outer">
+                                    <div class="dropdown-user-scroll scrollbar-outer" style="margin-left: 10px; margin-right: 10px;">
                                         <li>
                                             <div class="user-box">
                                                 <div class="avatar-lg">
-                                                    <img class="avatar-img rounded" src="{{ auth()->user()->profile_image ? Storage::url(auth()->user()->profile_image) : asset('img/user.png') }}" alt="Profile Image" style="width: 80px; height: 80px; object-fit: cover;">
+                                                    <img class="avatar-img rounded-circle" src="{{ auth()->user()->profile_image ? Storage::url(auth()->user()->profile_image) : 'avatar.png' }}" alt="Profile Image" style="width: 60px; height: 60px;">
                                                 </div>
                                                 <div class="u-text">
                                                     <h4>{{ Auth::user()->name }}</h4>
@@ -98,7 +84,7 @@
                                         </li>
                                         <li>
                                             <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="{{ route('profile.edit') }}">My Profile</a>
+                                            <a class="dropdown-item" href="{{route('profile.edit')}}">My Profile</a>
                                             <a class="dropdown-item" href="#">Inbox</a>
                                             <a class="dropdown-item" href="#">Account Setting</a>
                                             <div class="dropdown-divider"></div>
@@ -106,8 +92,8 @@
                                                 @csrf
                                                 <x-responsive-nav-link :href="route('logout')"
                                                     onclick="event.preventDefault();
-                                                                this.closest('form').submit();">
-                                                    <div class="btn btn-sm btn-danger">
+                                                                    this.closest('form').submit();">
+                                                    <div class="btn bnt-sm btn-danger btn-sm">
                                                         {{ __('Log Out') }}
                                                     </div>
                                                 </x-responsive-nav-link>
@@ -118,7 +104,7 @@
                             </li>
                         @else
                             <li class="nav-item mt-3">
-                                <a class="btn btn-warning btn-sm" href="{{ route('login') }}">Login</a>
+                                <a class="btn btn-primary btn-sm text-white" href="{{ route('login')}}" style="background-color: #007bff; border-color: #007bff;">Login</a>
                             </li>
                         @endif
                     </ul>
