@@ -151,28 +151,6 @@
                     </a>
                 </div>
 
-                <!-- Tasks Card -->
-                <div class="col-sm-6 col-md-3">
-                    <a href="{{ route('tasks.list') }}">
-                        <div class="card card-stats card-round">
-                            <div class="card-body">
-                                <div class="row align-items-center">
-                                    <div class="col-icon">
-                                        <div class="icon-big text-center icon-warning bubble-shadow-small">
-                                            <i class="fas fa-tasks"></i>
-                                        </div>
-                                    </div>
-                                    <div class="col col-stats ms-3 ms-sm-0">
-                                        <div class="numbers">
-                                            <p class="card-category">Tasks</p>
-                                            <h4 class="card-title">{{ $tasksCount }}</h4> <!-- Display real count -->
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                </div>
 
                 <!-- Library Card -->
                 <div class="col-sm-6 col-md-3">
