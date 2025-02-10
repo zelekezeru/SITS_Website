@@ -62,9 +62,13 @@ class RegisteredUserController extends Controller
         ]);
 
         if ($request->input('role')) {
-            $user->assignRole($request->input('role')); // Assign by role name
+            $role = Role::where('name', $request->input('role'))->first();
+            if ($role) {
+                $user->assignRole($role); // Assign by role name
+            } else {
+                return redirect()->back()->withErrors(['role' => 'The selected role does not exist.']);
+            }
         }
-
 
         $user = User::count();
 
