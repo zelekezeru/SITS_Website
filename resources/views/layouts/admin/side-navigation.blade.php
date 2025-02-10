@@ -4,8 +4,7 @@
         <!-- Logo Header -->
         <div class="logo-header" data-background-color="dark">
             <a href="{{ url('/') }}" class="logo">
-                <img src="{{ asset('img/logo.png') }}" alt="navbar brand" class="navbar-brand"
-                    height="50" />
+                <img src="{{ asset('img/logo.png') }}" alt="navbar brand" class="navbar-brand" height="50" />
             </a>
             <div class="nav-toggle">
                 <button class="btn btn-toggle toggle-sidebar">
@@ -31,7 +30,6 @@
                     </a>
                 </li>
 
-
                 <li class="nav-section">
                     <span class="sidebar-mini-icon">
                         <i class="fa fa-ellipsis-h"></i>
@@ -41,19 +39,17 @@
 
                 {{-- ONLY FOR ADMIN USERS --}}
                 @if(request()->user()->hasRole('ADMIN'))
-
                     <li class="nav-item">
                         <a href="{{route('users.list')}}">
-                            <i class="fas fa-user-circle"></i>
+                            <i class="fas fa-users-cog"></i>
                             <p>Users</p>
                         </a>
                     </li>
-
                 @endif
 
                 <li class="nav-item">
                     <a data-bs-toggle="collapse" href="#Course">
-                        <i class="fas fa-book"></i>
+                        <i class="fas fa-book-open"></i>
                         <p>Course</p>
                         <span class="caret"></span>
                     </a>
@@ -61,12 +57,12 @@
                         <ul class="nav nav-collapse">
                             <li>
                                 <a href="{{ route('courses.list') }}">
-                                    <i class="fas fa-list"></i>Manage Course
+                                    <i class="fas fa-th-list"></i> Manage Course
                                 </a>
                             </li>
                             <li>
                                 <a href="{{ route('courses.create') }}">
-                                    <i class="fas fa-plus"></i>Add Course
+                                    <i class="fas fa-file-circle-plus"></i> Add Course
                                 </a>
                             </li>
                         </ul>
@@ -74,7 +70,7 @@
                 </li>
                 <li class="nav-item">
                     <a data-bs-toggle="collapse" href="#Programs">
-                        <i class="fas fa-graduation-cap"></i>
+                        <i class="fas fa-university"></i>
                         <p>Program</p>
                         <span class="caret"></span>
                     </a>
@@ -82,12 +78,12 @@
                         <ul class="nav nav-collapse">
                             <li>
                                 <a href="{{ route('programs.list') }}">
-                                    <i class="fas fa-list"></i>Manage Programs
+                                    <i class="fas fa-th-list"></i> Manage Programs
                                 </a>
                             </li>
                             <li>
                                 <a href="{{ route('programs.create') }}">
-                                    <i class="fas fa-plus"></i>Add Programs
+                                    <i class="fas fa-folder-plus"></i> Add Programs
                                 </a>
                             </li>
                         </ul>
@@ -95,7 +91,7 @@
                 </li>
                 <li class="nav-item">
                     <a data-bs-toggle="collapse" href="#Events">
-                        <i class="fas fa-calendar-alt"></i>
+                        <i class="fas fa-calendar-check"></i>
                         <p>Event</p>
                         <span class="caret"></span>
                     </a>
@@ -103,33 +99,33 @@
                         <ul class="nav nav-collapse">
                             <li>
                                 <a href="{{ route('events.list') }}">
-                                    <i class="fas fa-list"></i>Manage Events
+                                    <i class="fas fa-calendar-day"></i> Manage Events
                                 </a>
                             </li>
                             <li>
                                 <a href="{{ route('events.create') }}">
-                                    <i class="fas fa-plus"></i>Add Events
+                                    <i class="fas fa-calendar-plus"></i> Add Events
                                 </a>
                             </li>
                         </ul>
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a data-bs-toggle="collapse" href="#Conatact">
-                        <i class="fas fa-chalkboard-teacher"></i>
+                    <a data-bs-toggle="collapse" href="#Trainers">
+                        <i class="fas fa-chalkboard-user"></i>
                         <p>Trainers</p>
                         <span class="caret"></span>
                     </a>
-                    <div class="collapse" id="Conatact">
+                    <div class="collapse" id="Trainers">
                         <ul class="nav nav-collapse">
                             <li>
                                 <a href="{{ route('trainers.list') }}">
-                                    <i class="fas fa-list"></i>Manage Trainers
+                                    <i class="fas fa-users"></i> Manage Trainers
                                 </a>
                             </li>
                             <li>
                                 <a href="{{ route('trainers.create') }}">
-                                    <i class="fas fa-plus"></i>Add Trainers
+                                    <i class="fas fa-user-plus"></i> Add Trainers
                                 </a>
                             </li>
                         </ul>
@@ -145,52 +141,32 @@
                         <ul class="nav nav-collapse">
                             <li>
                                 <a href="{{ route('blogs.list') }}">
-                                    <i class="fas fa-list"></i>Manage Blog
+                                    <i class="fas fa-clipboard-list"></i> Manage Blog
                                 </a>
                             </li>
                             <li>
                                 <a href="{{ route('blogs.create') }}">
-                                    <i class="fas fa-plus"></i>Add Blog
+                                    <i class="fas fa-pen-square"></i> Add Blog
                                 </a>
                             </li>
                         </ul>
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a data-bs-toggle="collapse" href="#Contact">
-                        <i class="fas fa-newspaper"></i>
+                    <a href="{{ route('contacts.list') }}">
+                        <i class="fas fa-address-book"></i>
                         <p>Contact</p>
-                        <span class="caret"></span>
                     </a>
-                    <div class="collapse" id="Contact">
-                        <ul class="nav nav-collapse">
-                            <li>
-                                <a href="{{ route('contacts.list') }}">
-                                    <i class="fas fa-list"></i>Manage Contact
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
                 </li>
                 <li class="nav-item">
-                    <a data-bs-toggle="collapse" href="#Subscription">
-                        <i class="fas fa-newspaper"></i>
+                    <a href="{{ route('subscriptions.index') }}">
+                        <i class="fas fa-envelope-open-text"></i>
                         <p>Subscription</p>
-                        <span class="caret"></span>
                     </a>
-                    <div class="collapse" id="Subscription">
-                        <ul class="nav nav-collapse">
-                            <li>
-                                <a href="{{ route('subscriptions.index') }}">
-                                    <i class="fas fa-list"></i>Manage Subscriptions
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
                 </li>
                 <li class="nav-item">
                     <a data-bs-toggle="collapse" href="#Library">
-                        <i class="fas fa-newspaper"></i>
+                        <i class="fas fa-book-reader"></i>
                         <p>Library</p>
                         <span class="caret"></span>
                     </a>
@@ -198,12 +174,12 @@
                         <ul class="nav nav-collapse">
                             <li>
                                 <a href="{{ route('libraries.list') }}">
-                                    <i class="fas fa-list"></i>Manage libraries
+                                    <i class="fas fa-folder-open"></i> Manage Libraries
                                 </a>
                             </li>
                             <li>
                                 <a href="{{ route('libraries.create') }}">
-                                    <i class="fas fa-plus"></i>Add Library
+                                    <i class="fas fa-plus-square"></i> Add Library
                                 </a>
                             </li>
                         </ul>

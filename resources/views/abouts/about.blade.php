@@ -65,13 +65,7 @@
       </div>
     </section>
     <!--================ End About Area =================-->
-
-    <!--================ Start Testimonial Area =================-->
-
-    @include('abouts.galary')
-
-    <!--================ End Testimonial Area =================-->
-
+    
     <!--================ Start Feature Area =================-->
     <section class="feature_area section_gap_top title-bg" data-aos="zoom-in" data-aos-delay="200">
       <div class="container">
@@ -133,6 +127,13 @@
       </div>
     </section>
     <!--================ End Feature Area =================-->
+    
+    <!--================ Start Testimonial Area =================-->
+
+    @include('abouts.galary')
+
+    <!--================ End Testimonial Area =================-->
+
 
     <!--================ Start Testimonial Area =================-->
 

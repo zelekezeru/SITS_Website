@@ -2,7 +2,7 @@
     <div class="container mt-5 pt-5">
 
         <h3 class="fw-bold mb-3 text-center">Dashboard</h3>
-        <h4 class="op-7 mb-2 text-center">SITS Admin Managment Panel</h4>
+        <h4 class="op-7 mb-2 text-center">SITS Admin Management Panel</h4>
 
         <div class="page-inner">
             <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
@@ -28,7 +28,7 @@
                                     <div class="col col-stats ms-3 ms-sm-0">
                                         <div class="numbers">
                                             <p class="card-category">Users</p>
-                                            <h4 class="card-title">{{ $usersCount }}</h4> <!-- Display real count -->
+                                            <h4 class="card-title">{{ $usersCount }}</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -50,7 +50,7 @@
                                     <div class="col col-stats ms-3 ms-sm-0">
                                         <div class="numbers">
                                             <p class="card-category">Courses</p>
-                                            <h4 class="card-title">{{ $coursesCount }}</h4> <!-- Display real count -->
+                                            <h4 class="card-title">{{ $coursesCount }}</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -58,7 +58,6 @@
                         </div>
                     </a>
                 </div>
-
                 <!-- Programs Card -->
                 <div class="col-sm-6 col-md-3">
                     <a href="{{ route('programs.list') }}">
@@ -73,7 +72,7 @@
                                     <div class="col col-stats ms-3 ms-sm-0">
                                         <div class="numbers">
                                             <p class="card-category">Programs</p>
-                                            <h4 class="card-title">{{ $programsCount }}</h4> <!-- Display real count -->
+                                            <h4 class="card-title">{{ $programsCount }}</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -81,7 +80,6 @@
                         </div>
                     </a>
                 </div>
-
                 <!-- Trainers Card -->
                 <div class="col-sm-6 col-md-3">
                     <a href="{{ route('trainers.list') }}">
@@ -96,7 +94,7 @@
                                     <div class="col col-stats ms-3 ms-sm-0">
                                         <div class="numbers">
                                             <p class="card-category">Trainers</p>
-                                            <h4 class="card-title">{{ $trainersCount }}</h4> <!-- Display real count -->
+                                            <h4 class="card-title">{{ $trainersCount }}</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -104,7 +102,6 @@
                         </div>
                     </a>
                 </div>
-
                 <!-- Events Card -->
                 <div class="col-sm-6 col-md-3">
                     <a href="{{ route('events.list') }}">
@@ -119,7 +116,7 @@
                                     <div class="col col-stats ms-3 ms-sm-0">
                                         <div class="numbers">
                                             <p class="card-category">Events</p>
-                                            <h4 class="card-title">{{ $eventsCount }}</h4> <!-- Display real count -->
+                                            <h4 class="card-title">{{ $eventsCount }}</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -127,7 +124,6 @@
                         </div>
                     </a>
                 </div>
-
                 <!-- Blogs Card -->
                 <div class="col-sm-6 col-md-3">
                     <a href="{{ route('blogs.list') }}">
@@ -136,13 +132,13 @@
                                 <div class="row align-items-center">
                                     <div class="col-icon">
                                         <div class="icon-big text-center icon-secondary bubble-shadow-small">
-                                            <i class="fas fa-list"></i>
+                                            <i class="fas fa-newspaper"></i>
                                         </div>
                                     </div>
                                     <div class="col col-stats ms-3 ms-sm-0">
                                         <div class="numbers">
                                             <p class="card-category">Blogs</p>
-                                            <h4 class="card-title">{{ $blogsCount }}</h4> <!-- Display real count -->
+                                            <h4 class="card-title">{{ $blogsCount }}</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -150,8 +146,6 @@
                         </div>
                     </a>
                 </div>
-
-
                 <!-- Library Card -->
                 <div class="col-sm-6 col-md-3">
                     <a href="{{ route('libraries.list') }}">
@@ -160,13 +154,13 @@
                                 <div class="row align-items-center">
                                     <div class="col-icon">
                                         <div class="icon-big text-center icon-warning bubble-shadow-small">
-                                            <i class="fas fa-libraries"></i>
+                                            <i class="fas fa-book-open"></i>
                                         </div>
                                     </div>
                                     <div class="col col-stats ms-3 ms-sm-0">
                                         <div class="numbers">
                                             <p class="card-category">Libraries</p>
-                                            <h4 class="card-title">{{ $librariesCount }}</h4> <!-- Display real count -->
+                                            <h4 class="card-title">{{ $librariesCount }}</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -175,8 +169,6 @@
                     </a>
                 </div>
             </div>
-
         </div>
+    </div>
 </x-admin-layout>
-
-

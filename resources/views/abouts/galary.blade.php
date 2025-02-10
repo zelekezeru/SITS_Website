@@ -1,5 +1,5 @@
 <!--================ Start Testimonial Area =================-->
-<div class="testimonial_area section_gap">
+<div class="testimonial_area mt-5">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-5">
@@ -17,7 +17,7 @@
                 <div class="testi_item">
                     <div class="row">
                         <div class="col-lg-12 col-md-12">
-                            <img src="{{ asset('img/testimonials/t1.jpg') }}" alt="" style="max-width: 500px; max-height: 500px;"/>
+                            <img src="{{ asset('img/testimonials/t1.jpg') }}" alt="" style="max-width: 400px; max-height: 400px;"/>
 
                             <div class="testi_text">
                                 <h4>Mesle Getu</h4>
@@ -29,7 +29,7 @@
                 <div class="testi_item">
                     <div class="row">
                         <div class="col-lg-12 col-md-12">
-                            <img src="{{ asset('img/testimonials/t1.jpg') }}" alt="" style="max-width: 500px; max-height: 500px;"/>
+                            <img src="{{ asset('img/testimonials/t1.jpg') }}" alt="" style="max-width: 400px; max-height: 400px;"/>
 
                             <div class="testi_text">
                                 <h4>Mesle Getu</h4>
@@ -40,7 +40,7 @@
                 <div class="testi_item">
                     <div class="row">
                         <div class="col-lg-12 col-md-12">
-                            <img src="{{ asset('img/testimonials/t1.jpg') }}" alt="" style="max-width: 500px; max-height: 500px;"/>
+                            <img src="{{ asset('img/testimonials/t1.jpg') }}" alt="" style="max-width: 400px; max-height: 400px;"/>
 
                             <div class="testi_text">
                                 <h4>Mesle Getu</h4>
@@ -51,7 +51,7 @@
                 <div class="testi_item">
                     <div class="row">
                         <div class="col-lg-12 col-md-12">
-                            <img src="{{ asset('img/testimonials/t1.jpg') }}" alt="" style="max-width: 500px; max-height: 500px;"/>
+                            <img src="{{ asset('img/testimonials/t1.jpg') }}" alt="" style="max-width: 400px; max-height: 400px;"/>
 
                             <div class="testi_text">
                                 <h4>Mesle Getu</h4>

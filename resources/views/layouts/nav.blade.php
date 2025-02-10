@@ -63,9 +63,6 @@
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('elements.index')}}">Elements</a>
-                        </li>
-                        <li class="nav-item">
                             <a href="#" class="nav-link search" id="search">
                             <i class="ti-search"></i>
                             </a>

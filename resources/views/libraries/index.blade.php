@@ -12,7 +12,7 @@
               <div class="banner_content text-center">
                 <h2>Libraries</h2>
                 <div class="page_link">
-                  <a href="">Home</a>
+                  <a href="{{ url('/') }}">Home</a>
                   <a href="{{ route('libraries.index')}}">Libraries</a>
                 </div>
               </div>

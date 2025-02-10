@@ -11,7 +11,7 @@
                         <div class="banner_content text-center">
                             <h2>Blogs</h2>
                             <div class="page_link">
-                                <a href="">Home</a>
+                                <a href="{{ url('/') }}">Home</a>
                                 <a href="{{ route('blogs.index') }}">Blogs</a>
                             </div>
                         </div>
