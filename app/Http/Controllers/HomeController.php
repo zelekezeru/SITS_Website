@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Course;
 use App\Models\Trainer;
 use App\Models\Program;
-use App\Models\Task;
 use App\Models\Blog;
 use App\Models\Event;
 use App\Models\User;
@@ -35,7 +34,6 @@ class HomeController extends Controller
         $programsCount = Program::count(); // Count programs
         $eventsCount = Event::count(); // Count events
         $blogsCount = Blog::count(); // Count blogs
-        $tasksCount = Task::count(); // Count tasks
         $usersCount = User::count(); // Count users
         $librariesCount = Library::count(); // Count libraries
 
