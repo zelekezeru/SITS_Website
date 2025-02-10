@@ -1,4 +1,4 @@
-    <!--================ Start Header Menu Area =================-->
+<!--================ Start Header Menu Area =================-->
 <header class="header_area">
     <div class="main_menu">
         <div class="search_input" id="search_input_box">
@@ -63,51 +63,62 @@
                         </li>
 
                         <li class="nav-item">
+<<<<<<< Updated upstream
                             <a href="#" class="nav-link search" id="search">
                             <i class="ti-search"></i>
                             </a>
+=======
+                            <a class="nav-link" href="{{ route('elements.index')}}">Elements</a>
+>>>>>>> Stashed changes
                         </li>
 
-                        @if (Auth::user() == true)
-                            <ul class="dropdown-menu dropdown-user animated fadeIn">
-                                <div class="dropdown-user-scroll scrollbar-outer">
-                                    <li>
-                                        <div class="user-box">
-                                            <div class="avatar-lg">
-                                                <img class="avatar-img rounded" src="{{ auth()->user()->profile_image ? Storage::url(auth()->user()->profile_image) : 'avatar.png' }}" alt="Profile Image">
-
-                                            </div>
-                                            <div class="u-text">
-                                                <h4>{{ Auth::user()->name }}</h4>
-                                                <p class="text-muted">{{ Auth::user()->email }}</p>
-                                                <a href="{{ route('users.show', Auth::user()->id) }}" class="btn btn-xs btn-secondary btn-sm">View
-                                                    Profile</a>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item" href="{{route('profile.edit')}}">My Profile</a>
-                                        <a class="dropdown-item" href="#">Inbox</a>
-                                        <a class="dropdown-item" href="#">Account Setting</a>
-                                        <div class="dropdown-divider"></div>
-                                        <form method="POST" action="{{ route('logout') }}">
-                                            @csrf
-
-                                            <x-responsive-nav-link :href="route('logout')"
-                                                onclick="event.preventDefault();
-                                                                this.closest('form').submit();">
-                                                <div class="btn bnt-sm btn-danger btn-sm">
-                                                    {{ __('Log Out') }}
+                        @if (Auth::check())
+                            <li class="nav-item submenu dropdown">
+                                <a class="nav-link dropdown-toggle profile-pic" data-toggle="dropdown" href="#" aria-expanded="false">
+                                    <div class="avatar-sm">
+                                        <img src="{{ auth()->user()->profile_image ? Storage::url(auth()->user()->profile_image) : asset('img/user.png') }}" alt="Profile Image" class="avatar-img rounded-circle" style="width: 40px; height: 40px; object-fit: cover;" />
+                                    </div>
+                                    <span class="profile-username">
+                                        <span class="fw-bold">{{ Auth::user()->name }}</span>
+                                    </span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-user animated fadeIn">
+                                    <div class="dropdown-user-scroll scrollbar-outer">
+                                        <li>
+                                            <div class="user-box">
+                                                <div class="avatar-lg">
+                                                    <img class="avatar-img rounded" src="{{ auth()->user()->profile_image ? Storage::url(auth()->user()->profile_image) : asset('img/user.png') }}" alt="Profile Image" style="width: 80px; height: 80px; object-fit: cover;">
                                                 </div>
-                                            </x-responsive-nav-link>
-                                        </form>
-                                    </li>
-                                </div>
-                            </ul>
+                                                <div class="u-text">
+                                                    <h4>{{ Auth::user()->name }}</h4>
+                                                    <p class="text-muted">{{ Auth::user()->email }}</p>
+                                                    <a href="{{ route('users.show', Auth::user()->id) }}" class="btn btn-xs btn-secondary btn-sm">View Profile</a>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" href="{{ route('profile.edit') }}">My Profile</a>
+                                            <a class="dropdown-item" href="#">Inbox</a>
+                                            <a class="dropdown-item" href="#">Account Setting</a>
+                                            <div class="dropdown-divider"></div>
+                                            <form method="POST" action="{{ route('logout') }}">
+                                                @csrf
+                                                <x-responsive-nav-link :href="route('logout')"
+                                                    onclick="event.preventDefault();
+                                                                this.closest('form').submit();">
+                                                    <div class="btn btn-sm btn-danger">
+                                                        {{ __('Log Out') }}
+                                                    </div>
+                                                </x-responsive-nav-link>
+                                            </form>
+                                        </li>
+                                    </div>
+                                </ul>
+                            </li>
                         @else
                             <li class="nav-item mt-3">
-                                <a class="btn-warning btn-sm" href="{{ route('login')}}">Login</a>
+                                <a class="btn btn-warning btn-sm" href="{{ route('login') }}">Login</a>
                             </li>
                         @endif
                     </ul>
