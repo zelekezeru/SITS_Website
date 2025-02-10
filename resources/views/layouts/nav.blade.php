@@ -56,76 +56,48 @@
                         </li>
                         <li class="nav-item">
                             <a href="{{ route('abouts.index')}}" class="nav-link" >About SITS</a>
-
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('contacts.index')}}">Contact Us</a>
                         </li>
-
-<<<<<<< Updated upstream
-                        @if (Auth::user() == true)
-                            <li class="nav-item submenu dropdown">
-                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                                    <img class="avatar-img rounded-circle" src="{{ auth()->user()->profile_image ? Storage::url(auth()->user()->profile_image) : 'avatar.png' }}" alt="Profile Image" style="width: 30px; height: 30px;">
-                                    {{ Auth::user()->name }}
-                                </a>
-                                <ul class="dropdown-menu dropdown-user animated fadeIn">
-                                    <div class="dropdown-user-scroll scrollbar-outer" style="margin-left: 10px; margin-right: 10px;">
-                                        <li>
-                                            <div class="user-box">
-                                                <div class="avatar-lg">
-                                                    <img class="avatar-img rounded-circle" src="{{ auth()->user()->profile_image ? Storage::url(auth()->user()->profile_image) : 'avatar.png' }}" alt="Profile Image" style="width: 60px; height: 60px;">
-=======
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('elements.index')}}">Elements</a>
                         </li>
-
                         @if (Auth::check())
                             <li class="nav-item submenu dropdown">
-                                <a class="nav-link dropdown-toggle profile-pic" data-toggle="dropdown" href="#" aria-expanded="false">
-                                    <div class="avatar-sm">
+                                <a class="nav-link dropdown-toggle profile-pic d-flex align-items-center" data-toggle="dropdown" href="#" aria-expanded="false">
+                                    <div class="avatar-sm d-flex justify-content-center">
                                         <img src="{{ auth()->user()->profile_image ? Storage::url(auth()->user()->profile_image) : asset('img/user.png') }}" alt="Profile Image" class="avatar-img rounded-circle" style="width: 40px; height: 40px; object-fit: cover;" />
                                     </div>
-                                    <span class="profile-username">
+                                    <span class="profile-username ml-2">
                                         <span class="fw-bold">{{ Auth::user()->name }}</span>
                                     </span>
                                 </a>
                                 <ul class="dropdown-menu dropdown-user animated fadeIn">
-                                    <div class="dropdown-user-scroll scrollbar-outer">
+                                    <div class="dropdown-user-scroll scrollbar-outer p-3">
                                         <li>
-                                            <div class="user-box">
+                                            <div class="user-box mb-3">
                                                 <div class="avatar-lg">
                                                     <img class="avatar-img rounded" src="{{ auth()->user()->profile_image ? Storage::url(auth()->user()->profile_image) : asset('img/user.png') }}" alt="Profile Image" style="width: 80px; height: 80px; object-fit: cover;">
->>>>>>> Stashed changes
                                                 </div>
-                                                <div class="u-text">
+                                                <div class="u-text mt-2">
                                                     <h4>{{ Auth::user()->name }}</h4>
                                                     <p class="text-muted">{{ Auth::user()->email }}</p>
-                                                    <a href="{{ route('users.show', Auth::user()->id) }}" class="btn btn-xs btn-secondary btn-sm">View Profile</a>
+                                                    <a href="{{ route('dashboard')}}" class="btn btn-xs btn-secondary btn-sm">Dashbord</a>
                                                 </div>
                                             </div>
                                         </li>
                                         <li>
                                             <div class="dropdown-divider"></div>
-<<<<<<< Updated upstream
-                                            <a class="dropdown-item" href="{{route('profile.edit')}}">My Profile</a>
-=======
                                             <a class="dropdown-item" href="{{ route('profile.edit') }}">My Profile</a>
->>>>>>> Stashed changes
-                                            <a class="dropdown-item" href="#">Inbox</a>
-                                            <a class="dropdown-item" href="#">Account Setting</a>
+                                            <a class="dropdown-item" href="{{ route('users.show', Auth::user()->id) }}">View Profile</a>
                                             <div class="dropdown-divider"></div>
                                             <form method="POST" action="{{ route('logout') }}">
                                                 @csrf
                                                 <x-responsive-nav-link :href="route('logout')"
                                                     onclick="event.preventDefault();
-<<<<<<< Updated upstream
-                                                                    this.closest('form').submit();">
-                                                    <div class="btn bnt-sm btn-danger btn-sm">
-=======
                                                                 this.closest('form').submit();">
                                                     <div class="btn btn-sm btn-danger">
->>>>>>> Stashed changes
                                                         {{ __('Log Out') }}
                                                     </div>
                                                 </x-responsive-nav-link>
@@ -136,11 +108,7 @@
                             </li>
                         @else
                             <li class="nav-item mt-3">
-<<<<<<< Updated upstream
-                                <a class="btn btn-primary btn-sm text-white" href="{{ route('login')}}" style="background-color: #007bff; border-color: #007bff;">Login</a>
-=======
                                 <a class="btn btn-warning btn-sm" href="{{ route('login') }}">Login</a>
->>>>>>> Stashed changes
                             </li>
                         @endif
                     </ul>
