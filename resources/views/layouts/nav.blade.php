@@ -46,10 +46,10 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('programs.index')}}" >Post Grad Programs</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('libraries.index')}}" >Book Library</a>
-                            </li>
                             </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('libraries.index')}}" >Libraries</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('blogs.index')}}">Blog</a>

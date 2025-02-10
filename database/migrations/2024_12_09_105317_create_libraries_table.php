@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('libraries', function (Blueprint $table) {
             $table->id(); // Auto-incremented unique ID
             $table->string('title', 50); // Customer name
-            $table->longText('description')->nullable()->unique(); // Email address
+            $table->longText('description')->nullable(); // Email address
             $table->string('banner')->nullable(); // Phone number
             $table->string('link')->nullable(); // Message title
             $table->string('category')->nullable(); // Message category

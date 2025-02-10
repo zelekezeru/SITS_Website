@@ -44,7 +44,7 @@
                                 <div class="course_head">
                                     <a href="{{ $library->link }}" target="_blank" rel="noopener noreferrer">
                                         @if($library->banner)
-                                            <img src="{{ asset('storage/' . $library->banner) }}" alt="{{ $library->title }}"  style="max-width: 500px; max-height: 500px;">
+                                            <img src="{{ asset('storage/' . $library->banner) }}" alt="{{ $library->title }}" style="width: 200px; height: 200px; object-fit: cover;">
                                         @else
                                             No Image
                                         @endif
@@ -56,7 +56,7 @@
                                         <a href="course-details.html">{{ $library->title }}</a>
                                     </h4>
                                     <p>
-                                        {{ $library->description }}
+                                        {{ Str::limit($library->description, 100) }}
                                     </p>
                                     <div class="course_meta d-flex justify-content-lg-between align-items-lg-center flex-lg-row flex-column mt-4">
                                         <div class="authr_meta">
