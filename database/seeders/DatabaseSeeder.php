@@ -14,7 +14,12 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
+<<<<<<< Updated upstream
             RoleSeeder::class,
         ]);
+=======
+        RoleSeeder::class,
+    ]);
+>>>>>>> Stashed changes
     }
 }
