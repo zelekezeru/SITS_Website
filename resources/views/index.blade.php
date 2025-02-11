@@ -171,7 +171,7 @@
                                     <img class="img-fluid" src="{{ asset('storage/' . $trainer->image) }}"
                                         alt="{{ $trainer->name }}" style="width: 100%; height: 250px; object-fit: cover;" />
                                 </div>
-                                <div class="meta-text text-sm-center">
+                                <div class="meta-text text-sm-center" style="height: 100%;">
                                     <h4>{{ $trainer->name }}</h4>
                                     <p class="designation">{{ $trainer->position }}</p>
                                     <div class="mb-4">
@@ -179,12 +179,12 @@
                                             {{ $trainer->description }}
                                         </p>
                                     </div>
-                                    <div class="align-items-center justify-content-center d-flex">
+                                    {{-- <div class="align-items-center justify-content-center d-flex">
                                         <a href="#"><i class="ti-facebook"></i></a>
                                         <a href="#"><i class="ti-twitter"></i></a>
                                         <a href="#"><i class="ti-linkedin"></i></a>
                                         <a href="#"><i class="ti-pinterest"></i></a>
-                                    </div>
+                                    </div> --}}
                                 </div>
                             </div>
                         @endforeach
