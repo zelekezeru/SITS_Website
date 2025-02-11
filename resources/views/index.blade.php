@@ -62,7 +62,7 @@
                                         </div>
 
                                         <div class="course_content">
-                                            <span class="price">${{ $course->amount_paid }}</span>
+                                            <span class="price">{{ $course->amount_paid }} Br</span>
                                             <span class="tag mb-2 d-inline-block">{{ $course->category }}</span>
                                             <h4 class="mb-2">
                                                 <a href="{{ route('courses.show', $course->id) }}">{{ $course->title }}</a>
