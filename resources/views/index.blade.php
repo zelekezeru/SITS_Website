@@ -33,30 +33,24 @@
     <!--================ End Feature Area =================-->
 
     <!--================ Start Popular Courses Area =================-->
-    <div class="popular_courses">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-5">
-                    <div class="main_title" data-aos="fade-up" data-aos-delay="200">
-                        <h2 class="mb-3">Our Popular Courses</h2>
-                        <p>
-                            Replenish man have thing gathering lights yielding shall you
-                        </p>
+
+    @if (!$courses->isEmpty())
+        <div class="popular_courses">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-5">
+                        <div class="main_title" data-aos="fade-up" data-aos-delay="200">
+                            <h2 class="mb-3">Our Popular Courses</h2>
+                            <p>
+                                Replenish man have thing gathering lights yielding shall you
+                            </p>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <!-- single course -->
-                <div class="col-lg-12">
-                    <div class="owl-carousel active_course">
-                        @if ($courses->isEmpty())
-                            <div class="col-lg-12">
-                                <div class="text-center">
-                                    <h3>No courses available at the moment</h3>
-                                </div>
-                            </div>
-
-                        @else
+                <div class="row">
+                    <!-- single course -->
+                    <div class="col-lg-12">
+                        <div class="owl-carousel active_course">
 
                             @foreach ($courses as $course)
                                 <div class="single_course">
@@ -84,14 +78,14 @@
                                         </div>
                                     </div>
                                 </div>
-                                @endforeach
-                        @endif
+                            @endforeach
 
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    @endif
     <!--================ End Popular Courses Area =================-->
 
     <!--================ Start Registration Area =================-->
@@ -175,7 +169,7 @@
                                 data-aos-delay="200">
                                 <div class="thumb d-flex justify-content-sm-center">
                                     <img class="img-fluid" src="{{ asset('storage/' . $trainer->image) }}"
-                                        alt="{{ $trainer->name }}" alt="" />
+                                        alt="{{ $trainer->name }}" style="width: 100%; height: 250px; object-fit: cover;" />
                                 </div>
                                 <div class="meta-text text-sm-center">
                                     <h4>{{ $trainer->name }}</h4>
