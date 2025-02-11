@@ -9,10 +9,10 @@
                     <div class="col-lg-12">
                         <div class="banner_content text-center animate__animated animate__backInUp">
                             <p class="text-uppercase">
-                                Convinient Theological Education
+                                Convenient Theological Education
                             </p>
                             <h2 class="text-uppercase mt-4 mb-5">
-                                Theological Education in a Digital and Convinient Way
+                                Theological Education in a Digital and convenient Way
                             </h2>
                             <div>
                                 <a href="{{ route('abouts.index')}}" class="primary-btn2 mb-3 mb-sm-0">learn more</a>
@@ -33,59 +33,70 @@
     <!--================ End Feature Area =================-->
 
     <!--================ Start Popular Courses Area =================-->
+    <div class="popular_courses">
 
-    @if (!$courses->isEmpty())
-        <div class="popular_courses">
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-lg-5">
-                        <div class="main_title" data-aos="fade-up" data-aos-delay="200">
-                            <h2 class="mb-3">Our Popular Courses</h2>
-                            <p>
-                                Replenish man have thing gathering lights yielding shall you
-                            </p>
-                        </div>
+            @if (!$courses->isEmpty()) <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-5">
+                    <div class="main_title" data-aos="fade-up" data-aos-delay="200">
+                        <h2 class="mb-3">Our Popular Courses</h2>
+                        <p>
+                            Replenish man have thing gathering lights yielding shall you
+                        </p>
                     </div>
                 </div>
-                <div class="row">
-                    <!-- single course -->
-                    <div class="col-lg-12">
-                        <div class="owl-carousel active_course">
+            </div>
+            <div class="popular_courses">
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-5">
+                            <div class="main_title" data-aos="fade-up" data-aos-delay="200">
+                                <h2 class="mb-3">Our Popular Courses</h2>
+                                <p>
+                                    Our popular courses offer cutting-edge content, practical skills, and flexible learning options, designed to meet diverse student needs.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <!-- single course -->
+                        <div class="col-lg-12">
+                            <div class="owl-carousel active_course">
 
-                            @foreach ($courses as $course)
-                                <div class="single_course">
-                                    <div class="course_head">
-                                        <img class="img-fluid" src="{{ asset('storage/' . $course->banner) }}"
-                                        alt="{{ $course->title }}"
-                                        style="width: 100%; height: 250px; object-fit: cover;"/>
-                                    </div>
+                                @foreach ($courses as $course)
+                                    <div class="single_course">
+                                        <div class="course_head">
+                                            <img class="img-fluid" src="{{ asset('storage/' . $course->banner) }}"
+                                            alt="{{ $course->title }}"
+                                            style="width: 100%; height: 250px; object-fit: cover;"/>
+                                        </div>
 
-                                    <div class="course_content">
-                                        <span class="price">${{ $course->amount_paid }}</span>
-                                        <span class="tag mb-2 d-inline-block">{{ $course->category }}</span>
-                                        <h4 class="mb-2">
-                                            <a href="{{ route('courses.show', $course->id) }}">{{ $course->title }}</a>
-                                        </h4>
-                                        <p>
-                                            {{ $course->description }}
-                                        </p>
-                                        <div class="course_meta d-flex justify-content-lg-between align-items-lg-center flex-lg-row flex-column mt-4">
-                                            <div class="authr_meta">
-                                                <img src="img/courses/author1.png" alt="" />
-                                                    <span class="d-inline-block ml-2">By Field Experts</span>
+                                        <div class="course_content">
+                                            <span class="price">${{ $course->amount_paid }}</span>
+                                            <span class="tag mb-2 d-inline-block">{{ $course->category }}</span>
+                                            <h4 class="mb-2">
+                                                <a href="{{ route('courses.show', $course->id) }}">{{ $course->title }}</a>
+                                            </h4>
+                                            <p>
+                                                {{ $course->description }}
+                                            </p>
+                                            <div class="course_meta d-flex justify-content-lg-between align-items-lg-center flex-lg-row flex-column mt-4">
+                                                <div class="authr_meta">
+                                                    <img src="img/courses/author1.png" alt="" />
+                                                        <span class="d-inline-block ml-2">By Field Experts</span>
+                                                </div>
+
                                             </div>
-
                                         </div>
                                     </div>
-                                </div>
-                            @endforeach
+                                @endforeach
 
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    @endif
+        @endif
     <!--================ End Popular Courses Area =================-->
 
     <!--================ Start Registration Area =================-->
@@ -103,13 +114,12 @@
                             </p>
                         </div>
                         <div class="col clockinner1 clockinner">
-                            <h4 class="days">🔹 Don’t wait! Register now and unlock your potential with SITS.</h4>
-
+                            <h4 class="days"> Don’t wait! Register now and unlock your potential with SITS.</h4>
                             <ul class="smalltext align-left">
-                                ✅ Easy Registration – Sign up in just a few clicks.<br>
-                                ✅ Exclusive Access – Get personalized learning and Library resources.<br>
-                                ✅ Expert-Led Programs – Learn from industry professionals.<br>
-                                ✅ Flexible Learning – Study at your own pace, anytime, anywhere.<br>
+                                Easy Registration – Sign up in just a few clicks.<br>
+                                Exclusive Access – Get personalized learning and Library resources.<br>
+                                Expert-Led Programs – Learn from industry professionals.<br>
+                                Flexible Learning – Study at your own pace, anytime, anywhere.<br>
                             </ul>
                         </div>
                     </div>
@@ -118,7 +128,6 @@
                     <div class="register_form">
                         <h3>Enroll Now!</h3>
                         <p>Online Theological Education at SITS</p>
-
                         <form action="{{ route('subscriptions.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="row">
@@ -128,7 +137,7 @@
                                     <input name="email" placeholder="Your Email Address"
                                         pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{1,63}$" required=""
                                         type="email" />
-                                        <input name="address" placeholder="Your Living Address" required="" type="text" />
+                                    <input name="address" placeholder="Your Living Address" required="" type="text" />
                                     <input type="text" name="type" required="" value="subscribe" hidden/>
                                 </div>
                                 <div class="col-lg-12 text-center">
@@ -136,7 +145,6 @@
                                 </div>
                             </div>
                         </form>
-
                     </div>
                 </div>
             </div>
@@ -152,12 +160,12 @@
                     <div class="main_title" data-aos="fade-up" data-aos-delay="200">
                         <h2 class="mb-3">Our Expert Trainers</h2>
                         <p>
-                            Replenish man have thing gathering lights yielding shall you
+                            Our expert trainers provide top-tier education, ministry experience, personalized guidance, and innovative methods, ensuring student success and growth.
                         </p>
                     </div>
                 </div>
             </div>
-            <div class="row justify-content-center d-flex align-items-center">
+            <div class="row">
                 @if ($trainers->isEmpty())
                     <div class="col-lg-12">
                         <div class="text-center">
@@ -165,22 +173,26 @@
                         </div>
                     </div>
                 @else
-                    <div class="owl-carousel active_trainers">
-                        @foreach ($trainers as $trainer)
-                            <div class="col-lg-3 col-md-6 col-sm-12 single-trainer" data-aos="fade-up" data-aos-delay="200">
-                                <div class="single_course">
-                                    <div class="course_head">
-                                        <img class="img-fluid" src="{{ asset('storage/' . $trainer->image) }}" alt="{{ $trainer->name }}" style="width: 100%; height: 250px; object-fit: cover;" />
-                                    </div>
-                                    <div class="course_content">
-                                        <h4 class="mb-2">{{ $trainer->name }}</h4>
-                                        <p class="designation">{{ $trainer->position }}</p>
-                                        <p>{{ $trainer->description }}</p>
-                                    </div>
+                    @foreach ($trainers as $trainer)
+                        <div class="col-lg-3 col-md-6 col-sm-12 single-trainer" data-aos="fade-up" data-aos-delay="200">
+                            <div class="thumb d-flex justify-content-sm-center">
+                                <img class="img-fluid" src="{{ asset('storage/' . $trainer->image) }}" alt="{{ $trainer->name }}" />
+                            </div>
+                            <div class="meta-text text-sm-center">
+                                <h4>{{ $trainer->name }}</h4>
+                                <p class="designation">{{ $trainer->position }}</p>
+                                <div class="mb-4">
+                                    <p>{{ $trainer->description }}</p>
+                                </div>
+                                <div class="align-items-center justify-content-center d-flex">
+                                    <a href="#"><i class="ti-facebook"></i></a>
+                                    <a href="#"><i class="ti-twitter"></i></a>
+                                    <a href="#"><i class="ti-linkedin"></i></a>
+                                    <a href="#"><i class="ti-pinterest"></i></a>
                                 </div>
                             </div>
-                        @endforeach
-                    </div>
+                        </div>
+                    @endforeach
                 @endif
             </div>
         </div>
