@@ -35,17 +35,7 @@
     <!--================ Start Popular Courses Area =================-->
     <div class="popular_courses">
 
-            @if (!$courses->isEmpty()) <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-5">
-                    <div class="main_title" data-aos="fade-up" data-aos-delay="200">
-                        <h2 class="mb-3">Our Popular Courses</h2>
-                        <p>
-                            Replenish man have thing gathering lights yielding shall you
-                        </p>
-                    </div>
-                </div>
-            </div>
+        <div class="container">
             <div class="popular_courses">
                 <div class="container">
                     <div class="row justify-content-center">
@@ -96,7 +86,8 @@
                     </div>
                 </div>
             </div>
-        @endif
+        </div>
+    </div>
     <!--================ End Popular Courses Area =================-->
 
     <!--================ Start Registration Area =================-->
@@ -116,10 +107,10 @@
                         <div class="col clockinner1 clockinner">
                             <h4 class="days"> Don’t wait! Register now and unlock your potential with SITS.</h4>
                             <ul class="smalltext align-left">
-                                Easy Registration – Sign up in just a few clicks.<br>
-                                Exclusive Access – Get personalized learning and Library resources.<br>
-                                Expert-Led Programs – Learn from industry professionals.<br>
-                                Flexible Learning – Study at your own pace, anytime, anywhere.<br>
+                                ✅ Easy Registration – Sign up in just a few clicks.<br>
+                                ✅ Exclusive Access – Get personalized learning and career resources.<br>
+                                ✅ Expert-Led Programs – Learn from industry professionals.<br>
+                                ✅ Flexible Learning – Study at your own pace, anytime, anywhere.<br>
                             </ul>
                         </div>
                     </div>
