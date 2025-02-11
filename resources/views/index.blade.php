@@ -163,10 +163,11 @@
                         <div class="text-center">
                             <h3>No Trainers available at the moment</h3>
                         </div>
-                    @else
+                    </div>
+                @else
+                    <div class="owl-carousel active_trainers">
                         @foreach ($trainers as $trainer)
-                            <div class="col-lg-3 col-md-6 col-sm-12 single-trainer" data-aos="fade-up"
-                                data-aos-delay="200">
+                            <div class="col-lg-3 col-md-6 col-sm-12 single-trainer" data-aos="fade-up" data-aos-delay="200">
                                 <div class="single_course">
                                     <div class="course_head">
                                         <img class="img-fluid" src="{{ asset('storage/' . $trainer->image) }}" alt="{{ $trainer->name }}" style="width: 100%; height: 250px; object-fit: cover;" />
@@ -179,8 +180,8 @@
                                 </div>
                             </div>
                         @endforeach
+                    </div>
                 @endif
-
             </div>
         </div>
     </section>
