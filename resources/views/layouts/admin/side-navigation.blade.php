@@ -113,7 +113,7 @@
                 <li class="nav-item">
                     <a data-bs-toggle="collapse" href="#Trainers">
                         <i class="fas fa-chalkboard-user"></i>
-                        <p>Trainers</p>
+                        <p>Trainer</p>
                         <span class="caret"></span>
                     </a>
                     <div class="collapse" id="Trainers">
@@ -153,18 +153,6 @@
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ route('contacts.list') }}">
-                        <i class="fas fa-address-book"></i>
-                        <p>Contact</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('subscriptions.index') }}">
-                        <i class="fas fa-envelope-open-text"></i>
-                        <p>Subscription</p>
-                    </a>
-                </li>
-                <li class="nav-item">
                     <a data-bs-toggle="collapse" href="#Library">
                         <i class="fas fa-book-reader"></i>
                         <p>Library</p>
@@ -184,6 +172,39 @@
                             </li>
                         </ul>
                     </div>
+                </li>
+                <li class="nav-item">
+                    <a data-bs-toggle="collapse" href="#User">
+                        <i class="fas fa-book-reader"></i>
+                        <p>User</p>
+                        <span class="caret"></span>
+                    </a>
+                    <div class="collapse" id="User">
+                        <ul class="nav nav-collapse">
+                            <li>
+                                <a href="{{ route('users.list') }}">
+                                    <i class="fas fa-folder-open"></i> Manage Users
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('users.create') }}">
+                                    <i class="fas fa-plus-square"></i> Add User
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('contacts.list') }}">
+                        <i class="fas fa-address-book"></i>
+                        <p>Contact</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('subscriptions.index') }}">
+                        <i class="fas fa-envelope-open-text"></i>
+                        <p>Subscription</p>
+                    </a>
                 </li>
             </ul>
         </div>

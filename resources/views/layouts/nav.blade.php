@@ -86,7 +86,7 @@
                                         </li>
                                         <li>
                                             <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="{{ route('profile.edit') }}">My Profile</a>
+                                            <a class="dropdown-item" href="https://pms.sits.edu.et/" target="_blank">Goto PMS</a>
                                             <a class="dropdown-item" href="{{ route('users.show', Auth::user()->id) }}">View Profile</a>
                                             <div class="dropdown-divider"></div>
                                             <form method="POST" action="{{ route('logout') }}">
