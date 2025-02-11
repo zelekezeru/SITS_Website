@@ -78,7 +78,7 @@
     <!--================ End Popular Courses Area =================-->
 
     <!--================ Start Registration Area =================-->
-    <div class="section_gap registration_area mb-5 ">
+    <div class="section_gap registration_area" data-aos="zoom-in">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-7">
@@ -86,47 +86,46 @@
                         <div class="col-lg-12">
                             <h1 class="mb-3">Register Now</h1>
                             <p>
-                                There is a moment in the life of any aspiring astronomer that
-                                it is time to buy that first telescope. It’s exciting to think
-                                about setting up your own viewing station.
+                                Take the first step toward success by registering with SITS!
+                                Whether you're looking for top-quality training, expert-led courses, or
+                                career-enhancing opportunities, SITS is here to equip you with the skills you need.
                             </p>
                         </div>
                         <div class="col clockinner1 clockinner">
-                            <h1 class="days">150</h1>
-                            <span class="smalltext">Days</span>
-                        </div>
-                        <div class="col clockinner clockinner1">
-                            <h1 class="hours">23</h1>
-                            <span class="smalltext">Hours</span>
-                        </div>
-                        <div class="col clockinner clockinner1">
-                            <h1 class="minutes">47</h1>
-                            <span class="smalltext">Mins</span>
-                        </div>
-                        <div class="col clockinner clockinner1">
-                            <h1 class="seconds">59</h1>
-                            <span class="smalltext">Secs</span>
+                            <h4 class="days">🔹 Don’t wait! Register now and unlock your potential with SITS.</h4>
+
+                            <ul class="smalltext align-left">
+                                ✅ Easy Registration – Sign up in just a few clicks.<br>
+                                ✅ Exclusive Access – Get personalized learning and Library resources.<br>
+                                ✅ Expert-Led Programs – Learn from industry professionals.<br>
+                                ✅ Flexible Learning – Study at your own pace, anytime, anywhere.<br>
+                            </ul>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-4 offset-lg-1">
                     <div class="register_form">
-                        <h3>Courses for Free</h3>
-                        <p>It is high time for learning</p>
-                        <form class="form_area" id="myForm" action="mail.html" method="post">
+                        <h3>Enroll Now!</h3>
+                        <p>Online Theological Education at SITS</p>
+
+                        <form action="{{ route('subscriptions.store') }}" method="POST" enctype="multipart/form-data">
+                            @csrf
                             <div class="row">
                                 <div class="col-lg-12 form_group">
                                     <input name="name" placeholder="Your Name" required="" type="text" />
-                                    <input name="name" placeholder="Your Phone Number" required="" type="tel" />
+                                    <input name="phone" placeholder="Your Phone Number" required="" type="tel" />
                                     <input name="email" placeholder="Your Email Address"
                                         pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{1,63}$" required=""
                                         type="email" />
+                                        <input name="address" placeholder="Your Living Address" required="" type="text" />
+                                    <input type="text" name="type" required="" value="subscribe" hidden/>
                                 </div>
                                 <div class="col-lg-12 text-center">
-                                    <button class="primary-btn">Submit</button>
+                                    <button class="primary-btn" type="submit">Submit</button>
                                 </div>
                             </div>
                         </form>
+
                     </div>
                 </div>
             </div>

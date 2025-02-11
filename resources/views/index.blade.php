@@ -81,15 +81,6 @@
                                                     <span class="d-inline-block ml-2">By Field Experts</span>
                                             </div>
 
-                                            {{-- <div class="mt-lg-0 mt-2">
-                                                <span class="meta_info mr-4">
-                                                    <a href="#"> <i class="ti-user mr-2"></i>25 </a>
-                                                </span>
-                                                <span class="meta_info">
-                                                    <a href="#"> <i class="ti-heart mr-2"></i>35 </a>
-                                                </span>
-                                            </div> --}}
-
                                         </div>
                                     </div>
                                 </div>
@@ -112,26 +103,20 @@
                         <div class="col-lg-12">
                             <h1 class="mb-3">Register Now</h1>
                             <p>
-                                There is a moment in the life of any aspiring astronomer that
-                                it is time to buy that first telescope. It’s exciting to think
-                                about setting up your own viewing station.
+                                Take the first step toward success by registering with SITS!
+                                Whether you're looking for top-quality training, expert-led courses, or
+                                career-enhancing opportunities, SITS is here to equip you with the skills you need.
                             </p>
                         </div>
                         <div class="col clockinner1 clockinner">
-                            <h1 class="days">150</h1>
-                            <span class="smalltext">Days</span>
-                        </div>
-                        <div class="col clockinner clockinner1">
-                            <h1 class="hours">23</h1>
-                            <span class="smalltext">Hours</span>
-                        </div>
-                        <div class="col clockinner clockinner1">
-                            <h1 class="minutes">47</h1>
-                            <span class="smalltext">Mins</span>
-                        </div>
-                        <div class="col clockinner clockinner1">
-                            <h1 class="seconds">59</h1>
-                            <span class="smalltext">Secs</span>
+                            <h4 class="days">🔹 Don’t wait! Register now and unlock your potential with SITS.</h4>
+
+                            <ul class="smalltext align-left">
+                                ✅ Easy Registration – Sign up in just a few clicks.<br>
+                                ✅ Exclusive Access – Get personalized learning and Library resources.<br>
+                                ✅ Expert-Led Programs – Learn from industry professionals.<br>
+                                ✅ Flexible Learning – Study at your own pace, anytime, anywhere.<br>
+                            </ul>
                         </div>
                     </div>
                 </div>

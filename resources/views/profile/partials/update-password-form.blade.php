@@ -13,26 +13,26 @@
         @csrf
         @method('put')
 
-        <div>
-            <x-input-label for="update_password_current_password" :value="__('Current Password')" />
-            <x-text-input id="update_password_current_password" name="current_password" type="password" class="mt-1 block w-full" autocomplete="current-password" />
-            <x-input-error :messages="$errors->updatePassword->get('current_password')" class="mt-2" />
+        <div class="form-group">
+            <label for="update_password_current_password">{{ __('Current Password') }}</label>
+            <input id="update_password_current_password" name="current_password" type="password" class="form-control border-black outline-black @error('current_password') is-invalid @enderror" autocomplete="current-password" />
+            @error('current_password') <div class="invalid-feedback">{{ $message }}</div> @enderror
         </div>
 
-        <div>
-            <x-input-label for="update_password_password" :value="__('New Password')" />
-            <x-text-input id="update_password_password" name="password" type="password" class="mt-1 block w-full" autocomplete="new-password" />
-            <x-input-error :messages="$errors->updatePassword->get('password')" class="mt-2" />
+        <div class="form-group">
+            <label for="update_password_password">{{ __('New Password') }}</label>
+            <input id="update_password_password" name="password" type="password" class="form-control border-black outline-black @error('password') is-invalid @enderror" autocomplete="new-password" />
+            @error('password') <div class="invalid-feedback">{{ $message }}</div> @enderror
         </div>
 
-        <div>
-            <x-input-label for="update_password_password_confirmation" :value="__('Confirm Password')" />
-            <x-text-input id="update_password_password_confirmation" name="password_confirmation" type="password" class="mt-1 block w-full" autocomplete="new-password" />
-            <x-input-error :messages="$errors->updatePassword->get('password_confirmation')" class="mt-2" />
+        <div class="form-group">
+            <label for="update_password_password_confirmation">{{ __('Confirm Password') }}</label>
+            <input id="update_password_password_confirmation" name="password_confirmation" type="password" class="form-control border-black outline-black @error('password_confirmation') is-invalid @enderror" autocomplete="new-password" />
+            @error('password_confirmation') <div class="invalid-feedback">{{ $message }}</div> @enderror
         </div>
 
         <div class="flex items-center gap-4">
-            <x-primary-button>{{ __('Save') }}</x-primary-button>
+            <button type="submit" class="btn btn-primary">{{ __('Save') }}</button>
 
             @if (session('status') === 'password-updated')
                 <p
