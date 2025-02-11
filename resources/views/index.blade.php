@@ -167,24 +167,15 @@
                         @foreach ($trainers as $trainer)
                             <div class="col-lg-3 col-md-6 col-sm-12 single-trainer" data-aos="fade-up"
                                 data-aos-delay="200">
-                                <div class="thumb d-flex justify-content-sm-center">
-                                    <img class="img-fluid" src="{{ asset('storage/' . $trainer->image) }}"
-                                        alt="{{ $trainer->name }}" style="width: 100%; height: 250px; object-fit: cover;" />
-                                </div>
-                                <div class="meta-text text-sm-center" style="height: 100%;">
-                                    <h4>{{ $trainer->name }}</h4>
-                                    <p class="designation">{{ $trainer->position }}</p>
-                                    <div class="mb-4">
-                                        <p>
-                                            {{ $trainer->description }}
-                                        </p>
+                                <div class="single_course">
+                                    <div class="course_head">
+                                        <img class="img-fluid" src="{{ asset('storage/' . $trainer->image) }}" alt="{{ $trainer->name }}" style="width: 100%; height: 250px; object-fit: cover;" />
                                     </div>
-                                    {{-- <div class="align-items-center justify-content-center d-flex">
-                                        <a href="#"><i class="ti-facebook"></i></a>
-                                        <a href="#"><i class="ti-twitter"></i></a>
-                                        <a href="#"><i class="ti-linkedin"></i></a>
-                                        <a href="#"><i class="ti-pinterest"></i></a>
-                                    </div> --}}
+                                    <div class="course_content">
+                                        <h4 class="mb-2">{{ $trainer->name }}</h4>
+                                        <p class="designation">{{ $trainer->position }}</p>
+                                        <p>{{ $trainer->description }}</p>
+                                    </div>
                                 </div>
                             </div>
                         @endforeach
