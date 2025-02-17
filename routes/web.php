@@ -14,7 +14,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TrainerController;
 use App\Http\Controllers\SubscriptionController;
-use App\Models\Trainer;
+use App\Http\Controllers\GalleryController;
 use Spatie\Permission\Middleware\RoleMiddleware;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -37,6 +37,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('trainers/list', [TrainerController::class, 'list'])->name("trainers.list");
     Route::get('contacts/list', [ContactController::class, 'list'])->name("contacts.list");
     Route::get('libraries/list', [LibraryController::class, 'list'])->name("libraries.list");
+    Route::get('galleries/list', [GalleryController::class, 'list'])->name("galleries.list");
 
     Route::post('/ckfinder-upload', [BlogController::class, 'upload'])->name('ckeditor.blog.upload');
     Route::post('/profile/upload-profile-image', [ProfileController::class, 'uploadProfileImage'])->name('profile.uploadProfileImage');
@@ -53,11 +54,14 @@ Route::get('/elements', [HomeController::class, 'elements'])->name('elements.ind
 
 Route::resource('users', UserController::class);
 
+Route::resource('galleries', GalleryController::class);
+
 Route::resource('blogs', BlogController::class);
 
 Route::resource('contacts', ContactController::class);
 
 Route::resource('testimonials', TestimonialController::class);
+
 
 Route::resource('courses', CourseController::class);
 
@@ -72,6 +76,7 @@ Route::resource('events', EventController::class);
 Route::resource('trainers', TrainerController::class);
 
 Route::resource('subscriptions', SubscriptionController::class);
+
 
 
 require __DIR__ . '/auth.php';
