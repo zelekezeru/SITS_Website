@@ -174,29 +174,8 @@
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a data-bs-toggle="collapse" href="#Gallery">
-                        <i class="fas fa-image"></i>
-                        <p>Gallery</p>
-                        <span class="caret"></span>
-                    </a>
-                    <div class="collapse" id="Gallery">
-                        <ul class="nav nav-collapse">
-                            <li>
-                                <a href="{{ route('galleries.list') }}">
-                                    <i class="fas fa-folder-open"></i> Manage Galleries
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ route('galleries.create') }}">
-                                    <i class="fas fa-plus-square"></i> Add Gallery
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="nav-item">
                     <a data-bs-toggle="collapse" href="#User">
-                        <i class="fas fa-user"></i>
+                        <i class="fas fa-book-reader"></i>
                         <p>User</p>
                         <span class="caret"></span>
                     </a>
