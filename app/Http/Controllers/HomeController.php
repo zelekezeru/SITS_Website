@@ -5,8 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Course;
 use App\Models\Trainer;
 use App\Models\Program;
-use App\Models\Blog;
 use App\Models\Event;
+use App\Models\Blog;
+use App\Models\Gallery;
 use App\Models\User;
 use App\Models\Library;
 use Illuminate\Http\Request;
@@ -43,7 +44,8 @@ class HomeController extends Controller
 
     public function about()
     {
-        return view('abouts.about');
+        $galleries = Gallery::all();
+        return view('abouts.about', compact('galleries'));
     }
 
     public function elements()

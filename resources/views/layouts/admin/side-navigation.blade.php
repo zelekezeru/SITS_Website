@@ -68,6 +68,7 @@
                         </ul>
                     </div>
                 </li>
+
                 <li class="nav-item">
                     <a data-bs-toggle="collapse" href="#Programs">
                         <i class="fas fa-university"></i>
@@ -89,6 +90,7 @@
                         </ul>
                     </div>
                 </li>
+
                 <li class="nav-item">
                     <a data-bs-toggle="collapse" href="#Events">
                         <i class="fas fa-calendar-check"></i>
@@ -110,6 +112,31 @@
                         </ul>
                     </div>
                 </li>
+
+                <!-- Gallery Section -->
+                <li class="nav-item">
+                    <a data-bs-toggle="collapse" href="#Gallery">
+                        <i class="fas fa-image"></i>
+                        <p>Gallery</p>
+                        <span class="caret"></span>
+                    </a>
+                    <div class="collapse" id="Gallery">
+                        <ul class="nav nav-collapse">
+                            <li>
+                                <a href="{{ route('galleries.list') }}">
+                                    <i class="fas fa-images"></i> Manage Gallery
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('galleries.create') }}">
+                                    <i class="fas fa-image"></i> Add Gallery
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
+                <!-- Trainer Section -->
                 <li class="nav-item">
                     <a data-bs-toggle="collapse" href="#Trainers">
                         <i class="fas fa-chalkboard-user"></i>
@@ -131,6 +158,8 @@
                         </ul>
                     </div>
                 </li>
+
+                <!-- Blog Section -->
                 <li class="nav-item">
                     <a data-bs-toggle="collapse" href="#Blog">
                         <i class="fas fa-newspaper"></i>
@@ -152,6 +181,8 @@
                         </ul>
                     </div>
                 </li>
+
+                <!-- Library Section -->
                 <li class="nav-item">
                     <a data-bs-toggle="collapse" href="#Library">
                         <i class="fas fa-book-reader"></i>
@@ -173,9 +204,11 @@
                         </ul>
                     </div>
                 </li>
+
+                <!-- User Section -->
                 <li class="nav-item">
                     <a data-bs-toggle="collapse" href="#User">
-                        <i class="fas fa-book-reader"></i>
+                        <i class="fas fa-users"></i>
                         <p>User</p>
                         <span class="caret"></span>
                     </a>
@@ -183,23 +216,27 @@
                         <ul class="nav nav-collapse">
                             <li>
                                 <a href="{{ route('users.list') }}">
-                                    <i class="fas fa-folder-open"></i> Manage Users
+                                    <i class="fas fa-users-cog"></i> Manage Users
                                 </a>
                             </li>
                             <li>
                                 <a href="{{ route('users.create') }}">
-                                    <i class="fas fa-plus-square"></i> Add User
+                                    <i class="fas fa-user-plus"></i> Add User
                                 </a>
                             </li>
                         </ul>
                     </div>
                 </li>
+
+                <!-- Contact Section -->
                 <li class="nav-item">
                     <a href="{{ route('contacts.list') }}">
                         <i class="fas fa-address-book"></i>
                         <p>Contact</p>
                     </a>
                 </li>
+
+                <!-- Subscription Section -->
                 <li class="nav-item">
                     <a href="{{ route('subscriptions.index') }}">
                         <i class="fas fa-envelope-open-text"></i>

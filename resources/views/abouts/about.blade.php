@@ -130,7 +130,7 @@
     
     <!--================ Start Testimonial Area =================-->
 
-    @include('abouts.galary')
+    @include('abouts.gallery')
 
     <!--================ End Testimonial Area =================-->
 
