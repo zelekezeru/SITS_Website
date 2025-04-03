@@ -6,138 +6,107 @@
 
 @section('main_content')
 
-    <!--================Home Banner Area =================-->
-    <section class="banner_area" data-aos="fade-up" data-aos-delay="200">
-      <div class="banner_inner d-flex align-items-center">
-        <div class="overlay"></div>
-        <div class="container">
-          <div class="row justify-content-center">
-            <div class="col-lg-6">
-              <div class="banner_content text-center">
-                <h2>About Us</h2>
-                <div class="page_link">
-                  <a href="{{url("/")}}">Home</a>
-                  <a href="{{ route('abouts.index')}}">About Us</a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+<!-- Home Banner Area -->
+<section class="bg-gray-900 py-16 mt-[200px] mb-[10px]" data-aos="fade-up" data-aos-delay="200">
+  <div class="container mx-auto px-6 text-center">
+    <div class="text-white">
+      <h2 class="text-4xl font-bold mb-4">About Us</h2>
+      <div class="flex justify-center space-x-4 text-gray-400">
+        <a href="{{url("/")}}" class="hover:text-white transition">Home</a>
+        <span>/</span>
+        <a href="{{ route('abouts.index') }}" class="hover:text-white transition">About Us</a>
       </div>
-    </section>
-    <!--================End Home Banner Area =================-->
+    </div>
+  </div>
+</section>
 
-    <!--================ Start About Area =================-->
-    <section class="about_area section_gap">
-      <div class="container">
-        <div class="row h_blog_item">
-          <div class="col-lg-6">
-            <div class="h_blog_img" data-aos="fade-right" data-aos-delay="200">
-              <img class="img-fluid" src="{{ asset('img/about.png') }}" alt="" />
-            </div>
-          </div>
-
-          <div class="col-lg-6">
-            <div class="h_blog_text">
-              <div class="h_blog_text_inner left right" data-aos="fade-up" data-aos-delay="700">
-                <h4>About SITS</h4>
-                <p>
-                  Shiloh International Theological Seminary (SITS) is a globally recognized institution dedicated to
-                  equipping individuals with a deep understanding of biblical principles. At SITS, we are committed to fostering spiritual growth and academic excellence,
-                  empowering students to lead with integrity, wisdom, and faith.
-                </p>
-                <p>
-                    With state-of-the-art facilities and innovative learning approaches and an extensive online library, we make theological
-                    education accessible and impactful. connecting students to diverse perspectives and international networks.
-                </p>
-                <p> At SITS, we believe in transforming lives and communities through the power of the Word of God. Whether
-                    you are preparing for ministry, enhancing your theological knowledge, or deepening your personal faith,
-                    SITS is your partner in fulfilling your divine calling.
-
-                </p>
-                <a class="primary-btn" href="#">
-                  Learn More <i class="ti-arrow-right ml-1"></i>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
+<!-- About Area -->
+<section class="bg-gray-900 py-16">
+  <div class="container mx-auto px-6">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <!-- Image Section -->
+      <div data-aos="zoom-in" data-aos-delay="300">
+        <img
+          src="{{ asset('img/about.png') }}"
+          alt="About Us"
+          class="w-[80%] rounded-lg shadow-lg"
+        />
       </div>
-    </section>
-    <!--================ End About Area =================-->
-    
-    <!--================ Start Feature Area =================-->
-    <section class="feature_area section_gap_top title-bg" data-aos="zoom-in" data-aos-delay="200">
-      <div class="container">
-        <div class="row justify-content-center">
-          <div class="col-lg-6">
-            <div class="main_title" data-aos="fade-up" data-aos-delay="200">
-              <h2 class="mb-3 text-white">Our Distinctive Edge</h2>
-              <p>
-                We deliver innovative, tailored solutions that set our clients up for success.
-              </p>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-lg-4 col-md-6">
-            <div class="single_feature" data-aos="fade-up" data-aos-delay="300">
-                <div class="icon text-center"><img src="{{ asset('img/features/state.png') }}" alt="" width="50" /></span></div>
-              <div class="desc">
-                <h4 class="mt-3 mb-2 text-center"> State of the Art <br>Academics </h4><br>
-
-                <h6 class=""> . Hybridized Courses for Flexibility </h6> <br>
-                <h6 class=""> . Asynchronous Training for Self-Paced </h6> <br>
-                <h6 class=""> . Comprehensive Online Library </h6> <br>
-                <h6 class=""> . Global Partnerships Across Continents </h6> <br>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="450">
-            <div class="single_feature">
-                <div class="icon text-center"><img src="{{ asset('img/features/actea.png') }}" alt="" width="50" /></span></div>
-              <div class="desc">
-                <h4 class="mt-3 mb-2 text-center"> ACTEA Accredited <br> (English) </h4><br>
-
-                <h6 class=""> . Advanced Deploma </h6> <br>
-                <h6 class=""> . BA in Theology </h6> <br>
-                <h6 class=""> . MA in Biblical & Theological Studies </h6> <br>
-                <h6 class=""> . Masters of Devinity </h6> <br>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="500">
-            <div class="single_feature">
-                <div class="icon text-center"><img src="{{ asset('img/features/language.jpg') }}" alt="" width="50" /></span></div>
-              <div class="desc">
-                <h4 class="mt-3 mb-2 text-center"> Other Languages <br> Amharic, Affan Oromo <br>  </h4><br>
-
-                <h6 class=""> . BA in Theology - Amharic </h6> <br>
-                <h6 class=""> . MA in Biblical & Theological Studies - Amharic </h6> <br>
-                <h6 class=""> . Masters of Devinity - Amharic </h6> <br>
-                <h6 class=""> . Pioneering educational model - Amharic </h6> <br>
-
-              </div>
-            </div>
-          </div>
-
-        </div>
+      <!-- Text Section -->
+      <div data-aos="fade-up" data-aos-delay="400">
+        <h4 class="text-3xl font-bold text-white mb-6">About SITS</h4>
+        <p class="text-gray-400 text-lg mb-4">
+          Shiloh International Theological Seminary (SITS) is a globally recognized institution dedicated to equipping individuals with a deep understanding of biblical principles. At SITS, we are committed to fostering spiritual growth and academic excellence, empowering students to lead with integrity, wisdom, and faith.
+        </p>
+        <p class="text-gray-400 text-lg mb-4">
+          With state-of-the-art facilities and innovative learning approaches, we make theological education accessible and impactful—connecting students to diverse perspectives and international networks.
+        </p>
+        <p class="text-gray-400 text-lg mb-4">
+          At SITS, we believe in transforming lives and communities through the power of the Word of God. Whether you are preparing for ministry, enhancing your theological knowledge, or deepening your personal faith, SITS is your partner in fulfilling your divine calling.
+        </p>
+        <a
+          href="#"
+          class="inline-block bg-blue-500 hover:bg-blue-600 text-white font-bold px-6 py-3 rounded transition"
+        >
+          Learn More
+          <i class="ti-arrow-right ml-2"></i>
+        </a>
       </div>
-    </section>
-    <!--================ End Feature Area =================-->
-    
-    <!--================ Start Testimonial Area =================-->
+    </div>
+  </div>
+</section>
 
-    @include('abouts.gallery')
+<!-- Feature Area -->
+<section class="bg-gray-800 py-20">
+  <div class="container mx-auto px-6">
+    <div class="text-center mb-12" data-aos="fade-up" data-aos-delay="300">
+      <h2 class="text-4xl font-bold text-white mb-6">Our Distinctive Edge</h2>
+      <p class="text-gray-400 text-lg">
+        We deliver innovative, tailored solutions that set our clients up for success.
+      </p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <!-- Feature 1 -->
+      <div class="bg-gray-900 p-8 rounded-xl shadow-lg hover:shadow-2xl transition transform hover:-translate-y-4" data-aos="zoom-in" data-aos-delay="400">
+        <img src="{{ asset('img/features/state.png') }}" alt="Feature Icon" class="w-16 h-16 mx-auto mb-6">
+        <h4 class="text-xl font-bold text-white text-center mb-6">State of the Art Academics</h4>
+        <ul class="text-gray-400 space-y-3 text-base">
+          <li class="flex items-center"><i class="fas fa-check-circle text-blue-500 mr-3"></i> Hybridized Courses for Flexibility</li>
+          <li class="flex items-center"><i class="fas fa-check-circle text-blue-500 mr-3"></i> Asynchronous Training for Self-Paced Learning</li>
+          <li class="flex items-center"><i class="fas fa-check-circle text-blue-500 mr-3"></i> Comprehensive Online Library</li>
+          <li class="flex items-center"><i class="fas fa-check-circle text-blue-500 mr-3"></i> Global Partnerships Across Continents</li>
+        </ul>
+      </div>
+      <!-- Feature 2 -->
+      <div class="bg-gray-900 p-8 rounded-xl shadow-lg hover:shadow-2xl transition transform hover:-translate-y-4" data-aos="zoom-in" data-aos-delay="500">
+        <img src="{{ asset('img/features/actea.png') }}" alt="Feature Icon" class="w-16 h-16 mx-auto mb-6">
+        <h4 class="text-xl font-bold text-white text-center mb-6">ACTEA Accredited (English)</h4>
+        <ul class="text-gray-400 space-y-3 text-base">
+          <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-3"></i> Advanced Diploma</li>
+          <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-3"></i> BA in Theology</li>
+          <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-3"></i> MA in Biblical & Theological Studies</li>
+          <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-3"></i> Masters of Divinity</li>
+        </ul>
+      </div>
+      <!-- Feature 3 -->
+      <div class="bg-gray-900 p-8 rounded-xl shadow-lg hover:shadow-2xl transition transform hover:-translate-y-4" data-aos="zoom-in" data-aos-delay="600">
+        <img src="{{ asset('img/features/language.jpg') }}" alt="Feature Icon" class="w-16 h-16 mx-auto mb-6">
+        <h4 class="text-xl font-bold text-white text-center mb-6">Other Languages: Amharic, Affan Oromo</h4>
+        <ul class="text-gray-400 space-y-3 text-base">
+          <li class="flex items-center"><i class="fas fa-check-circle text-yellow-500 mr-3"></i> BA in Theology - Amharic</li>
+          <li class="flex items-center"><i class="fas fa-check-circle text-yellow-500 mr-3"></i> MA in Biblical & Theological Studies - Amharic</li>
+          <li class="flex items-center"><i class="fas fa-check-circle text-yellow-500 mr-3"></i> Masters of Divinity - Amharic</li>
+          <li class="flex items-center"><i class="fas fa-check-circle text-yellow-500 mr-3"></i> Pioneering Educational Model - Amharic</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <!--================ End Testimonial Area =================-->
 
 
-    <!--================ Start Testimonial Area =================-->
+<!-- Gallery and Testimonials -->
+@include('abouts.gallery')
+@include('contacts.testimonials')
 
-    @include('contacts.testimonials')
-
-    <!--================ End Testimonial Area =================-->
 @endsection

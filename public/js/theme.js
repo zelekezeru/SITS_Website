@@ -47,7 +47,6 @@
         responsiveClass: true,
         thumbs: true,
         thumbsPrerendered: true,
-        navText: ["<img src='img/prev.png'>", "<img src='img/next.png'>"],
         responsive: {
           0: {
             items: 1,
@@ -96,7 +95,7 @@
       $(".testi_slider").owlCarousel({
         loop: true,
         margin: 30,
-        items: 2,
+        items: 3,
         autoplay: 2500,
         smartSpeed: 2500,
         dots: true,
@@ -106,7 +105,7 @@
             items: 1
           },
           991: {
-            items: 2
+            items: 3
           }
         }
       });

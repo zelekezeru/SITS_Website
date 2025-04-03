@@ -2,88 +2,72 @@
 
 @section('main_content')
 
-    <!--================Home Banner Area =================-->
-    <section class="banner_area">
-      <div class="banner_inner d-flex align-items-center">
-        <div class="overlay"></div>
-        <div class="container">
-          <div class="row justify-content-center">
-            <div class="col-lg-6">
-              <div class="banner_content text-center">
-                <h2>Libraries</h2>
-                <div class="page_link">
-                  <a href="{{ url('/') }}">Home</a>
-                  <a href="{{ route('libraries.index')}}">Libraries</a>
+    <!-- Home Banner Area -->
+    <section class="bg-gray-900 py-16 mt-[190px]" data-aos="fade-down" data-aos-delay="100">
+        <div class="container mx-auto px-6 text-center">
+            <div class="text-white">
+                <h2 class="text-4xl font-bold mb-4">Libraries</h2>
+                <div class="flex justify-center space-x-4 text-gray-400">
+                    <a href="{{ url('/') }}" class="hover:text-white transition">Home</a>
+                    <span>/</span>
+                    <a href="{{ route('libraries.index') }}" class="hover:text-white transition">Libraries</a>
                 </div>
-              </div>
             </div>
-          </div>
         </div>
-      </div>
     </section>
-    <!--================End Home Banner Area =================-->
 
-    <!--================ Start Popular libraries Area =================-->
-    <div class="popular_libraries section_gap_top">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-6">
-                    <div class="main_title">
-                        <h2 class="mb-3">Our Popular libraries</h2>
-                        <p>
-                            SITS is a place where you can find rich libraries you need to learn and grow.
-                        </p>
-                    </div>
-                </div>
+    <!-- Popular Libraries Area -->
+    <div class="bg-gray-900 py-16">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-12" data-aos="fade-up" data-aos-delay="200">
+                <h2 class="text-4xl font-bold text-white mb-4">Our Popular Libraries</h2>
+                <p class="text-gray-400">
+                    SITS is a place where you can find rich libraries you need to learn and grow.
+                </p>
             </div>
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="owl-carousel active_course">
-                        @foreach ($libraries as $library)
-                            <div class="single_course">
-                                <div class="course_head">
-                                    <a href="{{ $library->link }}" target="_blank" rel="noopener noreferrer">
-                                        @if($library->banner)
-                                            <img src="{{ asset('storage/' . $library->banner) }}" alt="{{ $library->title }}" style="width: 200px; height: 200px; object-fit: cover;">
-                                        @else
-                                            No Image
-                                        @endif
-                                    </a>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach ($libraries as $library)
+                    <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition hover:-translate-y-3"
+                        data-aos="zoom-in" data-aos-delay="300">
+                        <a href="{{ $library->link }}" target="_blank" rel="noopener noreferrer">
+                            @if ($library->banner)
+                                <img src="{{ asset('storage/' . $library->banner) }}" alt="{{ $library->title }}"
+                                    class="w-full h-48 object-cover" />
+                            @else
+                                <img src="{{ asset('assets/images/default-banner.jpg') }}" alt="No Image"
+                                    class="w-full h-48 object-cover" />
+                            @endif
+                        </a>
+                        <div class="p-6">
+                            <h4 class="text-lg font-bold text-white mb-2">
+                                <a href="{{ $library->link }}" target="_blank" class="hover:text-blue-400 transition">
+                                    {{ $library->title }}
+                                </a>
+                            </h4>
+                            <hr>
+                            <span class="block text-white text-sm px-2 py-1 rounded-full mb-3">
+                                {{ $library->category }}
+                            </span>
+                            <p class="text-gray-400 text-sm">
+                                {{ Str::limit($library->description, 100) }}
+                            </p>
+                            <div class="flex justify-between items-center mt-4">
+                                <div class="flex items-center">
+                                    <img src="img/libraries/author1.png" alt="Author" class="w-8 h-8 rounded-full">
+                                    <span class="text-gray-300 ml-2">Cameron</span>
                                 </div>
-                                <div class="course_content">
-                                    <span class="tag mb-4 d-inline-block">{{ $library->category }}</span>
-                                    <h4 class="mb-3">
-                                        <a href="course-details.html">{{ $library->title }}</a>
-                                    </h4>
-                                    <p>
-                                        {{ Str::limit($library->description, 100) }}
-                                    </p>
-                                    <div class="course_meta d-flex justify-content-lg-between align-items-lg-center flex-lg-row flex-column mt-4">
-                                        <div class="authr_meta">
-                                            <img src="img/libraries/author1.png" alt="" />
-                                            <span class="d-inline-block ml-2">Cameron</span>
-                                        </div>
-                                        <div class="mt-lg-0 mt-3">
-                                            <span class="meta_info mr-4">
-                                                <a href="#"> <i class="ti-user mr-2"></i>25 </a>
-                                            </span>
-                                            <span class="meta_info">
-                                                <a href="#"> <i class="ti-heart mr-2"></i>35 </a>
-                                            </span>
-                                        </div>
-                                    </div>
+                                <div class="flex space-x-4">
+                                    <span class="text-yellow-400 flex items-center"><i class="ti-user mr-2"></i>25</span>
+                                    <span class="text-yellow-400 flex items-center"><i class="ti-heart mr-2"></i>35</span>
                                 </div>
                             </div>
-                        @endforeach
+                        </div>
                     </div>
-                </div>
+                @endforeach
             </div>
         </div>
     </div>
-    <!--================ End Popular libraries Area =================-->
 
-    <!--================ Start Feature Area =================-->
+    <!-- Feature Area -->
     @include('abouts.values')
-    <!--================ End Feature Area =================-->
-
 @endsection

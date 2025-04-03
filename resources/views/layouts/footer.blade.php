@@ -1,76 +1,70 @@
-<!--================ Start footer Area  =================-->
-<footer class="footer-area section_gap  mt-5" data-aos="fade-up" data-aos-delay="200">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-2 col-md-6 single-footer-widget">
-                <h4>Our Values</h4>
-                <ul>
-                    <li><a href="#">Sustainable</a></li>
-                    <li><a href="#">Accessible</a></li>
-                    <li><a href="#">Vital</a></li>
-                    <li><a href="#">Excellent</a></li>
+<footer class="bg-gray-900 py-16 text-gray-300 mt-[100px]">
+    <div class="container mx-auto px-6">
+        <!-- Main Footer Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16">
+            <!-- Our Values Section -->
+            <div data-aos="fade-right" data-aos-delay="100">
+                <h3 class="text-lg font-bold text-white mb-6">Our Values</h3>
+                <ul class="space-y-4">
+                    <li><a href="#" class="hover:text-yellow-500 transition">Sustainable</a></li>
+                    <li><a href="#" class="hover:text-yellow-500 transition">Accessible</a></li>
+                    <li><a href="#" class="hover:text-yellow-500 transition">Vital</a></li>
+                    <li><a href="#" class="hover:text-yellow-500 transition">Excellent</a></li>
                 </ul>
             </div>
-            <div class="col-lg-3 col-md-6 single-footer-widget">
-                <h4>Resources</h4>
-                <ul>
-                    <li><a href="#">Digital Library</a></li>
-                    <li><a href="#">Physical Library</a></li>
-                    <li><a href="#">Advanced Materials</a></li>
-                    <li><a href="#">Research Publications</a></li>
-                </ul>
-            </div>
-            <div class="col-lg-3 col-md-6 single-footer-widget">
-                <h4>Accessiblity</h4>
-                <ul>
-                    <li><a href="#">Online Courses</a></li>
-                    <li><a href="#">Distance Program</a></li>
-                    <li><a href="#">Advanced Materials</a></li>
-                    <li><a href="#">International Connections</a></li>
-                </ul>
-            </div>
-            <div class="col-lg-4 col-md-6 single-footer-widget">
-                <h4>Newsletter</h4>
-                <p>You can trust us. we only send promo offers,</p>
-                <div class="form-wrap" id="mc_embed_signup">
-                    <form target="_blank"
-                        action="https://spondonit.us12.list-manage.com/subscribe/post?u=1462626880ade1ac87bd9c93a&amp;id=92a4423d01"
-                        method="get" class="form-inline">
-                        <input class="form-control" name="EMAIL" placeholder="Your Email Address"
-                            onfocus="this.placeholder = ''" onblur="this.placeholder = 'Your Email Address'"
-                            required="" type="email" />
-                        <button class="click-btn btn btn-default">
-                            <span>subscribe</span>
-                        </button>
-                        <div style="position: absolute; left: -5000px;">
-                            <input name="b_36c4fd991d266f23781ded980_aefe40901a" tabindex="-1" value=""
-                                type="text" />
-                        </div>
 
-                        <div class="info"></div>
-                    </form>
-                </div>
+            <!-- Resources Section -->
+            <div data-aos="fade-up" data-aos-delay="200">
+                <h3 class="text-lg font-bold text-white mb-6">Resources</h3>
+                <ul class="space-y-4">
+                    <li><a href="#" class="hover:text-blue-500 transition">Digital Library</a></li>
+                    <li><a href="#" class="hover:text-blue-500 transition">Physical Library</a></li>
+                    <li><a href="#" class="hover:text-blue-500 transition">Advanced Materials</a></li>
+                    <li><a href="#" class="hover:text-blue-500 transition">Research Publications</a></li>
+                </ul>
+            </div>
+
+            <!-- Accessibility Section -->
+            <div data-aos="fade-up" data-aos-delay="300">
+                <h3 class="text-lg font-bold text-white mb-6">Accessibility</h3>
+                <ul class="space-y-4">
+                    <li><a href="#" class="hover:text-green-500 transition">Online Courses</a></li>
+                    <li><a href="#" class="hover:text-green-500 transition">Distance Program</a></li>
+                    <li><a href="#" class="hover:text-green-500 transition">Advanced Materials</a></li>
+                    <li><a href="#" class="hover:text-green-500 transition">International Connections</a></li>
+                </ul>
+            </div>
+
+            <!-- Newsletter Section -->
+            <div data-aos="zoom-in" data-aos-delay="400">
+                <h3 class="text-lg font-bold text-white mb-6">Newsletter</h3>
+                <p class="text-gray-400 text-sm mb-6">You can trust us. We only send promo offers.</p>
+                <form class="flex">
+                    <input type="email" placeholder="Your Email Address"
+                        class="w-full px-2 py-2 rounded-lg bg-gray-800 text-gray-300 border border-gray-700 focus:border-blue-500 focus:outline-none" />
+                    <button type="submit"
+                        class="p-2 bg-yellow-500 hover:bg-yellow-600 text-sm text-gray-900 font-bold rounded-lg transition">
+                        SUBSCRIBE
+                    </button>
+                </form>
             </div>
         </div>
 
-        <div class="row footer-bottom d-flex justify-content-between">
-            <p class="col-lg-8 col-sm-12 footer-text m-0 text-white">
-                <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-                Copyright &copy;
-                <script>
-                    document.write(new Date().getFullYear());
-                </script> All rights reserved | Developed with <i class="ti-heart"
-                    aria-hidden="true"></i> by <a href="https://farmsmassa.com" target="_blank">AEZ Technologies</a>
-                <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+        <!-- Footer Bottom -->
+        <div class="mt-16 border-t border-gray-700 pt-8 text-center" data-aos="fade-up" data-aos-delay="500">
+            <p class="text-gray-400 text-sm mb-4">
+                Copyright © 2025 All rights reserved | Developed with ♡ by AEZ Technologies
             </p>
-            <div class="col-lg-4 col-sm-12 footer-social">
-                <a href="#"><i class="ti-facebook" target="_blank"></i></a>
-                <a href="{{ url('https://x.com/sitsethiopia')}}" target="_blank"><i class="ti-twitter"></i></a>
-                <a href="{{ url('https://www.linkedin.com/in/shiloh-intermational-theological-seminary-4a0536346?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_contact_details%3BVQ01XUv0Sy24tCYjbvo6dQ%3D%3D')}}" target="_blank"><i class="ti-linkedin"></i></a>
-                {{-- <a href="{{ url('https://www.tiktok.com/@sitsethiopia?is_from_webapp=1&sender_device=pc') }}" target="_blank"><i class="ti-twitter"></i></a> --}}
+            <div class="flex justify-center space-x-6">
+                <!-- Social Media Links -->
+                <a href="#" class="hover:text-blue-500 transition">Facebook</a>
+                <a href="{{ url('https://x.com/sitsethiopia') }}" class="hover:text-blue-500 transition"
+                    target="_blank">Twitter</a>
+                <a href="{{ url('https://www.linkedin.com/in/shiloh-intermational-theological-seminary-4a0536346') }}"
+                    class="hover:text-blue-500 transition" target="_blank">
+                    LinkedIn
+                </a>
             </div>
         </div>
-
     </div>
 </footer>
-<!--================ End footer Area  =================-->

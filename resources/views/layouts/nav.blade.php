@@ -1,117 +1,60 @@
-<!--================ Start Header Menu Area =================-->
-<header class="header_area">
-    <div class="main_menu">
-        <div class="search_input" id="search_input_box">
-            <div class="container">
-            <form class="d-flex justify-content-between" method="" action="">
-                <input
-                type="text"
-                class="form-control"
-                id="search_input"
-                placeholder="Search Here"
-                />
-                <button type="submit" class="btn"></button>
-                <span
-                class="ti-close"
-                id="close_search"
-                title="Close Search"
-                ></span>
-            </form>
-            </div>
-        </div>
+<nav class="fixed top-0 w-full bg-gray-800 py-4 shadow-lg z-50">
+    <div class="container mx-auto flex justify-between items-center px-4">
+        <!-- Logo -->
+        <a href="/" class="flex items-center">
+            <img src="/img/logo.png" alt="SITS Logo" class="h-10" />
+        </a>
 
-        <nav class="navbar navbar-expand-lg navbar-light">
-            <div class="container">
-                <!-- Brand and toggle get grouped for better mobile display -->
-                <a class="navbar-brand logo_h" href="{{url("/")}}"><img src="{{ asset('img/logo.png') }}" alt="SITS"/></a>
-                <button class="navbar-toggler" type="button"
-                    data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="icon-bar"></span> <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
+        <!-- Navigation Menu -->
+        <ul class="hidden md:flex space-x-6 text-gray-300">
+            <li><a href="{{ route('home') }}" class="hover:text-white">Home</a></li>
+            <li class="relative">
+                <!-- Dropdown Trigger -->
+                <button id="dropdownTrigger" class="hover:text-white flex items-center">
+                    Programs
+                    <svg class="w-3 h-3 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
+                    </svg>
                 </button>
-                <!-- Collect the nav links, forms, and other content for toggling -->
-                <div class="collapse navbar-collapse offset" id="navbarSupportedContent">
 
-                    <ul class="nav navbar-nav menu_nav ml-auto">
-                        <li class="nav-item active">
-                            <a class="nav-link" href="{{ route('home')}}">Home</a>
-                        </li>
-                        <li class="nav-item submenu dropdown">
-                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" >Programs</a>
-                            <ul class="dropdown-menu">
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('courses.index')}}">Courses</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('programs.index')}}" >Post Grad Programs</a>
-                            </li>
-                            </ul>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('libraries.index')}}" >Libraries</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('blogs.index')}}">Blog</a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('abouts.index')}}" class="nav-link" >About SITS</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('contacts.index')}}">Contact Us</a>
-                        </li>
-                        @if (Auth::check())
-                            <li class="nav-item submenu dropdown">
-                                <a class="nav-link dropdown-toggle profile-pic d-flex align-items-center" data-toggle="dropdown" href="#" aria-expanded="false">
-                                    <div class="avatar-sm d-flex justify-content-center">
-                                        <img src="{{ auth()->user()->profile_image ? Storage::url(auth()->user()->profile_image) : asset('img/user.png') }}" alt="Profile Image" class="avatar-img rounded-circle" style="width: 40px; height: 40px; object-fit: cover;" />
-                                    </div>
-                                    <span class="profile-username ml-2">
-                                        <span class="fw-bold">{{ Auth::user()->name }}</span>
-                                    </span>
-                                </a>
-                                <ul class="dropdown-menu dropdown-user animated fadeIn">
-                                    <div class="dropdown-user-scroll scrollbar-outer p-3">
-                                        <li>
-                                            <div class="user-box mb-3">
-                                                <div class="avatar-lg">
-                                                    <img class="avatar-img rounded" src="{{ auth()->user()->profile_image ? Storage::url(auth()->user()->profile_image) : asset('img/user.png') }}" alt="Profile Image" style="width: 80px; height: 80px; object-fit: cover;">
-                                                </div>
-                                                <div class="u-text mt-2">
-                                                    <h4>{{ Auth::user()->name }}</h4>
-                                                    <p class="text-muted">{{ Auth::user()->email }}</p>
-                                                    <a href="{{ route('dashboard')}}" class="btn btn-xs btn-secondary btn-sm">Dashbord</a>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="https://pms.sits.edu.et/" target="_blank">Goto PMS</a>
-                                            <a class="dropdown-item" href="{{ route('users.show', Auth::user()->id) }}">View Profile</a>
-                                            <div class="dropdown-divider"></div>
-                                            <form method="POST" action="{{ route('logout') }}">
-                                                @csrf
-                                                <x-responsive-nav-link :href="route('logout')"
-                                                    onclick="event.preventDefault();
-                                                                this.closest('form').submit();">
-                                                    <div class="btn btn-sm btn-danger">
-                                                        {{ __('Log Out') }}
-                                                    </div>
-                                                </x-responsive-nav-link>
-                                            </form>
-                                        </li>
-                                    </div>
-                                </ul>
-                            </li>
-                        @else
-                            <li class="nav-item mt-3">
-                                <a class="btn btn-warning btn-sm" href="{{ route('login') }}">Login</a>
-                            </li>
-                        @endif
+                <!-- Dropdown Menu -->
+                <div id="dropdownMenu" class="hidden absolute bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 mt-2">
+                    <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
+                        <li><a href="{{ route('courses.index') }}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Courses</a></li>
+                        <li><a href="{{ route('programs.index') }}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Post Grad Programs</a></li>
                     </ul>
                 </div>
+            </li>
+            <li><a href="{{ route('libraries.index') }}" class="hover:text-white">Libraries</a></li>
+            <li><a href="{{ route('blogs.index') }}" class="hover:text-white">Blog</a></li>
+            <li><a href="{{ route('abouts.index') }}" class="hover:text-white">About</a></li>
+            <li><a href="{{ route('contacts.index') }}" class="hover:text-white">Contact</a></li>
+        </ul>
+
+        <!-- User Actions -->
+        <div class="flex items-center space-x-4">
+            @if (Auth::check())
+            <div class="relative">
+                <div class="flex items-center cursor-pointer">
+                    <img src="{{ auth()->user()->profile_image ? Storage::url(auth()->user()->profile_image) : '/img/user.png' }}" alt="Profile Image" class="h-10 w-10 rounded-full object-cover" />
+                    <span class="ml-2 text-gray-300">{{ Auth::user()->name }}</span>
+                </div>
+                <ul class="absolute hidden bg-gray-700 text-sm rounded shadow-lg mt-2 right-0">
+                    <li><a href="{{ route('dashboard') }}" class="block px-4 py-2 hover:bg-gray-600">Dashboard</a></li>
+                    <li><a href="{{ route('users.show', Auth::user()->id) }}" class="block px-4 py-2 hover:bg-gray-600">View Profile</a></li>
+                    <li><a href="https://pms.sits.edu.et/" target="_blank" class="block px-4 py-2 hover:bg-gray-600">Goto PMS</a></li>
+                    <li>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button class="block w-full text-left px-4 py-2 hover:bg-gray-600">Logout</button>
+                        </form>
+                    </li>
+                </ul>
             </div>
-        </nav>
+            @else
+            <a href="{{ route('login') }}" class="bg-white text-gray-900 hover:bg-yellow-400 py-2 px-4 rounded-lg font-medium transition">Login</a>
+            @endif
+        </div>
     </div>
-</header>
-<!--================ End Header Menu Area =================-->
+</nav>
+=
