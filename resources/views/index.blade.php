@@ -328,7 +328,7 @@
     <!--================ End Events Area =================-->
 
     <!-- Announcement -->
-    <section
+    <section data-aos="zoom-in" data-aos-delay="100"
         class="dark:bg-gray-900 bg-[url('https://flowbite.s3.amazonaws.com/docs/jumbotron/hero-pattern.svg')] dark:bg-[url('https://flowbite.s3.amazonaws.com/docs/jumbotron/hero-pattern-dark.svg')]">
         <div class="py-8 px-4 mx-auto max-w-screen-xl text-center lg:py-16 z-10 relative">
             <!-- Announcement Banner -->
@@ -345,12 +345,12 @@
             </a>
             <!-- Main Heading -->
             <h1 class="mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-white"
-                data-aos="zoom-out" data-aos-delay="200">
+                >
                 Transforming Lives Through Theological Education
             </h1>
             <!-- Supporting Text -->
             <p class="mb-8 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 lg:px-48 dark:text-gray-200"
-                data-aos="fade-up" data-aos-delay="300">
+                >
                 At SITS, we empower individuals by delivering accessible, sustainable, and innovative theological education.
                 Join
                 us in equipping leaders to impact their communities and the world for Christ.
