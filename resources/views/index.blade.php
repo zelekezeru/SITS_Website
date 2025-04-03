@@ -331,8 +331,10 @@
     <section
         class="dark:bg-gray-900 bg-[url('https://flowbite.s3.amazonaws.com/docs/jumbotron/hero-pattern.svg')] dark:bg-[url('https://flowbite.s3.amazonaws.com/docs/jumbotron/hero-pattern-dark.svg')]">
         <div class="py-8 px-4 mx-auto max-w-screen-xl text-center lg:py-16 z-10 relative">
+            <!-- Announcement Banner -->
             <a href="#"
-                class="inline-flex justify-between items-center py-1 px-1 pe-4 mb-7 text-sm text-blue-700 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-800">
+                class="inline-flex justify-between items-center py-1 px-1 pe-4 mb-7 text-sm text-blue-700 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-800"
+                data-aos="zoom-in" data-aos-delay="100">
                 <span class="text-xs bg-blue-600 rounded-full text-white px-4 py-1.5 me-3">New</span>
                 <span class="text-sm font-medium">Introducing SITS Online Programs! See what's new</span>
                 <svg class="w-2.5 h-2.5 ms-2 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
@@ -342,18 +344,19 @@
                 </svg>
             </a>
             <!-- Main Heading -->
-            <h1
-                class="mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
+            <h1 class="mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-white"
+                data-aos="zoom-out" data-aos-delay="200">
                 Transforming Lives Through Theological Education
             </h1>
             <!-- Supporting Text -->
-            <p class="mb-8 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 lg:px-48 dark:text-gray-200">
-                At SITS, we empower individuals by delivering accessible, sustainable,
-                and innovative theological education. Join us in equipping leaders to
-                impact their communities and the world for Christ.
+            <p class="mb-8 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 lg:px-48 dark:text-gray-200"
+                data-aos="fade-up" data-aos-delay="300">
+                At SITS, we empower individuals by delivering accessible, sustainable, and innovative theological education.
+                Join
+                us in equipping leaders to impact their communities and the world for Christ.
             </p>
             <!-- Sign-up Form -->
-            <form class="w-full max-w-md mx-auto">
+            <form class="w-full max-w-md mx-auto" data-aos="zoom-in" data-aos-delay="400">
                 <label for="default-email" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Email
                     sign-up</label>
                 <div class="relative">
