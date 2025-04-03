@@ -10,6 +10,7 @@
             </p>
             <h2 class="text-4xl md:text-6xl font-bold text-white mb-6 drop-shadow-lg">
                 Theological Education in a Digital and Convenient Way
+                <br> <span class="text-3xl font-semibold text-yellow-500">Since 1994 G.C</span>
             </h2>
             <div class="space-x-4 mt-8">
                 <a href="{{ route('abouts.index') }}"
@@ -297,13 +298,7 @@
                                 </div>
 
                                 <!-- Description -->
-                                <p class="text-gray-400 text-sm">{{ $event->description }}</p>
-
-                                <!-- View Details Button -->
-                                <a href="{{ route('events.show', $event->id) }}"
-                                    class="inline-block mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition">
-                                    View Details
-                                </a>
+                                <p class="text-gray-400 text-md">{{ $event->description }}</p>
                             </div>
                         </div>
                     @endforeach

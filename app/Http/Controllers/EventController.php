@@ -56,7 +56,7 @@ class EventController extends Controller
             $bannerPath = $request->file('banner')->store('eventBanners', 'public');
             $data['banner'] = $bannerPath;
         }
-    
+        
         Event::create($data);
 
         // Redirect to the create page with a success message
