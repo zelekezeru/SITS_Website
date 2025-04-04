@@ -2,16 +2,24 @@
 
 @section('main_content')
     <!--================ Start Home Banner Area =================-->
-    <div class="relative h-screen flex items-center justify-center bg-gray-800" data-aos="fade-in" data-aos-delay="100">
+    <div class="relative h-screen flex items-center justify-center bg-gray-800" data-aos="fade-in" data-aos-delay="100"
+        style="background: url('{{ asset('img/banner/header.png') }}')  no-repeat right bottom; background-size: 40%; background-attachment: local;">
+        <!-- Dark Transparent Overlay -->
+        <div class="absolute inset-0 bg-black opacity-50"></div>
+
         <!-- Content Overlay -->
-        <div class="relative text-center px-6 mt-[90px]" data-aos="zoom-in" data-aos-delay="200">
+        <div class="relative text-center px-6 mt-[70px]" data-aos="zoom-in" data-aos-delay="200">
+
             <p class="text-lg md:text-xl text-gray-300 mb-6 drop-shadow-md">
                 Convenient Theological Education
             </p>
-            <h2 class="text-4xl md:text-6xl font-bold text-white mb-6 drop-shadow-lg">
+
+            <h2 class="text-4xl md:text-6xl font-bold text-white mb-6 drop-shadow-md"
+                style="text-shadow: 2px 2px 4px black;">
                 Theological Education in a Digital and Convenient Way
                 <br> <span class="text-3xl font-semibold text-yellow-500">Since 1994 G.C</span>
             </h2>
+
             <div class="space-x-4 mt-8">
                 <a href="{{ route('abouts.index') }}"
                     class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-lg transition"
@@ -339,13 +347,12 @@
                 </svg>
             </a>
             <!-- Main Heading -->
-            <h1 class="mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-white"
-                >
+            <h1
+                class="mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
                 Transforming Lives Through Theological Education
             </h1>
             <!-- Supporting Text -->
-            <p class="mb-8 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 lg:px-48 dark:text-gray-200"
-                >
+            <p class="mb-8 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 lg:px-48 dark:text-gray-200">
                 At SITS, we empower individuals by delivering accessible, sustainable, and innovative theological education.
                 Join
                 us in equipping leaders to impact their communities and the world for Christ.

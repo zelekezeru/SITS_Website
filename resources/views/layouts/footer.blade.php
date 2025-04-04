@@ -69,7 +69,7 @@
         <!-- Footer Bottom -->
         <div class="mt-16 border-t border-gray-700 pt-8 text-center" data-aos="fade-up" data-aos-delay="500">
             <p class="text-gray-400 text-sm mb-4">
-                Copyright © 2025 All rights reserved | Developed with ♡ by AEZ Technologies
+                Copyright © 2025 All rights reserved | Developed with by AEZ Technologies
             </p>
             <div class="flex justify-center space-x-6">
                 <!-- Social Media Links -->

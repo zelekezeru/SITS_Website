@@ -11,8 +11,7 @@
         <!-- Values Grid -->
         <div class="grid mt-[70px] grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <!-- Value 1 -->
-            <div class="bg-gray-800 p-12 rounded-lg text-center shadow-lg hover:bg-gray-700 transition"
-                data-aos="fade-up" data-aos-delay="400">
+            <div class="bg-gray-800 p-12 rounded-lg text-center shadow-lg hover:bg-gray-700 transition card-hover" data-aos="fade-up" data-aos-delay="400">
                 <div class="flex justify-center mb-4">
                     <img src="{{ asset('img/features/sustainability.png')}}" alt="Sustainable Icon" class="w-14 h-14" />
                 </div>
@@ -23,8 +22,7 @@
             </div>
 
             <!-- Value 2 -->
-            <div class="bg-gray-800 p-12 rounded-lg text-center shadow-lg hover:bg-gray-700 transition"
-                data-aos="fade-up" data-aos-delay="500">
+            <div class="bg-gray-800 p-12 rounded-lg text-center shadow-lg hover:bg-gray-700 transition card-hover" data-aos="fade-up" data-aos-delay="500">
                 <div class="flex justify-center mb-4">
                     <img src="{{ asset('img/features/accesibility.png')}}" alt="Accessible Icon" class="w-14 h-14" />
                 </div>
@@ -35,8 +33,7 @@
             </div>
 
             <!-- Value 3 -->
-            <div class="bg-gray-800 p-12 rounded-lg text-center shadow-lg hover:bg-gray-700 transition"
-                data-aos="fade-up" data-aos-delay="600">
+            <div class="bg-gray-800 p-12 rounded-lg text-center shadow-lg hover:bg-gray-700 transition card-hover" data-aos="fade-up" data-aos-delay="600">
                 <div class="flex justify-center mb-4">
                     <img src="{{ asset('img/features/vital.png')}}" alt="Vital Icon" class="w-14 h-14" />
                 </div>
@@ -47,8 +44,7 @@
             </div>
 
             <!-- Value 4 -->
-            <div class="bg-gray-800 p-12 rounded-lg text-center shadow-lg hover:bg-gray-700 transition"
-                data-aos="fade-up" data-aos-delay="700">
+            <div class="bg-gray-800 p-12 rounded-lg text-center shadow-lg hover:bg-gray-700 transition card-hover" data-aos="fade-up" data-aos-delay="700">
                 <div class="flex justify-center mb-4">
                     <img src="{{ asset('img/features/excellent.png')}}" alt="Excellent Icon" class="w-14 h-14" />
                 </div>

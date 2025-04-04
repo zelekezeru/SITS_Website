@@ -1,10 +1,13 @@
 @extends('layouts.app')
 
 @section('main_content')
-
     <!-- Home Banner Area -->
-    <section class="bg-gray-900 py-16 mt-[190px]" data-aos="fade-down" data-aos-delay="200">
-        <div class="container mx-auto px-6 text-center">
+    <section class="bg-gray-900 py-16 pt-[250px] relative" data-aos="fade-down" data-aos-delay="200"
+        style="background: url('{{ asset('img/banner/courses.png') }}')  no-repeat right bottom; background-size: 30%; background-attachment: local;">
+        <!-- Dark Transparent Overlay -->
+        <div class="absolute inset-0 bg-black opacity-20"></div>
+
+        <div class="container mx-auto px-6 text-center relative">
             <div class="text-white">
                 <h2 class="text-4xl font-bold mb-4">Courses</h2>
                 <div class="flex justify-center space-x-4 text-gray-400">

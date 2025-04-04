@@ -110,8 +110,6 @@
                 loop: true,
                 margin: 30,
                 nav: false,
-                /* Disable default navigation */
-                dots: true,
                 autoplay: true,
                 autoplayTimeout: 4000,
                 responsive: {
