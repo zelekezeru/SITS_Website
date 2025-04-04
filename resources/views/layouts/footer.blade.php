@@ -1,5 +1,7 @@
 <footer class="bg-gray-900 py-16 text-gray-300 mt-[100px]">
-    <div class="container mx-auto px-6">
+    
+    <div class="container mx-auto px-6 mt-16 border-t border-gray-700 pt-8 text-center" data-aos="fade-up" data-aos-delay="50">
+    {{-- <div class=""> --}}
         <!-- Main Footer Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16">
             <!-- Our Values Section -->
@@ -67,7 +69,7 @@
         </div>
 
         <!-- Footer Bottom -->
-        <div class="mt-16 border-t border-gray-700 pt-8 text-center" data-aos="fade-up" data-aos-delay="500">
+        <div class="mt-16 border-t border-gray-700 pt-8 text-center" data-aos="fade-up" data-aos-delay="100">
             <p class="text-gray-400 text-sm mb-4">
                 Copyright © 2025 All rights reserved | Developed with by AEZ Technologies
             </p>

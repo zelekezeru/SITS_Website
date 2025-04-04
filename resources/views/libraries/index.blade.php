@@ -28,20 +28,21 @@
                     SITS is a place where you can find rich libraries you need to learn and grow.
                 </p>
             </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 @foreach ($libraries as $library)
                     <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition hover:-translate-y-3"
                         data-aos="zoom-in" data-aos-delay="300">
                         <a href="{{ $library->link }}" target="_blank" rel="noopener noreferrer">
                             @if ($library->banner)
-                                <img src="{{ asset('storage/' . $library->banner) }}" alt="{{ $library->title }}"
-                                    class="w-full h-48 object-cover" />
+                                <div class="flex items-center justify-center h-48 bg-gray-800">
+                                    <img src="{{ asset('storage/' . $library->banner) }}" alt="{{ $library->title }}" class="h-full object-contain" />
+                                </div>
                             @else
                                 <img src="{{ asset('assets/images/default-banner.jpg') }}" alt="No Image"
                                     class="w-full h-48 object-cover" />
                             @endif
                         </a>
-                        <div class="p-6">
+                        <div class="p-6 text-center">
                             <h4 class="text-lg font-bold text-white mb-2">
                                 <a href="{{ $library->link }}" target="_blank" class="hover:text-blue-400 transition">
                                     {{ $library->title }}
@@ -54,16 +55,6 @@
                             <p class="text-gray-400 text-sm">
                                 {{ Str::limit($library->description, 100) }}
                             </p>
-                            <div class="flex justify-between items-center mt-4">
-                                <div class="flex items-center">
-                                    <img src="img/libraries/author1.png" alt="Author" class="w-8 h-8 rounded-full">
-                                    <span class="text-gray-300 ml-2">Cameron</span>
-                                </div>
-                                <div class="flex space-x-4">
-                                    <span class="text-yellow-400 flex items-center"><i class="ti-user mr-2"></i>25</span>
-                                    <span class="text-yellow-400 flex items-center"><i class="ti-heart mr-2"></i>35</span>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 @endforeach

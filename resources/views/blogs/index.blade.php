@@ -29,14 +29,11 @@
                                 <div class="sm:col-span-1">
                                     <div class="text-gray-400 space-y-2">
                                         <div>
-                                            <a href="#" class="text-sm hover:text-yellow-400">Food</a>,
-                                            <a href="#" class="text-sm hover:text-yellow-400">Technology</a>,
-                                            <a href="#" class="text-sm hover:text-yellow-400">Politics</a>,
-                                            <a href="#" class="text-sm hover:text-yellow-400">Lifestyle</a>
+                                            <a href="#" class="text-sm hover:text-yellow-400">Theology</a>
                                         </div>
                                         <ul class="text-sm space-y-2">
-                                            <li><i class="ti-user text-yellow-400"></i> Mark Wiens</li>
-                                            <li><i class="ti-calendar text-yellow-400"></i> 12 Dec, 2017</li>
+                                            <li><i class="ti-user text-yellow-400"></i> {{ $blog->author }} </li>
+                                            <li><i class="ti-calendar text-yellow-400"></i> {{ $blog->date }}</li>
                                             <li><i class="ti-eye text-yellow-400"></i> 1.2M Views</li>
                                             <li><i class="ti-comment text-yellow-400"></i> 06 Comments</li>
                                         </ul>
