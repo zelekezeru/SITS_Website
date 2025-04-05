@@ -8,23 +8,7 @@
         <!-- Navigation Menu -->
         <ul class="hidden md:flex space-x-6 text-gray-300">
             <li><a href="{{ route('home') }}" class="hover:text-white">Home</a></li>
-            <li class="relative">
-                <!-- Dropdown Trigger -->
-                <button id="dropdownTrigger" class="hover:text-white flex items-center">
-                    Programs
-                    <svg class="w-3 h-3 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
-                    </svg>
-                </button>
-
-                <!-- Dropdown Menu -->
-                <div id="dropdownMenu" class="hidden absolute bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 mt-2">
-                    <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
-                        <li><a href="{{ route('courses.index') }}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Courses</a></li>
-                        <li><a href="{{ route('programs.index') }}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Post Grad Programs</a></li>
-                    </ul>
-                </div>
-            </li>
+            <li><a href="{{ route('courses.index') }}" class="hover:text-white">Courses</a></li>
             <li><a href="{{ route('libraries.index') }}" class="hover:text-white">Libraries</a></li>
             <li><a href="{{ route('blogs.index') }}" class="hover:text-white">Blog</a></li>
             <li><a href="{{ route('abouts.index') }}" class="hover:text-white">About</a></li>

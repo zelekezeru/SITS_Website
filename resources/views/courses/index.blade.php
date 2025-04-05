@@ -50,8 +50,8 @@
                             <div class="flex justify-between items-center mt-4">
                                 <span class="text-yellow-400 font-bold">{{ $course->amount_paid }} Br</span>
                                 <div class="flex items-center">
-                                    <img src="img/courses/author1.png" alt="Instructor" class="w-8 h-8 rounded-full">
-                                    <span class="text-gray-300 ml-2">Instructor</span>
+                                    <img src="{{ asset('img/courses/instructor-icon.png') }}" alt="Instructor" class="w-8 h-8 rounded-full">
+                                    <span class="text-gray-300 ml-2">{{ $course->instructor }}</span>
                                 </div>
                             </div>
                         </div>

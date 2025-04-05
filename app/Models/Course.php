@@ -17,6 +17,7 @@ class Course extends Model
         'amount_paid',
         'program_id',
         'banner',
+        'instructor',
         // 'status',
         // 'visibility',
     ];

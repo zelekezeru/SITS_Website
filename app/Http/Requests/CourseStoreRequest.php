@@ -23,10 +23,11 @@ class CourseStoreRequest extends FormRequest
     {
         return [
             'title' => 'required|string|max:50',
-            'description' => 'required|string|max:255',
+            'description' => 'required|string',
             'category' => 'required|string|max:100',
             'credit_hours' => 'required|numeric',
             'amount_paid' => 'required|numeric',
+            'instructor' => 'required|string',
             'banner' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
   ];
     }

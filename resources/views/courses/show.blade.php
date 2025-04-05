@@ -19,6 +19,9 @@
                         <p><strong>Category:</strong> {{ $course->category }}</p>
                     </div>
                     <div class="col-md-6">
+                        <p><strong>Instructor:</strong> {{ $course->instructor }}</p>
+                    </div>
+                    <div class="col-md-6">
                         <p><strong>Credit Hours:</strong> {{ $course->credit_hours }}</p>
                     </div>
                     <div class="col-md-6">

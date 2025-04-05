@@ -14,10 +14,12 @@ return new class extends Migration
         Schema::create('courses', function (Blueprint $table) {
             $table->id(); // Auto-incremented unique ID
             $table->string('title', 50); // Course name
-            $table->string('description', 255)->nullable(); // Course description
+            $table->string('description')->nullable(); // Course description
             $table->string('category', 100); // Course category
             $table->integer('credit_hours'); // Credit hours for the course
             $table->decimal('amount_paid', 10, 2); // Amount paid for the course
+            
+            $table->string('instructor', 255)->nullable();
             $table->foreignId('program_id') // Foreign key linking to `contact_id`
                   ->nullable()
                   ->constrained('contacts')

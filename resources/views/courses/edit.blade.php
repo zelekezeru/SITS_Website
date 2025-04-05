@@ -44,6 +44,14 @@
                     </div>
 
                     <div class="col-md-6 mb-3">
+                        <label for="inputLocation" class="form-label"><strong>Instructor:</strong></label>
+                        <input type="text" name="instructor" class="form-control @error('instructor') is-invalid @enderror" id="inputInstructor" value="{{ old('instructor', $course->instructor) }}" placeholder="Instructor Name" required>
+                        @error('instructor')
+                            <div class="form-text text-danger">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="col-md-6 mb-3">
                         <label for="inputAmount_paid" class="form-label"><strong>Amount Paid:</strong></label>
                         <input type="number" name="amount_paid" class="form-control @error('amount_paid') is-invalid @enderror" id="inputAmount_paid" value="{{ old('amount_paid', $course->amount_paid) }}" placeholder="Amount Paid" required>
                         @error('amount_paid')
