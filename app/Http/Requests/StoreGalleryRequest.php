@@ -16,7 +16,7 @@ class StoreGalleryRequest extends FormRequest
         return [
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'image' => 'required|image|max:2048', // Max 2MB
+            'image' => 'required', // Max 2MB
         ];
     }
 }
