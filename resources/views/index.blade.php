@@ -3,7 +3,7 @@
 @section('main_content')
     <!--================ Start Home Banner Area =================-->
     <div class="relative h-screen flex items-center justify-center bg-gray-800" data-aos="fade-in" data-aos-delay="100"
-        style="background: url('{{ asset('img/banner/header.png') }}')  no-repeat right bottom; background-size: 40%; background-attachment: local;">
+        style="background: url('{{ asset('img/banner/header.png') }}')  no-repeat right bottom; background-size: 60%; background-attachment: local;">
         <!-- Dark Transparent Overlay -->
         <div class="absolute inset-0 bg-black opacity-50"></div>
 
