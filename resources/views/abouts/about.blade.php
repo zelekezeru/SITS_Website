@@ -36,7 +36,7 @@
       <div data-aos="fade-up" data-aos-delay="400">
         <h4 class="text-3xl font-bold text-white mb-6">About SITS</h4>
         <p class="text-gray-400 text-lg mb-4">
-          Shiloh International Theological Seminary (SITS) is a globally recognized institution dedicated to equipping individuals with a deep understanding of biblical principles. At SITS, we are committed to fostering spiritual growth and academic excellence, empowering students to lead with integrity, wisdom, and faith.
+          Shiloh International Theological Seminary (SITS) is a globally recognized institution dedicated to equipping individuals with a deep understanding of biblical principles. At SITS, we are committed to fostering spiritual growth and academic excellence, empowering students with the power of the Holy Spirit to serve Jesus Christ with integrity, wisdom, and faith.
         </p>
         <p class="text-gray-400 text-lg mb-4">
           With state-of-the-art facilities and innovative learning approaches, we make theological education accessible and impactful—connecting students to diverse perspectives and international networks.
@@ -93,7 +93,7 @@
         <img src="{{ asset('img/features/language.jpg') }}" alt="Feature Icon" class="w-16 h-16 mx-auto mb-6">
         <h4 class="text-xl font-bold text-white text-center mb-6">Other Languages: Amharic, Affan Oromo</h4>
         <ul class="text-gray-400 space-y-3 text-base">
-          <li class="flex items-center"><i class="fas fa-check-circle text-yellow-500 mr-3"></i> BA in Theology - Amharic</li>
+          <li class="flex items-center"><i class="fas fa-check-circle text-yellow-500 mr-3"></i> BA in Theology - Amharic, Urdu</li>
           <li class="flex items-center"><i class="fas fa-check-circle text-yellow-500 mr-3"></i> MA in Biblical & Theological Studies - Amharic</li>
           <li class="flex items-center"><i class="fas fa-check-circle text-yellow-500 mr-3"></i> Masters of Divinity - Amharic</li>
           <li class="flex items-center"><i class="fas fa-check-circle text-yellow-500 mr-3"></i> Pioneering Educational Model - Amharic</li>
@@ -107,6 +107,7 @@
 
 <!-- Gallery and Testimonials -->
 @include('abouts.gallery')
+
 @include('contacts.testimonials')
 
 @endsection

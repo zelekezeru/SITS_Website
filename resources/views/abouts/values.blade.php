@@ -24,11 +24,11 @@
             <!-- Value 2 -->
             <div class="bg-gray-800 p-12 rounded-lg text-center shadow-lg hover:bg-gray-700 transition card-hover" data-aos="fade-up" data-aos-delay="500">
                 <div class="flex justify-center mb-4">
-                    <img src="{{ asset('img/features/accesibility.png')}}" alt="Accessible Icon" class="w-14 h-14" />
+                    <img src="{{ asset('img/features/accessibility.png')}}" alt="Accessible Icon" class="w-14 h-14" />
                 </div>
                 <h3 class="text-xl font-bold text-white mb-2">Accessible</h3>
                 <p class="text-gray-400 text-md">
-                    We value education based on merit, character, and potential, not wealth or status.
+                    We value breaking barriers by offering flexible, affordable, multi-level, diverse languages and delivery modes to meet every student's needs.
                 </p>
             </div>
 
@@ -39,7 +39,7 @@
                 </div>
                 <h3 class="text-xl font-bold text-white mb-2">Vital</h3>
                 <p class="text-gray-400 text-md">
-                    We value knowing God through faith in Christ, empowered by the Holy Spirit.
+                    We value knowing, serving, and worshiping God through faith in Christ, empowered by the Holy Spirit.
                 </p>
             </div>
 

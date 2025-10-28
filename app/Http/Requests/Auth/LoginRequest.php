@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 
 class LoginRequest extends FormRequest
 {
@@ -42,6 +44,35 @@ class LoginRequest extends FormRequest
         $this->ensureIsNotRateLimited();
 
         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+            // Try legacy password verification and rehash to current hasher (bcrypt / configured hasher)
+            $user = User::where('email', $this->string('email'))->first();
+
+            if ($user) {
+                $plain = $this->string('password');
+
+                // If stored password is plaintext
+                if ($plain === $user->password) {
+                    $user->password = Hash::make($plain);
+                    $user->save();
+                    if (Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+                        RateLimiter::clear($this->throttleKey());
+                        return;
+                    }
+                }
+
+                // If stored password was an MD5 hash (legacy)
+                if (md5($plain) === $user->password) {
+                    $user->password = Hash::make($plain);
+                    $user->save();
+                    if (Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+                        RateLimiter::clear($this->throttleKey());
+                        return;
+                    }
+                }
+
+                // Add other legacy checks here if needed (e.g., sha1) following the same pattern.
+            }
+
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([

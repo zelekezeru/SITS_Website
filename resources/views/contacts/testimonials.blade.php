@@ -70,25 +70,6 @@
             understanding the Word of God for their lives today."
           </p>
         </div>
-  
-        <!-- Testimonial 4 -->
-        <div class="bg-gray-800 p-6 rounded-lg shadow-lg transform hover:scale-105 hover:shadow-xl transition" data-aos="zoom-in" data-aos-delay="200">
-          <div class="flex flex-col items-center text-center mb-4">
-            <div class="image-container" data-aos="flip-left" data-aos-delay="250">
-              <img
-                src="{{ asset('img/testimonials/t4.jpg') }}"
-                alt="Daniel Alemayehu"
-                class="rounded-full object-cover"
-              />
-            </div>
-            <h4 class="text-lg font-bold text-white mt-4" data-aos="fade-right" data-aos-delay="300">Daniel Alemayehu</h4>
-            <p class="text-sm text-yellow-400" data-aos="fade-left" data-aos-delay="350">Gospel Singer, Preacher</p>
-            <p class="text-sm text-gray-400" data-aos="fade-up" data-aos-delay="400">Hawassa New Testament Priest Church</p>
-          </div>
-          <p class="text-gray-300" data-aos="zoom-in" data-aos-delay="450">
-            "Theological education has equipped me to better know God himself, as he is."
-          </p>
-        </div>
       </div>
     </div>
   </section>
