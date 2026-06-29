@@ -1,77 +1,113 @@
 <x-admin-layout>
-    <div class="container mt-5 pt-5">
-        <div class="card mt-5">
-            <h2 class="card-header text-center">Add New Course</h2>
-            <div class="card-body">
-                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                    <a class="btn btn-primary btn-sm" href="{{ route('courses.index') }}"><i class="fa fa-arrow-left"></i> Back</a>
-                </div>
+    <div class="max-w-4xl mx-auto space-y-6">
+        <!-- Header -->
+        <div class="flex justify-between items-center">
+            <div>
+                <h1 class="font-outfit text-3xl font-extrabold text-white tracking-tight">Add New Course</h1>
+                <p class="text-sm text-slate-400">Create a new course entry in the curriculum registry.</p>
+            </div>
+            <a class="inline-flex items-center space-x-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-sm font-semibold rounded-xl transition duration-200" href="{{ route('courses.list') }}">
+                <i class="fa fa-arrow-left text-xs"></i>
+                <span>Back</span>
+            </a>
+        </div>
 
-                <form action="{{ route('courses.store') }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="inputName" class="form-label"><strong>Course Title:</strong></label>
-                            <input type="text" name="title" class="form-control @error('title') is-invalid @enderror" id="inputTitle" placeholder="Course Title" required>
-                            @error('title')
-                                <div class="form-text text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label for="inputEmail" class="form-label"><strong>Description:</strong></label>
-                            <input type="text" name="description" class="form-control @error('description') is-invalid @enderror" id="inputDescription" placeholder="Description" required>
-                            @error('description')
-                                <div class="form-text text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label for="inputLocation" class="form-label"><strong>Category:</strong></label>
-                            <input type="text" name="category" class="form-control @error('category') is-invalid @enderror" id="inputCategory" placeholder="Category" required>
-                            @error('category')
-                                <div class="form-text text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label for="inputContact" class="form-label"><strong>Credit Hours:</strong></label>
-                            <input type="number" name="credit_hours" class="form-control @error('credit_hours') is-invalid @enderror" id="inputCredit_hours" placeholder="Credit_hours" required>
-                            @error('credit_hours')
-                                <div class="form-text text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label for="inputLocation" class="form-label"><strong>Instructor:</strong></label>
-                            <input type="text" name="instructor" class="form-control @error('instructor') is-invalid @enderror" id="inputInstructor" placeholder="Instructor Name" required>
-                            @error('instructor')
-                                <div class="form-text text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label for="inputContact" class="form-label"><strong>Amount paid:</strong></label>
-                            <input type="number" name="amount_paid" class="form-control @error('amount_paid') is-invalid @enderror" id="inputAmount_paid" placeholder="Amount_paid" required>
-                            @error('amount_paid')
-                                <div class="form-text text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label for="inputBanner" class="form-label"><strong>Banner:</strong></label>
-                            <input type="file" name="banner" class="form-control @error('banner') is-invalid @enderror" id="inputBanner">
-                            @error('banner')
-                                <div class="form-text text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-
+        <!-- Form Card -->
+        <div class="rounded-3xl bg-slate-900/40 backdrop-blur-md border border-slate-800/80 shadow-2xl p-6 sm:p-8">
+            <form action="{{ route('courses.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+                @csrf
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Title -->
+                    <div class="space-y-2">
+                        <label for="inputTitle" class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Course Title</label>
+                        <input type="text" name="title" id="inputTitle" required
+                               class="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-slate-800/80 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-white placeholder-slate-500 text-sm transition outline-none"
+                               placeholder="e.g. Systematic Theology I">
+                        @error('title')
+                            <p class="text-xs text-rose-400 mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
-                    <button type="submit" class="btn btn-success"><i class="fa-solid fa-floppy-disk"></i> Submit</button>
-                </form>
+                    <!-- Category -->
+                    <div class="space-y-2">
+                        <label for="inputCategory" class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Category</label>
+                        <input type="text" name="category" id="inputCategory" required
+                               class="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-slate-800/80 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-white placeholder-slate-500 text-sm transition outline-none"
+                               placeholder="e.g. Theology, Ministry">
+                        @error('category')
+                            <p class="text-xs text-rose-400 mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
 
-            </div>
+                    <!-- Description -->
+                    <div class="space-y-2 md:col-span-2">
+                        <label for="inputDescription" class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Description</label>
+                        <input type="text" name="description" id="inputDescription" required
+                               class="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-slate-800/80 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-white placeholder-slate-500 text-sm transition outline-none"
+                               placeholder="Brief overview of the course curriculum and objectives">
+                        @error('description')
+                            <p class="text-xs text-rose-400 mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Credit Hours -->
+                    <div class="space-y-2">
+                        <label for="inputCredit_hours" class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Credit Hours</label>
+                        <input type="number" name="credit_hours" id="inputCredit_hours" required
+                               class="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-slate-800/80 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-white placeholder-slate-500 text-sm transition outline-none"
+                               placeholder="e.g. 3">
+                        @error('credit_hours')
+                            <p class="text-xs text-rose-400 mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Instructor -->
+                    <div class="space-y-2">
+                        <label for="inputInstructor" class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Instructor</label>
+                        <input type="text" name="instructor" id="inputInstructor" required
+                               class="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-slate-800/80 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-white placeholder-slate-500 text-sm transition outline-none"
+                               placeholder="Instructor Name">
+                        @error('instructor')
+                            <p class="text-xs text-rose-400 mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Amount Paid -->
+                    <div class="space-y-2">
+                        <label for="inputAmount_paid" class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Amount / Fee (ETB)</label>
+                        <input type="number" name="amount_paid" id="inputAmount_paid" required
+                               class="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-slate-800/80 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-white placeholder-slate-500 text-sm transition outline-none"
+                               placeholder="e.g. 1500">
+                        @error('amount_paid')
+                            <p class="text-xs text-rose-400 mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Banner File -->
+                    <div class="space-y-2">
+                        <label for="inputBanner" class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Course Banner Image</label>
+                        <input type="file" name="banner" id="inputBanner"
+                               class="w-full px-4 py-2.5 rounded-xl bg-slate-950/60 border border-slate-800/80 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-slate-400 text-sm transition outline-none file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-500/10 file:text-indigo-400 hover:file:bg-indigo-500/20 file:cursor-pointer">
+                        @error('banner')
+                            <p class="text-xs text-rose-400 mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+
+                <!-- Submit Buttons -->
+                <div class="flex justify-end gap-3 border-t border-slate-900/60 pt-6 mt-8">
+                    <a href="{{ route('courses.list') }}" 
+                       class="px-5 py-2.5 rounded-xl text-sm font-semibold bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white transition duration-200">
+                        Cancel
+                    </a>
+                    <button type="submit" 
+                            class="px-5 py-2.5 rounded-xl text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/20 hover:scale-[1.02] active:scale-[0.98] transition duration-200">
+                        <i class="fa-solid fa-floppy-disk mr-1.5 text-xs"></i>
+                        <span>Save Course</span>
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </x-admin-layout>

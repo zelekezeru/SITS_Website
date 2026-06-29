@@ -1,42 +1,155 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="en" class="h-full">
 <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>SITS Admin Dashboard</title>
-    <meta content="width=device-width, initial-scale=1.0, shrink-to-fit=no" name="viewport" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="icon" href="{{ asset('img/logo.png') }}" type="image/png" />
-    <!-- Fonts and icons -->
-    <script src="{{ asset('js/plugin/webfont/webfont.min.js') }}"></script>
-    <!-- CSS Files -->
-    <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}" />
-    <link rel="stylesheet" href="{{ asset('css/plugins.min.css') }}" />
-    <link rel="stylesheet" href="{{ asset('css/kaiadmin.min.css') }}" />
-    <link rel="stylesheet" href="{{ asset('css/fonts.min.css') }}"/>
-    <link rel="stylesheet" href="{{ asset('css/style.css') }}"/>
+    <title>SITS Admin Dashboard</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-
-
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        outfit: ['Outfit', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <!-- Bootstrap 5 CSS (for legacy pages compatibility) -->
+    <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}" />
+    
+    <style>
+        /* Ambient glowing background blobs */
+        .glow-blob {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.12;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .glow-blob-1 {
+            background: radial-gradient(circle, #4f46e5 0%, #06b6d4 100%);
+            width: 500px;
+            height: 500px;
+            top: -10%;
+            right: -5%;
+        }
+        .glow-blob-2 {
+            background: radial-gradient(circle, #f59e0b 0%, #ef4444 100%);
+            width: 600px;
+            height: 600px;
+            bottom: -10%;
+            left: -10%;
+        }
+        .glassmorphism {
+            background: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        /* Dark overrides for Bootstrap elements (legacy compatibility) */
+        body {
+            background-color: #090d16 !important;
+            color: #cbd5e1 !important;
+        }
+        .card {
+            background: rgba(15, 23, 42, 0.45) !important;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05) !important;
+            color: #f8fafc !important;
+            border-radius: 1rem !important;
+        }
+        .card-header {
+            background: rgba(15, 23, 42, 0.6) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+            color: #ffffff !important;
+            font-weight: 700;
+        }
+        .table {
+            color: #cbd5e1 !important;
+            border-color: rgba(255, 255, 255, 0.05) !important;
+        }
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: rgba(255, 255, 255, 0.01) !important;
+            color: #cbd5e1 !important;
+        }
+        .table-hover tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.04) !important;
+            color: #ffffff !important;
+        }
+        .table td, .table th {
+            border-color: rgba(255, 255, 255, 0.05) !important;
+            padding: 1rem 0.75rem !important;
+            vertical-align: middle !important;
+        }
+        .thead-dark th {
+            background-color: rgba(15, 23, 42, 0.8) !important;
+            color: #ffffff !important;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.08) !important;
+        }
+        .form-control, .form-select {
+            background-color: rgba(15, 23, 42, 0.6) !important;
+            border-color: rgba(255, 255, 255, 0.08) !important;
+            color: #ffffff !important;
+            border-radius: 0.5rem !important;
+        }
+        .form-control:focus, .form-select:focus {
+            background-color: rgba(15, 23, 42, 0.8) !important;
+            color: #ffffff !important;
+            border-color: #6366f1 !important;
+            box-shadow: 0 0 0 0.25rem rgba(99, 102, 241, 0.25) !important;
+        }
+        label {
+            color: #94a3b8 !important;
+        }
+    </style>
 </head>
+<body class="bg-[#090d16] text-slate-300 font-sans min-h-screen flex flex-col relative overflow-x-hidden selection:bg-indigo-500 selection:text-white">
+    <!-- Glowing Background blobs -->
+    <div class="glow-blob glow-blob-1"></div>
+    <div class="glow-blob glow-blob-2"></div>
 
-<body>
-    <div class="wrapper">
-
-        @if (Auth::user())
-
-        @include('layouts.admin.side-navigation')
-
-        @include('layouts.admin.navigation')
-        <!-- Page Content -->
-
+    <div class="flex flex-col md:flex-row min-h-screen">
+        @if (Auth::check())
+            <!-- Sidebar -->
+            @include('layouts.admin.side-navigation')
         @endif
 
+        <!-- Main Content Panel -->
+        <div class="flex-1 flex flex-col min-h-screen z-10">
+            @if (Auth::check())
+                <!-- Topbar Header -->
+                @include('layouts.admin.navigation')
+            @endif
 
-        <main>
-            {{ $slot }}
-        </main>
+            <!-- Main Content Area -->
+            <main class="flex-grow p-6 md:p-8">
+                {{ $slot }}
+            </main>
+        </div>
     </div>
 
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         function confirmDelete(ItemId) {
             Swal.fire({
@@ -46,7 +159,13 @@
                 showCancelButton: true,
                 confirmButtonColor: "#d33",
                 cancelButtonColor: "#3085d6",
-                confirmButtonText: "Yes, delete it!"
+                confirmButtonText: "Yes, delete it!",
+                background: '#0f172a',
+                color: '#f8fafc',
+                customClass: {
+                    popup: 'rounded-3xl border border-slate-800 shadow-2xl backdrop-blur-md',
+                    confirmButton: 'rounded-xl px-5 py-2.5 text-sm font-semibold'
+                }
             }).then((result) => {
                 if (result.isConfirmed) {
                     document.getElementById('delete-form-' + ItemId).submit();
@@ -54,67 +173,5 @@
             });
         }
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!--   Core JS Files   -->
-    <script src="{{ asset('js/core/jquery-3.7.1.min.js') }}"></script>
-    <script src="{{ asset('js/core/popper.min.js') }}"></script>
-    <script src="{{ asset('js/core/bootstrap.min.js') }}"></script>
-
-    <!-- jQuery Scrollbar -->
-    <script src="{{ asset('js/plugin/jquery-scrollbar/jquery.scrollbar.min.js') }}"></script>
-
-    <!-- Chart JS -->
-    <script src="{{ asset('js/plugin/chart.js/chart.min.js') }}"></script>
-
-    <!-- jQuery Sparkline -->
-    <script src="{{ asset('js/plugin/jquery.sparkline/jquery.sparkline.min.js') }}"></script>
-
-    <!-- Chart Circle -->
-    <script src="{{ asset('js/plugin/chart-circle/circles.min.js') }}"></script>
-
-    <!-- Datatables -->
-    <script src="{{ asset('js/plugin/datatables/datatables.min.js') }}"></script>
-
-    <!-- Bootstrap Notify -->
-    <script src="{{ asset('js/plugin/bootstrap-notify/bootstrap-notify.min.js') }}"></script>
-
-    <!-- jQuery Vector Maps -->
-    <script src="{{ asset('js/plugin/jsvectormap/jsvectormap.min.js') }}"></script>
-    <script src="{{ asset('js/plugin/jsvectormap/world.js') }}"></script>
-
-    <!-- Sweet Alert -->
-    <script src="{{ asset('js/plugin/sweetalert/sweetalert.min.js') }}"></script>
-
-    <!-- Kaiadmin JS -->
-    <script src="{{ asset('js/kaiadmin.min.js') }}"></script>
-    <script>
-        $("#lineChart").sparkline([102, 109, 120, 99, 110, 105, 115], {
-            type: "line",
-            height: "70",
-            width: "100%",
-            lineWidth: "2",
-            lineColor: "#177dff",
-            fillColor: "rgba(23, 125, 255, 0.14)",
-        });
-
-        $("#lineChart2").sparkline([99, 125, 122, 105, 110, 124, 115], {
-            type: "line",
-            height: "70",
-            width: "100%",
-            lineWidth: "2",
-            lineColor: "#f3545d",
-            fillColor: "rgba(243, 84, 93, .14)",
-        });
-
-        $("#lineChart3").sparkline([105, 103, 123, 100, 95, 105, 115], {
-            type: "line",
-            height: "70",
-            width: "100%",
-            lineWidth: "2",
-            lineColor: "#ffa534",
-            fillColor: "rgba(255, 165, 52, .14)",
-        });
-    </script>
 </body>
-
 </html>

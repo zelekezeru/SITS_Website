@@ -1,76 +1,78 @@
-<section class="bg-gray-900 py-[90px]">
+<section class="py-20 bg-transparent">
     <div class="container mx-auto px-6">
-      <!-- Section Header -->
-      <div class="text-center mb-12" data-aos="fade-up" data-aos-delay="100">
-        <h2 class="text-4xl font-bold text-white mb-4">Testimonials about SITS</h2>
-        <p class="text-gray-400 text-lg">
-          See what our clients have to say about their experience with SITS and the results we deliver.
-        </p>
-      </div>
-  
-      <!-- Testimonial Carousel -->
-      <div class="owl-carousel testi_slider">
-        <!-- Testimonial 1 -->
-        <div class="bg-gray-800 p-6 rounded-lg shadow-lg transform hover:scale-105 hover:shadow-xl transition" data-aos="zoom-in" data-aos-delay="200">
-          <div class="flex flex-col items-center text-center mb-4">
-            <!-- Small Perfect Circle Image -->
-            <div class="image-container" data-aos="flip-left" data-aos-delay="250">
-              <img
-                src="{{ asset('img/testimonials/t1.jpg') }}"
-                alt="Mesle Getu"
-                class="rounded-full object-cover"
-              />
+        <!-- Section Header -->
+        <div class="max-w-3xl mx-auto text-center mb-16" data-aos="fade-up" data-aos-delay="100">
+            <div class="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-semibold tracking-wide mb-4">
+                Student Voices
             </div>
-            <h4 class="text-lg font-bold text-white mt-4" data-aos="fade-right" data-aos-delay="300">Mesle Getu</h4>
-            <p class="text-sm text-yellow-400" data-aos="fade-left" data-aos-delay="350">Marriage Counsellor</p>
-            <p class="text-sm text-gray-400" data-aos="fade-up" data-aos-delay="400">Hawassa Hiwot Birhan Church</p>
-          </div>
-          <p class="text-gray-300" data-aos="zoom-in" data-aos-delay="450">
-            "Shiloh's education has helped me know the Word of God on a deeper level, which impacts my ministry
-            strengthening marriages in Ethiopia every day."
-          </p>
+            <h2 class="text-3xl md:text-4xl font-bold text-white font-outfit mb-4">Testimonials About SITS</h2>
+            <p class="text-slate-400">
+                Discover how Shiloh's theological training has equipped pastors, counselors, and church leaders across the region.
+            </p>
         </div>
-  
-        <!-- Testimonial 2 -->
-        <div class="bg-gray-800 p-6 rounded-lg shadow-lg transform hover:scale-105 hover:shadow-xl transition" data-aos="zoom-in" data-aos-delay="200">
-          <div class="flex flex-col items-center text-center mb-4">
-            <div class="image-container" data-aos="flip-left" data-aos-delay="250">
-              <img
-                src="{{ asset('img/testimonials/t2.jpg') }}"
-                alt="Eyasu Bassa"
-                class="rounded-full object-cover"
-              />
+
+        <!-- Testimonial Slider / Grid -->
+        <div class="owl-carousel testi_slider" data-aos="fade-up" data-aos-delay="200">
+            <!-- Testimonial 1 -->
+            <div class="glass-card p-8 rounded-3xl border border-white/5 relative flex flex-col justify-between h-full min-h-[250px] group hover:border-indigo-500/30 transition duration-300">
+                <!-- Quote Icon Accent -->
+                <div class="absolute top-6 right-8 text-indigo-500/15 text-5xl font-serif pointer-events-none group-hover:scale-110 transition duration-300">“</div>
+                
+                <p class="text-slate-300 text-sm leading-relaxed italic relative z-10 mb-6">
+                    "Shiloh's education has helped me know the Word of God on a deeper level, which impacts my ministry strengthening marriages in Ethiopia every day."
+                </p>
+
+                <div class="flex items-center gap-4 pt-4 border-t border-slate-900/60">
+                    <div class="w-12 h-12 rounded-full overflow-hidden border-2 border-indigo-500/20 shrink-0">
+                        <img src="{{ asset('img/testimonials/t1.jpg') }}" alt="Mesle Getu" class="w-full h-full object-cover" />
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-white font-outfit">Mesle Getu</h4>
+                        <span class="block text-[11px] text-amber-500 font-semibold uppercase tracking-wider">Marriage Counsellor</span>
+                        <span class="block text-[10px] text-slate-500">Hawassa Hiwot Birhan Church</span>
+                    </div>
+                </div>
             </div>
-            <h4 class="text-lg font-bold text-white mt-4" data-aos="fade-right" data-aos-delay="300">Eyasu Bassa</h4>
-            <p class="text-sm text-yellow-400" data-aos="fade-left" data-aos-delay="350">Pastor</p>
-            <p class="text-sm text-gray-400" data-aos="fade-up" data-aos-delay="400">Mehal Hawassa Meserete Kristos Church</p>
-          </div>
-          <p class="text-gray-300" data-aos="zoom-in" data-aos-delay="450">
-            "Shiloh is helping me to know and understand the Word of God in a better way. This is helping me to serve
-            the people of God with better understanding."
-          </p>
-        </div>
-  
-        <!-- Testimonial 3 -->
-        <div class="bg-gray-800 p-6 rounded-lg shadow-lg transform hover:scale-105 hover:shadow-xl transition" data-aos="zoom-in" data-aos-delay="200">
-          <div class="flex flex-col items-center text-center mb-4">
-            <div class="image-container" data-aos="flip-left" data-aos-delay="250">
-              <img
-                src="{{ asset('img/testimonials/t3.jpg') }}"
-                alt="Mersha Gebre"
-                class="rounded-full object-cover"
-              />
+
+            <!-- Testimonial 2 -->
+            <div class="glass-card p-8 rounded-3xl border border-white/5 relative flex flex-col justify-between h-full min-h-[250px] group hover:border-indigo-500/30 transition duration-300">
+                <div class="absolute top-6 right-8 text-indigo-500/15 text-5xl font-serif pointer-events-none group-hover:scale-110 transition duration-300">“</div>
+                
+                <p class="text-slate-300 text-sm leading-relaxed italic relative z-10 mb-6">
+                    "Shiloh is helping me to know and understand the Word of God in a better way. This is helping me to serve the people of God with better understanding."
+                </p>
+
+                <div class="flex items-center gap-4 pt-4 border-t border-slate-900/60">
+                    <div class="w-12 h-12 rounded-full overflow-hidden border-2 border-indigo-500/20 shrink-0">
+                        <img src="{{ asset('img/testimonials/t2.jpg') }}" alt="Eyasu Bassa" class="w-full h-full object-cover" />
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-white font-outfit">Eyasu Bassa</h4>
+                        <span class="block text-[11px] text-amber-500 font-semibold uppercase tracking-wider">Pastor</span>
+                        <span class="block text-[10px] text-slate-500">Mehal Hawassa Meserete Kristos Church</span>
+                    </div>
+                </div>
             </div>
-            <h4 class="text-lg font-bold text-white mt-4" data-aos="fade-right" data-aos-delay="300">Mersha Gebre</h4>
-            <p class="text-sm text-yellow-400" data-aos="fade-left" data-aos-delay="350">Pastor, Chairman</p>
-            <p class="text-sm text-gray-400" data-aos="fade-up" data-aos-delay="400">Hawassa Alamura Full Gospel Believer's Church</p>
-          </div>
-          <p class="text-gray-300" data-aos="zoom-in" data-aos-delay="450">
-            "The theological education I have received at Shiloh has equipped me to serve others in better
-            understanding the Word of God for their lives today."
-          </p>
+
+            <!-- Testimonial 3 -->
+            <div class="glass-card p-8 rounded-3xl border border-white/5 relative flex flex-col justify-between h-full min-h-[250px] group hover:border-indigo-500/30 transition duration-300">
+                <div class="absolute top-6 right-8 text-indigo-500/15 text-5xl font-serif pointer-events-none group-hover:scale-110 transition duration-300">“</div>
+                
+                <p class="text-slate-300 text-sm leading-relaxed italic relative z-10 mb-6">
+                    "The theological education I have received at Shiloh has equipped me to serve others in better understanding the Word of God for their lives today."
+                </p>
+
+                <div class="flex items-center gap-4 pt-4 border-t border-slate-900/60">
+                    <div class="w-12 h-12 rounded-full overflow-hidden border-2 border-indigo-500/20 shrink-0">
+                        <img src="{{ asset('img/testimonials/t3.jpg') }}" alt="Mersha Gebre" class="w-full h-full object-cover" />
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-white font-outfit">Mersha Gebre</h4>
+                        <span class="block text-[11px] text-amber-500 font-semibold uppercase tracking-wider">Pastor, Chairman</span>
+                        <span class="block text-[10px] text-slate-500">Hawassa Alamura Full Gospel Believer's Church</span>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </section>
-  
+</section>

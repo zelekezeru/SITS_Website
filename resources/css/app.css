@@ -1,3 +1,36 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+@source '../**/*.vue';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+/*
+ * Force native <select> option dropdowns to match the dark slate theme.
+ * The `color-scheme` property is the most reliable cross-browser way to coerce
+ * the OS-rendered dropdown panel into a dark palette.
+ */
+select {
+    color-scheme: dark;
+}
+
+select option {
+    background-color: #0f172a; /* slate-950 */
+    color: #e2e8f0;            /* slate-200 */
+}
+
+select option:disabled {
+    color: #475569;            /* slate-600 */
+}
+
+select option:checked,
+select option:hover {
+    background-color: #1e293b; /* slate-800 */
+}
+
