@@ -19,18 +19,37 @@
         <div class="flex items-center space-x-4">
             @if (Auth::check())
             <div class="relative">
-                <div class="flex items-center cursor-pointer">
+                <div id="dropdownTrigger" class="flex items-center cursor-pointer">
                     <img src="{{ auth()->user()->profile_image ? Storage::url(auth()->user()->profile_image) : '/img/user.png' }}" alt="Profile Image" class="h-10 w-10 rounded-full object-cover" />
                     <span class="ml-2 text-gray-300">{{ Auth::user()->name }}</span>
                 </div>
-                <ul class="absolute hidden bg-gray-700 text-sm rounded shadow-lg mt-2 right-0">
-                    <li><a href="{{ route('dashboard') }}" class="block px-4 py-2 hover:bg-gray-600">Dashboard</a></li>
-                    <li><a href="{{ route('users.show', Auth::user()->id) }}" class="block px-4 py-2 hover:bg-gray-600">View Profile</a></li>
-                    <li><a href="https://pms.sits.edu.et/" target="_blank" class="block px-4 py-2 hover:bg-gray-600">Goto PMS</a></li>
+                @php
+                    $user = Auth::user();
+                    $lmsLabel = 'LMS Portal';
+                    if ($user->hasRole('STUDENT')) {
+                        $lmsLabel = 'Go to Student Learning Portal';
+                    } elseif ($user->hasRole('TRAINER')) {
+                        $lmsLabel = 'Instructors Portal';
+                    } elseif ($user->hasAnyRole(['STAFF', 'SUPERADMIN', 'ADMIN', 'EDITOR', 'LIBRARIAN'])) {
+                        $lmsLabel = 'Staff Portal';
+                    }
+                @endphp
+                <ul id="dropdownMenu" class="absolute hidden bg-gray-800 border border-gray-700/60 text-sm rounded-xl shadow-xl mt-2 right-0 w-64 py-1.5 z-50">
+                    <li><a href="{{ route('portal') }}" class="block px-4 py-2 text-gray-200 hover:bg-gray-700/80 hover:text-white transition duration-150">Dashboard</a></li>
+                    <li><a href="{{ route('users.show', Auth::user()->id) }}" class="block px-4 py-2 text-gray-200 hover:bg-gray-700/80 hover:text-white transition duration-150">View Profile</a></li>
+                    <li class="border-t border-gray-700/50 my-1"></li>
+                    <li><a href="https://lms.sits.edu.et" target="_blank" class="block px-4 py-2 text-gray-200 hover:bg-gray-700/80 hover:text-white transition duration-150">{{ $lmsLabel }}</a></li>
+                    @if ($user->hasAnyRole(['SUPERADMIN', 'ADMIN', 'EDITOR', 'TRAINER', 'STAFF', 'LIBRARIAN']))
+                        <li><a href="https://pms.sits.edu.et" target="_blank" class="block px-4 py-2 text-gray-200 hover:bg-gray-700/80 hover:text-white transition duration-150">ERP Portal</a></li>
+                    @endif
+                    @if ($user->hasAnyRole(['STUDENT', 'TRAINER', 'LIBRARIAN', 'ADMIN', 'SUPERADMIN', 'STAFF', 'EDITOR']))
+                        <li><a href="https://library.sits.edu.et" target="_blank" class="block px-4 py-2 text-gray-200 hover:bg-gray-700/80 hover:text-white transition duration-150">Digital Library</a></li>
+                    @endif
+                    <li class="border-t border-gray-700/50 my-1"></li>
                     <li>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button class="block w-full text-left px-4 py-2 hover:bg-gray-600">Logout</button>
+                            <button class="block w-full text-left px-4 py-2 text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 transition duration-150">Logout</button>
                         </form>
                     </li>
                 </ul>
@@ -41,4 +60,4 @@
         </div>
     </div>
 </nav>
-=
+

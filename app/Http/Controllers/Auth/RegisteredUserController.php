@@ -59,6 +59,11 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'profile_image' => $path, // Store null if no image uploaded
+            // Public website accounts are usable immediately (ERP staff are
+            // provisioned/approved separately by an admin).
+            'is_approved' => true,
+            'is_active' => true,
+            'password_changed' => true,
         ]);
 
         if ($request->input('role')) {
@@ -83,7 +88,7 @@ class RegisteredUserController extends Controller
         event(new Registered($user));
         if (User::count() === 0) {
             Auth::login($user);
-            $redirectTo = 'dashboard';
+            $redirectTo = 'portal';
         }
 
         return redirect(route($redirectTo, absolute: false));

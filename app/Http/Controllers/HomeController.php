@@ -29,17 +29,67 @@ class HomeController extends Controller
     }
     public function dashboard()
     {
-        // Get the counts of each model
-        $coursesCount = Course::count(); // Count courses
-        $trainersCount = Trainer::count(); // Count Trrainer
-        $programsCount = Program::count(); // Count programs
-        $eventsCount = Event::count(); // Count events
-        $blogsCount = Blog::count(); // Count blogs
-        $usersCount = User::count(); // Count users
-        $librariesCount = Library::count(); // Count libraries
+        // Get the counts of each model for administration analytics
+        $coursesCount = Course::count();
+        $trainersCount = Trainer::count();
+        $programsCount = Program::count();
+        $eventsCount = Event::count();
+        $blogsCount = Blog::count();
+        $usersCount = User::count();
+        $librariesCount = Library::count();
 
-        // Pass the counts to the dashboard view
-        return view('dashboard', compact('coursesCount', 'programsCount', 'eventsCount', 'trainersCount', 'blogsCount', 'usersCount', 'librariesCount'));
+        // Get system portals mapping
+        $portals = config('portals', []);
+        $user = auth()->user();
+
+        foreach ($portals as $key => &$portal) {
+            $hasAccess = false;
+            // Check if user has any role authorized for this portal
+            foreach ($portal['roles'] as $roleName) {
+                if ($user->hasRole($roleName)) {
+                    $hasAccess = true;
+                    break;
+                }
+            }
+            // Fallback for authenticated users who have no roles assigned yet (default to USER access)
+            if (!$hasAccess && in_array('USER', $portal['roles']) && $user->roles->isEmpty()) {
+                $hasAccess = true;
+            }
+
+            // Custom checks and URL routing for specific portals
+            if ($key === 'library') {
+                $hasAccess = $user->hasLibraryAccess();
+                $portal['url'] = route('library.portal');
+            } elseif ($key === 'lms') {
+                $portal['url'] = route('lms.redirect');
+            }
+
+            $portal['authorized'] = $hasAccess;
+
+            // Dynamically customize LMS name based on user type
+            if ($key === 'lms') {
+                if ($user->hasRole('STUDENT')) {
+                    $portal['name'] = 'Student Learning Portal';
+                } elseif ($user->hasRole('TRAINER')) {
+                    $portal['name'] = 'Instructors Portal';
+                } elseif ($user->hasAnyRole(['STAFF', 'SUPERADMIN', 'ADMIN', 'EDITOR', 'LIBRARIAN'])) {
+                    $portal['name'] = 'Staff Portal';
+                }
+            }
+        }
+        unset($portal); // Break reference
+
+        // Pass the counts and portals to the dashboard view
+        return view('dashboard', compact(
+            'coursesCount', 
+            'programsCount', 
+            'eventsCount', 
+            'trainersCount', 
+            'blogsCount', 
+            'usersCount', 
+            'librariesCount',
+            'portals'
+        ));
     }
 
     public function about()

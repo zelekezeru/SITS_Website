@@ -31,4 +31,18 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Moodle LMS Integration
+    |--------------------------------------------------------------------------
+    | Used for SSO (Single Sign-On) between sits.edu.et and lms.sits.edu.et.
+    | Generate the token in Moodle: Admin → Web Services → Manage Tokens.
+    | The auth_userkey plugin must be installed on the Moodle instance.
+    */
+    'moodle' => [
+        'url'     => env('MOODLE_URL', 'https://lms.sits.edu.et'),
+        'token'   => env('MOODLE_TOKEN', ''),
+        'service' => env('MOODLE_SSO_SERVICE', 'sits_sso_service'),
+    ],
+
 ];

@@ -1,28 +1,42 @@
-
-<div class="row">
-
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
     <!-- Full Name -->
-    <div class="form-group mb-3">
-        <label for="name" class="form-label">Full Name</label>
-        <input type="text" class="form-control" id="name" name="name" value="{{ old('name', $user->name) }}" required>
+    <div class="space-y-2">
+        <label for="name" class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Full Name</label>
+        <input type="text" name="name" id="name" required
+               class="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-slate-800/80 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-white placeholder-slate-500 text-sm transition outline-none"
+               placeholder="Full Name" value="{{ old('name', $user->name) }}">
+        @error('name')
+            <p class="text-xs text-rose-400 mt-1">{{ $message }}</p>
+        @enderror
     </div>
 
     <!-- Email -->
-    <div class="form-group mb-3">
-        <label for="email" class="form-label">Email</label>
-        <input type="text" class="form-control" id="email" name="email" value="{{ old('email', $user->email) }}" required>
+    <div class="space-y-2">
+        <label for="email" class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Email Address</label>
+        <input type="email" name="email" id="email" required
+               class="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-slate-800/80 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-white placeholder-slate-500 text-sm transition outline-none"
+               placeholder="Email Address" value="{{ old('email', $user->email) }}">
+        @error('email')
+            <p class="text-xs text-rose-400 mt-1">{{ $message }}</p>
+        @enderror
     </div>
 
     <!-- Phone -->
-    <div class="form-group mb-3">
-        <label for="phone" class="form-label">Phone</label>
-        <input type="text" class="form-control" id="phone" name="phone" value="{{ old('phone', $user->email) }}" required>
+    <div class="space-y-2">
+        <label for="phone" class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Phone Number</label>
+        <input type="text" name="phone" id="phone" required
+               class="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-slate-800/80 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-white placeholder-slate-500 text-sm transition outline-none"
+               placeholder="Phone Number" value="{{ old('phone', $user->phone ?? $user->email) }}">
+        @error('phone')
+            <p class="text-xs text-rose-400 mt-1">{{ $message }}</p>
+        @enderror
     </div>
 
     <!-- Role -->
-    <div class="form-group mb-4">
-        <label for="role" class="form-label">Role</label>
-        <select class="form-control" id="role" name="role" required>
+    <div class="space-y-2">
+        <label for="role" class="text-xs font-semibold text-slate-400 uppercase tracking-wider">System Role</label>
+        <select name="role" id="role" required
+                class="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-slate-800/80 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-white placeholder-slate-500 text-sm transition outline-none cursor-pointer">
             <option value="" disabled>Select a role</option>
             @foreach ($roles as $role)
                 <option value="{{ $role->name }}" {{ $user->hasRole($role->name) ? 'selected' : '' }}>
@@ -30,6 +44,8 @@
                 </option>
             @endforeach
         </select>
+        @error('role')
+            <p class="text-xs text-rose-400 mt-1">{{ $message }}</p>
+        @enderror
     </div>
 </div>
-
