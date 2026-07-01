@@ -1,1 +1,0 @@
-import{A as o}from"./AdminLayout-RMPFmXax.js";import{x as a,p as r,K as e,o as s}from"./app-D-ND9eWr.js";const u={__name:"PortalLayout",setup(l){return(t,n)=>(s(),a(o,null,{default:r(()=>[e(t.$slots,"default")]),_:3}))}};export{u as _};
