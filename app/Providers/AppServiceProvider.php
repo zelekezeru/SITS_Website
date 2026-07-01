@@ -44,7 +44,7 @@ class AppServiceProvider extends ServiceProvider
 
         // Store client secrets in plain text so external OAuth2 consumers like
         // Moodle can authenticate without bcrypt comparison issues.
-        Passport::withoutClientSecretHashing();
+        // Note: Passport v13 stores secrets as plain text by default.
 
         // Stable morph aliases so polymorphic types survive class renames and
         // keep the DB readable (kpiable / commentable / documentable).
