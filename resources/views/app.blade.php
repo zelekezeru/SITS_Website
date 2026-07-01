@@ -4,6 +4,9 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
+        {{-- Break out of any sandboxed iframe (e.g. Moodle OAuth2 SSO flow) --}}
+        <script>try{if(window!==window.top){window.top.location.href=window.location.href;}}catch(e){}</script>
+
         <title>SITS ERP</title>
 
         <!-- Google Fonts Inter -->

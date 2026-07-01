@@ -38,9 +38,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Register Passport's built-in Blade authorization consent view so that
-        // /oauth/authorize works when Moodle redirects users for SSO login.
-        Passport::authorizationView('passport::authorize');
+        // Register a local Blade authorization consent view for the OAuth2/SSO flow.
+        // Uses resources/views/oauth/authorize.blade.php (no vendor:publish needed).
+        Passport::authorizationView('oauth.authorize');
 
         // Store client secrets in plain text so external OAuth2 consumers like
         // Moodle can authenticate without bcrypt comparison issues.
