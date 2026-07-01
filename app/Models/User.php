@@ -2,18 +2,32 @@
 
 namespace App\Models;
 
+use App\Enums\Role;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 use Laravel\Passport\HasApiTokens;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasApiTokens, HasFactory, HasRoles, Notifiable;
+    use HasApiTokens, HasFactory, HasRoles, LogsActivity, Notifiable;
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['name', 'email'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
 
     /**
      * The attributes that are mass assignable.
@@ -34,6 +48,8 @@ class User extends Authenticatable
         'password_changed',
         'default_password',
         'password_reset_requested_at',
+        // Library (ILS) field
+        'current_campus_id',
     ];
 
     /**
@@ -145,5 +161,64 @@ class User extends Authenticatable
     {
         return $departmentId !== null
             && in_array($departmentId, $this->managedDepartmentIds(), true);
+    }
+
+    // ----- Library (ILS) relationships ----------------------------------
+    // Merged from sits-library: a user is also a library patron.
+
+    public function loans(): HasMany
+    {
+        return $this->hasMany(Loan::class);
+    }
+
+    public function holds(): HasMany
+    {
+        return $this->hasMany(Hold::class);
+    }
+
+    public function fines(): HasMany
+    {
+        return $this->hasMany(Fine::class);
+    }
+
+    public function payments(): HasManyThrough
+    {
+        return $this->hasManyThrough(Payment::class, Fine::class);
+    }
+
+    public function currentCampus(): BelongsTo
+    {
+        return $this->belongsTo(Campus::class, 'current_campus_id');
+    }
+
+    public function stagingRecord(): HasOne
+    {
+        return $this->hasOne(StagingUser::class);
+    }
+
+    /**
+     * The user's primary role as a library Role enum, or null when the user's
+     * top role is a SITS/ERP role that isn't part of the library enum
+     * (tryFrom keeps this graceful during the unified-RBAC transition).
+     */
+    public function primaryRole(): ?Role
+    {
+        $roleName = $this->roles->first()?->name;
+
+        return $roleName ? Role::tryFrom($roleName) : null;
+    }
+
+    /** Count of currently active (unreturned) loans. */
+    public function getActiveLoansCountAttribute(): int
+    {
+        return $this->loans()->where('status', 'active')->count();
+    }
+
+    /** Total outstanding fine balance. */
+    public function getOutstandingFinesTotalAttribute(): float
+    {
+        return round((float) $this->fines()
+            ->where('status', 'open')
+            ->sum(DB::raw('amount - paid_amount')), 2);
     }
 }
