@@ -40,14 +40,16 @@ class JoomlaBookImportSeeder extends Seeder
 
                 // If description contains download links or cover image references, clean them up or adapt
                 // The Joomla paths for images are typically like "images/books/hol.jpg"
-                $bannerPath = $row->banner ? '/' . $row->banner : null;
-                $filePath   = $row->file ? '/images/books/' . $row->file : null;
+                $bannerClean = $row->banner ? explode('#', $row->banner)[0] : null;
+                $bannerPath  = $bannerClean ? mb_substr(str_starts_with($bannerClean, '/') ? $bannerClean : '/' . $bannerClean, 0, 255, 'UTF-8') : null;
+                
+                $filePath = $row->file ? mb_substr(str_starts_with($row->file, '/') ? $row->file : '/images/books/' . $row->file, 0, 255, 'UTF-8') : null;
 
                 Library::create([
                     'title'       => mb_substr($row->title, 0, 50, 'UTF-8'), // SITS title column has length 50
                     'description' => $row->description,
                     'banner'      => $bannerPath,
-                    'file'        => $row->file,
+                    'file'        => mb_substr($row->file, 0, 255, 'UTF-8'),
                     'link'        => $filePath, // Point direct download link to file path
                     'category'    => $row->category_name ?? 'General',
                     'status'      => intval($row->state) === 1,
