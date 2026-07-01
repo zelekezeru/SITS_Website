@@ -20,6 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->validateCsrfTokens(except: [
             'hikvision/webhook',
+            'oauth/authorize',   // Passport consent flow — OAuth state param provides security
         ]);
 
         $middleware->alias([
