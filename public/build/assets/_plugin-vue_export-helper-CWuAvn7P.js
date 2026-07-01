@@ -1,0 +1,1 @@
+import{k as r,B as e}from"./app-D-ND9eWr.js";function p(){const t=e(),s=r(()=>t.props.locale??"en");return{t:(o,a)=>t.props.translations?.[o]??a??o,locale:s}}const l=(t,s)=>{const n=t.__vccOpts||t;for(const[o,a]of s)n[o]=a;return n};export{l as _,p as u};
