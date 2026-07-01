@@ -44,7 +44,7 @@ class JoomlaBookImportSeeder extends Seeder
                 $filePath   = $row->file ? '/images/books/' . $row->file : null;
 
                 Library::create([
-                    'title'       => substr($row->title, 0, 50), // SITS title column has length 50
+                    'title'       => mb_substr($row->title, 0, 50, 'UTF-8'), // SITS title column has length 50
                     'description' => $row->description,
                     'banner'      => $bannerPath,
                     'file'        => $row->file,
