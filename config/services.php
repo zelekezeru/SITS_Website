@@ -45,4 +45,8 @@ return [
         'service' => env('MOODLE_SSO_SERVICE', 'sits_sso_service'),
     ],
 
+    'jstore' => [
+        'url' => env('JSTORE_URL', 'https://library.sits.edu.et'),
+    ],
+
 ];

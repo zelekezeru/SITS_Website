@@ -110,9 +110,8 @@ class LibraryController extends Controller
                 ->with('info', 'You need an active subscription to access the library portal.');
         }
 
-        $libraries = Library::latest()->paginate(20);
-
-        return view('library.portal', compact('libraries', 'subscription'));
+        $targetUrl = config('services.jstore.url', 'https://library.sits.edu.et');
+        return redirect()->away($targetUrl);
     }
 
     /**
