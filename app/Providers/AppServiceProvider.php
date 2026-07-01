@@ -42,6 +42,10 @@ class AppServiceProvider extends ServiceProvider
         // /oauth/authorize works when Moodle redirects users for SSO login.
         Passport::authorizationView('passport::authorize');
 
+        // Store client secrets in plain text so external OAuth2 consumers like
+        // Moodle can authenticate without bcrypt comparison issues.
+        Passport::withoutClientSecretHashing();
+
         // Stable morph aliases so polymorphic types survive class renames and
         // keep the DB readable (kpiable / commentable / documentable).
         Relation::morphMap([
