@@ -105,3 +105,7 @@ require __DIR__ . '/auth.php';
 // ─── SITS ERP (Performance Management System) ─────────────────────────────────
 // Inertia/Vue back-office, merged from the standalone PMS app.
 require __DIR__ . '/erp.php';
+
+// ─── SITS Library (Integrated Library System) ─────────────────────────────────
+// Inertia/Vue ILS, merged from the standalone sits-library. Mounted under /library.
+require __DIR__ . '/library.php';
