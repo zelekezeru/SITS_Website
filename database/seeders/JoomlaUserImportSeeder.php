@@ -50,18 +50,31 @@ class JoomlaUserImportSeeder extends Seeder
 
     public function run(): void
     {
-        // ── STUB DATA ─────────────────────────────────────────────────────────
-        // Populate this array from your Joomla database export.
-        // The 'group' field should be the Joomla group name from jos_usergroups.
-        $joomlaUsers = [
-            // Example:
-            // [
-            //     'joomla_id' => 62,
-            //     'name'      => 'Abebe Kebede',
-            //     'email'     => 'abebe@example.com',
-            //     'group'     => 'Registered',         // Joomla group name
-            // ],
-        ];
+        $joomlaUsers = [];
+        try {
+            \Illuminate\Support\Facades\DB::connection('joomla')->getPdo();
+            
+            $prefix = config('database.connections.joomla.prefix', 'josn9_');
+            $rows = \Illuminate\Support\Facades\DB::connection('joomla')->select("
+                SELECT u.id as joomla_id, u.name, u.email, g.title as group_name
+                FROM {$prefix}users u
+                LEFT JOIN {$prefix}user_usergroup_map m ON u.id = m.user_id
+                LEFT JOIN {$prefix}usergroups g ON m.group_id = g.id
+                WHERE u.block = 0
+            ");
+            
+            foreach ($rows as $row) {
+                $joomlaUsers[] = [
+                    'joomla_id' => $row->joomla_id,
+                    'name'      => $row->name,
+                    'email'     => $row->email,
+                    'group'     => $row->group_name ?? 'Registered',
+                ];
+            }
+        } catch (\Exception $e) {
+            $this->command->warn('Could not connect to Joomla database: ' . $e->getMessage());
+            $this->command->info('Falling back to empty/stub user array.');
+        }
 
         $defaultPassword = Hash::make('ChangeMe@2026');
         $imported = 0;

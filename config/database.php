@@ -59,6 +59,19 @@ return [
             ]) : [],
         ],
 
+        'joomla' => [
+            'driver' => 'mysql',
+            'host' => env('JOOMLA_DB_HOST', '127.0.0.1'),
+            'port' => env('JOOMLA_DB_PORT', '3306'),
+            'database' => env('JOOMLA_DB_DATABASE', 'sitseduorg_joomla'),
+            'username' => env('JOOMLA_DB_USERNAME', 'sitseduorg_joomla'),
+            'password' => env('JOOMLA_DB_PASSWORD', 'p4sG)D44.S'),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => env('JOOMLA_DB_PREFIX', 'josn9_'),
+            'strict' => true,
+        ],
+
         'mariadb' => [
             'driver' => 'mariadb',
             'url' => env('DB_URL'),

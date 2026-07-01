@@ -33,35 +33,45 @@ class JstoreSubscriptionSeeder extends Seeder
 {
     public function run(): void
     {
-        // ── STUB DATA ─────────────────────────────────────────────────────────
-        // Replace with actual exported JSTORE records.
-        // Each record should have:
-        //   jstore_user_id     → the Joomla user_id from jos_users
-        //   jstore_sub_id      → the JSTORE subscription ID
-        //   email              → used to match the Laravel user
-        //   plan_type          → monthly | annual | lifetime
-        //   plan_name          → human-readable plan name
-        //   amount_paid        → original amount in ETB
-        //   start_date         → subscription start (Y-m-d)
-        //   expiry_date        → null for lifetime, date otherwise
-        //   is_active          → 1 or 0
-
-        $records = [
-            // Example — replace with real JSTORE data:
-            // [
-            //     'jstore_user_id'        => 42,
-            //     'jstore_subscription_id' => 'JSTORE-0001',
-            //     'email'                  => 'student@example.com',
-            //     'plan_type'              => 'annual',
-            //     'plan_name'              => 'Annual Access',
-            //     'amount_paid'            => 1200.00,
-            //     'start_date'             => '2025-01-01',
-            //     'expiry_date'            => '2026-01-01',
-            //     'is_active'              => true,
-            //     'payment_method'         => 'CBE',
-            //     'payment_reference'      => 'CBE-TRN-XXXX',
-            // ],
-        ];
+        $records = [];
+        try {
+            \Illuminate\Support\Facades\DB::connection('joomla')->getPdo();
+            
+            $prefix = config('database.connections.joomla.prefix', 'josn9_');
+            $rows = \Illuminate\Support\Facades\DB::connection('joomla')->select("
+                SELECT s.id as sub_id, s.user_id, u.email, s.price as amount_paid, s.created_date as start_date, s.expiry_date, s.status, p.title as plan_name
+                FROM {$prefix}jstore_subscriptions s
+                LEFT JOIN {$prefix}users u ON s.user_id = u.id
+                LEFT JOIN {$prefix}jstore_packages p ON s.package_id = p.id
+            ");
+            
+            foreach ($rows as $row) {
+                $planType = 'monthly';
+                $name = strtolower($row->plan_name ?? '');
+                if (str_contains($name, 'year') || str_contains($name, 'annual')) {
+                    $planType = 'annual';
+                } elseif (str_contains($name, 'life')) {
+                    $planType = 'lifetime';
+                }
+                
+                $records[] = [
+                    'jstore_user_id'         => $row->user_id,
+                    'jstore_subscription_id' => 'JSTORE-' . str_pad($row->sub_id, 4, '0', STR_PAD_LEFT),
+                    'email'                  => $row->email,
+                    'plan_type'              => $planType,
+                    'plan_name'              => $row->plan_name ?? 'Digital Library Subscription',
+                    'amount_paid'            => $row->amount_paid ?? 0.00,
+                    'start_date'             => substr($row->start_date ?? now()->toDateString(), 0, 10),
+                    'expiry_date'            => $row->expiry_date ? substr($row->expiry_date, 0, 10) : null,
+                    'is_active'              => intval($row->status) === 1,
+                    'payment_method'         => 'JSTORE Migrated',
+                    'payment_reference'      => 'Joomla-' . $row->sub_id,
+                ];
+            }
+        } catch (\Exception $e) {
+            $this->command->warn('Could not connect to Joomla database for JSTORE: ' . $e->getMessage());
+            $this->command->info('Falling back to empty/stub subscription array.');
+        }
 
         $imported = 0;
         $skipped  = 0;
