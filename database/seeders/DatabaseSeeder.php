@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             // ---- RBAC (both schemes) ----
             RolesAndPermissionsSeeder::class,   // ERP roles + permissions
             RoleSeeder::class,                  // Website roles (SUPERADMIN, ADMIN, …)
+            LibraryPermissionsSeeder::class,    // Library ILS permissions → unified SITS roles
 
             // ---- ERP reference data ----
             OrganizationSeeder::class,          // campuses, departments, positions
