@@ -1,4 +1,31 @@
 <x-guest-layout>
+    {{-- ═══════════════════════════════════════════════════════
+         IFRAME / SANDBOX FRAME-BREAKER
+         When Moodle opens the OAuth flow in a sandboxed iframe,
+         we must break out to the top-level window so that:
+         1. Form submission works (allow-forms may be absent)
+         2. Session cookies are accessible
+         3. The full OAuth redirect chain can complete
+    ═══════════════════════════════════════════════════════ --}}
+    <div id="frame-alert" style="display:none;position:fixed;top:0;left:0;right:0;z-index:9999;background:#1e3a5f;border-bottom:2px solid #3b82f6;padding:14px 20px;text-align:center;font-family:system-ui,sans-serif;font-size:14px;color:#93c5fd;">
+        ⚠️ This login page is loading inside a restricted frame.
+        <a id="frame-break-link" href="{{ url()->full() }}" target="_top"
+           style="color:#60a5fa;font-weight:700;text-decoration:underline;margin-left:8px;">Click here to open it fully →</a>
+    </div>
+    <script>
+        (function() {
+            try {
+                if (window !== window.top) {
+                    // Try automatic break-out first
+                    window.top.location.href = window.location.href;
+                }
+            } catch(e) {
+                // Automatic break-out blocked (no allow-top-navigation);
+                // show the manual link instead (works with allow-top-navigation-by-user-activation)
+                document.getElementById('frame-alert').style.display = 'block';
+            }
+        })();
+    </script>
     <div class="relative max-w-4xl mx-auto">
         <div class="absolute -inset-1 rounded-3xl bg-gradient-to-r from-indigo-500 to-purple-600 opacity-20 blur-xl"></div>
         
@@ -121,7 +148,8 @@
                         });
 
                         if (response.ok) {
-                            window.location.href = '/portal';
+                            // Redirect to the server's intended URL (OAuth flow or portal)
+                            window.location.href = response.url || '/portal';
                         } else {
                             const data = await response.json();
                             button.textContent = originalText;
