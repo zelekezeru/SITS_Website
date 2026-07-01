@@ -22,8 +22,42 @@ class IsbnLookupService
 
         // Cache results for 24 hours to avoid repeated API calls
         return Cache::remember("isbn_lookup_{$isbn}", 86400, function () use ($isbn) {
-            return $this->fetchFromOpenLibrary($isbn);
+            $meta = $this->fetchFromOpenLibrary($isbn);
+
+            return $meta ? $this->enrichWithAi($meta) : null;
         });
+    }
+
+    /**
+     * Smart cataloging: when Open Library returns a book with no description or
+     * subjects, ask the configured AI provider (Claude / Gemini) to fill them in.
+     * No-ops when AI is disabled (no key) or the record is already rich.
+     */
+    protected function enrichWithAi(array $meta): array
+    {
+        if (! empty($meta['description']) && ! empty($meta['subject'])) {
+            return $meta;
+        }
+
+        $ai = app(\App\Services\Ai\AiService::class);
+        if (! $ai->enabled() || empty($meta['title'])) {
+            return $meta;
+        }
+
+        $authors = implode(', ', array_filter($meta['authors'] ?? []));
+        $prompt = "For the theological/academic book \"{$meta['title']}\""
+            .($authors ? " by {$authors}" : '')
+            .', return keys: "description" (a 2-3 sentence neutral summary) and '
+            .'"subject" (up to 5 comma-separated library subject keywords).';
+
+        $data = $ai->json($prompt);
+        if ($data) {
+            $meta['description'] = $meta['description'] ?: ($data['description'] ?? null);
+            $meta['subject']     = $meta['subject'] ?: ($data['subject'] ?? null);
+            $meta['ai_enriched'] = true;
+        }
+
+        return $meta;
     }
 
     protected function fetchFromOpenLibrary(string $isbn): ?array

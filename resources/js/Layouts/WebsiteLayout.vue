@@ -98,7 +98,7 @@
                   <li class="border-t border-slate-800/60 my-1"></li>
                   <li><a href="/go/lms" class="block px-4 py-2.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800/40 transition">{{ lmsLabel }}</a></li>
                   <li v-if="hasErpAccess"><a href="/dashboard" class="block px-4 py-2.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800/40 transition">{{ t('erp_portal', 'ERP Portal') }}</a></li>
-                  <li><a href="/library/portal" class="block px-4 py-2.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800/40 transition">{{ t('digital_library', 'Digital Library') }}</a></li>
+                  <li><a href="/library/dashboard" class="block px-4 py-2.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800/40 transition">{{ t('digital_library', 'Digital Library') }}</a></li>
                   <li class="border-t border-slate-800/60 my-1"></li>
                   <li>
                     <button @click="logout" class="block w-full text-left px-4 py-2.5 text-xs text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition">{{ t('sign_out', 'Sign Out') }}</button>
@@ -214,7 +214,7 @@
             <h3 class="text-sm font-bold text-white mb-4 uppercase tracking-wider">Resources</h3>
             <ul class="space-y-2.5 text-sm">
               <li><a href="/go/lms" target="_blank" rel="noopener" class="hover:text-indigo-400 transition">{{ t('lms', 'eLearning') }}</a></li>
-              <li><a href="/library/portal" class="hover:text-indigo-400 transition">Digital Library</a></li>
+              <li><a href="/library/dashboard" class="hover:text-indigo-400 transition">Digital Library</a></li>
               <li><Link :href="route('courses.index')" class="hover:text-indigo-400 transition">Courses</Link></li>
               <li><Link :href="route('blogs.index')" class="hover:text-indigo-400 transition">Blog</Link></li>
               <li><Link :href="route('abouts.index')" class="hover:text-indigo-400 transition">About Us</Link></li>

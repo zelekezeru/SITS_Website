@@ -75,8 +75,10 @@ class HomeController extends Controller
 
             // Custom checks and URL routing for specific portals
             if ($key === 'library') {
-                $hasAccess = $user->hasLibraryAccess();
-                $portal['url'] = route('library.portal');
+                // Merged ILS: reachable by any user with the base library permission
+                // (or the legacy subscription/admin path).
+                $hasAccess = $user->can('view_books') || $user->hasLibraryAccess();
+                $portal['url'] = route('library.dashboard');
             } elseif ($key === 'lms') {
                 $portal['url'] = route('lms.redirect');
             } elseif ($key === 'erp') {
