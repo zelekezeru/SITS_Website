@@ -2,7 +2,7 @@
     <div class="relative max-w-4xl mx-auto">
         <div class="absolute -inset-1 rounded-3xl bg-gradient-to-r from-indigo-500 to-purple-600 opacity-20 blur-xl"></div>
         
-        <div class="relative glass-card rounded-3xl overflow-hidden grid md:grid-cols-12 border border-white/5 shadow-2xl">
+        <div style="background-color: #0f172a;" class="relative glass-card rounded-3xl overflow-hidden grid md:grid-cols-12 border border-white/5 shadow-2xl">
             <!-- Left Branding Column -->
             <div class="md:col-span-5 bg-slate-950/60 p-8 flex flex-col justify-between items-center text-center border-r border-white/5 relative">
                 <div class="absolute inset-0 bg-gradient-to-b from-indigo-950/20 to-transparent pointer-events-none"></div>

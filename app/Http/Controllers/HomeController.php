@@ -40,6 +40,13 @@ class HomeController extends Controller
     }
     public function dashboard()
     {
+        $user = auth()->user();
+
+        // Redirect employees directly to their ERP landing page
+        if ($user && !$user->roles->isEmpty() && !$user->hasRole('STUDENT')) {
+            return redirect(\App\Support\RoleLanding::url($user));
+        }
+
         // Get the counts of each model for administration analytics
         $coursesCount = Course::count();
         $trainersCount = Trainer::count();
@@ -51,7 +58,6 @@ class HomeController extends Controller
 
         // Get system portals mapping
         $portals = config('portals', []);
-        $user = auth()->user();
 
         foreach ($portals as $key => &$portal) {
             $hasAccess = false;

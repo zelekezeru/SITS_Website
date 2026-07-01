@@ -17,7 +17,7 @@ class MoodleController extends Controller
     public function redirect(Request $request)
     {
         $user   = $request->user();
-        $direct = rtrim(config('services.moodle.url', 'https://lms.sits.edu.et'), '/');
+        $direct = rtrim(config('services.moodle.url', 'https://learn.sits.edu.et'), '/');
 
         // If Moodle is not configured, just redirect to LMS directly
         if (empty(config('services.moodle.token'))) {

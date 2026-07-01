@@ -21,7 +21,7 @@
         @inertiaHead
         <script src="{{ asset('js/aos.js') }}" defer></script>
     </head>
-    <body class="font-sans antialiased text-slate-100 bg-slate-950 min-h-screen">
+    <body style="background-color: #020617; color: #f8fafc;" class="font-sans antialiased text-slate-100 bg-slate-950 min-h-screen">
         @inertia
     </body>
 </html>

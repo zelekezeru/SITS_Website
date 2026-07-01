@@ -8,8 +8,27 @@
       <section class="relative min-h-screen flex items-center justify-center pt-8 pb-12">
         <div class="container mx-auto px-6 z-10 grid lg:grid-cols-12 gap-12 items-center">
 
-          <!-- Left -->
-          <div class="lg:col-span-7 space-y-8 text-left" data-aos="fade-right" data-aos-duration="1000">
+          <!-- Left card (Digital Campus) -->
+          <div class="lg:col-span-5 relative" data-aos="fade-right" data-aos-duration="1000">
+            <div class="absolute -inset-1 rounded-3xl bg-gradient-to-r from-indigo-500 to-pink-500 opacity-20 blur-xl"></div>
+            <div class="relative glass-card rounded-3xl p-8 border border-white/5 space-y-6">
+              <div class="relative h-72 rounded-2xl overflow-hidden bg-slate-900 group">
+                <img :src="'/img/banner/header.png'" alt="SITS Learning Portal" class="w-full h-full object-cover group-hover:scale-105 transition duration-700" />
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent"></div>
+                <div class="absolute bottom-4 left-4">
+                  <span class="bg-indigo-600/90 backdrop-blur-md text-white text-xs px-3 py-1.5 rounded-lg font-bold">Digital Campus</span>
+                </div>
+              </div>
+              <div class="space-y-4">
+                <div class="flex items-start gap-3"><div class="w-6 h-6 rounded-full bg-indigo-500/10 border border-indigo-500/25 flex items-center justify-center text-indigo-400 mt-0.5 shrink-0"><svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div><p class="text-sm text-slate-300"><strong class="text-white">Fast Setup:</strong> Register and create your student account in minutes.</p></div>
+                <div class="flex items-start gap-3"><div class="w-6 h-6 rounded-full bg-indigo-500/10 border border-indigo-500/25 flex items-center justify-center text-indigo-400 mt-0.5 shrink-0"><svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div><p class="text-sm text-slate-300"><strong class="text-white">Structured Learning:</strong> Access digital textbooks, lecture notes, and assignments.</p></div>
+                <div class="flex items-start gap-3"><div class="w-6 h-6 rounded-full bg-indigo-500/10 border border-indigo-500/25 flex items-center justify-center text-indigo-400 mt-0.5 shrink-0"><svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div><p class="text-sm text-slate-300"><strong class="text-white">Expert Mentors:</strong> Regular interactive sessions with highly experienced faculty.</p></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right (Theological Education Text) -->
+          <div class="lg:col-span-7 space-y-8 text-left" data-aos="fade-left" data-aos-duration="1000">
             <div class="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-semibold tracking-wide">
               <span class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span>
               Convenient Theological Education
@@ -41,25 +60,6 @@
               <div><span class="block text-3xl font-extrabold text-white font-outfit">30+</span><span class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Years of Grace</span></div>
               <div><span class="block text-3xl font-extrabold text-white font-outfit">15K+</span><span class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Graduates</span></div>
               <div><span class="block text-3xl font-extrabold text-white font-outfit">100%</span><span class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Digital &amp; Flexible</span></div>
-            </div>
-          </div>
-
-          <!-- Right card -->
-          <div class="lg:col-span-5 relative" data-aos="fade-left" data-aos-duration="1000">
-            <div class="absolute -inset-1 rounded-3xl bg-gradient-to-r from-indigo-500 to-pink-500 opacity-20 blur-xl"></div>
-            <div class="relative glass-card rounded-3xl p-8 border border-white/5 space-y-6">
-              <div class="relative h-56 rounded-2xl overflow-hidden bg-slate-900 group">
-                <img :src="'/img/banner/header.png'" alt="SITS Learning Portal" class="w-full h-full object-cover group-hover:scale-105 transition duration-700" />
-                <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent"></div>
-                <div class="absolute bottom-4 left-4">
-                  <span class="bg-indigo-600/90 backdrop-blur-md text-white text-xs px-3 py-1.5 rounded-lg font-bold">Digital Campus</span>
-                </div>
-              </div>
-              <div class="space-y-4">
-                <div class="flex items-start gap-3"><div class="w-6 h-6 rounded-full bg-indigo-500/10 border border-indigo-500/25 flex items-center justify-center text-indigo-400 mt-0.5 shrink-0"><svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div><p class="text-sm text-slate-300"><strong class="text-white">Fast Setup:</strong> Register and create your student account in minutes.</p></div>
-                <div class="flex items-start gap-3"><div class="w-6 h-6 rounded-full bg-indigo-500/10 border border-indigo-500/25 flex items-center justify-center text-indigo-400 mt-0.5 shrink-0"><svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div><p class="text-sm text-slate-300"><strong class="text-white">Structured Learning:</strong> Access digital textbooks, lecture notes, and assignments.</p></div>
-                <div class="flex items-start gap-3"><div class="w-6 h-6 rounded-full bg-indigo-500/10 border border-indigo-500/25 flex items-center justify-center text-indigo-400 mt-0.5 shrink-0"><svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div><p class="text-sm text-slate-300"><strong class="text-white">Expert Mentors:</strong> Regular interactive sessions with highly experienced faculty.</p></div>
-              </div>
             </div>
           </div>
         </div>

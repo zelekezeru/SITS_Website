@@ -110,7 +110,7 @@
         }
     </style>
 </head>
-<body class="bg-[#090d16] text-slate-300 font-sans min-h-screen flex flex-col relative overflow-x-hidden selection:bg-indigo-500 selection:text-white">
+<body style="background-color: #090d16; color: #cbd5e1;" class="bg-[#090d16] text-slate-300 font-sans min-h-screen flex flex-col relative overflow-x-hidden selection:bg-indigo-500 selection:text-white">
     <!-- Glowing Background blobs -->
     <div class="glow-blob glow-blob-1"></div>
     <div class="glow-blob glow-blob-2"></div>

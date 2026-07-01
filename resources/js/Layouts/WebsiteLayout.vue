@@ -34,7 +34,7 @@
               </Link>
             </li>
             <!-- eLearning dropdown: SITS LMS (external site) + Moodle (integrated, single sign-on) -->
-            <li class="relative group">
+            <li v-if="auth.user" class="relative group">
               <button type="button"
                 class="px-3 py-2 rounded-lg transition hover:text-white hover:bg-slate-900/60 inline-flex items-center gap-1.5">
                 {{ t('lms', 'eLearning') }}
@@ -137,17 +137,19 @@
               {{ link.label }}
             </Link>
             <!-- eLearning: SITS LMS (external) + Moodle (integrated SSO) -->
-            <p class="px-4 pt-3 pb-1 text-[10px] text-slate-600 font-semibold uppercase tracking-widest">{{ t('lms', 'eLearning') }}</p>
-            <a href="https://lms.sits.edu.et" target="_blank" rel="noopener" @click="mobileMenuOpen = false"
-              class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-300 hover:bg-slate-900 hover:text-white transition">
-              <svg class="w-4 h-4 shrink-0 text-indigo-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-              {{ t('sits_lms', 'SITS LMS') }}
-            </a>
-            <a href="/go/lms" target="_blank" rel="noopener" @click="mobileMenuOpen = false"
-              class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-300 hover:bg-slate-900 hover:text-white transition">
-              <svg class="w-4 h-4 shrink-0 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>
-              {{ t('moodle', 'Moodle') }}
-            </a>
+            <template v-if="auth.user">
+              <p class="px-4 pt-3 pb-1 text-[10px] text-slate-600 font-semibold uppercase tracking-widest">{{ t('lms', 'eLearning') }}</p>
+              <a href="https://lms.sits.edu.et" target="_blank" rel="noopener" @click="mobileMenuOpen = false"
+                class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-300 hover:bg-slate-900 hover:text-white transition">
+                <svg class="w-4 h-4 shrink-0 text-indigo-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                {{ t('sits_lms', 'SITS LMS') }}
+              </a>
+              <a href="/go/lms" target="_blank" rel="noopener" @click="mobileMenuOpen = false"
+                class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-300 hover:bg-slate-900 hover:text-white transition">
+                <svg class="w-4 h-4 shrink-0 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>
+                {{ t('moodle', 'Moodle') }}
+              </a>
+            </template>
 
             <div class="border-t border-slate-900 my-2"></div>
 
@@ -182,8 +184,8 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           <!-- Brand -->
           <div>
-            <div class="flex items-center gap-2.5 mb-4">
-              <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-500 to-cyan-400 p-0.5">
+            <Link :href="route('home')" class="flex items-center gap-2.5 mb-4 group inline-flex">
+              <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-500 to-cyan-400 p-0.5 group-hover:scale-105 transition-transform duration-300">
                 <div class="w-full h-full bg-slate-900 rounded-[10px] flex items-center justify-center overflow-hidden">
                   <img :src="'/img/logo.png'" alt="SITS" class="h-6 w-auto object-contain" />
                 </div>
@@ -192,7 +194,7 @@
                 <span class="block text-[9px] text-slate-500 font-semibold uppercase tracking-widest">SITS Ethiopia</span>
                 <span class="block text-xs font-extrabold text-white uppercase">Seminary</span>
               </div>
-            </div>
+            </Link>
             <p class="text-sm text-slate-500 leading-relaxed">Empowering leaders and transforming communities through accessible theological education since 1994 G.C.</p>
           </div>
 
@@ -318,8 +320,9 @@ const userAvatar = computed(() => {
 })
 
 const hasErpAccess = computed(() => {
-  const roles = auth.value?.user?.roles ?? []
-  return roles.some(r => ['SUPERADMIN','ADMIN','EDITOR','TRAINER','STAFF','LIBRARIAN'].includes(r.toUpperCase()))
+  const roles = (auth.value?.user?.roles ?? []).map(r => r.toLowerCase())
+  if (!roles.length) return false
+  return !roles.includes('student')
 })
 
 const lmsLabel = computed(() => {

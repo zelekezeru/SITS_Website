@@ -194,15 +194,17 @@ watch(currentPath, () => {
     >
       <!-- Brand -->
       <div class="h-20 flex items-center gap-3 px-4 border-b border-slate-900 shrink-0">
-        <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-indigo-500 to-cyan-400 p-0.5 shadow-lg shadow-indigo-500/20 shrink-0 flex items-center justify-center">
-          <div class="w-full h-full bg-slate-900 rounded-[10px] flex items-center justify-center overflow-hidden">
-            <img :src="'/img/logo.png'" alt="SITS Logo" class="h-7 w-auto object-contain" />
+        <Link href="/" class="flex items-center gap-3 hover:opacity-90 group transition-all duration-300">
+          <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-indigo-500 to-cyan-400 p-0.5 shadow-lg shadow-indigo-500/20 shrink-0 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+            <div class="w-full h-full bg-slate-900 rounded-[10px] flex items-center justify-center overflow-hidden">
+              <img :src="'/img/logo.png'" alt="SITS Logo" class="h-7 w-auto object-contain" />
+            </div>
           </div>
-        </div>
-        <div v-if="!collapsed" class="min-w-0">
-          <p class="text-base font-bold tracking-tight text-white leading-tight">SITS ERP</p>
-          <p class="text-[11px] text-blue-400/80 font-semibold uppercase tracking-wider truncate">{{ brandSubtitle }}</p>
-        </div>
+          <div v-if="!collapsed" class="min-w-0">
+            <p class="text-base font-bold tracking-tight text-white leading-tight">SITS ERP</p>
+            <p class="text-[11px] text-blue-400/80 font-semibold uppercase tracking-wider truncate">{{ brandSubtitle }}</p>
+          </div>
+        </Link>
         <button class="ml-auto hidden lg:flex items-center justify-center w-7 h-7 rounded-lg text-slate-500 hover:text-slate-200 hover:bg-slate-900 transition-colors"
                 @click="toggleCollapsed" :title="collapsed ? 'Expand' : 'Collapse'">
           <Icon :name="collapsed ? 'PanelLeftOpen' : 'PanelLeftClose'" :size="18" />

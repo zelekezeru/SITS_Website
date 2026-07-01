@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" style="background-color: #090d16;">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -56,13 +56,42 @@
                 100% { transform: translate(-40px, 50px) scale(0.9); }
             }
 
-            /* Glassmorphism Card */
+            /* Default dark theme overrides to prevent FOUC white flash */
+            html, body {
+                background-color: #090d16 !important;
+                color: #cbd5e1 !important;
+            }
             .glass-card {
-                background: rgba(15, 23, 42, 0.45);
+                background: #0f172a !important;
+                background: rgba(15, 23, 42, 0.45) !important;
                 backdrop-filter: blur(20px);
                 -webkit-backdrop-filter: blur(20px);
-                border: 1px solid rgba(255, 255, 255, 0.05);
+                border: 1px solid rgba(255, 255, 255, 0.05) !important;
                 box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+                /* Prevent hardware acceleration paint blink on backdrop-filter repaints */
+                transform: translate3d(0, 0, 0);
+                backface-visibility: hidden;
+            }
+            input, select, textarea {
+                background-color: #0f172a !important;
+                color: #ffffff !important;
+                border: 1px solid #1e293b !important;
+            }
+            /* Autocomplete/Autofill styles to prevent bright yellow/white flash */
+            input:-webkit-autofill,
+            input:-webkit-autofill:hover, 
+            input:-webkit-autofill:focus, 
+            input:-webkit-autofill:active {
+                -webkit-box-shadow: 0 0 0 30px #090d16 inset !important;
+                -webkit-text-fill-color: #ffffff !important;
+                transition: background-color 5000s ease-in-out 0s;
+            }
+            label {
+                color: #94a3b8 !important;
+            }
+            button[type="submit"] {
+                background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
+                color: #ffffff !important;
             }
 
             /* Grid overlay */
@@ -103,7 +132,7 @@
             }
         </style>
     </head>
-    <body class="bg-[#090d16] text-slate-300 font-jakarta min-h-screen relative overflow-x-hidden flex flex-col justify-center py-12">
+    <body style="background-color: #090d16; color: #cbd5e1;" class="bg-[#090d16] text-slate-300 font-jakarta min-h-screen relative overflow-x-hidden flex flex-col justify-center py-12">
         <!-- Background elements -->
         <div class="glow-blob glow-blob-1"></div>
         <div class="glow-blob glow-blob-2"></div>

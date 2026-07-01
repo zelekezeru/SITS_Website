@@ -87,7 +87,7 @@
     @yield('styles')
 </head>
 
-<body class="bg-slate-950 text-slate-100 font-sans h-full min-h-screen flex flex-col justify-between overflow-x-hidden selection:bg-indigo-500 selection:text-white">
+<body style="background-color: #020617; color: #f8fafc;" class="bg-slate-950 text-slate-100 font-sans h-full min-h-screen flex flex-col justify-between overflow-x-hidden selection:bg-indigo-500 selection:text-white">
 
     <!-- Glowing Background blobs -->
     <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
