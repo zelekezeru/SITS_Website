@@ -24,6 +24,16 @@ createInertiaApp({
             }
             return '';
         };
+        // Global translator used by the merged Library pages (and available app-wide):
+        // reads the `translations` shared prop, falls back to the key.
+        app.config.globalProperties.__ = (key, replace = {}) => {
+            const translations = (props.initialPage?.props?.translations) || {};
+            let translation = translations[key] ?? key;
+            Object.keys(replace).forEach((r) => {
+                translation = String(translation).replace(`:${r}`, replace[r]);
+            });
+            return translation;
+        };
         app.use(plugin)
             .mount(el);
     },

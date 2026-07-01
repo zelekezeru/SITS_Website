@@ -66,7 +66,21 @@ class HandleInertiaRequests extends Middleware
             // Bilingual (English / Amharic). The active locale + its UI strings are
             // shared so the frontend can translate without an extra round-trip.
             'locale' => app()->getLocale(),
-            'translations' => (array) trans('app'),
+            // PHP-array (app.php) keys + the merged Library JSON (full-string) keys.
+            'translations' => array_merge(
+                (array) trans('app'),
+                $this->jsonTranslations(app()->getLocale()),
+            ),
         ];
+    }
+
+    /** Load the locale's JSON translations (lang/{locale}.json) as a flat array. */
+    private function jsonTranslations(string $locale): array
+    {
+        $path = lang_path("{$locale}.json");
+
+        return is_file($path)
+            ? (json_decode((string) file_get_contents($path), true) ?: [])
+            : [];
     }
 }
