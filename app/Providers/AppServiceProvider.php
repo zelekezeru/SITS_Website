@@ -46,6 +46,13 @@ class AppServiceProvider extends ServiceProvider
         // Moodle can authenticate without bcrypt comparison issues.
         // Note: Passport v13 stores secrets as plain text by default.
 
+        // Define OAuth2 / OIDC scopes that external clients (Moodle) may request.
+        Passport::tokensCan([
+            'openid'  => 'OpenID Connect identity',
+            'profile' => 'Read your basic profile information (name)',
+            'email'   => 'Read your email address',
+        ]);
+
         // Stable morph aliases so polymorphic types survive class renames and
         // keep the DB readable (kpiable / commentable / documentable).
         Relation::morphMap([
