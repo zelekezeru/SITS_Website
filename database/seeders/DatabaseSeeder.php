@@ -42,6 +42,7 @@ class DatabaseSeeder extends Seeder
             // ---- Website data imports (stubs until Joomla export is pasted) ----
             JoomlaUserImportSeeder::class,
             JstoreSubscriptionSeeder::class,
+            JoomlaBookImportSeeder::class,
         ]);
 
         // Unified super-admin: can use BOTH the website admin panel and the ERP.
