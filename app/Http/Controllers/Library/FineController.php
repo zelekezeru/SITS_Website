@@ -35,7 +35,7 @@ class FineController extends Controller
             'open_count'  => Fine::where('status', 'open')->count(),
         ];
 
-        return Inertia::render('Fines/Index', [
+        return Inertia::render('Library/Fines/Index', [
             'fines'    => $fines,
             'filters'  => ['status' => $status, 'q' => $search],
             'totals'   => $totals,

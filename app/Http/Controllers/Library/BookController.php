@@ -24,7 +24,7 @@ class BookController extends Controller
 
     public function create()
     {
-        return Inertia::render('Books/Create', [
+        return Inertia::render('Library/Books/Create', [
             'book' => new Book(),
         ]);
     }
@@ -72,7 +72,7 @@ class BookController extends Controller
     public function edit(Book $book)
     {
         $book->load(['authors', 'categories']);
-        return Inertia::render('Books/Edit', [
+        return Inertia::render('Library/Books/Edit', [
             'book' => $book,
         ]);
     }

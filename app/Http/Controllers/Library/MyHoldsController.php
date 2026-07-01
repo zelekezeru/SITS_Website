@@ -17,7 +17,7 @@ class MyHoldsController extends Controller
             ->orderBy('placed_at', 'desc')
             ->paginate(15);
 
-        return Inertia::render('Circulation/MyHolds', [
+        return Inertia::render('Library/Circulation/MyHolds', [
             'holds' => $holds,
         ]);
     }

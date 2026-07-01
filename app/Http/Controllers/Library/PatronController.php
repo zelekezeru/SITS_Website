@@ -102,7 +102,7 @@ class PatronController extends Controller
                 ->whereIn('status', ['waiting', 'ready'])->count(),
         ];
 
-        return Inertia::render('Users/Show', [
+        return Inertia::render('Library/Users/Show', [
             'patron'     => array_merge($user->only('id', 'name', 'email', 'created_at'), [
                 'role'         => $user->primaryRole()?->label() ?? 'No role',
                 'role_value'   => $user->primaryRole()?->value,

@@ -20,7 +20,7 @@ class MyLoansController extends Controller
             ->orderBy('due_on', 'asc')
             ->paginate(15);
 
-        return Inertia::render('Circulation/MyLoans', [
+        return Inertia::render('Library/Circulation/MyLoans', [
             'loans'       => $loans,
             'maxRenewals' => LoanPolicy::for($request->user())->maxRenewals,
         ]);

@@ -30,7 +30,7 @@ class AuditController extends Controller
             $query->where('created_at', '<=', $request->to);
         }
 
-        return Inertia::render('Admin/Audit/Index', [
+        return Inertia::render('Library/Admin/Audit/Index', [
             'activities' => $query->paginate(50)->withQueryString(),
             'filters' => $request->only(['user_id', 'subject_type', 'from', 'to']),
         ]);

@@ -21,7 +21,7 @@ class SecureDocumentController extends Controller
 
     public function index(Request $request)
     {
-        return Inertia::render('Archive/Index', [
+        return Inertia::render('Library/Archive/Index', [
             'documents' => SecureDocument::with('book')->orderBy('created_at', 'desc')->get(),
             'can_upload' => $request->user()->can('upload_secure_pdf'),
         ]);
@@ -31,7 +31,7 @@ class SecureDocumentController extends Controller
     {
         $this->authorize('create', SecureDocument::class);
 
-        return Inertia::render('Archive/Form', [
+        return Inertia::render('Library/Archive/Form', [
             'books' => \App\Models\Book::orderBy('title')->get(['id', 'title']),
         ]);
     }
@@ -40,7 +40,7 @@ class SecureDocumentController extends Controller
     {
         abort_unless($document->isAccessibleBy($request->user()), 403);
 
-        return Inertia::render('Archive/Reader', [
+        return Inertia::render('Library/Archive/Reader', [
             'secureDocument' => array_merge($document->toArray(), [
                 'watermark_text' => sprintf('%s - %s', $request->user()->name, now()->format('Y-m-d H:i')),
             ]),

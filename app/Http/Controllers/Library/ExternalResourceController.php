@@ -14,7 +14,7 @@ class ExternalResourceController extends Controller
 {
     public function index(Request $request)
     {
-        return Inertia::render('Resources/Index', [
+        return Inertia::render('Library/Resources/Index', [
             'resources' => ExternalResource::visibleTo($request->user())->orderBy('sort_order')->orderBy('name')->get()->groupBy('category'),
         ]);
     }

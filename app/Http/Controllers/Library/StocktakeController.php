@@ -21,7 +21,7 @@ class StocktakeController extends Controller
             ->orderByDesc('created_at')
             ->paginate(15);
 
-        return Inertia::render('Stocktake/Index', [
+        return Inertia::render('Library/Stocktake/Index', [
             'stocktakes' => $stocktakes,
             'campuses'   => Campus::where('is_active', true)->get(['id', 'name', 'code']),
         ]);
@@ -79,7 +79,7 @@ class StocktakeController extends Controller
             ->whereNotIn('id', $scannedCopyIds)
             ->count();
 
-        return Inertia::render('Stocktake/Show', [
+        return Inertia::render('Library/Stocktake/Show', [
             'stocktake'     => $stocktake,
             'scans'         => $scans,
             'mismatches'    => $mismatches,

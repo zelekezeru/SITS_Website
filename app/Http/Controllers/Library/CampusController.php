@@ -14,14 +14,14 @@ class CampusController extends Controller
 {
     public function index(): Response
     {
-        return Inertia::render('Spatial/Campuses/Index', [
+        return Inertia::render('Library/Spatial/Campuses/Index', [
             'campuses' => Campus::withCount('floors')->orderBy('name')->paginate(20),
         ]);
     }
 
     public function create(): Response
     {
-        return Inertia::render('Spatial/Campuses/Create');
+        return Inertia::render('Library/Spatial/Campuses/Create');
     }
 
     public function store(Request $request): RedirectResponse
@@ -43,7 +43,7 @@ class CampusController extends Controller
     {
         $campus->load(['floors.rows.shelfBoxes']);
 
-        return Inertia::render('Spatial/Tree', [
+        return Inertia::render('Library/Spatial/Tree', [
             'campus' => $campus,
             'floors' => $campus->floors()->with('rows')->orderBy('level')->get(),
         ]);
@@ -51,7 +51,7 @@ class CampusController extends Controller
 
     public function edit(Campus $campus): Response
     {
-        return Inertia::render('Spatial/Campuses/Edit', [
+        return Inertia::render('Library/Spatial/Campuses/Edit', [
             'campus' => $campus,
         ]);
     }

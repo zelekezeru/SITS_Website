@@ -14,6 +14,7 @@ use App\Http\Controllers\Library\FineController;
 use App\Http\Controllers\Library\FloorController;
 use App\Http\Controllers\Library\HoldController;
 use App\Http\Controllers\Library\IsbnLookupController;
+use App\Http\Controllers\Library\LanguageController;
 use App\Http\Controllers\Library\Legacy\LegacyImportController;
 use App\Http\Controllers\Library\MyFinesController;
 use App\Http\Controllers\Library\MyHoldsController;
@@ -50,6 +51,9 @@ Route::match(['get', 'post'], '/library/payments/callback', [PaymentController::
 Route::middleware('auth')->prefix('library')->name('library.')->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Language toggle (library UI). SITS also has /locale; kept for the library's switcher.
+    Route::post('/language', [LanguageController::class, 'switch'])->name('language.switch');
 
     // ── Notifications ──────────────────────────────────────────────────────
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');

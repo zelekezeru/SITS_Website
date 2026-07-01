@@ -23,14 +23,14 @@ class CirculationController extends Controller
 
     public function desk()
     {
-        return Inertia::render('Circulation/Desk', [
+        return Inertia::render('Library/Circulation/Desk', [
             'currency' => config('library.currency_symbol'),
         ]);
     }
 
     public function returns()
     {
-        return Inertia::render('Circulation/Returns', [
+        return Inertia::render('Library/Circulation/Returns', [
             'campuses' => Campus::orderBy('name')->get(['id','name','code']),
         ]);
     }

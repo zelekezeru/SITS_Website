@@ -15,7 +15,7 @@ class NotificationController extends Controller
             ->notifications()
             ->paginate(20);
 
-        return Inertia::render('Notifications/Index', [
+        return Inertia::render('Library/Notifications/Index', [
             'notifications' => $notifications,
             'unreadCount'   => $request->user()->unreadNotifications()->count(),
         ]);

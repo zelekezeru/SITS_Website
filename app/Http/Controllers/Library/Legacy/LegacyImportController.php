@@ -18,7 +18,7 @@ class LegacyImportController extends Controller
     {
         $this->authorize('manage_legacy_data');
         
-        return Inertia::render('Admin/Legacy/Index', [
+        return Inertia::render('Library/Admin/Legacy/Index', [
             'recentImports' => [], // You could pull from a separate activity log table
         ]);
     }

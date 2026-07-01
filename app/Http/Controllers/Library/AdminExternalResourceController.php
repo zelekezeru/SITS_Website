@@ -14,14 +14,14 @@ class AdminExternalResourceController extends Controller
 {
     public function index()
     {
-        return Inertia::render('Admin/Resources/Index', [
+        return Inertia::render('Library/Admin/Resources/Index', [
             'resources' => ExternalResource::orderBy('sort_order')->get(),
         ]);
     }
 
     public function create()
     {
-        return Inertia::render('Admin/Resources/Form', [
+        return Inertia::render('Library/Admin/Resources/Form', [
             'resource' => new ExternalResource(),
             'permissions' => Permission::pluck('name'),
             'roles' => [Role::SUPER_ADMIN->value, Role::CAMPUS_ADMIN->value, Role::LIBRARIAN->value, Role::INSTRUCTOR->value, Role::STAFF_USER->value, Role::STUDENT->value],
@@ -51,7 +51,7 @@ class AdminExternalResourceController extends Controller
 
     public function edit(ExternalResource $resource)
     {
-        return Inertia::render('Admin/Resources/Form', [
+        return Inertia::render('Library/Admin/Resources/Form', [
             'resource' => $resource,
             'permissions' => Permission::pluck('name'),
             'roles' => [Role::SUPER_ADMIN->value, Role::CAMPUS_ADMIN->value, Role::LIBRARIAN->value, Role::INSTRUCTOR->value, Role::STAFF_USER->value, Role::STUDENT->value],

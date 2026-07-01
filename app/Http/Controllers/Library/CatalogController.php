@@ -36,7 +36,7 @@ class CatalogController extends Controller
 
         $books->withQueryString();
 
-        return Inertia::render('Catalog/Index', [
+        return Inertia::render('Library/Catalog/Index', [
             'books'   => $books,
             'filters' => ['q' => (string)$q, 'campus_id' => $campusId],
             'campuses'=> Campus::orderBy('name')->get(['id','name','code']),
@@ -68,7 +68,7 @@ class CatalogController extends Controller
 
         $book->append('average_rating');
 
-        return Inertia::render('Catalog/Show', [
+        return Inertia::render('Library/Catalog/Show', [
             'book' => $book,
             'canModerateReviews' => $canModerate,
             'campuses' => Campus::orderBy('name')->get(['id', 'name', 'code']),

@@ -26,7 +26,7 @@ class MyFinesController extends Controller
             ->outstanding()
             ->sum(DB::raw('amount - paid_amount'));
 
-        return Inertia::render('Fines/My', [
+        return Inertia::render('Library/Fines/My', [
             'fines'           => $fines,
             'outstanding'     => round($outstanding, 2),
             'currency'        => config('library.currency_symbol'),

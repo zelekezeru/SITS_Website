@@ -14,14 +14,14 @@ class UserController extends Controller
 {
     public function index()
     {
-        return Inertia::render('Users/Index', [
+        return Inertia::render('Library/Users/Index', [
             'users' => User::with('roles')->paginate(15),
         ]);
     }
 
     public function create()
     {
-        return Inertia::render('Users/Create', [
+        return Inertia::render('Library/Users/Create', [
             'roles' => Role::all(),
         ]);
     }
@@ -48,7 +48,7 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
-        return Inertia::render('Users/Edit', [
+        return Inertia::render('Library/Users/Edit', [
             'user' => $user->load('roles'),
             'roles' => Role::all(),
         ]);

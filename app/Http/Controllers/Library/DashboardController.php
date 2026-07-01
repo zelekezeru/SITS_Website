@@ -47,7 +47,7 @@ class DashboardController extends Controller
             $props['recent_activity'] = $this->recentActivity();
         }
 
-        return Inertia::render('Dashboard', $props);
+        return Inertia::render('Library/Dashboard', $props);
     }
 
     /**

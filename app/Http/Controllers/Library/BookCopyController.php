@@ -62,7 +62,7 @@ class BookCopyController extends Controller
             $query->whereIn('id', explode(',', $ids));
         }
 
-        return Inertia::render('BookCopies/Print', [
+        return Inertia::render('Library/BookCopies/Print', [
             'copies' => $query->get(),
         ]);
     }

@@ -25,7 +25,7 @@ class ReportController extends Controller
         $from = $request->date('from') ?? today()->subDays(30);
         $to   = $request->date('to') ?? today();
 
-        return Inertia::render('Reports/Index', [
+        return Inertia::render('Library/Reports/Index', [
             'report'   => $report,
             'from'     => $from->format('Y-m-d'),
             'to'       => $to->format('Y-m-d'),

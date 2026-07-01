@@ -45,7 +45,7 @@ class TransferController extends Controller
             ->take(50)
             ->get();
 
-        return Inertia::render('Transfers/Index', [
+        return Inertia::render('Library/Transfers/Index', [
             'incoming' => $incoming,
             'outgoing' => $outgoing,
             'history'  => $history,
@@ -56,14 +56,14 @@ class TransferController extends Controller
     {
         $transfer->load(['copy.book', 'fromCampus', 'toCampus', 'requester', 'approver', 'dispatcher', 'receiver']);
         
-        return Inertia::render('Transfers/Show', [
+        return Inertia::render('Library/Transfers/Show', [
             'transfer' => $transfer,
         ]);
     }
 
     public function create(Request $request)
     {
-        return Inertia::render('Transfers/Create', [
+        return Inertia::render('Library/Transfers/Create', [
             'campuses' => Campus::orderBy('name')->get(['id', 'name']),
             'copy_id' => $request->query('copy_id'),
         ]);
