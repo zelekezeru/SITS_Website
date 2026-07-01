@@ -18,6 +18,7 @@ use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Passport\Passport;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -37,6 +38,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Register Passport's built-in Blade authorization consent view so that
+        // /oauth/authorize works when Moodle redirects users for SSO login.
+        Passport::authorizationView('passport::authorize');
+
         // Stable morph aliases so polymorphic types survive class renames and
         // keep the DB readable (kpiable / commentable / documentable).
         Relation::morphMap([
