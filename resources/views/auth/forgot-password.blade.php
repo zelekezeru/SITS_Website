@@ -44,4 +44,72 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    
+                    const email = form.querySelector('#email').value;
+                    const csrfToken = form.querySelector('input[name="_token"]').value;
+
+                    const button = form.querySelector('button[type="submit"]');
+                    const originalText = button.textContent;
+                    button.textContent = 'Sending...';
+                    button.disabled = true;
+
+                    // Remove previous error/status messages
+                    form.querySelectorAll('.text-rose-500').forEach(el => el.remove());
+                    const statusBox = document.querySelector('.bg-emerald-500\\/10');
+                    if (statusBox) statusBox.remove();
+
+                    try {
+                        const response = await fetch(form.action, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': csrfToken
+                            },
+                            body: JSON.stringify({ email })
+                        });
+
+                        const data = await response.json();
+                        button.textContent = originalText;
+                        button.disabled = false;
+
+                        if (response.ok) {
+                            // Show success status
+                            const successDiv = document.createElement('div');
+                            successDiv.className = 'p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mb-4';
+                            successDiv.textContent = data.status || 'Password reset link sent successfully!';
+                            form.parentNode.insertBefore(successDiv, form);
+                            form.reset();
+                        } else {
+                            if (data.errors) {
+                                Object.entries(data.errors).forEach(([field, messages]) => {
+                                    const input = form.querySelector(`[name="${field}"]`);
+                                    if (input) {
+                                        const errSpan = document.createElement('span');
+                                        errSpan.className = 'text-xs text-rose-500 mt-1.5 block';
+                                        errSpan.textContent = messages[0];
+                                        input.closest('div').appendChild(errSpan);
+                                    }
+                                });
+                            } else {
+                                alert(data.message || 'Failed to send reset link.');
+                            }
+                        }
+                    } catch (error) {
+                        console.error(error);
+                        button.textContent = originalText;
+                        button.disabled = false;
+                        alert('An error occurred. Please try again.');
+                    }
+                });
+            }
+        });
+    </script>
 </x-guest-layout>

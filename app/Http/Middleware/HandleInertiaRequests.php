@@ -45,10 +45,11 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => $user ? [
-                    'id' => $user->id,
-                    'name' => $user->name,
-                    'email' => $user->email,
-                    'roles' => $user->roles->pluck('name'),
+                    'id'                => $user->id,
+                    'name'              => $user->name,
+                    'email'             => $user->email,
+                    'profile_image'     => $user->profile_image,
+                    'roles'             => $user->roles->pluck('name'),
                 ] : null,
                 'pending_users' => $isPresident
                     ? \App\Models\User::where('is_approved', false)->get(['id', 'name', 'email'])

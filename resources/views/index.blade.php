@@ -2,149 +2,9 @@
 
 @section('title', 'SITS Ethiopia — Shiloh International Theological Seminary')
 
+
 @section('main_content')
-    <!-- Custom CSS for Premium Animations and Glassmorphism -->
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
-
-        .font-outfit {
-            font-family: 'Outfit', sans-serif;
-        }
-        .font-jakarta {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-        }
-
-        /* Ambient glowing background blobs */
-        .glow-blob {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(120px);
-            opacity: 0.15;
-            z-index: 0;
-            pointer-events: none;
-            animation: float-blob 20s infinite alternate;
-        }
-        .glow-blob-1 {
-            background: radial-gradient(circle, #4f46e5 0%, #06b6d4 100%);
-            width: 500px;
-            height: 500px;
-            top: -10%;
-            right: -5%;
-        }
-        .glow-blob-2 {
-            background: radial-gradient(circle, #f59e0b 0%, #ef4444 100%);
-            width: 600px;
-            height: 600px;
-            bottom: 10%;
-            left: -10%;
-            animation-delay: -5s;
-            animation-duration: 25s;
-        }
-        .glow-blob-3 {
-            background: radial-gradient(circle, #a855f7 0%, #6366f1 100%);
-            width: 400px;
-            height: 400px;
-            top: 40%;
-            right: 15%;
-            animation-delay: -10s;
-            animation-duration: 18s;
-        }
-
-        @keyframes float-blob {
-            0% { transform: translate(0px, 0px) scale(1); }
-            50% { transform: translate(60px, -40px) scale(1.15); }
-            100% { transform: translate(-40px, 50px) scale(0.9); }
-        }
-
-        /* Glassmorphism Cards */
-        .glass-card {
-            background: rgba(15, 23, 42, 0.45);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-        }
-        .glass-card-hover {
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .glass-card-hover:hover {
-            transform: translateY(-8px);
-            background: rgba(15, 23, 42, 0.6);
-            border-color: rgba(99, 102, 241, 0.25);
-            box-shadow: 0 30px 60px rgba(99, 102, 241, 0.15);
-        }
-
-        /* Custom text gradient */
-        .text-gradient {
-            background: linear-gradient(135deg, #ffffff 30%, #a5b4fc 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .text-gradient-accent {
-            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        /* Dynamic Grid overlay */
-        .grid-overlay {
-            background-size: 40px 40px;
-            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-                              linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-        }
-
-        /* Animated border for buttons */
-        .btn-glow {
-            position: relative;
-            overflow: hidden;
-        }
-        .btn-glow::after {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: all 0.6s ease;
-        }
-        .btn-glow:hover::after {
-            left: 100%;
-        }
-
-        /* Custom input focus glow */
-        .input-glow:focus {
-            box-shadow: 0 0 15px rgba(245, 158, 11, 0.2);
-            border-color: rgba(245, 158, 11, 0.4);
-        }
-
-        /* Line clamping for cleaner layouts */
-        .line-clamp-3 {
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;  
-            overflow: hidden;
-        }
-
-        /* Custom slider controls */
-        .slider-btn {
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-        .slider-btn:hover {
-            background: #4f46e5;
-            border-color: #6366f1;
-            box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
-        }
-    </style>
-
     <div class="relative bg-[#090d16] overflow-hidden min-h-screen font-jakarta text-slate-300">
-        <!-- Background Ambient Blobs -->
-        <div class="glow-blob glow-blob-1"></div>
-        <div class="glow-blob glow-blob-2"></div>
-        <div class="glow-blob glow-blob-3"></div>
-
-        <!-- Grid Pattern Overlay -->
-        <div class="absolute inset-0 grid-overlay pointer-events-none"></div>
 
         <!--================ Start Home Banner Area =================-->
         <div class="relative min-h-screen flex items-center justify-center pt-24 pb-12">
@@ -199,7 +59,7 @@
                     <div class="absolute -inset-1 rounded-3xl bg-gradient-to-r from-indigo-500 to-pink-500 opacity-20 blur-xl"></div>
                     <div class="relative glass-card rounded-3xl p-8 border border-white/5 space-y-6">
                         <div class="aspect-video w-full rounded-2xl overflow-hidden bg-slate-950 relative group border border-white/5">
-                            <img src="{{ asset('img/banner/header.png') }}" alt="SITS Learning Portal" class="w-full h-full object-cover group-hover:scale-105 transition duration-700" />
+                            <img src="{{ asset('img/banner/header.webp') }}" alt="SITS Learning Portal" width="1100" height="733" fetchpriority="high" decoding="async" class="w-full h-full object-cover group-hover:scale-105 transition duration-700" />
                             <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent flex items-end p-6">
                                 <div>
                                     <span class="text-xs text-indigo-400 font-bold uppercase tracking-wider">Next-Gen Portal</span>
@@ -262,7 +122,7 @@
                                 <!-- Course Banner -->
                                 <div class="relative h-48 overflow-hidden bg-slate-950">
                                     @if($course->banner)
-                                        <img class="w-full h-full object-cover hover:scale-105 transition duration-500" src="{{ asset('storage/' . $course->banner) }}" alt="{{ $course->title }}" />
+                                        <img class="w-full h-full object-cover hover:scale-105 transition duration-500" src="{{ asset('storage/' . $course->banner) }}" alt="{{ $course->title }}" loading="lazy" />
                                     @else
                                         <div class="w-full h-full bg-gradient-to-br from-slate-900 to-indigo-950/60 flex items-center justify-center text-slate-700">
                                             <i class="ti-book text-4xl"></i>
@@ -439,7 +299,7 @@
                             <div class="glass-card glass-card-hover rounded-2xl overflow-hidden border border-white/5" data-aos="fade-up" data-aos-delay="100">
                                 <div class="relative h-64 bg-slate-950 overflow-hidden group">
                                     @if($trainer->image)
-                                        <img class="w-full h-full object-cover group-hover:scale-105 transition duration-500" src="{{ asset('storage/' . $trainer->image) }}" alt="{{ $trainer->name }}" />
+                                        <img class="w-full h-full object-cover group-hover:scale-105 transition duration-500" src="{{ asset('storage/' . $trainer->image) }}" alt="{{ $trainer->name }}" loading="lazy" />
                                     @else
                                         <div class="w-full h-full bg-gradient-to-br from-slate-900 to-indigo-950/40 flex items-center justify-center text-slate-700">
                                             <i class="ti-user text-5xl"></i>
@@ -488,7 +348,7 @@
                             <div class="glass-card glass-card-hover rounded-2xl overflow-hidden flex flex-col border border-white/5">
                                 <div class="relative h-48 bg-slate-950">
                                     @if($event->banner)
-                                        <img src="{{ asset('storage/' . $event->banner) }}" alt="{{ $event->title }}" class="w-full h-full object-cover" />
+                                        <img src="{{ asset('storage/' . $event->banner) }}" alt="{{ $event->title }}" class="w-full h-full object-cover" loading="lazy" />
                                     @else
                                         <div class="w-full h-full bg-gradient-to-br from-slate-900 to-indigo-950/40 flex items-center justify-center text-slate-700">
                                             <i class="ti-gallery text-4xl"></i>

@@ -1,12 +1,13 @@
 @font-face {
 	font-family: 'themify';
-	src:url('../fonts/themify.eot?-fvbane');
-	src:url('../fonts/themify.eot?#iefix-fvbane') format('embedded-opentype'),
-		url('../fonts/themify.woff?-fvbane') format('woff'),
-		url('../fonts/themify.ttf?-fvbane') format('truetype'),
-		url('../fonts/themify.svg?-fvbane#themify') format('svg');
+	/* Subsetted to only the ~31 ti-* icons actually used (3.6KB woff2 vs the
+	   original 56KB woff). font-display:block keeps icon slots blank until the
+	   font loads instead of flashing fallback boxes on slow connections. */
+	src:url('../fonts/themify-subset.woff2?v=2') format('woff2'),
+		url('../fonts/themify-subset.woff?v=2') format('woff');
 	font-weight: normal;
 	font-style: normal;
+	font-display: block;
 }
 
 [class^="ti-"], [class*=" ti-"] {

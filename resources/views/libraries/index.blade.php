@@ -38,7 +38,7 @@
                         <a href="{{ $library->link }}" target="_blank" rel="noopener noreferrer" class="block group">
                             @if ($library->banner)
                                 <div class="flex items-center justify-center h-48 bg-slate-950 border-b border-white/5 p-6 overflow-hidden">
-                                    <img src="{{ asset('storage/' . $library->banner) }}" alt="{{ $library->title }}" class="h-full object-contain group-hover:scale-105 transition duration-500" />
+                                    <img src="{{ asset('storage/' . $library->banner) }}" alt="{{ $library->title }}" class="h-full object-contain group-hover:scale-105 transition duration-500" loading="lazy" />
                                 </div>
                             @else
                                 <div class="w-full h-48 bg-gradient-to-br from-slate-900 to-indigo-950/60 flex items-center justify-center text-slate-700 border-b border-white/5">

@@ -9,19 +9,24 @@
         "anthropic-ai/sdk": "*",
         "barryvdh/laravel-dompdf": "*",
         "inertiajs/inertia-laravel": "*",
-        "laravel/framework": "^11.0",
-        "laravel/tinker": "^2.9",
+        "laravel/framework": "^12.0",
+        "laravel/passport": "^13.7",
+        "laravel/tinker": "^2.10",
         "phpoffice/phpspreadsheet": "*",
         "spatie/laravel-activitylog": "*",
         "spatie/laravel-permission": "^6.10",
         "tightenco/ziggy": "*"
     },
     "require-dev": {
+        "fakerphp/faker": "^1.23",
         "laravel/breeze": "^2.2",
         "laravel/pint": "^1.13",
         "laravel/sail": "^1.26",
         "mockery/mockery": "^1.6",
-        "nunomaduro/collision": "^8.0"
+        "nunomaduro/collision": "^8.6",
+        "pestphp/pest": "^3.8",
+        "pestphp/pest-plugin-laravel": "^3.2",
+        "spatie/laravel-ignition": "^2.9"
     },
     "autoload": {
         "psr-4": {

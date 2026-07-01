@@ -1,14 +1,30 @@
 import './bootstrap';
 import { createApp, h } from 'vue';
-import { createInertiaApp } from '@inertiajs/vue3';
+import { createInertiaApp, router } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
+
+// Initialize and refresh AOS animations on every SPA client-side page navigation
+router.on('navigate', () => {
+    if (typeof window !== 'undefined' && typeof window.AOS !== 'undefined') {
+        setTimeout(() => {
+            window.AOS.init({ once: true, duration: 700, offset: 60 });
+            window.AOS.refresh();
+        }, 150);
+    }
+});
 
 createInertiaApp({
     title: (title) => title ? `${title} - SITS ERP` : 'SITS ERP',
     resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
     setup({ el, App, props, plugin }) {
-        createApp({ render: () => h(App, props) })
-            .use(plugin)
+        const app = createApp({ render: () => h(App, props) });
+        app.config.globalProperties.route = (...args) => {
+            if (typeof window.route === 'function') {
+                return window.route(...args);
+            }
+            return '';
+        };
+        app.use(plugin)
             .mount(el);
     },
 });

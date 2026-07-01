@@ -1,10 +1,28 @@
 <?php
 
-/*
- * UI strings shared to the frontend (Inertia prop `translations`). Add keys here
- * and the Amharic counterpart in lang/am/app.php; use $t('key') in Vue.
- */
 return [
+    // Navigation / Public Menus
+    'home' => 'Home',
+    'courses' => 'Courses',
+    'libraries' => 'Libraries',
+    'blog' => 'Blog',
+    'about' => 'About',
+    'contact' => 'Contact',
+    'lms' => 'eLearning',
+    'sits_lms' => 'SITS LMS',
+    'moodle' => 'Moodle',
+    'login' => 'Login',
+
+    // General ERP Portal Hub Options
+    'dashboard' => 'Dashboard',
+    'view_profile' => 'View Profile',
+    'lms_portal' => 'LMS Portal',
+    'student_portal' => 'Go to Student Learning Portal',
+    'trainer_portal' => 'Instructors Portal',
+    'staff_portal' => 'Staff Portal',
+    'erp_portal' => 'ERP Portal',
+    'digital_library' => 'Digital Library',
+
     'search' => 'Search…',
     'sign_out' => 'Sign out',
     'notifications' => 'Notifications',

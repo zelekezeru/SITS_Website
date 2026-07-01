@@ -1,6 +1,6 @@
-<aside class="w-full md:w-64 bg-slate-950/85 backdrop-blur-md border-r border-slate-900 flex flex-col z-30 shrink-0">
+<aside id="adminSidebar" class="fixed md:sticky inset-y-0 left-0 z-50 w-64 bg-slate-950/95 border-r border-slate-900 flex flex-col shrink-0 transition-transform duration-300 -translate-x-full md:translate-x-0 h-full">
     <!-- Brand Logo -->
-    <div class="h-20 flex items-center px-6 border-b border-slate-900">
+    <div class="h-20 flex items-center justify-between px-6 border-b border-slate-900 shrink-0">
         <a href="{{ url('/') }}" class="flex items-center space-x-3 group">
             <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-cyan-400 p-0.5 shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform duration-300">
                 <div class="w-full h-full bg-slate-900 rounded-[10px] flex items-center justify-center overflow-hidden">
@@ -8,11 +8,14 @@
                 </div>
             </div>
             <div>
-                <span class="font-outfit text-lg font-bold tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">
+                <span class="font-outfit text-base font-bold tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent uppercase">
                     SITS ADMIN
                 </span>
             </div>
         </a>
+        <button type="button" id="adminSidebarClose" class="md:hidden w-8 h-8 flex items-center justify-center rounded-xl bg-slate-900 border border-slate-800 text-slate-500 hover:text-white transition">
+            <i class="fa fa-times text-sm"></i>
+        </button>
     </div>
 
     <!-- Navigation Menu Links -->

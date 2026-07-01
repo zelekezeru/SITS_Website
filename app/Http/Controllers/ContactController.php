@@ -7,6 +7,7 @@ use App\Mail\ContactMail;
 use App\Models\Contact;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Inertia\Inertia;
 
 class ContactController extends Controller
 {
@@ -15,9 +16,7 @@ class ContactController extends Controller
      */
     public function index()
     {
-        $contacts = Contact::all();
-
-        return view('contacts.index', compact('contacts'));
+        return Inertia::render('Website/Contact/Index');
     }
 
     /**

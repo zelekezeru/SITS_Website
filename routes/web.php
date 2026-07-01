@@ -16,12 +16,23 @@ use App\Http\Controllers\TrainerController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\MoodleController;
+use App\Http\Controllers\Auth\OidcUserInfoController;
+
+// ── OIDC userinfo for Moodle SSO ──────────────────────────────────────────────
+// Moodle's auth_oauth2 plugin calls this with the Bearer token from /oauth/token
+// to fetch the signed-in SITS user (email/name/roles) and provision/match locally.
+Route::middleware('auth:api')->get('/oauth/userinfo', OidcUserInfoController::class)->name('oauth.userinfo');
 
 // ─── Public Routes ───────────────────────────────────────────────────────────
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/home', [HomeController::class, 'index']);
 Route::get('/about', [HomeController::class, 'about'])->name('abouts.index');
 Route::get('/elements', [HomeController::class, 'elements'])->name('elements.index');
+
+Route::resource('courses',       CourseController::class)->only(['index', 'show']);
+Route::resource('blogs',         BlogController::class)->only(['index', 'show']);
+Route::resource('libraries',     LibraryController::class)->only(['index', 'show']);
+Route::resource('contacts',      ContactController::class)->only(['index', 'store']);
 
 // ─── Authenticated User Routes ────────────────────────────────────────────────
 // The unified portal hub (launch-pad for ERP / LMS / Library). The ERP owns the
@@ -32,7 +43,7 @@ Route::middleware(['auth'])->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::post('/profile/upload-profile-image', [ProfileController::class, 'uploadProfileImage'])->name('profile.uploadProfileImage');
 
@@ -73,11 +84,11 @@ Route::middleware(['auth', 'role:SUPERADMIN|ADMIN|EDITOR'])->group(function () {
 
     // ── Full CRUD Resource routes (create / edit / delete / update)
     Route::resource('users',         UserController::class);
-    Route::resource('blogs',         BlogController::class);
-    Route::resource('contacts',      ContactController::class);
+    Route::resource('blogs',         BlogController::class)->except(['index', 'show']);
+    Route::resource('contacts',      ContactController::class)->except(['index', 'store']);
     Route::resource('testimonials',  TestimonialController::class);
-    Route::resource('courses',       CourseController::class);
-    Route::resource('libraries',     LibraryController::class);
+    Route::resource('courses',       CourseController::class)->except(['index', 'show']);
+    Route::resource('libraries',     LibraryController::class)->except(['index', 'show']);
     Route::resource('admins',        AdminController::class);
     Route::resource('programs',      ProgramController::class);
     Route::resource('events',        EventController::class);
@@ -85,6 +96,9 @@ Route::middleware(['auth', 'role:SUPERADMIN|ADMIN|EDITOR'])->group(function () {
     Route::resource('subscriptions', SubscriptionController::class);
     Route::resource('galleries',     GalleryController::class);
 });
+
+// ─── Hikvision Webhook Real-time Attendance Integration ───────────────────────
+Route::post('/hikvision/webhook', [\App\Http\Controllers\Admin\HikvisionWebhookController::class, 'handle'])->name('hikvision.webhook');
 
 require __DIR__ . '/auth.php';
 

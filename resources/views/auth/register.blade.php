@@ -132,4 +132,61 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    
+                    const formData = new FormData(form);
+                    const button = form.querySelector('button[type="submit"]');
+                    const originalText = button.textContent;
+                    button.textContent = 'Registering...';
+                    button.disabled = true;
+
+                    // Remove previous error messages
+                    form.querySelectorAll('.text-rose-500').forEach(el => el.remove());
+
+                    try {
+                        const response = await fetch(form.action, {
+                            method: 'POST',
+                            headers: {
+                                'Accept': 'application/json',
+                            },
+                            body: formData
+                        });
+
+                        if (response.ok) {
+                            window.location.href = '/portal';
+                        } else {
+                            const data = await response.json();
+                            button.textContent = originalText;
+                            button.disabled = false;
+
+                            if (data.errors) {
+                                Object.entries(data.errors).forEach(([field, messages]) => {
+                                    const input = form.querySelector(`[name="${field}"]`);
+                                    if (input) {
+                                        const errSpan = document.createElement('span');
+                                        errSpan.className = 'text-xs text-rose-500 mt-1.5 block';
+                                        errSpan.textContent = messages[0];
+                                        input.closest('div').appendChild(errSpan);
+                                    }
+                                });
+                            } else {
+                                alert(data.message || 'Registration failed.');
+                            }
+                        }
+                    } catch (error) {
+                        console.error(error);
+                        button.textContent = originalText;
+                        button.disabled = false;
+                        alert('An error occurred. Please try again.');
+                    }
+                });
+            }
+        });
+    </script>
 </x-guest-layout>

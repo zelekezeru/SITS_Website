@@ -19,8 +19,9 @@ class UserController extends Controller
     public function index(): View
     {
         $users = User::with('employee')->where('id', '!=', Auth::id())->orderBy('name', 'asc')->paginate(10); // Use pagination to avoid loading too many records at once
+        $roles = Role::all();
 
-        return view('users.list', compact('users'));
+        return view('users.list', compact('users', 'roles'));
     }
 
     /**
@@ -30,8 +31,9 @@ class UserController extends Controller
     {
 
         $users = User::with('employee')->where('id', '!=', Auth::id())->orderBy('name', 'asc')->paginate(10); // Use pagination to avoid loading too many records at once
+        $roles = Role::all();
 
-        return view('users.list', compact('users'));
+        return view('users.list', compact('users', 'roles'));
     }
 
 

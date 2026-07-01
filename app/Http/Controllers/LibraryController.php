@@ -10,6 +10,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\LibraryStoreRequest;
 use App\Http\Requests\LibraryUpdateRequest;
+use Inertia\Inertia;
 
 class LibraryController extends Controller
 {
@@ -18,10 +19,12 @@ class LibraryController extends Controller
     /**
      * Public listing of available library resources.
      */
-    public function index(): View
+    public function index()
     {
-        $libraries = Library::latest()->paginate(12);
-        return view('libraries.index', compact('libraries'));
+        $libraries = Library::select(['id', 'title', 'banner', 'category', 'description', 'link'])
+            ->latest()
+            ->paginate(12);
+        return Inertia::render('Website/Libraries/Index', ['libraries' => $libraries]);
     }
 
     /**

@@ -40,6 +40,13 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+        // OAuth2 access-token guard (Laravel Passport) — used by the Moodle SSO
+        // userinfo endpoint so Moodle can fetch the logged-in user's profile.
+        'api' => [
+            'driver' => 'passport',
+            'provider' => 'users',
+        ],
     ],
 
     /*

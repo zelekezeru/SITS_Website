@@ -33,12 +33,15 @@ use App\Support\AdminNavigation;
 use App\Support\RoleLanding;
 use Illuminate\Support\Facades\Route;
 
-// Switch the UI language (English / Amharic); persisted in the session.
+// Switch the UI language (11 supported languages); persisted in the session and a long-lived cookie.
 Route::post('/locale', function (\Illuminate\Http\Request $request) {
-    $request->validate(['locale' => ['required', 'in:en,am']]);
-    $request->session()->put('locale', $request->string('locale')->toString());
+    $supported = ['en', 'am', 'om', 'ti', 'so', 'sw', 'zh', 'fr', 'es', 'ku', 'ur'];
+    $request->validate(['locale' => ['required', 'in:' . implode(',', $supported)]]);
 
-    return back();
+    $locale = $request->string('locale')->toString();
+    $request->session()->put('locale', $locale);
+
+    return back()->withCookie(cookie()->forever('locale', $locale));
 })->name('locale.switch');
 
 /*
@@ -217,6 +220,7 @@ Route::middleware(['auth', 'active', 'password.fresh'])->group(function () {
         Route::post('/admin/attendance-imports/{attendanceImport}/approve', [AttendanceImportController::class, 'approve'])->middleware('can:approve attendance')->name('admin.attendance-imports.approve');
         Route::post('/admin/attendance-imports/{attendanceImport}/reject', [AttendanceImportController::class, 'reject'])->middleware('can:approve attendance')->name('admin.attendance-imports.reject');
         Route::delete('/admin/attendance-imports/{attendanceImport}', [AttendanceImportController::class, 'destroy'])->name('admin.attendance-imports.destroy');
+        Route::post('/admin/attendance-logs/sync', [\App\Http\Controllers\Admin\AttendanceLogController::class, 'sync'])->name('admin.attendance-logs.sync');
 
         // Fiscal-year viewing context
         Route::post('/admin/fiscal-year', [\App\Http\Controllers\Admin\FiscalYearController::class, 'view'])->name('admin.fiscal-year.view');

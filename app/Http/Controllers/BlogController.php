@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Blog;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class BlogController extends Controller
 {
@@ -13,9 +14,11 @@ class BlogController extends Controller
      */
     public function index()
     {
-        $blogs = Blog::paginate(5);
+        $blogs = Blog::select(['id', 'category', 'author', 'date', 'image', 'title', 'content'])
+            ->latest()
+            ->paginate(9);
 
-        return view('blogs.index', compact('blogs'));
+        return Inertia::render('Website/Blog/Index', ['blogs' => $blogs]);
     }
 
     /**

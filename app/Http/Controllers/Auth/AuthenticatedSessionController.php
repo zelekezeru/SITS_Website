@@ -46,9 +46,8 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        // Forward to the user's role-based landing (ERP areas for staff, the
-        // portal hub for everyone else). See App\Support\RoleLanding.
-        return redirect()->intended(\App\Support\RoleLanding::url($request->user()));
+        // Forward to the website's unified portal hub as the main starting point.
+        return redirect()->intended(route('portal'));
     }
 
     /**

@@ -114,10 +114,47 @@ const crumb = computed(() => {
 const initials = computed(() =>
   (user.value?.name ?? 'SA').split(' ').map((p) => p[0]).slice(0, 2).join('').toUpperCase());
 
+const userMenuOpen = ref(false);
+
+const lmsLabel = computed(() => {
+  const roles = user.value?.roles ?? [];
+  const rolesLower = roles.map(r => r.toLowerCase());
+  if (rolesLower.includes('student')) {
+    return 'Go to Student Learning Portal';
+  } else if (rolesLower.includes('trainer')) {
+    return 'Instructors Portal';
+  } else if (
+    rolesLower.includes('staff') ||
+    rolesLower.includes('superadmin') ||
+    rolesLower.includes('admin') ||
+    rolesLower.includes('president / super admin') ||
+    rolesLower.includes('editor') ||
+    rolesLower.includes('librarian')
+  ) {
+    return 'Staff Portal';
+  }
+  return 'LMS Portal';
+});
+
+const hasLibraryAccess = computed(() => {
+  const roles = user.value?.roles ?? [];
+  const rolesLower = roles.map(r => r.toLowerCase());
+  const allowed = ['student', 'trainer', 'librarian', 'admin', 'superadmin', 'president / super admin', 'staff', 'editor'];
+  return rolesLower.some(r => allowed.includes(r));
+});
+
+const hasErpAccess = computed(() => {
+  const roles = user.value?.roles ?? [];
+  const rolesLower = roles.map(r => r.toLowerCase());
+  const allowed = ['superadmin', 'admin', 'president / super admin', 'editor', 'trainer', 'staff', 'librarian', 'vice president', 'dean of the seminary', 'operational manager', 'finance officer', 'department head', 'registrar'];
+  return rolesLower.some(r => allowed.includes(r));
+});
+
 watch(currentPath, () => {
   mobileOpen.value = false;
   notifOpen.value = false;
   yearOpen.value = false;
+  userMenuOpen.value = false;
 });
 </script>
 
@@ -157,7 +194,11 @@ watch(currentPath, () => {
     >
       <!-- Brand -->
       <div class="h-20 flex items-center gap-3 px-4 border-b border-slate-900 shrink-0">
-        <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-blue-500 to-purple-600 flex items-center justify-center font-bold text-lg text-white shadow-lg shadow-blue-500/20 shrink-0">S</div>
+        <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-indigo-500 to-cyan-400 p-0.5 shadow-lg shadow-indigo-500/20 shrink-0 flex items-center justify-center">
+          <div class="w-full h-full bg-slate-900 rounded-[10px] flex items-center justify-center overflow-hidden">
+            <img :src="'/img/logo.png'" alt="SITS Logo" class="h-7 w-auto object-contain" />
+          </div>
+        </div>
         <div v-if="!collapsed" class="min-w-0">
           <p class="text-base font-bold tracking-tight text-white leading-tight">SITS ERP</p>
           <p class="text-[11px] text-blue-400/80 font-semibold uppercase tracking-wider truncate">{{ brandSubtitle }}</p>
@@ -381,8 +422,126 @@ watch(currentPath, () => {
 
         <div class="w-px h-6 bg-slate-800"></div>
 
-        <!-- Avatar -->
-        <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-blue-500 to-purple-600 flex items-center justify-center text-xs font-bold text-white">{{ initials }}</div>
+        <!-- Avatar & Dropdown -->
+        <div class="relative">
+          <button 
+            @click="userMenuOpen = !userMenuOpen"
+            class="flex items-center space-x-2 p-1 rounded-full hover:bg-slate-900 border border-transparent hover:border-slate-800 transition focus:outline-none cursor-pointer"
+          >
+            <img 
+              :src="user?.profile_image ? (user.profile_image.startsWith('http') ? user.profile_image : '/storage/' + user.profile_image) : '/img/user.png'" 
+              alt="Profile Image" 
+              class="h-8 w-8 rounded-full object-cover ring-2 ring-indigo-500/20" 
+            />
+            <span class="text-xs font-semibold text-slate-350 hidden sm:inline-block">{{ user?.name }}</span>
+            <Icon 
+              name="ChevronDown" 
+              :size="10" 
+              class="text-slate-500 hidden sm:inline-block transition-transform duration-200" 
+              :class="{ 'rotate-180': userMenuOpen }" 
+            />
+          </button>
+
+          <!-- click-away overlay -->
+          <div v-if="userMenuOpen" class="fixed inset-0 z-40" @click="userMenuOpen = false"></div>
+
+          <Transition
+            enter-active-class="transition duration-150 ease-out" 
+            enter-from-class="opacity-0 -translate-y-1" 
+            enter-to-class="opacity-100 translate-y-0"
+            leave-active-class="transition duration-100 ease-in" 
+            leave-from-class="opacity-100" 
+            leave-to-class="opacity-0 -translate-y-1"
+          >
+            <div 
+              v-if="userMenuOpen" 
+              class="absolute right-0 mt-2 w-64 rounded-2xl border border-slate-850 bg-slate-900/95 backdrop-blur-xl shadow-2xl z-50 overflow-hidden"
+            >
+              <div class="px-4 py-3 border-b border-slate-800/60">
+                <p class="text-[10px] text-slate-500 font-semibold uppercase tracking-wider">Logged In As</p>
+                <p class="text-sm font-bold text-white truncate">{{ user?.name }}</p>
+                <div class="mt-1 flex flex-wrap gap-1">
+                  <span 
+                    v-for="r in user?.roles" 
+                    :key="r" 
+                    class="text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded bg-blue-500/10 border border-blue-500/20 text-blue-400"
+                  >
+                    {{ r }}
+                  </span>
+                </div>
+              </div>
+              <div class="py-1">
+                <!-- Dashboard Hub -->
+                <Link 
+                  href="/portal" 
+                  class="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-350 hover:text-white hover:bg-slate-800/50 transition-colors"
+                  @click="userMenuOpen = false"
+                >
+                  <Icon name="LayoutDashboard" :size="15" class="text-slate-500" />
+                  <span>Dashboard Hub</span>
+                </Link>
+
+                <!-- Profile -->
+                <a 
+                  href="/profile" 
+                  class="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-350 hover:text-white hover:bg-slate-800/50 transition-colors"
+                  @click="userMenuOpen = false"
+                >
+                  <Icon name="User" :size="15" class="text-slate-500" />
+                  <span>View Profile</span>
+                </a>
+
+                <div class="border-t border-slate-800/60 my-1"></div>
+
+                <!-- LMS Link -->
+                <a 
+                  href="/go/lms" 
+                  class="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-350 hover:text-white hover:bg-slate-800/50 transition-colors"
+                  @click="userMenuOpen = false"
+                >
+                  <Icon name="Briefcase" :size="15" class="text-slate-500" />
+                  <span>{{ lmsLabel }}</span>
+                </a>
+
+                <!-- ERP Portal (if they have roles to access ERP modules) -->
+                <Link 
+                  v-if="hasErpAccess"
+                  href="/dashboard" 
+                  class="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-350 hover:text-white hover:bg-slate-800/50 transition-colors"
+                  @click="userMenuOpen = false"
+                >
+                  <Icon name="ShieldCheck" :size="15" class="text-slate-500" />
+                  <span>ERP Portal</span>
+                </Link>
+
+                <!-- Digital Library -->
+                <a 
+                  v-if="hasLibraryAccess"
+                  href="/library/portal" 
+                  class="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-350 hover:text-white hover:bg-slate-800/50 transition-colors"
+                  @click="userMenuOpen = false"
+                >
+                  <Icon name="FolderOpen" :size="15" class="text-slate-500" />
+                  <span>Digital Library</span>
+                </a>
+
+                <div class="border-t border-slate-800/60 my-1"></div>
+
+                <!-- Logout -->
+                <Link 
+                  href="/logout" 
+                  method="post" 
+                  as="button" 
+                  class="w-full flex items-center gap-2 px-4 py-2.5 text-left text-xs font-bold text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 transition-colors cursor-pointer w-full"
+                  @click="userMenuOpen = false"
+                >
+                  <Icon name="LogOut" :size="15" />
+                  <span>Sign Out</span>
+                </Link>
+              </div>
+            </div>
+          </Transition>
+        </div>
       </header>
 
       <!-- Page content -->

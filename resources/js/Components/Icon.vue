@@ -7,6 +7,7 @@ import {
   Search, Bell, ChevronDown, ChevronRight, Menu, X, LogOut, PanelLeftClose,
   PanelLeftOpen, CircleUserRound, Plus, ArrowRight, ArrowLeft, Sun, Moon,
   Command, Dot, CheckCircle2, AlertTriangle, CircleHelp, Trash2, Download,
+  Globe,
   // Employee profile / credentials
   Eye, EyeOff, Mail, History, Briefcase, Hash, User, Image, Link2, File, Archive,
 } from 'lucide-vue-next';
@@ -18,6 +19,7 @@ const map = {
   Search, Bell, ChevronDown, ChevronRight, Menu, X, LogOut, PanelLeftClose,
   PanelLeftOpen, CircleUserRound, Plus, ArrowRight, ArrowLeft, Sun, Moon,
   Command, Dot, CheckCircle2, AlertTriangle, CircleHelp, Trash2, Download,
+  Globe,
   Eye, EyeOff, Mail, History, Briefcase, Hash, User, Image, Link2, File, Archive,
 };
 

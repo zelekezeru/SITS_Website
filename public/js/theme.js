@@ -117,9 +117,10 @@
   /*  MailChimp Slider
     /*----------------------------------------------------*/
   function mailChimp() {
-    $("#mc_embed_signup")
-      .find("form")
-      .ajaxChimp();
+    var $form = $("#mc_embed_signup").find("form");
+    if ($form.length && typeof $form.ajaxChimp === 'function') {
+      $form.ajaxChimp();
+    }
   }
   mailChimp();
 

@@ -18,6 +18,10 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\HandleInertiaRequests::class,
         ]);
 
+        $middleware->validateCsrfTokens(except: [
+            'hikvision/webhook',
+        ]);
+
         $middleware->alias([
             // ERP role/account gates
             'role.landing' => \App\Http\Middleware\EnsureRole::class,
@@ -33,7 +37,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // guest-only pages (login/register) -> their role-based landing.
         $middleware->redirectGuestsTo(fn () => route('login'));
         $middleware->redirectUsersTo(
-            fn ($request) => RoleLanding::url($request->user())
+            fn ($request) => route('portal')
         );
     })
     ->withExceptions(function (Exceptions $exceptions): void {

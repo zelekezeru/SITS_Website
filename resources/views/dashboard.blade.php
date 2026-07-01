@@ -10,13 +10,13 @@
         <!-- Decorative subtle background pattern -->
         <div class="absolute right-0 top-0 -mt-10 -mr-10 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none"></div>
         
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
                 <h1 class="font-outfit text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-2">
                     Welcome Back, <span class="bg-gradient-to-r from-indigo-400 via-cyan-400 to-indigo-400 bg-clip-text text-transparent">{{ Auth::user()->name }}</span> 👋
                 </h1>
                 <p class="text-slate-400 text-sm sm:text-base max-w-xl">
-                    Access SITS theological systems, check electronic resources, and manage system registries from your unified workspace.
+                    Access SITS Systems, E-Resources, and Information here.
                 </p>
             </div>
             
@@ -39,14 +39,7 @@
     </div>
 
     <!-- Portal Systems Section -->
-    <div class="mb-12">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-8">
-            <div>
-                <h2 class="font-outfit text-2xl font-bold text-white tracking-tight">System Access Portals</h2>
-                <p class="text-xs sm:text-sm text-slate-400">Select a system to launch or request access permissions.</p>
-            </div>
-            <span class="h-1 w-20 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-full"></span>
-        </div>
+    <div class="mb-6">
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             @foreach ($portals as $key => $portal)
@@ -63,7 +56,7 @@
 
                     <div class="p-6">
                         <!-- Icon Header -->
-                        <div class="flex justify-between items-start mb-6">
+                        <div class="flex justify-between items-start mb-4">
                             <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-xl shadow-inner
                                 @if($portal['color'] === 'indigo') bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 @endif
                                 @if($portal['color'] === 'cyan') bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 @endif
@@ -89,12 +82,12 @@
                         <h3 class="font-outfit text-xl font-bold text-white mb-2 group-hover:text-indigo-300 transition-colors duration-300">
                             {{ $portal['name'] }}
                         </h3>
-                        <p class="text-sm text-slate-400 leading-relaxed mb-6">
+                        <p class="text-sm text-slate-400 leading-relaxed mb-4">
                             {{ $portal['description'] }}
                         </p>
 
                         <!-- Features checklist -->
-                        <div class="border-t border-slate-900/60 pt-4 mb-6">
+                        <div class="border-t border-slate-900/60 pt-4 mb-4">
                             <h4 class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-3">Key Features</h4>
                             <ul class="space-y-2.5">
                                 @foreach ($portal['features'] as $feature)
@@ -111,7 +104,7 @@
                     </div>
 
                     <!-- Action Button Container -->
-                    <div class="p-6 pt-0 border-t border-slate-900/40 mt-auto">
+                    <div class="p-4 pt-0 border-t border-slate-900/40 mt-auto">
                         @if ($portal['authorized'])
                             <a href="{{ $portal['url'] }}" target="_blank" 
                                class="w-full flex items-center justify-center py-3 px-4 rounded-xl text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]
@@ -131,7 +124,7 @@
                             @else
                                 <button type="button" 
                                         onclick="openRequestModal('{{ $portal['key'] }}', '{{ $portal['name'] }}', '{{ $portal['color'] }}')"
-                                        class="w-full flex items-center justify-center py-3 px-4 rounded-xl text-sm font-semibold bg-slate-900 border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800/80 transition duration-300 hover:scale-[1.02] active:scale-[0.98]">
+                                        class="w-full flex items-center justify-center py-2 px-4 rounded-xl text-sm font-semibold bg-slate-900 border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800/80 transition duration-300 hover:scale-[1.02] active:scale-[0.98]">
                                     <i class="fa-solid fa-lock mr-2 text-xs"></i>
                                     <span>Request Access</span>
                                 </button>
@@ -145,7 +138,7 @@
 
     <!-- Administrative Management Panel (Only visible to Authorized Admin/Editor Roles) -->
     @if(Auth::user()->hasRole('SUPERADMIN') || Auth::user()->hasRole('ADMIN') || Auth::user()->hasRole('EDITOR'))
-        <div class="mt-16 border-t border-slate-900 pt-12">
+        <div class="mt-8 border-t border-slate-900 pt-6">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-8">
                 <div>
                     <h2 class="font-outfit text-2xl font-bold text-white tracking-tight flex items-center">

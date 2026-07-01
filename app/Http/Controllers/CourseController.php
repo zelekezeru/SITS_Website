@@ -8,19 +8,22 @@ use App\Http\Requests\CourseStoreRequest;
 use App\Http\Requests\CourseUpdateRequest;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Inertia\Inertia;
 
 class CourseController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(): View
+    public function index()
     {
+        $courses = Course::select(['id', 'title', 'banner', 'category', 'description', 'amount_paid', 'instructor'])
+            ->latest()
+            ->paginate(12);
 
-    $courses = Course::paginate(10); // Use pagination to avoid loading too many records at once
-
-    return view('courses.index', compact('courses'));
-
+        return Inertia::render('Website/Courses/Index', [
+            'courses' => $courses,
+        ]);
     }
 
     /**

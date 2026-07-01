@@ -8,22 +8,28 @@
     <link rel="icon" href="{{ asset('img/logo.png') }}" type="image/png" />
     <title>@yield('title', 'SITS Ethiopia')</title>
 
-    <link rel="stylesheet" href="{{ asset('css/aos.css') }}">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="{{ asset('css/flaticon.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/themify-icons.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/ti-tiktok.css') }}">
-
+    <!-- DNS prefetch for external resources -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
-
+    <!-- Critical CSS first -->
+    <link rel="stylesheet" href="{{ asset('css/flaticon.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/themify-icons.css') }}">
     <link rel="stylesheet" href="{{ asset('vendors/owl-carousel/owl.carousel.min.css') }}">
     <link rel="stylesheet" href="{{ asset('vendors/nice-select/css/nice-select.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/aos.css') }}">
+    <!-- Vite Pre-Compiled Tailwind CSS (CSS only — app.js is Inertia/ERP only) -->
+    @vite(['resources/css/app.css'])
     <!-- main css -->
     <link rel="stylesheet" href="{{ asset('css/main.css') }}">
+    <!-- Animate.css (non-blocking) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"></noscript>
+
+    <!-- Google Fonts (single load) -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
         .font-outfit {
@@ -164,10 +170,10 @@
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 
     <script>
         function confirmDelete(ItemId) {
+            if (typeof Swal === 'undefined') { return; }
             Swal.fire({
                 title: "Are you sure?",
                 text: "Once deleted, this Item cannot be recovered!",
@@ -183,129 +189,113 @@
             });
         }
     </script>
-    <script src="{{ asset('js/aos.js') }}"></script>
     <script src="{{ asset('js/jquery-3.2.1.min.js') }}"></script>
-    <script src="{{ asset('js/popper.js') }}"></script>
-    <script src="{{ asset('js/bootstrap.min.js') }}"></script>
-    <script src="{{ asset('vendors/nice-select/js/jquery.nice-select.min.js') }}"></script>
-    <script src="{{ asset('vendors/owl-carousel/owl.carousel.min.js') }}"></script>
-    <script src="{{ asset('js/owl-carousel-thumb.min.js') }}"></script>
-    <script src="{{ asset('js/jquery.ajaxchimp.min.js') }}"></script>
-    <script src="{{ asset('js/mail-script.js') }}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+    <script src="{{ asset('js/popper.js') }}" defer></script>
+    <script src="{{ asset('js/bootstrap.min.js') }}" defer></script>
+    <script src="{{ asset('vendors/nice-select/js/jquery.nice-select.min.js') }}" defer></script>
+    <script src="{{ asset('vendors/owl-carousel/owl.carousel.min.js') }}" defer></script>
+    <script src="{{ asset('js/owl-carousel-thumb.min.js') }}" defer></script>
+    <script src="{{ asset('js/jquery.ajaxchimp.min.js') }}" defer></script>
+    <script src="{{ asset('js/mail-script.js') }}" defer></script>
+    <script src="{{ asset('js/aos.js') }}" defer></script>
 
-    <!--gmaps Js-->
+    {{-- Google Maps: only About page sections this --}}
     @yield('maps')
-    <script>
-        AOS.init();
+    {{-- gmaps helper only needed when maps are present --}}
+    @hasSection('maps')
+        <script src="{{ asset('js/gmaps.min.js') }}" defer></script>
+    @endif
 
+    <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Initialize Owl Carousel with smooth transition
-            $('#galleryCarousel').owlCarousel({
-                items: 3, // Show 3 images at a time
-                loop: true,
-                margin: 20,
-                nav: true,
-                dots: true,
-                autoplay: true,
-                autoplayTimeout: 3000,
-                autoplayHoverPause: true,
-                smartSpeed: 800 // Smooth transition speed
-            });
-        });
-        document.addEventListener('DOMContentLoaded', function() {
-            // Select all images that open the modal
+            // AOS — deferred scripts run before DOMContentLoaded, so AOS is available here
+            if (typeof AOS !== 'undefined') { AOS.init(); }
+
+            // Gallery image modal
             document.querySelectorAll('.gallery-image').forEach(function(image) {
                 image.addEventListener('click', function() {
-                    // Get the modal elements
                     const modalImage = document.getElementById('modalImage');
                     const modalTitle = document.getElementById('galleryModalLabel');
-
-                    // Update the modal content with the clicked image's attributes
+                    if (!modalImage || !modalTitle) return;
                     modalImage.src = this.getAttribute('data-image');
                     modalImage.alt = this.getAttribute('data-description');
                     modalTitle.textContent = this.getAttribute('data-description');
-
-                    // Show the modal (in case Bootstrap's auto binding doesn't work)
                     const modal = new bootstrap.Modal(document.getElementById('galleryModal'));
                     modal.show();
                 });
             });
-        });
 
-        $(document).ready(function() {
-            var owl = $(".active_course");
-
-            owl.owlCarousel({
-                loop: true,
-                margin: 30,
-                nav: false,
-                autoplay: true,
-                autoplayTimeout: 4000,
-                responsive: {
-                    0: {
-                        items: 1
-                    },
-                    768: {
-                        items: 2
-                    },
-                    1024: {
-                        items: 3
-                    },
-                },
-            });
-
-            // Custom navigation buttons
-            $(".prev").click(function() {
-                owl.trigger("prev.owl.carousel");
-            });
-            $(".next").click(function() {
-                owl.trigger("next.owl.carousel");
-            });
-
-            // Testimonial slider initialization
-            $(".testi_slider").owlCarousel({
-                loop: true,
-                margin: 30,
-                nav: false,
-                autoplay: true,
-                autoplayTimeout: 5000,
-                responsive: {
-                    0: {
-                        items: 1
-                    },
-                    768: {
-                        items: 2
-                    },
-                    1024: {
-                        items: 3
-                    },
-                },
-            });
-        });
-
-        // Dropdown toggle on click
-        const dropdownTrigger = document.getElementById('dropdownTrigger');
-        const dropdownMenu = document.getElementById('dropdownMenu');
-
-        if (dropdownTrigger && dropdownMenu) {
-            dropdownTrigger.addEventListener('click', () => {
-                dropdownMenu.classList.toggle('hidden'); // Toggles visibility
-            });
-
-            // Close dropdown if clicked outside
-            window.addEventListener('click', (e) => {
-                if (!dropdownTrigger.contains(e.target) && !dropdownMenu.contains(e.target)) {
-                    dropdownMenu.classList.add('hidden');
+            // jQuery-dependent carousels (jQuery is deferred but loaded before DOMContentLoaded)
+            if (typeof $ !== 'undefined') {
+                // Gallery carousel (About page)
+                if ($('#galleryCarousel').length) {
+                    $('#galleryCarousel').owlCarousel({
+                        items: 3,
+                        loop: true,
+                        margin: 20,
+                        nav: true,
+                        dots: true,
+                        autoplay: true,
+                        autoplayTimeout: 3000,
+                        autoplayHoverPause: true,
+                        smartSpeed: 800
+                    });
                 }
-            });
-        }
+
+                // Active courses carousel (Home page)
+                var owl = $(".active_course");
+                if (owl.length) {
+                    owl.owlCarousel({
+                        loop: true,
+                        margin: 30,
+                        nav: false,
+                        autoplay: true,
+                        autoplayTimeout: 4000,
+                        responsive: { 0: { items: 1 }, 768: { items: 2 }, 1024: { items: 3 } },
+                    });
+                    $(".prev").click(function() { owl.trigger("prev.owl.carousel"); });
+                    $(".next").click(function() { owl.trigger("next.owl.carousel"); });
+                }
+
+                // Testimonials slider
+                if ($(".testi_slider").length) {
+                    $(".testi_slider").owlCarousel({
+                        loop: true,
+                        margin: 30,
+                        nav: false,
+                        autoplay: true,
+                        autoplayTimeout: 5000,
+                        responsive: { 0: { items: 1 }, 768: { items: 2 }, 1024: { items: 3 } },
+                    });
+                }
+            }
+
+            // Dropdown toggle
+            const dropdownTrigger = document.getElementById('dropdownTrigger');
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            if (dropdownTrigger && dropdownMenu) {
+                dropdownTrigger.addEventListener('click', () => {
+                    dropdownMenu.classList.toggle('hidden');
+                });
+                window.addEventListener('click', (e) => {
+                    if (!dropdownTrigger.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                        dropdownMenu.classList.add('hidden');
+                    }
+                });
+            }
+        });
     </script>
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="{{ asset('js/gmaps.min.js') }}"></script>
-    <script src="{{ asset('js/theme.js') }}"></script>
+    {{-- SweetAlert2: only load on pages that need it --}}
+    @stack('sweetalert')
+
+    {{-- Maps JS: only load when @yield('maps') has content --}}
+    @stack('maps_js')
+
+    <script src="{{ asset('js/theme.js') }}" defer></script>
+
+    {{-- Page-specific scripts --}}
+    @stack('scripts')
 </body>
 
 </html>

@@ -12,11 +12,11 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class SetLocale
 {
-    public const SUPPORTED = ['en', 'am'];
+    public const SUPPORTED = ['en', 'am', 'om', 'ti', 'so', 'sw', 'zh', 'fr', 'es', 'ku', 'ur'];
 
     public function handle(Request $request, Closure $next): Response
     {
-        $locale = $request->session()->get('locale', config('app.locale'));
+        $locale = $request->session()->get('locale', $request->cookie('locale', config('app.locale')));
 
         if (in_array($locale, self::SUPPORTED, true)) {
             app()->setLocale($locale);

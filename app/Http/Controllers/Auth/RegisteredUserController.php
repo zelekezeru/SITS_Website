@@ -7,7 +7,6 @@ use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
@@ -75,21 +74,12 @@ class RegisteredUserController extends Controller
             }
         }
 
-        $user = User::count();
-
-        if ($user == 1) {
-            $redirectTo = ('login');
-        }
-
-        else {
-            $redirectTo = 'users.list';
-        }
+        // Bootstrap (the very first account) lands on the login screen so the
+        // new user signs in; an admin provisioning further users returns to the
+        // user list.
+        $redirectTo = User::count() === 1 ? 'login' : 'users.list';
 
         event(new Registered($user));
-        if (User::count() === 0) {
-            Auth::login($user);
-            $redirectTo = 'portal';
-        }
 
         return redirect(route($redirectTo, absolute: false));
     }

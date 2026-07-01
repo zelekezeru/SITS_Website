@@ -11,21 +11,32 @@ use App\Models\Gallery;
 use App\Models\User;
 use App\Models\Library;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class HomeController extends Controller
 {
     public function index()
     {
+        $courses = Course::select(['id', 'title', 'category', 'description', 'banner'])
+            ->latest()
+            ->take(6)
+            ->get();
 
-        $courses = Course::get();
+        $trainers = Trainer::select(['id', 'name', 'position', 'description', 'image'])
+            ->latest()
+            ->take(4)
+            ->get();
 
-        $trainers = Trainer::get();
+        $events = Event::select(['id', 'title', 'banner', 'date', 'start_time', 'end_time', 'location', 'description'])
+            ->latest()
+            ->take(2)
+            ->get();
 
-        $courses = Course::get();
-
-        $events = Event::latest()->take(2)->get();
-
-        return view('index', compact('courses', 'events', 'trainers'));
+        return Inertia::render('Website/Home', [
+            'courses'  => $courses,
+            'trainers' => $trainers,
+            'events'   => $events,
+        ]);
     }
     public function dashboard()
     {
@@ -62,6 +73,8 @@ class HomeController extends Controller
                 $portal['url'] = route('library.portal');
             } elseif ($key === 'lms') {
                 $portal['url'] = route('lms.redirect');
+            } elseif ($key === 'erp') {
+                $portal['url'] = \App\Support\RoleLanding::url($user);
             }
 
             $portal['authorized'] = $hasAccess;
@@ -94,8 +107,11 @@ class HomeController extends Controller
 
     public function about()
     {
-        $galleries = Gallery::all();
-        return view('abouts.about', compact('galleries'));
+        $galleries = Gallery::select(['id', 'image', 'description'])
+            ->latest()
+            ->take(12)
+            ->get();
+        return Inertia::render('Website/About/Index', ['galleries' => $galleries]);
     }
 
     public function elements()

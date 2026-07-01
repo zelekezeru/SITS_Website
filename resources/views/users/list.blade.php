@@ -57,16 +57,22 @@
                                         @endif
                                     </td>
                                     <td class="py-4 px-6">
-                                        @php
-                                            $role = $user->getRoleNames()->first() ?? 'USER';
-                                        @endphp
-                                        <span class="inline-block px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wide
-                                            @if($role === 'SUPERADMIN' || $role === 'ADMIN') bg-rose-500/10 text-rose-400 border border-rose-500/20
-                                            @elseif($role === 'EDITOR' || $role === 'TRAINER') bg-amber-500/10 text-amber-400 border border-amber-500/20
-                                            @elseif($role === 'STUDENT') bg-indigo-500/10 text-indigo-400 border border-indigo-500/20
-                                            @else bg-slate-500/10 text-slate-400 border border-slate-500/20 @endif">
-                                            {{ $role }}
-                                        </span>
+                                        <form action="{{ route('users.update', $user->id) }}" method="POST" class="inline-block">
+                                            @csrf
+                                            @method('PUT')
+                                            <!-- Hidden inputs to satisfy validation in UserController@update -->
+                                            <input type="hidden" name="name" value="{{ $user->name }}" />
+                                            <input type="hidden" name="email" value="{{ $user->email }}" />
+                                            
+                                            <select name="role" onchange="this.form.submit()" 
+                                                    class="bg-slate-950/60 border border-slate-800/80 focus:border-indigo-500 rounded-lg px-2.5 py-1.5 text-slate-300 text-xs focus:outline-none cursor-pointer">
+                                                @foreach ($roles as $r)
+                                                    <option value="{{ $r->name }}" {{ $user->hasRole($r->name) ? 'selected' : '' }}>
+                                                        {{ $r->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </form>
                                     </td>
                                     <td class="py-4 px-6 text-center">
                                         <div class="flex justify-center items-center space-x-2">

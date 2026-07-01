@@ -15,21 +15,8 @@
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Plus Jakarta Sans', 'sans-serif'],
-                        outfit: ['Outfit', 'sans-serif'],
-                    },
-                }
-            }
-        }
-    </script>
+    <!-- Tailwind CSS (Vite compiled) -->
+    @vite(['resources/css/app.css'])
     
     <!-- Bootstrap 5 CSS (for legacy pages compatibility) -->
     <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}" />
@@ -128,6 +115,9 @@
     <div class="glow-blob glow-blob-1"></div>
     <div class="glow-blob glow-blob-2"></div>
 
+    <!-- Mobile Sidebar Backdrop -->
+    <div id="adminSidebarBackdrop" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-40 hidden md:hidden"></div>
+
     <div class="flex flex-col md:flex-row min-h-screen">
         @if (Auth::check())
             <!-- Sidebar -->
@@ -172,6 +162,39 @@
                 }
             });
         }
+
+        // Mobile Sidebar Toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const adminMobileToggle = document.getElementById('adminMobileToggle');
+            const adminSidebar = document.getElementById('adminSidebar');
+            const adminSidebarClose = document.getElementById('adminSidebarClose');
+            const adminSidebarBackdrop = document.getElementById('adminSidebarBackdrop');
+
+            if (adminMobileToggle && adminSidebar) {
+                function openSidebar() {
+                    adminSidebar.classList.remove('-translate-x-full');
+                    if (adminSidebarBackdrop) adminSidebarBackdrop.classList.remove('hidden');
+                }
+
+                function closeSidebar() {
+                    adminSidebar.classList.add('-translate-x-full');
+                    if (adminSidebarBackdrop) adminSidebarBackdrop.classList.add('hidden');
+                }
+
+                adminMobileToggle.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    openSidebar();
+                });
+
+                if (adminSidebarClose) {
+                    adminSidebarClose.addEventListener('click', closeSidebar);
+                }
+
+                if (adminSidebarBackdrop) {
+                    adminSidebarBackdrop.addEventListener('click', closeSidebar);
+                }
+            }
+        });
     </script>
 </body>
 </html>

@@ -17,7 +17,9 @@ test('users can authenticate using the login screen', function () {
     ]);
 
     $this->assertAuthenticated();
-    $response->assertRedirect(route('dashboard', absolute: false));
+    // Post-merge, login forwards to the unified portal hub (RoleLanding fallback
+    // for accounts without a senior ERP role).
+    $response->assertRedirect(route('portal', absolute: false));
 });
 
 test('users can not authenticate with invalid password', function () {

@@ -37,7 +37,7 @@
                         <!-- Course Banner -->
                         <div class="relative h-48 overflow-hidden bg-slate-950">
                             @if($course->banner)
-                                <img class="w-full h-full object-cover hover:scale-105 transition duration-500" src="{{ asset('storage/' . $course->banner) }}" alt="{{ $course->title }}" />
+                                <img class="w-full h-full object-cover hover:scale-105 transition duration-500" src="{{ asset('storage/' . $course->banner) }}" alt="{{ $course->title }}" loading="lazy" />
                             @else
                                 <div class="w-full h-full bg-gradient-to-br from-slate-900 to-indigo-950/60 flex items-center justify-center text-slate-700">
                                     <i class="ti-book text-4xl"></i>

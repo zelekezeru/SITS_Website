@@ -12,7 +12,8 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="{{ asset('css/themify-icons.css') }}">
-        <script src="https://cdn.tailwindcss.com"></script>
+        <!-- Tailwind CSS (Vite compiled) -->
+        @vite(['resources/css/app.css'])
 
         <style>
             .font-outfit {

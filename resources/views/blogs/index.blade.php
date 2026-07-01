@@ -52,7 +52,7 @@
                                         @if($blog->image)
                                             <div class="h-64 rounded-xl overflow-hidden bg-slate-950">
                                                 <img src="{{ asset('storage/' . $blog->image) }}" alt="{{ $blog->title }}"
-                                                    class="w-full h-full object-cover hover:scale-102 transition duration-500" />
+                                                    class="w-full h-full object-cover hover:scale-102 transition duration-500" loading="lazy" />
                                             </div>
                                         @endif
                                         <h3 class="text-xl font-bold text-white font-outfit hover:text-indigo-400 transition">
@@ -105,7 +105,7 @@
                                 <div class="flex gap-4 items-center group">
                                     @if($popBlog->image)
                                         <img src="{{ asset('storage/' . $popBlog->image) }}" alt="{{ $popBlog->title }}"
-                                            class="w-16 h-16 rounded-xl object-cover shrink-0 bg-slate-950 border border-white/5" />
+                                            class="w-16 h-16 rounded-xl object-cover shrink-0 bg-slate-950 border border-white/5" loading="lazy" />
                                     @else
                                         <div class="w-16 h-16 rounded-xl bg-slate-900 border border-white/5 flex items-center justify-center text-slate-750 shrink-0">
                                             <i class="ti-file text-lg"></i>

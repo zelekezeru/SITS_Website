@@ -61,8 +61,34 @@ class FinanceModuleController extends Controller
         }
 
         if ($routeName === 'admin.attendance') {
+            $durationType = request('duration_type', 'this_month');
+            $startDate = request('start_date');
+            $endDate = request('end_date');
+
+            $now = \Carbon\Carbon::now();
+            if ($durationType === 'last_month') {
+                $start = $now->copy()->subMonth()->startOfMonth();
+                $end = $now->copy()->subMonth()->endOfMonth();
+            } elseif ($durationType === 'custom') {
+                $start = $startDate ? \Carbon\Carbon::parse($startDate)->startOfDay() : $now->copy()->startOfMonth();
+                $end = $endDate ? \Carbon\Carbon::parse($endDate)->endOfDay() : $now->copy()->endOfMonth();
+            } else { // this_month
+                $start = $now->copy()->startOfMonth();
+                $end = $now->copy()->endOfMonth();
+            }
+
             return Inertia::render('Admin/Finance/Attendance', $base + [
-                'attendanceRecords' => AttendanceRecord::with(['employee', 'payrollPeriod'])->get(),
+                'attendanceRecords' => AttendanceRecord::whereHas('payrollPeriod', function($q) use ($start, $end) {
+                        $q->where('start_date', '<=', $end)->where('end_date', '>=', $start);
+                    })->with(['employee', 'payrollPeriod'])->latest()->get(),
+                'attendanceLogs' => \App\Models\AttendanceLog::whereBetween('swipe_time', [$start, $end])
+                    ->with('employee')->latest()->get(),
+                'payrollPeriods' => PayrollPeriod::monthly()->forActiveYear()->orderByDesc('start_date')->get(),
+                'filters' => [
+                    'duration_type' => $durationType,
+                    'start_date' => $start->format('Y-m-d'),
+                    'end_date' => $end->format('Y-m-d'),
+                ]
             ]);
         }
 
