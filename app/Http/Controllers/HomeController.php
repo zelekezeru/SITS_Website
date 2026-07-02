@@ -80,7 +80,11 @@ class HomeController extends Controller
                 $hasAccess = $user->can('view_books') || $user->hasLibraryAccess();
                 $portal['url'] = route('library.dashboard');
             } elseif ($key === 'lms') {
-                $portal['url'] = route('lms.redirect');
+                if ($user->hasAnyRole(['STAFF', 'SUPERADMIN', 'ADMIN', 'EDITOR', 'LIBRARIAN'])) {
+                    $portal['url'] = 'https://lms.sits.edu.et';
+                } else {
+                    $portal['url'] = route('lms.redirect');
+                }
             } elseif ($key === 'erp') {
                 $portal['url'] = \App\Support\RoleLanding::url($user);
             }
@@ -94,7 +98,7 @@ class HomeController extends Controller
                 } elseif ($user->hasRole('TRAINER')) {
                     $portal['name'] = 'Instructors Portal';
                 } elseif ($user->hasAnyRole(['STAFF', 'SUPERADMIN', 'ADMIN', 'EDITOR', 'LIBRARIAN'])) {
-                    $portal['name'] = 'Staff Portal';
+                    $portal['name'] = 'LMS Portal';
                 }
             }
         }

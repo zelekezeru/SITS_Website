@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import ApplicationLogo from '@/Components/Library/ApplicationLogo.vue';
 import NotificationBell from '@/Components/Library/NotificationBell.vue';
 import Toast from '@/Components/Library/Toast.vue';
@@ -26,6 +26,55 @@ const can = (permission) => permissions.value.includes(permission);
 
 const sidebarOpen = ref(false);
 const { isDark, toggle: toggleDarkMode } = useDarkMode();
+
+const userAvatar = computed(() => {
+    const img = auth.value?.user?.profile_image;
+    return img ? `/storage/${img}` : '/img/user.png';
+});
+
+const hasErpAccess = computed(() => {
+    const roles = (auth.value?.user?.roles ?? []).map(r => r.toLowerCase());
+    if (!roles.length) return false;
+    return !roles.includes('student');
+});
+
+const lmsLabel = computed(() => {
+    const roles = (auth.value?.user?.roles ?? []).map(r => r.toLowerCase());
+    if (roles.includes('student')) return t('Student Portal');
+    if (roles.includes('trainer')) return t('Instructor Portal');
+    return t('LMS Portal', 'LMS Portal');
+});
+
+const lmsUrl = computed(() => {
+    const roles = (auth.value?.user?.roles ?? []).map(r => r.toLowerCase());
+    if (roles.includes('student') || roles.includes('trainer')) {
+        return '/go/lms';
+    }
+    return 'https://lms.sits.edu.et';
+});
+
+const hasLibraryAccess = computed(() => {
+    const roles = (auth.value?.user?.roles ?? []).map(r => r.toLowerCase());
+    const allowed = ['student', 'trainer', 'librarian', 'admin', 'superadmin', 'president / super admin', 'staff', 'editor'];
+    return roles.some(r => allowed.includes(r));
+});
+
+const userMenuOpen = ref(false);
+const userMenuRef = ref(null);
+
+const handleOutsideClick = (e) => {
+    if (userMenuRef.value && !userMenuRef.value.contains(e.target)) {
+        userMenuOpen.value = false;
+    }
+};
+
+onMounted(() => {
+    document.addEventListener('click', handleOutsideClick);
+});
+
+onUnmounted(() => {
+    document.removeEventListener('click', handleOutsideClick);
+});
 
 const loadExpandedState = () => {
     try {
@@ -236,28 +285,6 @@ const roleBadge = computed(() => {
                             {{ roleBadge.label }}
                         </span>
                     </div>
-                    <div class="flex items-center gap-1 shrink-0">
-                        <Link
-                            :href="route('profile.edit')"
-                            :title="t('Profile')"
-                            class="rounded-lg p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
-                        >
-                            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                            </svg>
-                        </Link>
-                        <Link
-                            :href="route('logout')"
-                            method="post"
-                            as="button"
-                            :title="t('Sign out')"
-                            class="rounded-lg p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950 transition"
-                        >
-                            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                            </svg>
-                        </Link>
-                    </div>
                 </div>
             </div>
         </aside>
@@ -286,12 +313,44 @@ const roleBadge = computed(() => {
                     <NotificationBell />
                     <button
                         @click="toggleDarkMode"
-                        class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+                        class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition mr-2"
                         :title="isDark ? t('Switch to light mode') : t('Switch to dark mode')"
                     >
                         <svg v-if="isDark" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M16.95 16.95l.707.707M7.05 7.05l.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
                         <svg v-else class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
                     </button>
+
+                    <!-- User Profile Dropdown -->
+                    <div class="relative" ref="userMenuRef">
+                      <button @click="userMenuOpen = !userMenuOpen"
+                        class="flex items-center gap-2 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition focus:outline-none cursor-pointer">
+                        <img :src="userAvatar" alt="Profile" class="h-8 w-8 rounded-full object-cover ring-2 ring-indigo-500/20" />
+                        <span class="text-xs font-semibold text-gray-700 dark:text-gray-300 hidden sm:inline-block">{{ auth.user.name }}</span>
+                        <svg class="w-3 h-3 text-gray-500 hidden sm:block transition-transform duration-200" :class="{'rotate-180': userMenuOpen}" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                      </button>
+
+                      <Transition enter-active-class="transition ease-out duration-150" enter-from-class="opacity-0 scale-95" enter-to-class="opacity-100 scale-100"
+                        leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100 scale-100" leave-to-class="opacity-0 scale-95">
+                        <ul v-if="userMenuOpen" class="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl shadow-2xl py-2 z-50">
+                          <li class="px-4 py-2 border-b border-gray-100 dark:border-gray-800 mb-1 sm:hidden">
+                            <p class="text-[10px] text-gray-400 dark:text-gray-500 uppercase tracking-wider">{{ t('Logged in as') }}</p>
+                            <p class="text-xs font-semibold text-gray-900 dark:text-white truncate">{{ auth.user.name }}</p>
+                          </li>
+                          <li><Link :href="route('portal')" class="block px-4 py-2.5 text-xs text-gray-650 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800/40 transition">{{ t('Dashboard Hub', 'Dashboard Hub') }}</Link></li>
+                          <li><Link :href="route('profile.edit')" class="block px-4 py-2.5 text-xs text-gray-650 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800/40 transition">{{ t('View Profile', 'View Profile') }}</Link></li>
+                          <li class="border-t border-gray-150 dark:border-gray-800 my-1"></li>
+                          <li><a :href="lmsUrl" class="block px-4 py-2.5 text-xs text-gray-650 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800/40 transition">{{ lmsLabel }}</a></li>
+                          <li v-if="hasErpAccess"><Link :href="route('dashboard')" class="block px-4 py-2.5 text-xs text-gray-650 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800/40 transition">{{ t('ERP Portal', 'ERP Portal') }}</Link></li>
+                          <li v-if="hasLibraryAccess"><Link :href="route('library.dashboard')" class="block px-4 py-2.5 text-xs text-gray-650 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800/40 transition">{{ t('Digital Library', 'Digital Library') }}</Link></li>
+                          <li class="border-t border-gray-150 dark:border-gray-800 my-1"></li>
+                          <li>
+                            <Link :href="route('logout')" method="post" as="button" class="block w-full text-left px-4 py-2.5 text-xs text-rose-500 hover:text-rose-455 hover:bg-rose-500/10 transition cursor-pointer">{{ t('Sign out') }}</Link>
+                          </li>
+                        </ul>
+                      </Transition>
+                    </div>
                 </div>
             </header>
 

@@ -93,15 +93,15 @@
                     <p class="text-[10px] text-slate-500 uppercase tracking-wider">{{ t('logged_in_as', 'Logged in as') }}</p>
                     <p class="text-xs font-semibold text-white truncate">{{ auth.user.name }}</p>
                   </li>
-                  <li><a href="/portal" class="block px-4 py-2.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800/40 transition">{{ t('dashboard', 'Dashboard') }}</a></li>
-                  <li><a href="/profile" class="block px-4 py-2.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800/40 transition">{{ t('view_profile', 'View Profile') }}</a></li>
+                  <li><Link :href="route('portal')" class="block px-4 py-2.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800/40 transition">{{ t('dashboard', 'Dashboard') }}</Link></li>
+                  <li><Link :href="route('profile.edit')" class="block px-4 py-2.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800/40 transition">{{ t('view_profile', 'View Profile') }}</Link></li>
                   <li class="border-t border-slate-800/60 my-1"></li>
-                  <li><a href="/go/lms" class="block px-4 py-2.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800/40 transition">{{ lmsLabel }}</a></li>
-                  <li v-if="hasErpAccess"><a href="/dashboard" class="block px-4 py-2.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800/40 transition">{{ t('erp_portal', 'ERP Portal') }}</a></li>
-                  <li><a href="/library/dashboard" class="block px-4 py-2.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800/40 transition">{{ t('digital_library', 'Digital Library') }}</a></li>
+                  <li><a :href="lmsUrl" class="block px-4 py-2.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800/40 transition">{{ lmsLabel }}</a></li>
+                  <li v-if="hasErpAccess"><Link :href="route('dashboard')" class="block px-4 py-2.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800/40 transition">{{ t('erp_portal', 'ERP Portal') }}</Link></li>
+                  <li><Link :href="route('library.dashboard')" class="block px-4 py-2.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800/40 transition">{{ t('digital_library', 'Digital Library') }}</Link></li>
                   <li class="border-t border-slate-800/60 my-1"></li>
                   <li>
-                    <button @click="logout" class="block w-full text-left px-4 py-2.5 text-xs text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition">{{ t('sign_out', 'Sign Out') }}</button>
+                    <Link :href="route('logout')" method="post" as="button" class="block w-full text-left px-4 py-2.5 text-xs text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition cursor-pointer">{{ t('sign_out', 'Sign Out') }}</Link>
                   </li>
                 </ul>
               </Transition>
@@ -329,7 +329,15 @@ const lmsLabel = computed(() => {
   const roles = (auth.value?.user?.roles ?? []).map(r => r.toLowerCase())
   if (roles.includes('student')) return t('student_portal', 'Student Portal')
   if (roles.includes('trainer')) return t('trainer_portal', 'Instructor Portal')
-  return t('staff_portal', 'Staff Portal')
+  return t('lms_portal', 'LMS Portal')
+})
+
+const lmsUrl = computed(() => {
+  const roles = (auth.value?.user?.roles ?? []).map(r => r.toLowerCase())
+  if (roles.includes('student') || roles.includes('trainer')) {
+    return '/go/lms'
+  }
+  return 'https://lms.sits.edu.et'
 })
 
 // ── Actions ───────────────────────────────────────────────────────────────────

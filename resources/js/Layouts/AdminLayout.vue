@@ -123,17 +123,17 @@ const lmsLabel = computed(() => {
     return 'Go to Student Learning Portal';
   } else if (rolesLower.includes('trainer')) {
     return 'Instructors Portal';
-  } else if (
-    rolesLower.includes('staff') ||
-    rolesLower.includes('superadmin') ||
-    rolesLower.includes('admin') ||
-    rolesLower.includes('president / super admin') ||
-    rolesLower.includes('editor') ||
-    rolesLower.includes('librarian')
-  ) {
-    return 'Staff Portal';
   }
   return 'LMS Portal';
+});
+
+const lmsUrl = computed(() => {
+  const roles = user.value?.roles ?? [];
+  const rolesLower = roles.map(r => r.toLowerCase());
+  if (rolesLower.includes('student') || rolesLower.includes('trainer')) {
+    return '/go/lms';
+  }
+  return 'https://lms.sits.edu.et';
 });
 
 const hasLibraryAccess = computed(() => {
@@ -475,8 +475,8 @@ watch(currentPath, () => {
               <div class="py-1">
                 <!-- Dashboard Hub -->
                 <Link 
-                  href="/portal" 
-                  class="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-350 hover:text-white hover:bg-slate-800/50 transition-colors"
+                  :href="route('portal')" 
+                  class="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-355 hover:text-white hover:bg-slate-800/50 transition-colors"
                   @click="userMenuOpen = false"
                 >
                   <Icon name="LayoutDashboard" :size="15" class="text-slate-500" />
@@ -484,21 +484,21 @@ watch(currentPath, () => {
                 </Link>
 
                 <!-- Profile -->
-                <a 
-                  href="/profile" 
-                  class="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-350 hover:text-white hover:bg-slate-800/50 transition-colors"
+                <Link 
+                  :href="route('profile.edit')" 
+                  class="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-355 hover:text-white hover:bg-slate-800/50 transition-colors"
                   @click="userMenuOpen = false"
                 >
                   <Icon name="User" :size="15" class="text-slate-500" />
                   <span>View Profile</span>
-                </a>
+                </Link>
 
                 <div class="border-t border-slate-800/60 my-1"></div>
 
                 <!-- LMS Link -->
                 <a 
-                  href="/go/lms" 
-                  class="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-350 hover:text-white hover:bg-slate-800/50 transition-colors"
+                  :href="lmsUrl" 
+                  class="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-355 hover:text-white hover:bg-slate-800/50 transition-colors"
                   @click="userMenuOpen = false"
                 >
                   <Icon name="Briefcase" :size="15" class="text-slate-500" />
@@ -508,8 +508,8 @@ watch(currentPath, () => {
                 <!-- ERP Portal (if they have roles to access ERP modules) -->
                 <Link 
                   v-if="hasErpAccess"
-                  href="/dashboard" 
-                  class="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-350 hover:text-white hover:bg-slate-800/50 transition-colors"
+                  :href="route('dashboard')" 
+                  class="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-355 hover:text-white hover:bg-slate-800/50 transition-colors"
                   @click="userMenuOpen = false"
                 >
                   <Icon name="ShieldCheck" :size="15" class="text-slate-500" />
@@ -517,21 +517,21 @@ watch(currentPath, () => {
                 </Link>
 
                 <!-- Digital Library -->
-                <a 
+                <Link 
                   v-if="hasLibraryAccess"
-                  href="/library/portal" 
-                  class="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-350 hover:text-white hover:bg-slate-800/50 transition-colors"
+                  :href="route('library.dashboard')" 
+                  class="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-355 hover:text-white hover:bg-slate-800/50 transition-colors"
                   @click="userMenuOpen = false"
                 >
                   <Icon name="FolderOpen" :size="15" class="text-slate-500" />
                   <span>Digital Library</span>
-                </a>
+                </Link>
 
                 <div class="border-t border-slate-800/60 my-1"></div>
 
                 <!-- Logout -->
                 <Link 
-                  href="/logout" 
+                  :href="route('logout')" 
                   method="post" 
                   as="button" 
                   class="w-full flex items-center gap-2 px-4 py-2.5 text-left text-xs font-bold text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 transition-colors cursor-pointer w-full"

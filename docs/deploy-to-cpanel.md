@@ -57,15 +57,23 @@ CHAPA_PUBLIC_KEY=
 ```
 If it's a brand-new app dir with no APP_KEY: `php artisan key:generate`.
 
-## STEP 5 — Database (THE key decision — see below)
-After choosing the DB strategy and backing up:
+## STEP 5 — Database (DECIDED: prod already has the ERP merge → additive Library-only deploy)
+The current prod DB already carries the ERP-merged schema, so this deploy only **adds**
+the Library tables and grants the Library permissions to the roles that already exist.
+Nothing ERP/website is dropped or reseeded. **Back up first (STEP 0), then:**
 ```bash
-php artisan migrate --force            # additive: brings ERP + Library tables
-# first-time only (fresh DB): also seed roles/permissions/reference data
-php artisan db:seed --force
+php artisan migrate --force        # adds the 27 Library tables; ALTERs the shared `campuses`
+                                   # table (adds name/code/address/soft-deletes). Additive only.
+
+# Seed ONLY the Library permissions — idempotent (firstOrCreate + givePermissionTo),
+# attaches to the existing SITS roles (SUPERADMIN/LIBRARIAN/TRAINER/…).
+php artisan db:seed --class=LibraryPermissionsSeeder --force
 ```
-`migrate` reconciles `campuses` automatically (the merge's ALTER migration). Never run
-`migrate:fresh` on a DB you want to keep — it drops everything.
+> ⚠️ Do **NOT** run a blanket `php artisan db:seed --force` on this live DB. The default
+> `DatabaseSeeder` re-runs the ERP/website seeders (duplicating reference data) and creates
+> an `admin@sits.edu.et` / `password` account. Only the class-scoped seed above is safe here.
+
+Never run `migrate:fresh` on a DB you want to keep — it drops everything.
 
 ## STEP 6 — Wire-up & caches
 ```bash
@@ -89,14 +97,31 @@ Restore the DB dump + the app/`storage` tarball, point the docroot back, clear c
 
 ---
 
-## The one decision I need: the production database
-The merged app needs the full 117-table schema. What is the **current** production DB?
-1. **It already has the ERP-merged schema** (you've been deploying the merge) → just
-   `php artisan migrate --force` to add the Library tables. Lowest risk. **(likely)**
-2. **It's still the old website-only DB** → migrate will add ERP + Library tables on top;
-   test on a staging copy first (foreign-key/order edge cases), then run on prod.
-3. **Start clean** → new empty DB + `migrate --force && db:seed --force`, then import real
-   users/content. Cleanest, but you re-enter/import production data.
+## Copy-paste deploy sequence (SSH / cPanel Terminal) — additive Library deploy
+Run from the app root on the server (the dir whose `public/` is the docroot):
+```bash
+# 0. BACK UP FIRST (see STEP 0) — mysqldump + tarball of app/storage.
 
-Tell me which, and whether I should **push the 6 local commits to `origin/main`** so the
-server can pull them.
+# 1. Pull the code (origin/main is current; all commits are pushed)
+git fetch origin && git reset --hard origin/main
+
+# 2. PHP deps (prod has ext-sodium; no --ignore-platform-req needed)
+composer install --no-dev --optimize-autoloader
+
+# 3. .env — confirm APP_ENV=production, APP_DEBUG=false, DB_* correct, keep APP_KEY (STEP 4)
+
+# 4. DB — additive migrate + Library permissions only (STEP 5)
+php artisan migrate --force
+php artisan db:seed --class=LibraryPermissionsSeeder --force
+
+# 5. Wire-up & caches (STEP 6)
+php artisan storage:link
+php artisan config:cache && php artisan route:cache && php artisan view:cache && php artisan optimize
+
+# 6. Verify (STEP 7): / , /portal , /library/dashboard ; php artisan about (env=production, debug=off)
+```
+Assets are prebuilt in `public/build` (166 files, manifest present) — **no `npm`/Node on the
+server.** If Meilisearch isn't running, keep `SCOUT_DRIVER=database` in `.env`; switch to
+`meilisearch` and run `php artisan scout:import "App\Models\Book"` later.
+
+**Status:** DB strategy = option 1 (prod already ERP-merged) ✅ · `origin/main` up to date ✅

@@ -114,7 +114,7 @@ const submit = () => {
       <div class="mt-8 pt-6 border-t border-slate-900 text-center">
         <p class="text-sm text-slate-400">
           Don't have an enterprise account? 
-          <Link href="/register" class="text-blue-400 hover:text-blue-300 font-semibold transition-colors">Sign Up</Link>
+          <Link :href="route('register')" class="text-blue-400 hover:text-blue-300 font-semibold transition-colors">Sign Up</Link>
         </p>
       </div>
     </div>

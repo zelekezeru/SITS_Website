@@ -25,7 +25,7 @@ const submit = () => {
   <GuestLayout>
     <Head title="Reset Password - SITS ERP" />
 
-    <Link href="/login" class="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-300 transition-colors mb-8 group">
+    <Link :href="route('login')" class="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-300 transition-colors mb-8 group">
       <span class="group-hover:-translate-x-1 transition-transform">←</span>
       Back to sign in
     </Link>

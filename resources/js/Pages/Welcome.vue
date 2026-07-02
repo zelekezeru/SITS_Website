@@ -1,5 +1,58 @@
 <script setup>
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
+import { computed, ref, onMounted, onUnmounted } from 'vue';
+
+const page = usePage();
+const user = computed(() => page.props.auth?.user);
+
+const userAvatar = computed(() => {
+  const img = user.value?.profile_image;
+  return img ? `/storage/${img}` : '/img/user.png';
+});
+
+const hasErpAccess = computed(() => {
+  const roles = (user.value?.roles ?? []).map(r => r.toLowerCase());
+  if (!roles.length) return false;
+  return !roles.includes('student');
+});
+
+const lmsLabel = computed(() => {
+  const roles = (user.value?.roles ?? []).map(r => r.toLowerCase());
+  if (roles.includes('student')) return 'Student Portal';
+  if (roles.includes('trainer')) return 'Instructor Portal';
+  return 'LMS Portal';
+});
+
+const lmsUrl = computed(() => {
+  const roles = (user.value?.roles ?? []).map(r => r.toLowerCase());
+  if (roles.includes('student') || roles.includes('trainer')) {
+    return '/go/lms';
+  }
+  return 'https://lms.sits.edu.et';
+});
+
+const hasLibraryAccess = computed(() => {
+  const roles = (user.value?.roles ?? []).map(r => r.toLowerCase());
+  const allowed = ['student', 'trainer', 'librarian', 'admin', 'superadmin', 'president / super admin', 'staff', 'editor'];
+  return roles.some(r => allowed.includes(r));
+});
+
+const userMenuOpen = ref(false);
+const userMenuRef = ref(null);
+
+const handleOutsideClick = (e) => {
+  if (userMenuRef.value && !userMenuRef.value.contains(e.target)) {
+    userMenuOpen.value = false;
+  }
+};
+
+onMounted(() => {
+  document.addEventListener('click', handleOutsideClick);
+});
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleOutsideClick);
+});
 </script>
 
 <template>
@@ -18,7 +71,40 @@ import { Head, Link } from '@inertiajs/vue3';
         </div>
         <span class="text-lg font-bold tracking-tight text-white">SITS ERP</span>
       </div>
-      <Link href="/login" class="text-sm font-medium text-slate-400 hover:text-white transition-colors">
+
+      <div v-if="user" class="relative" ref="userMenuRef">
+        <button @click="userMenuOpen = !userMenuOpen"
+          class="flex items-center gap-2 p-1 rounded-full hover:bg-slate-900 border border-transparent hover:border-slate-800 transition focus:outline-none cursor-pointer">
+          <img :src="userAvatar" alt="Profile" class="h-8 w-8 rounded-full object-cover ring-2 ring-indigo-500/20" />
+          <span class="text-xs font-semibold text-slate-300 hidden sm:inline-block">{{ user.name }}</span>
+          <svg class="w-3 h-3 text-slate-500 hidden sm:block transition-transform duration-200" :class="{'rotate-180': userMenuOpen}" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+          </svg>
+        </button>
+
+        <!-- Dropdown -->
+        <Transition enter-active-class="transition ease-out duration-150" enter-from-class="opacity-0 scale-95" enter-to-class="opacity-100 scale-100"
+          leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100 scale-100" leave-to-class="opacity-0 scale-95">
+          <ul v-if="userMenuOpen" class="absolute right-0 mt-2 w-56 bg-slate-900/95 backdrop-blur-xl border border-slate-800 rounded-2xl shadow-2xl py-2 z-50 text-left">
+            <li class="px-4 py-2 border-b border-slate-800/60 mb-1 sm:hidden">
+              <p class="text-[10px] text-slate-500 uppercase tracking-wider">Logged in as</p>
+              <p class="text-xs font-semibold text-white truncate">{{ user.name }}</p>
+            </li>
+            <li><Link :href="route('portal')" class="block px-4 py-2.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800/40 transition">Dashboard Hub</Link></li>
+            <li><Link :href="route('profile.edit')" class="block px-4 py-2.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800/40 transition">View Profile</Link></li>
+            <li class="border-t border-slate-800/60 my-1"></li>
+            <li><a :href="lmsUrl" class="block px-4 py-2.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800/40 transition">{{ lmsLabel }}</a></li>
+            <li v-if="hasErpAccess"><Link :href="route('dashboard')" class="block px-4 py-2.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800/40 transition">ERP Portal</Link></li>
+            <li v-if="hasLibraryAccess"><Link :href="route('library.dashboard')" class="block px-4 py-2.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800/40 transition">Digital Library</Link></li>
+            <li class="border-t border-slate-800/60 my-1"></li>
+            <li>
+              <Link :href="route('logout')" method="post" as="button" class="block w-full text-left px-4 py-2.5 text-xs text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition cursor-pointer">Sign Out</Link>
+            </li>
+          </ul>
+        </Transition>
+      </div>
+
+      <Link v-else :href="route('login')" class="text-sm font-medium text-slate-400 hover:text-white transition-colors">
         Sign In
       </Link>
     </header>
@@ -37,10 +123,10 @@ import { Head, Link } from '@inertiajs/vue3';
       </p>
       
       <div class="mt-10 flex flex-col sm:flex-row gap-4 items-center justify-center w-full sm:w-auto">
-        <Link href="/login" class="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-semibold rounded-xl transition-all duration-200 shadow-md shadow-blue-500/10 hover:shadow-blue-500/20 hover:scale-[1.02]">
+        <Link :href="route('login')" class="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-semibold rounded-xl transition-all duration-200 shadow-md shadow-blue-500/10 hover:shadow-blue-500/20 hover:scale-[1.02]">
           Sign In to System
         </Link>
-        <Link href="/register" class="w-full sm:w-auto px-8 py-3.5 border border-slate-800 hover:border-slate-700 bg-slate-900/50 hover:bg-slate-900/80 text-slate-300 hover:text-white font-semibold rounded-xl transition-all duration-200">
+        <Link :href="route('register')" class="w-full sm:w-auto px-8 py-3.5 border border-slate-800 hover:border-slate-700 bg-slate-900/50 hover:bg-slate-900/80 text-slate-300 hover:text-white font-semibold rounded-xl transition-all duration-200">
           Create Account
         </Link>
       </div>
