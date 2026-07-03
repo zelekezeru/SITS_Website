@@ -395,5 +395,5 @@ info("");
 info("Finish up:");
 info("  1. cPanel docroots:  learn.sits.edu.et → {$NEW['coderoot']}   |   old.sits.edu.et → {$OLD['coderoot']}");
 info("  2. Archive the OLD site:  {$BIN['php']} " . basename(__FILE__) . " fix-old --confirm");
-info("  3. Configure OAuth2 SSO in the NEW Moodle (docs/moodle-migration.md, Phase D).");
+info("  3. Configure OAuth2 SSO in the NEW Moodle (docs/moodle-migration.md, Phase E).");
 info("  4. Verify: log into https://learn.sits.edu.et as an existing user; check courses/grades/files.");

@@ -60,7 +60,54 @@ mbstring, zip, xml, exif, fileinfo, openssl, ctype, iconv, simplexml, tokenizer`
 
 ---
 
+## Phase B2 — Preflight (do BEFORE Phase C): third-party plugins + character set
+Two things the clone-and-upgrade can silently mangle if you skip them. Both are quick to check.
+
+### B2.1 — Match the OLD site's third-party plugins into the NEW code tree
+**Why:** the cloned OLD database records every plugin the OLD site had installed. If the NEW code
+tree doesn't physically contain those plugins, `admin/cli/upgrade.php` reports them as *missing* and
+their tables/data are orphaned (Moodle offers to uninstall them → data loss). Core plugins are fine;
+this is only about **contributed / third-party** ones.
+
+1. **List the OLD site's additional plugins.** Canonical: OLD Moodle → *Site administration → Plugins →
+   Plugins overview* → tick **"Show additional plugins only"**. CLI alternative (Moodle 3.9+):
+   ```bash
+   ea-phpXX ~/moodle-old/admin/cli/uninstall_plugins.php --show-all   # non-core rows = your contrib plugins
+   ```
+2. **Copy each one into the NEW tree at the same relative path** (`mod/…`, `blocks/…`, `theme/…`,
+   `local/…`, `auth/…`, `enrol/…`, `filter/…`, `question/type/…`, `report/…`). Use a release of the
+   plugin that supports the **NEW** Moodle version — an old copy that predates the target version will
+   itself fail the upgrade. Get compatible builds from the plugin's page on moodle.org/plugins.
+3. **If a plugin has no build compatible with the new version,** decide deliberately to drop it and let
+   Moodle uninstall it during the upgrade (its data goes) — don't leave stale incompatible code in the
+   tree. Do this **before** running Phase C (or, for a hop upgrade, before the *final* hop's upgrade).
+
+### B2.2 — Confirm the database character set (utf8mb4)
+**Why:** this runbook and the tool assume **utf8mb4** end to end. An older Moodle on `utf8` (utf8mb3)
+or `latin1` can fail the upgrade or corrupt multibyte text (Amharic, emoji, smart quotes) when loaded
+under a utf8mb4 connection.
+
+1. **Read-only check on the OLD DB** (changes nothing):
+   ```bash
+   ea-phpXX ~/moodle-old/admin/cli/mysql_collation.php --list    # all utf8mb4_* ? → nothing to do
+   ```
+   Moodle sites created in the last several years are already utf8mb4 → this is usually a no-op.
+2. **If OLD is not utf8mb4,** convert the *NEW* DB right after the clone and before the upgrade, so the
+   OLD archive stays untouched. Split Phase C into clone → convert → finish:
+   ```bash
+   ea-phpXX ~/moodle-migrate.php run --confirm --skip-upgrade                    # clone db+files only
+   ea-phpXX ~/moodle/admin/cli/mysql_collation.php --collation=utf8mb4_unicode_ci  # convert in place
+   ea-phpXX ~/moodle-migrate.php run --confirm --skip-db --skip-files            # upgrade + URL rewrite + purge
+   ```
+   (`--skip-upgrade` clones and matches the prefix but stops before the upgrade; the final call does
+   only the upgrade, URL rewrite, and cache purge — no re-clone.)
+
+---
+
 ## Phase C — Complete migration (OLD → NEW)
+> **Run Phase B2 first.** If third-party plugins aren't in the NEW tree, the upgrade orphans their
+> data; if the OLD DB isn't utf8mb4, the upgrade can choke or mojibake content.
+
 Backs up the new DB, clones the old DB + moodledata into the new site, upgrades, rewrites URLs,
 purges caches. **Destructive to the NEW database** (backed up first, under `~/moodle-migrate-backups/`).
 
