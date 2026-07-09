@@ -25,11 +25,13 @@ class ClosedDayController extends Controller
     {
         return [
             'closedDays' => ClosedDay::with('createdBy:id,name')
-                ->orderBy('date', 'desc')
+                ->orderBy('start_date', 'desc')
                 ->get()
                 ->map(fn ($d) => [
                     'id'          => $d->id,
-                    'date'        => $d->date->toDateString(),
+                    'start_date'  => $d->start_date->toDateString(),
+                    'end_date'    => $d->end_date->toDateString(),
+                    'days_count'  => $d->days_count,
                     'name'        => $d->name,
                     'type'        => $d->type->value,
                     'type_label'  => $d->type->label(),
@@ -47,7 +49,8 @@ class ClosedDayController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'date'        => ['required', 'date', 'unique:closed_days,date'],
+            'start_date'  => ['required', 'date'],
+            'end_date'    => ['required', 'date', 'after_or_equal:start_date'],
             'name'        => ['required', 'string', 'max:200'],
             'type'        => ['required', 'in:'.implode(',', array_column(ClosedDayType::cases(), 'value'))],
             'description' => ['nullable', 'string', 'max:1000'],
@@ -64,7 +67,8 @@ class ClosedDayController extends Controller
     public function update(Request $request, ClosedDay $closedDay)
     {
         $data = $request->validate([
-            'date'        => ['required', 'date', 'unique:closed_days,date,'.$closedDay->id],
+            'start_date'  => ['required', 'date'],
+            'end_date'    => ['required', 'date', 'after_or_equal:start_date'],
             'name'        => ['required', 'string', 'max:200'],
             'type'        => ['required', 'in:'.implode(',', array_column(ClosedDayType::cases(), 'value'))],
             'description' => ['nullable', 'string', 'max:1000'],

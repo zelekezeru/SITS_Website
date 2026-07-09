@@ -106,10 +106,10 @@
                 </ul>
               </Transition>
             </div>
-            <Link v-else :href="route('login')"
+            <a v-else :href="route('login')"
               class="hidden sm:inline-flex items-center bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold py-2 px-4 rounded-xl shadow-md transition">
               {{ t('login', 'Login') }}
-            </Link>
+            </a>
 
             <!-- Hamburger -->
             <button @click="mobileMenuOpen = !mobileMenuOpen" aria-label="Menu"
@@ -164,9 +164,9 @@
 
             <!-- Mobile login -->
             <div v-if="!auth.user" class="px-4 pt-1">
-              <Link :href="route('login')" class="block text-center bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold py-3 px-4 rounded-xl transition">
+              <a :href="route('login')" class="block text-center bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold py-3 px-4 rounded-xl transition">
                 {{ t('login', 'Login') }}
-              </Link>
+              </a>
             </div>
           </div>
         </div>

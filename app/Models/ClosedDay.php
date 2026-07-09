@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\ClosedDayType;
+use Carbon\CarbonPeriod;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -16,7 +17,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class ClosedDay extends Model
 {
     protected $fillable = [
-        'date',
+        'start_date',
+        'end_date',
         'name',
         'type',
         'description',
@@ -25,10 +27,25 @@ class ClosedDay extends Model
     ];
 
     protected $casts = [
-        'date'      => 'date',
-        'type'      => ClosedDayType::class,
-        'is_active' => 'boolean',
+        'start_date' => 'date',
+        'end_date'   => 'date',
+        'type'       => ClosedDayType::class,
+        'is_active'  => 'boolean',
     ];
+
+    /** Inclusive number of calendar days the closure spans (1 for a single day). */
+    public function getDaysCountAttribute(): int
+    {
+        return $this->start_date->diffInDays($this->end_date) + 1;
+    }
+
+    /** Every calendar date the closure covers, as `Y-m-d` strings. */
+    public function dates(): array
+    {
+        return collect(CarbonPeriod::create($this->start_date, $this->end_date))
+            ->map(fn ($d) => $d->format('Y-m-d'))
+            ->all();
+    }
 
     public function createdBy(): BelongsTo
     {

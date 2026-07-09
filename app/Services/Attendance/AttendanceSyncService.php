@@ -27,11 +27,16 @@ class AttendanceSyncService
         $start = $period->start_date->startOfDay();
         $end = $period->end_date->endOfDay();
 
-        // 1. Get all closed/holiday dates in the period
-        $closedDates = ClosedDay::whereBetween('date', [$start, $end])
-            ->where('is_active', true)
-            ->pluck('date')
-            ->map(fn($d) => $d->format('Y-m-d'))
+        // 1. Get all closed/holiday dates in the period. Closed days are stored
+        //    as inclusive start_date → end_date ranges, so pull any range that
+        //    overlaps the period and expand it into individual calendar dates.
+        $closedDates = ClosedDay::where('is_active', true)
+            ->where('start_date', '<=', $end)
+            ->where('end_date', '>=', $start)
+            ->get()
+            ->flatMap(fn ($d) => $d->dates())
+            ->unique()
+            ->values()
             ->toArray();
 
         // 2. Generate list of working calendar days (Monday-Friday, excluding holidays)

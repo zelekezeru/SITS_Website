@@ -29,12 +29,21 @@ const editingDay = ref(null);
 const search = ref('');
 
 const form = useForm({
-  date: '',
+  start_date: '',
+  end_date: '',
   name: '',
   type: 'holiday',
   description: '',
   is_active: true,
 });
+
+// Keep end_date in step with start_date until the user sets a later end date,
+// so a single-day closure just needs the one field.
+const onStartDateChange = () => {
+  if (!form.end_date || form.end_date < form.start_date) {
+    form.end_date = form.start_date;
+  }
+};
 
 const openCreate = () => {
   editingDay.value = null;
@@ -45,7 +54,8 @@ const openCreate = () => {
 
 const openEdit = (day) => {
   editingDay.value = day;
-  form.date = day.date;
+  form.start_date = day.start_date;
+  form.end_date = day.end_date;
   form.name = day.name;
   form.type = day.type;
   form.description = day.description || '';
@@ -68,10 +78,14 @@ const submit = () => {
   }
 };
 
+// "2026-01-07" for a single day, or "2026-01-07 → 2026-01-09" for a range.
+const formatRange = (day) =>
+  day.start_date === day.end_date ? day.start_date : `${day.start_date} → ${day.end_date}`;
+
 const remove = async (day) => {
   const ok = await confirm({
     title: 'Remove Closed Day',
-    message: `Are you sure you want to remove "${day.name}" (${day.date})?`,
+    message: `Are you sure you want to remove "${day.name}" (${formatRange(day)})?`,
   });
   if (ok) {
     router.delete(`/admin/closed-days/${day.id}`, { preserveScroll: true });
@@ -84,7 +98,8 @@ const filteredClosedDays = computed(() => {
   return props.closedDays.filter(
     (d) =>
       d.name.toLowerCase().includes(q) ||
-      d.date.includes(q) ||
+      d.start_date.includes(q) ||
+      d.end_date.includes(q) ||
       d.type_label.toLowerCase().includes(q)
   );
 });
@@ -132,7 +147,7 @@ const filteredClosedDays = computed(() => {
         <table class="w-full text-left border-collapse text-sm">
           <thead>
             <tr class="border-b border-slate-900 text-xs font-semibold text-slate-500 uppercase">
-              <th class="p-3">Date</th>
+              <th class="p-3">Date(s)</th>
               <th class="p-3">Holiday / Closure Name</th>
               <th class="p-3">Type</th>
               <th class="p-3">Description</th>
@@ -142,7 +157,12 @@ const filteredClosedDays = computed(() => {
           </thead>
           <tbody class="divide-y divide-slate-900">
             <tr v-for="day in filteredClosedDays" :key="day.id" class="hover:bg-slate-900/30 transition-colors">
-              <td class="p-3 font-mono font-semibold text-slate-200">{{ day.date }}</td>
+              <td class="p-3 whitespace-nowrap">
+                <span class="font-mono font-semibold text-slate-200">{{ formatRange(day) }}</span>
+                <span v-if="day.days_count > 1" class="ml-2 px-2 py-0.5 text-[10px] rounded-full font-bold border border-indigo-500/20 bg-indigo-500/10 text-indigo-400">
+                  {{ day.days_count }} days
+                </span>
+              </td>
               <td class="p-3 font-semibold text-slate-300">{{ day.name }}</td>
               <td class="p-3">
                 <span class="px-2 py-0.5 text-[10px] rounded-full font-bold border" :class="TYPE_COLORS[day.type] || 'text-slate-400 border-slate-800'">
@@ -184,17 +204,23 @@ const filteredClosedDays = computed(() => {
         <form @submit.prevent="submit" class="space-y-5">
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Date</label>
-              <input v-model="form.date" type="date" required class="w-full bg-slate-950/60 border border-slate-850 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:border-indigo-500/50" />
-              <p v-if="form.errors.date" class="text-xs text-rose-400 mt-1">{{ form.errors.date }}</p>
+              <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">From</label>
+              <input v-model="form.start_date" @change="onStartDateChange" type="date" required class="w-full bg-slate-950/60 border border-slate-850 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:border-indigo-500/50" />
+              <p v-if="form.errors.start_date" class="text-xs text-rose-400 mt-1">{{ form.errors.start_date }}</p>
             </div>
             <div>
-              <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Type</label>
-              <select v-model="form.type" required class="w-full bg-slate-950/60 border border-slate-850 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:border-indigo-500/50">
-                <option v-for="(label, val) in types" :key="val" :value="val">{{ label }}</option>
-              </select>
-              <p v-if="form.errors.type" class="text-xs text-rose-400 mt-1">{{ form.errors.type }}</p>
+              <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">To</label>
+              <input v-model="form.end_date" type="date" required :min="form.start_date" class="w-full bg-slate-950/60 border border-slate-850 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:border-indigo-500/50" />
+              <p v-if="form.errors.end_date" class="text-xs text-rose-400 mt-1">{{ form.errors.end_date }}</p>
             </div>
+          </div>
+          <p class="-mt-1 text-[11px] text-slate-500">Set <span class="text-slate-400 font-medium">To</span> the same as <span class="text-slate-400 font-medium">From</span> for a single-day closure, or a later date for a multi-day one.</p>
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Type</label>
+            <select v-model="form.type" required class="w-full bg-slate-950/60 border border-slate-850 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:border-indigo-500/50">
+              <option v-for="(label, val) in types" :key="val" :value="val">{{ label }}</option>
+            </select>
+            <p v-if="form.errors.type" class="text-xs text-rose-400 mt-1">{{ form.errors.type }}</p>
           </div>
           <div>
             <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Name / Title</label>

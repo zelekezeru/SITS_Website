@@ -40,7 +40,7 @@ class MassPermissionController extends Controller
                 'initiatedBy:id,name',
                 'firstApprovedBy:id,name',
                 'finalApprovedBy:id,name',
-                'closedDays:id,date,name,type',
+                'closedDays:id,start_date,end_date,name,type',
             ])
                 ->latest()
                 ->get()
@@ -63,15 +63,24 @@ class MassPermissionController extends Controller
                     'employees_affected'  => $mp->employees_affected,
                     'permissions_spawned' => $mp->permissions_spawned,
                     'closed_days'         => $mp->closedDays->map(fn ($d) => [
-                        'id'   => $d->id,
-                        'date' => $d->date->toDateString(),
-                        'name' => $d->name,
-                        'type' => $d->type->value,
+                        'id'         => $d->id,
+                        'start_date' => $d->start_date->toDateString(),
+                        'end_date'   => $d->end_date->toDateString(),
+                        'name'       => $d->name,
+                        'type'       => $d->type->value,
                     ]),
                 ]),
             'closedDays' => ClosedDay::where('is_active', true)
-                ->orderBy('date')
-                ->get(['id', 'date', 'name', 'type']),
+                ->orderBy('start_date')
+                ->get()
+                ->map(fn ($d) => [
+                    'id'         => $d->id,
+                    'start_date' => $d->start_date->toDateString(),
+                    'end_date'   => $d->end_date->toDateString(),
+                    'days_count' => $d->days_count,
+                    'name'       => $d->name,
+                    'type'       => $d->type->value,
+                ]),
             'periods' => PayrollPeriod::monthly()->forActiveYear()->orderByDesc('start_date')->get(['id', 'name']),
             'can'     => [
                 'create'  => (bool) $user?->can('create mass permission'),
@@ -92,7 +101,13 @@ class MassPermissionController extends Controller
             'closed_day_ids.*'  => ['exists:closed_days,id'],
         ]);
 
-        $dayCount = count($data['closed_day_ids']);
+        // Total excused days = distinct calendar days across every selected
+        // closed-day range (ranges may overlap, so de-duplicate the dates).
+        $dayCount = ClosedDay::whereIn('id', $data['closed_day_ids'])
+            ->get()
+            ->flatMap(fn ($cd) => $cd->dates())
+            ->unique()
+            ->count();
 
         $mp = MassPermission::create([
             'name'              => $data['name'],
@@ -159,12 +174,18 @@ class MassPermissionController extends Controller
             $employees = Employee::where('is_active', true)->get(['id']);
             $count     = $employees->count();
 
-            $period   = $massPermission->payrollPeriod;
-            // Build a human-readable date range from the attached closed days.
-            $dates    = $massPermission->closedDays()->orderBy('date')->pluck('date');
-            $dateStr  = $dates->count() === 1
-                ? $dates->first()->toDateString()
-                : $dates->first()->toDateString().' – '.$dates->last()->toDateString();
+            // Expand every attached closed-day range into distinct calendar
+            // dates, then take the span for the spawned permissions.
+            $dates    = $massPermission->closedDays
+                ->flatMap(fn ($cd) => $cd->dates())
+                ->unique()
+                ->sort()
+                ->values();
+            $firstDate = $dates->first();
+            $lastDate  = $dates->last();
+            $dateStr   = $dates->count() === 1
+                ? $firstDate
+                : $firstDate.' – '.$lastDate;
 
             $reason = $massPermission->name.
                 ' (mass permission — '.$massPermission->total_days.' day(s) on '.$dateStr.')';
@@ -179,8 +200,8 @@ class MassPermissionController extends Controller
                         'mass_permission_id' => $massPermission->id,
                     ],
                     [
-                        'start_date'  => $dates->first(),
-                        'end_date'    => $dates->last(),
+                        'start_date'  => $firstDate,
+                        'end_date'    => $lastDate,
                         'days'        => $massPermission->total_days,
                         'reason'      => $reason,
                         'status'      => AttendancePermissionStatus::Approved,

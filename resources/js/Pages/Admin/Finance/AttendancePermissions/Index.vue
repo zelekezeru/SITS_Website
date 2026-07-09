@@ -5,7 +5,7 @@ export default { layout: AdminLayout };
 
 <script setup>
 import { Head, useForm, router } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import Icon from '@/Components/Icon.vue';
 import { useConfirm } from '@/Composables/useConfirm';
 
@@ -52,6 +52,27 @@ const reject = () => {
     preserveScroll: true, onSuccess: () => { rejectModal.value = null; rejectNotes.value = ''; },
   });
 };
+
+// Attachment preview
+const previewOpen = ref(false);
+const previewSrc = ref('');
+
+const openPreview = (p) => {
+  previewSrc.value = p.file_path;
+  previewOpen.value = true;
+};
+
+const previewName = computed(() => {
+  const path = (previewSrc.value || '').split('?')[0];
+  return decodeURIComponent(path.split('/').pop() || 'attachment');
+});
+
+const previewKind = computed(() => {
+  const path = (previewSrc.value || '').split('?')[0].toLowerCase();
+  if (/\.(png|jpe?g|gif|webp|bmp|svg)$/.test(path)) return 'image';
+  if (/\.pdf$/.test(path)) return 'pdf';
+  return 'other';
+});
 </script>
 
 <template>
@@ -104,10 +125,10 @@ const reject = () => {
             <td class="p-3 text-slate-400 text-xs">
               <div class="flex flex-col gap-1">
                 <span>{{ p.reason || '—' }}</span>
-                <a v-if="p.file_path" :href="p.file_path" target="_blank" class="inline-flex items-center gap-1 text-[10px] font-semibold text-blue-400 hover:text-blue-300 hover:underline mt-1 w-max">
+                <button v-if="p.file_path" type="button" @click="openPreview(p)" class="inline-flex items-center gap-1 text-[10px] font-semibold text-blue-400 hover:text-blue-300 hover:underline mt-1 w-max cursor-pointer">
                   <Icon name="File" :size="12" />
                   <span>View Attachment</span>
-                </a>
+                </button>
               </div>
             </td>
             <td class="p-3 text-slate-400 text-xs">{{ p.created_by || '—' }}</td>
@@ -200,6 +221,47 @@ const reject = () => {
         <div class="flex items-center justify-end gap-3 pt-5">
           <button @click="rejectModal = null" class="text-xs font-semibold px-4 py-2.5 border border-slate-850 hover:border-slate-700 bg-slate-900/50 rounded-xl">Cancel</button>
           <button @click="reject" class="text-xs font-semibold bg-rose-600 hover:bg-rose-500 text-white px-5 py-2.5 rounded-xl cursor-pointer">Reject</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Attachment preview modal -->
+    <div v-if="previewOpen" class="fixed inset-0 z-50 flex items-center justify-center p-6 bg-slate-950/80 backdrop-blur-sm" @click.self="previewOpen = false">
+      <div class="w-full max-w-3xl max-h-[90vh] flex flex-col rounded-3xl border border-slate-900 bg-gradient-to-b from-slate-900 to-slate-950 shadow-2xl overflow-hidden">
+        <div class="flex items-center justify-between gap-4 px-6 py-4 border-b border-slate-900">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <span class="w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 shrink-0">
+              <Icon name="File" :size="16" />
+            </span>
+            <div class="min-w-0">
+              <p class="text-sm font-bold text-white truncate">{{ previewName }}</p>
+              <p class="text-[10px] text-slate-500 uppercase tracking-widest">Attachment Preview</p>
+            </div>
+          </div>
+          <button type="button" @click="previewOpen = false" class="shrink-0 w-8 h-8 flex items-center justify-center rounded-lg border border-slate-800 text-slate-400 hover:text-white hover:border-slate-700 transition cursor-pointer">
+            <Icon name="X" :size="16" />
+          </button>
+        </div>
+
+        <div class="flex-1 min-h-0 overflow-auto bg-slate-950/60 flex items-center justify-center p-4">
+          <img v-if="previewKind === 'image'" :src="previewSrc" :alt="previewName" class="max-w-full max-h-[70vh] rounded-lg object-contain" />
+          <iframe v-else-if="previewKind === 'pdf'" :src="previewSrc" class="w-full h-[70vh] rounded-lg bg-white" title="PDF preview"></iframe>
+          <div v-else class="text-center py-12 px-6">
+            <span class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-slate-900 border border-slate-800 text-slate-400 mb-4">
+              <Icon name="FileText" :size="26" />
+            </span>
+            <p class="text-sm text-slate-300 font-semibold">Preview not available</p>
+            <p class="text-xs text-slate-500 mt-1 max-w-xs mx-auto">This file type can't be shown in the browser. Download it to view the contents.</p>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-900">
+          <a :href="previewSrc" target="_blank" rel="noopener" class="text-xs font-semibold px-4 py-2.5 border border-slate-850 hover:border-slate-700 bg-slate-900/50 rounded-xl inline-flex items-center gap-1.5">
+            <Icon name="Link2" :size="14" /> Open in new tab
+          </a>
+          <a :href="previewSrc" :download="previewName" class="text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-xl shadow-md inline-flex items-center gap-1.5">
+            <Icon name="Download" :size="14" /> Download
+          </a>
         </div>
       </div>
     </div>

@@ -105,6 +105,10 @@ const toggleClosedDaySelection = (dayId) => {
     form.closed_day_ids.push(dayId);
   }
 };
+
+// "2026-01-07" for a single day, or "2026-01-07 → 2026-01-09" for a range.
+const formatRange = (d) =>
+  d.start_date === d.end_date ? d.start_date : `${d.start_date} → ${d.end_date}`;
 </script>
 
 <template>
@@ -158,7 +162,7 @@ const toggleClosedDaySelection = (dayId) => {
             <td class="p-3">
               <div class="flex flex-wrap gap-1">
                 <span v-for="d in mp.closed_days" :key="d.id" class="px-2 py-0.5 text-[10px] rounded bg-slate-900 border border-slate-800 text-slate-400 font-medium">
-                  {{ d.name }} ({{ d.date }})
+                  {{ d.name }} ({{ formatRange(d) }})
                 </span>
               </div>
             </td>
@@ -267,9 +271,10 @@ const toggleClosedDaySelection = (dayId) => {
                   <div>
                     <span class="text-sm font-semibold text-slate-200">{{ day.name }}</span>
                     <span class="text-[10px] text-slate-500 ml-2">({{ day.type }})</span>
+                    <span v-if="day.days_count > 1" class="ml-2 px-1.5 py-0.5 text-[9px] rounded-full font-bold border border-blue-500/20 bg-blue-500/10 text-blue-400">{{ day.days_count }} days</span>
                   </div>
                 </div>
-                <span class="font-mono text-xs text-slate-400">{{ day.date }}</span>
+                <span class="font-mono text-xs text-slate-400">{{ formatRange(day) }}</span>
               </div>
               <div v-if="!closedDays.length" class="text-center text-xs text-slate-500 py-4">
                 No active closed days registered in the calendar.

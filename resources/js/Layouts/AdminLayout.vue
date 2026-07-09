@@ -80,14 +80,18 @@ const isWithin = (path) => currentPath.value === path || currentPath.value.start
 
 // ---- Expandable groups ----------------------------------------------------
 const expanded = reactive({});
-const isOpen = (item) => expanded[item.name] ?? isWithin(item.path);
+// A group "owns" the current route when the URL is within the parent path OR
+// matches any child path (children may live at sibling paths, not nested ones).
+const childActive = (item) => (item.children || []).some((c) => isWithin(c.path));
+const ownsCurrent = (item) => isWithin(item.path) || childActive(item);
+const isOpen = (item) => expanded[item.name] ?? ownsCurrent(item);
 const toggle = (item) => { expanded[item.name] = !isOpen(item); };
 
 // Auto-open the group that owns the current route.
 watch(currentPath, () => {
   nav.value.forEach((section) =>
     section.items.forEach((item) => {
-      if (item.children && isWithin(item.path)) expanded[item.name] = true;
+      if (item.children && ownsCurrent(item)) expanded[item.name] = true;
     }));
 }, { immediate: true });
 
@@ -228,7 +232,7 @@ watch(currentPath, () => {
                 :class="[
                   isExact(item.path)
                     ? 'bg-gradient-to-r from-blue-500/20 to-blue-500/5 text-white shadow-sm'
-                    : isWithin(item.path)
+                    : (isWithin(item.path) || childActive(item))
                       ? 'text-white bg-slate-900/60'
                       : 'text-slate-400 hover:text-slate-100 hover:bg-slate-900/50',
                   collapsed ? 'justify-center' : '',
@@ -237,7 +241,7 @@ watch(currentPath, () => {
               >
                 <span class="relative flex items-center justify-center shrink-0">
                   <span v-if="isExact(item.path)" class="absolute -left-3 h-5 w-1 rounded-r bg-blue-400"></span>
-                  <Icon :name="item.icon" :size="19" :class="isWithin(item.path) ? 'text-blue-400' : ''" />
+                  <Icon :name="item.icon" :size="19" :class="(isWithin(item.path) || childActive(item)) ? 'text-blue-400' : ''" />
                 </span>
 
                 <template v-if="!collapsed">
