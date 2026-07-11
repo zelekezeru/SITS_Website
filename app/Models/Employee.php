@@ -151,4 +151,17 @@ class Employee extends Model
     {
         return $this->hasMany(Termination::class);
     }
+
+    public function loans(): HasMany
+    {
+        return $this->hasMany(EmployeeLoan::class);
+    }
+
+    /** Active loans still being repaid, oldest first (payroll deducts these). */
+    public function activeLoans(): HasMany
+    {
+        return $this->loans()
+            ->where('status', \App\Enums\EmployeeLoanStatus::Active)
+            ->orderBy('created_at');
+    }
 }

@@ -140,6 +140,9 @@ class AdminNavigation
                             self::child('Payroll Setup', 'admin.payroll.components', '/admin/payroll/components',
                                 'Configure allowance, deduction and statutory (pension / provident fund) components.'),
                         ]),
+                    self::item('Loans', 'admin.loans', '/admin/loans', 'Landmark',
+                        'Employee salary loans auto-deducted from payroll at a fixed monthly amount until cleared.',
+                        ['Fixed monthly deduction', 'Live balance & remaining months', 'Extra / lump-sum settlement', 'Blocks clearance until paid']),
                     self::item('Attendance', 'admin.attendance', '/admin/attendance', 'Clock',
                         'Attendance with raw → pending_review → verified → locked lifecycle.',
                         ['Device / Excel / manual sources', 'Overtime tiers (1.5×/2×/2.5×)', 'Late & absence tracking', 'Verification & lock'], [
@@ -196,6 +199,8 @@ class AdminNavigation
                             self::child('All Users', 'admin.users.index', '/admin/users', 'Every account and its roles.'),
                             self::child('Pending Approvals', 'admin.users.approvals', '/admin/users/approvals',
                                 'New sign-ups awaiting approval and activation.'),
+                            self::child('Deactivation Requests', 'admin.users.deactivations', '/admin/users/deactivations',
+                                'Review user deactivation, delete, and archive requests.'),
                             self::child('Roles & Permissions', 'admin.users.roles', '/admin/users/roles',
                                 'The seven SITS roles and their permission matrix.'),
                         ]),

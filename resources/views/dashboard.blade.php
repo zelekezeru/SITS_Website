@@ -106,7 +106,7 @@
                     <!-- Action Button Container -->
                     <div class="p-4 pt-0 border-t border-slate-900/40 mt-auto">
                         @if ($portal['authorized'])
-                            <a href="{{ $portal['url'] }}" target="_blank" 
+                            <a href="{{ $portal['url'] }}" {{ $key !== 'library' ? 'target="_blank"' : '' }}
                                class="w-full flex items-center justify-center py-3 px-4 rounded-xl text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]
                                 @if($portal['color'] === 'indigo') bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 shadow-indigo-600/20 neon-glow-indigo @endif
                                 @if($portal['color'] === 'cyan') bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 shadow-cyan-600/20 neon-glow-cyan @endif

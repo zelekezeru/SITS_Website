@@ -7,6 +7,7 @@ use App\Models\Employee;
 use App\Models\LeaveRequest;
 use App\Models\Termination;
 use App\Models\EmployeeStatusChange;
+use App\Enums\EmployeeLoanStatus;
 use App\Enums\LeaveStatus;
 use App\Enums\TerminationReason;
 use App\Enums\EmployeeStatus;
@@ -235,15 +236,50 @@ class EmployeeLifecycleController extends Controller
     {
         Gate::authorize('view', $termination);
 
+        $termination->load('employee.user', 'employee.department', 'initiatedBy', 'finalizedBy', 'finalPayslip', 'documents');
+
+        $outstanding = self::outstandingLoanBalance($termination->employee);
+
         return Inertia::render('Admin/EmployeeLifecycle/TerminationDetail', [
-            'termination' => $termination->load('employee.user', 'employee.department', 'initiatedBy', 'finalizedBy', 'finalPayslip', 'documents'),
+            'termination' => $termination,
             'canFinalize' => auth()->user()->can('finalize', $termination),
+            'loanClearance' => [
+                'outstanding' => $outstanding,
+                'cleared'     => $outstanding <= 0,
+            ],
         ]);
+    }
+
+    /** Total unpaid balance across an employee's active salary loans. */
+    private static function outstandingLoanBalance(?Employee $employee): float
+    {
+        if (! $employee) {
+            return 0.0;
+        }
+
+        return round(
+            $employee->loans()
+                ->where('status', EmployeeLoanStatus::Active)
+                ->get()
+                ->sum(fn ($loan) => $loan->balance),
+            2
+        );
     }
 
     public function terminationFinalize(Request $request, Termination $termination)
     {
         Gate::authorize('finalize', $termination);
+
+        // Clearance rule: an employee must fully settle any outstanding salary
+        // loan before they can be cleared/terminated.
+        $outstanding = self::outstandingLoanBalance($termination->employee);
+        if ($outstanding > 0) {
+            return redirect()->back()->withErrors([
+                'error' => 'Cannot clear this employee: an outstanding salary loan balance of '
+                    .number_format($outstanding, 2).' must be fully settled first. '
+                    .'Record the settlement under Finance → Loans, then finalize.',
+            ]);
+        }
 
         $validated = $request->validate([
             'severance_amount' => 'nullable|numeric|min:0',

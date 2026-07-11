@@ -10,6 +10,10 @@ use App\Models\PayrollComponent;
 use App\Models\Payslip;
 use App\Models\PayrollPeriod;
 use App\Models\User;
+use App\Enums\EmployeeLoanPaymentType;
+use App\Enums\EmployeeLoanStatus;
+use App\Models\EmployeeLoanPayment;
+use App\Services\Payroll\EmployeeLoanService;
 use App\Services\PayrollCalculator;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -36,6 +40,10 @@ class PayrollRunService
                 'attendancePermissions' => fn ($q) => $q
                     ->where('payroll_period_id', $period->id)
                     ->where('status', AttendancePermissionStatus::Approved),
+                // Oldest-first so earlier loans are repaid before later ones.
+                'loans' => fn ($q) => $q
+                    ->where('status', EmployeeLoanStatus::Active)
+                    ->orderBy('created_at'),
             ])
             ->get();
 
@@ -43,9 +51,10 @@ class PayrollRunService
         $statutory = PayrollComponent::active()->statutory()->get();
 
         $calculator = PayrollCalculator::fromSettings();
+        $loanService = new EmployeeLoanService();
         $asOf = $period->end_date ? Carbon::parse($period->end_date) : null;
 
-        DB::transaction(function () use ($period, $employees, $statutory, $calculator, $asOf, $preparedBy) {
+        DB::transaction(function () use ($period, $employees, $statutory, $calculator, $asOf, $preparedBy, $loanService) {
             foreach ($employees as $employee) {
                 // Fold approved permission days into permitted_days before computing.
                 $permittedDays = (int) $employee->attendancePermissions->sum('days');
@@ -62,6 +71,40 @@ class PayrollRunService
                 $assignments = $employee->componentAssignments->filter->appliesTo($period);
 
                 $result = $calculator->compute($employee, $attendance, $asOf, $assignments, $statutory);
+
+                // --- Loan repayments (post-tax, deducted from net) -----------
+                // First, each active loan withholds its fixed monthly amount,
+                // capped at the remaining balance and at whatever net pay is left.
+                $appliedThisRun = 0.0;
+                foreach ($employee->loans as $loan) {
+                    $availableNet = round((float) $result['net_pay'] - $appliedThisRun, 2);
+                    $appliedThisRun += $loanService->applyPayrollDeduction($loan, $period, $availableNet, $preparedBy);
+                }
+
+                // Then derive the payslip figure from the ledger for this period,
+                // so it always matches what was actually booked — including a loan
+                // that was settled elsewhere but still withheld a payroll amount
+                // in this period.
+                $periodLoanPayments = EmployeeLoanPayment::query()
+                    ->where('payroll_period_id', $period->id)
+                    ->where('type', EmployeeLoanPaymentType::Payroll)
+                    ->whereHas('loan', fn ($q) => $q->where('employee_id', $employee->id))
+                    ->with('loan:id,reference')
+                    ->get();
+
+                $loanDeduction = 0.0;
+                foreach ($periodLoanPayments as $payment) {
+                    $loanDeduction += (float) $payment->amount;
+                    $result['lines'][] = [
+                        'type' => 'deduction',
+                        'label' => 'Loan Repayment ('.$payment->loan?->reference.')',
+                        'amount' => (float) $payment->amount,
+                    ];
+                }
+                if ($loanDeduction > 0) {
+                    $result['total_deductions'] = round((float) $result['total_deductions'] + $loanDeduction, 2);
+                    $result['net_pay'] = round((float) $result['net_pay'] - $loanDeduction, 2);
+                }
 
                 $payslip = Payslip::updateOrCreate(
                     ['employee_id' => $employee->id, 'payroll_period_id' => $period->id],
@@ -84,6 +127,7 @@ class PayrollRunService
                         'salary_advance' => $result['salary_advance'],
                         'kircha_deduction' => $result['kircha_deduction'],
                         'other_deduction' => $result['other_deduction'],
+                        'loan_deduction' => $loanDeduction,
                         'total_deductions' => $result['total_deductions'],
                         'net_pay' => $result['net_pay'],
                         'status' => 'draft',

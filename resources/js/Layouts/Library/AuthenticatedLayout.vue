@@ -7,6 +7,7 @@ import GlobalSearch from '@/Components/Library/GlobalSearch.vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import { useDarkMode } from '@/composables/useDarkMode';
 import LanguageSwitcher from '@/Components/Library/LanguageSwitcher.vue';
+import Icon from '@/Components/Icon.vue';
 
 const page = usePage();
 const translations = computed(() => page.props.translations || {});
@@ -36,6 +37,11 @@ const hasErpAccess = computed(() => {
     const roles = (auth.value?.user?.roles ?? []).map(r => r.toLowerCase());
     if (!roles.length) return false;
     return !roles.includes('student');
+});
+
+const isWebsiteAdmin = computed(() => {
+    const roles = (auth.value?.user?.roles ?? []).map(r => r.toLowerCase());
+    return roles.some(r => ['superadmin', 'admin', 'editor'].includes(r));
 });
 
 const lmsLabel = computed(() => {
@@ -178,6 +184,7 @@ const navGroups = computed(() => {
     const adminItems = [];
     if (can('manage_users'))          adminItems.push({ label: t('Users'),           route: 'library.users.index',            icon: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z' });
     if (can('manage_campus'))         adminItems.push({ label: t('Campuses'),        route: 'library.campuses.index',         icon: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-2 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4' });
+    if (can('manage_campus'))         adminItems.push({ label: t('Subscriptions'),   route: 'library.subscriptions',          icon: 'M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z', external: true });
     if (can('manage_external_links')) adminItems.push({ label: t('Ext. Resources'),  route: 'library.resources.index',  icon: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z' });
     if (can('manage_campus'))         adminItems.push({ label: t('Audit Log'),       route: 'library.admin.audit',            icon: 'M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' });
     if (can('view_loans'))            adminItems.push({ label: t('Reports'),          route: 'library.reports.index',          icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' });
@@ -253,7 +260,8 @@ const roleBadge = computed(() => {
                             <ul class="space-y-0.5 px-0.5">
                                 <li v-for="item in group.items" :key="item.route" class="relative">
                                     <div v-if="route().current(item.route)" class="absolute left-0 top-1.5 bottom-1.5 w-1 rounded-r bg-indigo-600 dark:bg-indigo-400"></div>
-                                    <Link
+                                    <component
+                                        :is="item.external ? 'a' : Link"
                                         :href="route(item.route, item.params || {})"
                                         :target="item.target || '_self'"
                                         class="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition duration-200"
@@ -265,7 +273,7 @@ const roleBadge = computed(() => {
                                             <path stroke-linecap="round" stroke-linejoin="round" :d="item.icon" />
                                         </svg>
                                         {{ item.label }}
-                                    </Link>
+                                    </component>
                                 </li>
                             </ul>
                         </div>
@@ -293,7 +301,7 @@ const roleBadge = computed(() => {
         <div class="flex flex-1 flex-col min-w-0 overflow-hidden">
 
             <!-- Top bar -->
-            <header class="flex h-16 shrink-0 items-center gap-4 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-4 sm:px-6">
+            <header class="flex h-16 shrink-0 items-center gap-2 sm:gap-4 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-3 sm:px-6">
                 <button
                     class="lg:hidden rounded-lg p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
                     @click="sidebarOpen = !sidebarOpen"
@@ -303,11 +311,11 @@ const roleBadge = computed(() => {
                     </svg>
                 </button>
 
-                <div class="flex-1 min-w-0">
+                <div class="hidden sm:block flex-1 min-w-0 [&_h2]:truncate [&_h2]:text-sm [&_h2]:sm:text-xl [&_h2]:font-semibold">
                     <slot name="header" />
                 </div>
 
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-1.5 sm:gap-2">
                     <GlobalSearch />
                     <LanguageSwitcher />
                     <NotificationBell />
@@ -339,11 +347,38 @@ const roleBadge = computed(() => {
                             <p class="text-xs font-semibold text-gray-900 dark:text-white truncate">{{ auth.user.name }}</p>
                           </li>
                           <li><Link :href="route('portal')" class="block px-4 py-2.5 text-xs text-gray-650 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800/40 transition">{{ t('Dashboard Hub', 'Dashboard Hub') }}</Link></li>
-                          <li><Link :href="route('profile.edit')" class="block px-4 py-2.5 text-xs text-gray-650 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800/40 transition">{{ t('View Profile', 'View Profile') }}</Link></li>
+                          <li><Link :href="route('profile.edit', { from: 'library' })" class="block px-4 py-2.5 text-xs text-gray-650 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800/40 transition">{{ t('View Profile', 'View Profile') }}</Link></li>
                           <li class="border-t border-gray-150 dark:border-gray-800 my-1"></li>
-                          <li><a :href="lmsUrl" class="block px-4 py-2.5 text-xs text-gray-650 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800/40 transition">{{ lmsLabel }}</a></li>
-                          <li v-if="hasErpAccess"><Link :href="route('dashboard')" class="block px-4 py-2.5 text-xs text-gray-650 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800/40 transition">{{ t('ERP Portal', 'ERP Portal') }}</Link></li>
-                          <li v-if="hasLibraryAccess"><Link :href="route('library.dashboard')" class="block px-4 py-2.5 text-xs text-gray-650 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800/40 transition">{{ t('Digital Library', 'Digital Library') }}</Link></li>
+                          <li v-if="hasErpAccess">
+                            <Link :href="route('dashboard')" class="flex items-center gap-2.5 px-4 py-2.5 text-xs text-gray-650 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800/40 transition">
+                              <Icon name="LayoutDashboard" :size="15" class="text-gray-400 dark:text-gray-500" />
+                              <span>SITS ERP</span>
+                            </Link>
+                          </li>
+                          <li>
+                            <Link :href="route('library.dashboard')" class="flex items-center gap-2.5 px-4 py-2.5 text-xs text-gray-650 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800/40 transition">
+                              <Icon name="BookOpen" :size="15" class="text-gray-400 dark:text-gray-500" />
+                              <span>Digital Library</span>
+                            </Link>
+                          </li>
+                          <li>
+                            <a href="https://lms.sits.edu.et" target="_blank" class="flex items-center gap-2.5 px-4 py-2.5 text-xs text-gray-650 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800/40 transition">
+                              <Icon name="GraduationCap" :size="15" class="text-gray-400 dark:text-gray-500" />
+                              <span>SITS LMS</span>
+                            </a>
+                          </li>
+                          <li>
+                            <a href="/go/lms" target="_blank" class="flex items-center gap-2.5 px-4 py-2.5 text-xs text-gray-650 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800/40 transition">
+                              <Icon name="Laptop" :size="15" class="text-gray-400 dark:text-gray-500" />
+                              <span>Moodle</span>
+                            </a>
+                          </li>
+                          <li v-if="isWebsiteAdmin">
+                            <a :href="route('website.admin.dashboard')" class="flex items-center gap-2.5 px-4 py-2.5 text-xs text-gray-650 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800/40 transition">
+                              <Icon name="Globe" :size="15" class="text-gray-400 dark:text-gray-500" />
+                              <span>Website Admin</span>
+                            </a>
+                          </li>
                           <li class="border-t border-gray-150 dark:border-gray-800 my-1"></li>
                           <li>
                             <Link :href="route('logout')" method="post" as="button" class="block w-full text-left px-4 py-2.5 text-xs text-rose-500 hover:text-rose-455 hover:bg-rose-500/10 transition cursor-pointer">{{ t('Sign out') }}</Link>

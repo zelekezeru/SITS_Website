@@ -233,25 +233,5 @@ const money = (v) => 'ETB ' + Number(v ?? 0).toLocaleString(undefined, { minimum
       </div>
     </div>
 
-    <!-- ===================== OTHER ROLES (capabilities + account) ============ -->
-    <div v-else class="grid lg:grid-cols-12 gap-6">
-      <div class="lg:col-span-8 rounded-2xl border border-slate-900 bg-slate-900/20 shadow-md p-6">
-        <h3 class="font-bold text-lg text-white mb-4 flex items-center gap-2"><Icon name="ShieldCheck" :size="19" :class="accent.text" /> Your Capabilities</h3>
-        <div class="flex flex-wrap gap-2">
-          <span v-for="c in (panel.capabilities || [])" :key="c"
-                class="text-xs font-medium px-3 py-1.5 rounded-lg border border-slate-800 bg-slate-950/40 text-slate-300">{{ c }}</span>
-          <p v-if="!(panel.capabilities || []).length" class="text-sm text-slate-600 italic">No explicit permissions granted.</p>
-        </div>
-      </div>
-      <div class="lg:col-span-4 rounded-2xl border border-slate-900 bg-slate-900/20 shadow-md p-6">
-        <h3 class="font-bold text-sm text-white uppercase tracking-wider mb-4">Account</h3>
-        <dl class="space-y-2 text-sm">
-          <div class="flex justify-between"><dt class="text-slate-500">Name</dt><dd class="text-slate-200 font-medium">{{ panel.account?.name }}</dd></div>
-          <div class="flex justify-between"><dt class="text-slate-500">Email</dt><dd class="text-slate-200 font-medium truncate ml-3">{{ panel.account?.email }}</dd></div>
-          <div v-if="panel.account?.department" class="flex justify-between"><dt class="text-slate-500">Department</dt><dd class="text-slate-200 font-medium">{{ panel.account.department }}</dd></div>
-          <div v-if="panel.account?.staffNo" class="flex justify-between"><dt class="text-slate-500">Staff No.</dt><dd class="text-slate-200 font-mono text-xs">{{ panel.account.staffNo }}</dd></div>
-        </dl>
-      </div>
-    </div>
   </div>
 </template>

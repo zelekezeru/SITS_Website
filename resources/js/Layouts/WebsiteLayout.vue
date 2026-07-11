@@ -33,16 +33,30 @@
                 {{ link.label }}
               </Link>
             </li>
-            <!-- eLearning dropdown: SITS LMS (external site) + Moodle (integrated, single sign-on) -->
+            <!-- Portals dropdown: SITS ERP, Digital Library, SITS LMS, Moodle -->
             <li v-if="auth.user" class="relative group">
               <button type="button"
                 class="px-3 py-2 rounded-lg transition hover:text-white hover:bg-slate-900/60 inline-flex items-center gap-1.5">
-                {{ t('lms', 'eLearning') }}
+                {{ t('portals', 'Portals') }}
                 <svg class="w-3 h-3 opacity-60 transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
               </button>
               <!-- pt-2 bridges the gap so hover isn't lost between the button and the menu -->
               <div class="absolute left-0 top-full pt-2 w-56 hidden group-hover:block z-50">
                 <ul class="bg-slate-900/95 backdrop-blur-xl border border-slate-800 rounded-2xl shadow-2xl py-2">
+                  <li v-if="hasErpAccess">
+                    <Link :href="route('dashboard')"
+                      class="flex items-center gap-2.5 px-4 py-2.5 text-xs text-slate-300 hover:text-white hover:bg-slate-800/50 transition">
+                      <svg class="w-4 h-4 shrink-0 text-cyan-405" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/></svg>
+                      {{ t('sits_erp', 'SITS ERP') }}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link :href="route('library.dashboard')"
+                      class="flex items-center gap-2.5 px-4 py-2.5 text-xs text-slate-300 hover:text-white hover:bg-slate-800/50 transition">
+                      <svg class="w-4 h-4 shrink-0 text-amber-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0 1 12 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 0 1 3 12c0-.778.099-1.533.284-2.253"/></svg>
+                      {{ t('digital_library', 'Digital Library') }}
+                    </Link>
+                  </li>
                   <li>
                     <a href="https://lms.sits.edu.et" target="_blank" rel="noopener"
                       class="flex items-center gap-2.5 px-4 py-2.5 text-xs text-slate-300 hover:text-white hover:bg-slate-800/50 transition">
@@ -94,11 +108,38 @@
                     <p class="text-xs font-semibold text-white truncate">{{ auth.user.name }}</p>
                   </li>
                   <li><Link :href="route('portal')" class="block px-4 py-2.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800/40 transition">{{ t('dashboard', 'Dashboard') }}</Link></li>
-                  <li><Link :href="route('profile.edit')" class="block px-4 py-2.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800/40 transition">{{ t('view_profile', 'View Profile') }}</Link></li>
+                  <li><Link :href="route('profile.edit', { from: 'website' })" class="block px-4 py-2.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800/40 transition">{{ t('view_profile', 'View Profile') }}</Link></li>
                   <li class="border-t border-slate-800/60 my-1"></li>
-                  <li><a :href="lmsUrl" class="block px-4 py-2.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800/40 transition">{{ lmsLabel }}</a></li>
-                  <li v-if="hasErpAccess"><Link :href="route('dashboard')" class="block px-4 py-2.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800/40 transition">{{ t('erp_portal', 'ERP Portal') }}</Link></li>
-                  <li><Link :href="route('library.dashboard')" class="block px-4 py-2.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800/40 transition">{{ t('digital_library', 'Digital Library') }}</Link></li>
+                  <li v-if="hasErpAccess">
+                    <Link :href="route('dashboard')" class="flex items-center gap-2.5 px-4 py-2.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800/40 transition">
+                      <Icon name="LayoutDashboard" :size="15" class="text-slate-500" />
+                      <span>SITS ERP</span>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link :href="route('library.dashboard')" class="flex items-center gap-2.5 px-4 py-2.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800/40 transition">
+                      <Icon name="BookOpen" :size="15" class="text-slate-500" />
+                      <span>Digital Library</span>
+                    </Link>
+                  </li>
+                  <li>
+                    <a href="https://lms.sits.edu.et" target="_blank" class="flex items-center gap-2.5 px-4 py-2.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800/40 transition">
+                      <Icon name="GraduationCap" :size="15" class="text-slate-500" />
+                      <span>SITS LMS</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="/go/lms" target="_blank" class="flex items-center gap-2.5 px-4 py-2.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800/40 transition">
+                      <Icon name="Laptop" :size="15" class="text-slate-500" />
+                      <span>Moodle</span>
+                    </a>
+                  </li>
+                  <li v-if="isWebsiteAdmin">
+                    <a :href="route('website.admin.dashboard')" class="flex items-center gap-2.5 px-4 py-2.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800/40 transition">
+                      <Icon name="Globe" :size="15" class="text-slate-500" />
+                      <span>Website Admin</span>
+                    </a>
+                  </li>
                   <li class="border-t border-slate-800/60 my-1"></li>
                   <li>
                     <Link :href="route('logout')" method="post" as="button" class="block w-full text-left px-4 py-2.5 text-xs text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition cursor-pointer">{{ t('sign_out', 'Sign Out') }}</Link>
@@ -136,9 +177,22 @@
               <component :is="'svg'" class="w-4 h-4 shrink-0" v-html="link.icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"></component>
               {{ link.label }}
             </Link>
-            <!-- eLearning: SITS LMS (external) + Moodle (integrated SSO) -->
+            <!-- Portals: SITS ERP, Digital Library, SITS LMS, Moodle -->
             <template v-if="auth.user">
-              <p class="px-4 pt-3 pb-1 text-[10px] text-slate-600 font-semibold uppercase tracking-widest">{{ t('lms', 'eLearning') }}</p>
+              <p class="px-4 pt-3 pb-1 text-[10px] text-slate-600 font-semibold uppercase tracking-widest">{{ t('portals', 'Portals') }}</p>
+              
+              <Link v-if="hasErpAccess" :href="route('dashboard')" @click="mobileMenuOpen = false"
+                class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-300 hover:bg-slate-900 hover:text-white transition">
+                <svg class="w-4 h-4 shrink-0 text-cyan-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/></svg>
+                {{ t('sits_erp', 'SITS ERP') }}
+              </Link>
+              
+              <Link :href="route('library.dashboard')" @click="mobileMenuOpen = false"
+                class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-300 hover:bg-slate-900 hover:text-white transition">
+                <svg class="w-4 h-4 shrink-0 text-amber-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0 1 12 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 0 1 3 12c0-.778.099-1.533.284-2.253"/></svg>
+                {{ t('digital_library', 'Digital Library') }}
+              </Link>
+
               <a href="https://lms.sits.edu.et" target="_blank" rel="noopener" @click="mobileMenuOpen = false"
                 class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-300 hover:bg-slate-900 hover:text-white transition">
                 <svg class="w-4 h-4 shrink-0 text-indigo-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
@@ -252,6 +306,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { usePage, router, Link } from '@inertiajs/vue3'
 import { useTranslations } from '@/Composables/useTranslations'
+import Icon from '@/Components/Icon.vue'
 
 const page = usePage()
 const auth = computed(() => page.props.auth)
@@ -323,6 +378,11 @@ const hasErpAccess = computed(() => {
   const roles = (auth.value?.user?.roles ?? []).map(r => r.toLowerCase())
   if (!roles.length) return false
   return !roles.includes('student')
+})
+
+const isWebsiteAdmin = computed(() => {
+  const roles = (auth.value?.user?.roles ?? []).map(r => r.toLowerCase())
+  return roles.some(r => ['superadmin', 'admin', 'editor'].includes(r))
 })
 
 const lmsLabel = computed(() => {

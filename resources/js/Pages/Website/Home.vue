@@ -9,17 +9,17 @@
         <div class="container mx-auto px-6 z-10 grid lg:grid-cols-12 gap-12 items-center">
 
           <!-- Left card (Digital Campus) -->
-          <div class="lg:col-span-5 relative" data-aos="fade-right" data-aos-duration="1000">
-            <div class="absolute -inset-1 rounded-3xl bg-gradient-to-r from-indigo-500 to-pink-500 opacity-20 blur-xl"></div>
-            <div class="relative glass-card rounded-3xl p-8 border border-white/5 space-y-6">
-              <div class="relative h-72 rounded-2xl overflow-hidden bg-slate-900 group">
+          <div class="lg:col-span-5 relative -mx-6 sm:mx-0" data-aos="fade-right" data-aos-duration="1000">
+            <div class="absolute -inset-1 rounded-3xl bg-gradient-to-r from-indigo-500 to-pink-500 opacity-20 blur-xl hidden sm:block"></div>
+            <div class="relative glass-card rounded-none sm:rounded-3xl p-0 sm:p-8 border-x-0 sm:border border-white/5 space-y-6">
+              <div class="relative h-56 sm:h-72 rounded-none sm:rounded-2xl overflow-hidden bg-slate-900 group">
                 <img :src="'/img/banner/header.png'" alt="SITS Learning Portal" class="w-full h-full object-cover group-hover:scale-105 transition duration-700" />
                 <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent"></div>
                 <div class="absolute bottom-4 left-4">
                   <span class="bg-indigo-600/90 backdrop-blur-md text-white text-xs px-3 py-1.5 rounded-lg font-bold">Digital Campus</span>
                 </div>
               </div>
-              <div class="space-y-4">
+              <div class="space-y-4 px-6 pb-6 sm:px-0 sm:pb-0">
                 <div class="flex items-start gap-3"><div class="w-6 h-6 rounded-full bg-indigo-500/10 border border-indigo-500/25 flex items-center justify-center text-indigo-400 mt-0.5 shrink-0"><svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div><p class="text-sm text-slate-300"><strong class="text-white">Fast Setup:</strong> Register and create your student account in minutes.</p></div>
                 <div class="flex items-start gap-3"><div class="w-6 h-6 rounded-full bg-indigo-500/10 border border-indigo-500/25 flex items-center justify-center text-indigo-400 mt-0.5 shrink-0"><svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div><p class="text-sm text-slate-300"><strong class="text-white">Structured Learning:</strong> Access digital textbooks, lecture notes, and assignments.</p></div>
                 <div class="flex items-start gap-3"><div class="w-6 h-6 rounded-full bg-indigo-500/10 border border-indigo-500/25 flex items-center justify-center text-indigo-400 mt-0.5 shrink-0"><svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div><p class="text-sm text-slate-300"><strong class="text-white">Expert Mentors:</strong> Regular interactive sessions with highly experienced faculty.</p></div>

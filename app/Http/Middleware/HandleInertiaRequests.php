@@ -51,6 +51,7 @@ class HandleInertiaRequests extends Middleware
                     'profile_image'     => $user->profile_image,
                     'roles'             => $user->roles->pluck('name'),
                 ] : null,
+                'permissions' => $user ? $user->getPermissionNames() : [],
                 'pending_users' => $isPresident
                     ? \App\Models\User::where('is_approved', false)->get(['id', 'name', 'email'])
                     : [],

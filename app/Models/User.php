@@ -130,7 +130,7 @@ class User extends Authenticatable
      */
     public function hasLibraryAccess(): bool
     {
-        if ($this->hasAnyRole(['SUPERADMIN', 'ADMIN', 'LIBRARIAN'])) {
+        if ($this->hasAnyRole(['SUPERADMIN', 'ADMIN', 'LIBRARIAN', 'President / Super Admin'])) {
             return true;
         }
 

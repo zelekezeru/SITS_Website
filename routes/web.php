@@ -29,10 +29,7 @@ Route::get('/home', [HomeController::class, 'index']);
 Route::get('/about', [HomeController::class, 'about'])->name('abouts.index');
 Route::get('/elements', [HomeController::class, 'elements'])->name('elements.index');
 
-Route::resource('courses',       CourseController::class)->only(['index', 'show']);
-Route::resource('blogs',         BlogController::class)->only(['index', 'show']);
-Route::resource('libraries',     LibraryController::class)->only(['index', 'show']);
-Route::resource('contacts',      ContactController::class)->only(['index', 'store']);
+
 
 // ─── Authenticated User Routes ────────────────────────────────────────────────
 // The unified portal hub (launch-pad for ERP / LMS / Library). The ERP owns the
@@ -63,6 +60,8 @@ Route::get('/library/plans', [LibraryController::class, 'plans'])->name('library
 // These routes are protected by both authentication and role-based access.
 // Only users with the SUPERADMIN, ADMIN, or EDITOR role may access them.
 Route::middleware(['auth', 'role:SUPERADMIN|ADMIN|EDITOR'])->group(function () {
+
+    Route::get('/website/admin', [HomeController::class, 'websiteAdminDashboard'])->name('website.admin.dashboard');
 
     // CKFinder / rich-text upload
     Route::post('/ckfinder-upload', [BlogController::class, 'upload'])->name('ckeditor.blog.upload');
@@ -96,6 +95,13 @@ Route::middleware(['auth', 'role:SUPERADMIN|ADMIN|EDITOR'])->group(function () {
     Route::resource('subscriptions', SubscriptionController::class);
     Route::resource('galleries',     GalleryController::class);
 });
+
+// ─── Public Resource Routes (placed after admin list views to avoid interception) ──
+Route::resource('courses',       CourseController::class)->only(['index', 'show']);
+Route::resource('blogs',         BlogController::class)->only(['index', 'show']);
+Route::resource('libraries',     LibraryController::class)->only(['index', 'show']);
+Route::resource('contacts',      ContactController::class)->only(['index', 'store']);
+
 
 // ─── Hikvision Webhook Real-time Attendance Integration ───────────────────────
 Route::post('/hikvision/webhook', [\App\Http\Controllers\Admin\HikvisionWebhookController::class, 'handle'])->name('hikvision.webhook');

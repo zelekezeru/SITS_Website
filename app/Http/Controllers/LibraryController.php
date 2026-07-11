@@ -102,7 +102,7 @@ class LibraryController extends Controller
             ->first();
 
         // Admin/Superadmin/Librarian bypass subscription check
-        $hasBypass = $user->hasAnyRole(['SUPERADMIN', 'ADMIN', 'LIBRARIAN']);
+        $hasBypass = $user->hasAnyRole(['SUPERADMIN', 'ADMIN', 'LIBRARIAN', 'President / Super Admin']);
 
         // If no active subscription and no bypass, redirect to plans
         if (! $subscription && ! $hasBypass) {

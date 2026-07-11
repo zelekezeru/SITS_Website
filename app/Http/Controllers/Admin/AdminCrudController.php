@@ -160,13 +160,53 @@ class AdminCrudController extends Controller
 
         $approved = !$user->is_approved;
 
-        // Approval and activation move together so the login gate
-        // (is_approved AND is_active) matches the message shown.
+        if (!$approved) {
+            $exists = \App\Models\DeactivationRequest::where('user_id', $user->id)
+                ->where('status', 'pending')
+                ->exists();
+
+            if (!$exists) {
+                \App\Models\DeactivationRequest::create([
+                    'user_id' => $user->id,
+                    'type' => 'deactivate',
+                    'status' => 'pending',
+                    'reason' => 'Requested by Administrator',
+                ]);
+            }
+
+            return redirect()->back()->with('success', "Deactivation request has been queued for approval.");
+        }
+
         $user->update([
-            'is_approved' => $approved,
-            'is_active' => $approved,
+            'is_approved' => true,
+            'is_active' => true,
         ]);
 
-        return redirect()->back()->with('success', $approved ? "User account has been approved and activated." : "User account has been deactivated.");
+        return redirect()->back()->with('success', "User account has been approved and activated.");
+    }
+
+    public function approveDeactivation(\App\Models\DeactivationRequest $request)
+    {
+        $user = $request->user;
+
+        if ($user->hasRole('President / Super Admin')) {
+            return redirect()->back()->with('error', "The superadmin account cannot be deactivated.");
+        }
+
+        $request->update(['status' => 'approved']);
+
+        $user->update([
+            'is_approved' => false,
+            'is_active' => false,
+        ]);
+
+        return redirect()->back()->with('success', "Deactivation request has been approved. The account is now inactive.");
+    }
+
+    public function rejectDeactivation(\App\Models\DeactivationRequest $request)
+    {
+        $request->update(['status' => 'rejected']);
+
+        return redirect()->back()->with('success', "Deactivation request has been rejected.");
     }
 }

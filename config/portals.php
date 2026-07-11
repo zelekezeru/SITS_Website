@@ -34,7 +34,7 @@ return [
     'library' => [
         'name' => 'Digital Library Portal',
         'key' => 'Library',
-        'url' => env('LIBRARY_URL', 'https://library.sits.edu.et'),
+        'url' => env('LIBRARY_URL', '/library/dashboard'),
         'roles' => ['SUPERADMIN', 'ADMIN', 'EDITOR', 'TRAINER', 'STUDENT', 'STAFF', 'LIBRARIAN', 'USER'],
         'icon' => 'fas fa-book-reader',
         'color' => 'amber', // Amber theme

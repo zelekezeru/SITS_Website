@@ -24,11 +24,11 @@ const changeLocale = (locale) => {
             <template #trigger>
                 <button
                     type="button"
-                    class="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-xs font-semibold text-gray-505 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition active:scale-95 duration-200"
+                    class="inline-flex items-center justify-center gap-1.5 rounded-lg h-9 w-9 sm:w-auto px-0 sm:px-2.5 py-2 text-xs font-semibold text-gray-505 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition active:scale-95 duration-200"
                 >
                     <span class="text-sm leading-none">{{ locales[currentLocale]?.flag }}</span>
-                    <span class="text-xs leading-none font-bold">{{ locales[currentLocale]?.name }}</span>
-                    <svg class="h-3 w-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <span class="text-xs leading-none font-bold hidden sm:inline">{{ locales[currentLocale]?.name }}</span>
+                    <svg class="h-3 w-3 text-gray-400 hidden sm:inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
                     </svg>
                 </button>

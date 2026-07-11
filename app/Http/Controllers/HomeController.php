@@ -126,6 +126,37 @@ class HomeController extends Controller
         return Inertia::render('Website/About/Index', ['galleries' => $galleries]);
     }
 
+    public function websiteAdminDashboard()
+    {
+        $coursesCount = Course::count();
+        $trainersCount = Trainer::count();
+        $programsCount = Program::count();
+        $eventsCount = Event::count();
+        $blogsCount = Blog::count();
+        $usersCount = User::count();
+        $librariesCount = Library::count();
+        $librarySubscriptionsCount = \App\Models\LibrarySubscription::count();
+        $subscriptionsCount = \App\Models\Subscription::count();
+        $contactsCount = \App\Models\Contact::count();
+        $galleryCount = Gallery::count();
+
+        return view('admin.website_dashboard', [
+            'stats' => [
+                'courses' => $coursesCount,
+                'trainers' => $trainersCount,
+                'programs' => $programsCount,
+                'events' => $eventsCount,
+                'blogs' => $blogsCount,
+                'users' => $usersCount,
+                'libraries' => $librariesCount,
+                'library_subscriptions' => $librarySubscriptionsCount,
+                'subscriptions' => $subscriptionsCount,
+                'contacts' => $contactsCount,
+                'gallery' => $galleryCount,
+            ]
+        ]);
+    }
+
     public function elements()
     {
         return view('layouts.elements');

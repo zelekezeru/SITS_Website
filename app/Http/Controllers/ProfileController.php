@@ -16,44 +16,20 @@ class ProfileController extends Controller
     /**
      * Display the user's profile form.
      */
-    public function edit(Request $request): View
+    public function edit(Request $request): \Inertia\Response
     {
         $user = $request->user();
-        $roles = Role::all();
+        $from = $request->query('from', 'website');
+        $hasPendingDeactivation = \App\Models\DeactivationRequest::where('user_id', $user->id)
+            ->where('status', 'pending')
+            ->exists();
         
-        // Eager load ERP employee profile relationships
-        $employee = $user->employee?->load(['position', 'department.campus', 'reportingTo']);
-        
-        // Library access details and stats
-        $libraryAccess = $user->hasLibraryAccess();
-        $activeSubscription = $user->activeLibrarySubscription();
-        $activeLoansCount = $user->loans()->where('status', 'active')->count();
-        $outstandingFines = $user->outstanding_fines_total;
-        
-        // Dynamic LMS labels and links
-        $rolesLower = $user->roles->pluck('name')->map(fn($r) => strtolower($r));
-        if ($rolesLower->contains('student')) {
-            $lmsLabel = 'Student Learning Portal';
-            $lmsUrl = '/go/lms';
-        } elseif ($rolesLower->contains('trainer')) {
-            $lmsLabel = 'Instructor Portal';
-            $lmsUrl = '/go/lms';
-        } else {
-            $lmsLabel = 'LMS Portal';
-            $lmsUrl = 'https://lms.sits.edu.et';
-        }
-
-        return view('profile.edit', compact(
-            'roles',
-            'user',
-            'employee',
-            'libraryAccess',
-            'activeSubscription',
-            'activeLoansCount',
-            'outstandingFines',
-            'lmsLabel',
-            'lmsUrl'
-        ));
+        return \Inertia\Inertia::render('Profile/Edit', [
+            'mustVerifyEmail' => $user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail,
+            'status' => session('status'),
+            'from' => $from,
+            'hasPendingDeactivation' => $hasPendingDeactivation,
+        ]);
     }
 
     /**

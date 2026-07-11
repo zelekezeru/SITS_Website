@@ -66,35 +66,5 @@ const modules = computed(() =>
         </Link>
       </div>
     </section>
-
-    <!-- Capabilities + account -->
-    <section class="grid lg:grid-cols-12 gap-6">
-      <div class="lg:col-span-8">
-        <div class="rounded-2xl border border-slate-900 bg-slate-900/20 p-6 h-full">
-          <h3 class="font-bold text-lg mb-1">Permissions granted</h3>
-          <p class="text-xs text-slate-400 mb-5">Your President / Super Admin role carries the full permission set.</p>
-          <div class="flex flex-wrap gap-2">
-            <span v-for="cap in panel.capabilities" :key="cap"
-                  class="inline-flex items-center gap-2 text-xs font-medium px-3 py-1.5 rounded-lg border border-slate-800 bg-slate-950/50 text-slate-300">
-              <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>{{ cap }}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <div class="lg:col-span-4">
-        <div class="rounded-2xl border border-slate-900 bg-slate-900/20 p-6 h-full">
-          <h3 class="font-bold text-lg mb-5">Account</h3>
-          <dl class="space-y-4 text-sm">
-            <div class="flex justify-between gap-4"><dt class="text-slate-500">Name</dt><dd class="text-slate-200 font-medium text-right">{{ panel.account.name }}</dd></div>
-            <div class="flex justify-between gap-4"><dt class="text-slate-500">Email</dt><dd class="text-slate-200 font-medium text-right break-all">{{ panel.account.email }}</dd></div>
-            <div class="flex justify-between gap-4"><dt class="text-slate-500">Roles</dt><dd class="text-slate-200 font-medium text-right">{{ panel.account.roles.join(', ') }}</dd></div>
-          </dl>
-          <div v-if="!panel.account.passwordChanged" class="mt-6 p-3 rounded-xl border border-amber-500/20 bg-amber-500/5 text-amber-300 text-xs leading-relaxed">
-            You're still on a default password. Please change it soon.
-          </div>
-        </div>
-      </div>
-    </section>
   </div>
 </template>

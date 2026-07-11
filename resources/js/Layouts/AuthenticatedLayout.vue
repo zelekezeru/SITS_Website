@@ -38,6 +38,11 @@ const hasLibraryAccess = computed(() => {
   return roles.some(r => allowed.includes(r));
 });
 
+const isWebsiteAdmin = computed(() => {
+  const roles = (user.value?.roles ?? []).map(r => r.toLowerCase());
+  return roles.some(r => ['superadmin', 'admin', 'editor'].includes(r));
+});
+
 const userMenuOpen = ref(false);
 const userMenuRef = ref(null);
 
@@ -133,11 +138,16 @@ watch(() => page.props.flash, (flash) => {
                   <p class="text-xs font-semibold text-white truncate">{{ user.name }}</p>
                 </li>
                 <li><Link :href="route('portal')" class="block px-4 py-2.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800/40 transition">Dashboard Hub</Link></li>
-                <li><Link :href="route('profile.edit')" class="block px-4 py-2.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800/40 transition">View Profile</Link></li>
+                <li><Link :href="route('profile.edit', { from: 'website' })" class="block px-4 py-2.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800/40 transition">View Profile</Link></li>
                 <li class="border-t border-slate-800/60 my-1"></li>
                 <li><a :href="lmsUrl" class="block px-4 py-2.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800/40 transition">{{ lmsLabel }}</a></li>
                 <li v-if="hasErpAccess"><Link :href="route('dashboard')" class="block px-4 py-2.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800/40 transition">ERP Portal</Link></li>
                 <li v-if="hasLibraryAccess"><Link :href="route('library.dashboard')" class="block px-4 py-2.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800/40 transition">Digital Library</Link></li>
+                <li v-if="isWebsiteAdmin">
+                  <a :href="route('website.admin.dashboard')" class="block px-4 py-2.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800/40 transition">
+                    Website Admin
+                  </a>
+                </li>
                 <li class="border-t border-slate-800/60 my-1"></li>
                 <li>
                   <Link :href="route('logout')" method="post" as="button" class="block w-full text-left px-4 py-2.5 text-xs text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition cursor-pointer">Sign Out</Link>

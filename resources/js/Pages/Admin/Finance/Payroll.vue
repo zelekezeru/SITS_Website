@@ -24,6 +24,10 @@ const runPayrollModalOpen = ref(false);
 
 const moneyFmt = (n) => Number(n || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
+// Total loan repayment withheld across a period's payslips (0 when none).
+const periodLoanTotal = (period) =>
+  (period.payslips || []).reduce((sum, p) => sum + Number(p.loan_deduction || 0), 0);
+
 const periodForm = useForm({
   name: '',
   start_date: '',
@@ -195,6 +199,10 @@ const rejectPeriod = () => {
             <p class="text-xs text-slate-500 mt-1" v-if="period.payment_date">
               Payment Date: {{ new Date(period.payment_date).toLocaleDateString() }}
             </p>
+            <div v-if="periodLoanTotal(period) > 0" class="mt-3 inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-400 bg-emerald-500/[0.07] border border-emerald-500/15 rounded-lg px-2.5 py-1">
+              <Icon name="Landmark" :size="13" />
+              <span>Loan deductions: {{ moneyFmt(periodLoanTotal(period)) }}</span>
+            </div>
           </div>
 
           <div class="flex items-center justify-between mt-6 pt-4 border-t border-slate-900">

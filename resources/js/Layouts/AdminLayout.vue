@@ -154,6 +154,11 @@ const hasErpAccess = computed(() => {
   return rolesLower.some(r => allowed.includes(r));
 });
 
+const isWebsiteAdmin = computed(() => {
+  const roles = user.value?.roles ?? [];
+  return roles.map(r => r.toLowerCase()).some(r => ['superadmin', 'admin', 'editor'].includes(r));
+});
+
 watch(currentPath, () => {
   mobileOpen.value = false;
   notifOpen.value = false;
@@ -300,14 +305,14 @@ watch(currentPath, () => {
     <!-- ===================== MAIN ===================== -->
     <div class="transition-all duration-300 ease-in-out" :class="collapsed ? 'lg:pl-[76px]' : 'lg:pl-[270px]'">
       <!-- Topbar -->
-      <header class="sticky top-0 z-30 h-16 flex items-center gap-3 px-4 sm:px-6 border-b border-slate-900 bg-slate-950/80 backdrop-blur-md">
+      <header class="sticky top-0 z-30 h-16 flex items-center gap-1.5 sm:gap-3 px-3 sm:px-6 border-b border-slate-900 bg-slate-950/80 backdrop-blur-md">
         <button class="lg:hidden w-9 h-9 flex items-center justify-center rounded-lg text-slate-400 hover:bg-slate-900" @click="mobileOpen = true">
           <Icon name="Menu" :size="20" />
         </button>
 
         <!-- Breadcrumb -->
-        <div class="min-w-0">
-          <p class="text-[11px] text-slate-500 font-medium uppercase tracking-wider truncate">{{ crumb.section }}</p>
+        <div class="hidden sm:block min-w-0">
+          <p class="text-[11px] text-slate-500 font-medium uppercase tracking-wider truncate hidden sm:block">{{ crumb.section }}</p>
           <h1 class="text-sm font-bold text-white truncate -mt-0.5">{{ crumb.label }}</h1>
         </div>
 
@@ -329,15 +334,15 @@ watch(currentPath, () => {
 
         <!-- Fiscal year switcher -->
         <div v-if="fiscalYear" class="relative">
-          <button class="flex items-center gap-2 h-9 px-3 rounded-xl border text-xs font-semibold transition-colors"
+          <button class="flex items-center justify-center gap-2 h-9 w-9 sm:w-auto px-0 sm:px-3 rounded-xl border text-xs font-semibold transition-colors"
                   :class="fiscalYear.isHistorical
                     ? 'border-amber-500/30 bg-amber-500/10 text-amber-300'
                     : 'border-slate-800 bg-slate-900/50 text-slate-300 hover:border-slate-700'"
                   @click="yearOpen = !yearOpen">
             <Icon name="CalendarDays" :size="15" />
-            <span>{{ fiscalYear.currentLabel || 'No year' }}</span>
+            <span class="hidden sm:inline">{{ fiscalYear.currentLabel || 'No year' }}</span>
             <span v-if="fiscalYear.isHistorical" class="hidden md:inline text-[9px] uppercase tracking-wide">· Historical</span>
-            <Icon name="ChevronDown" :size="14" class="transition-transform" :class="yearOpen ? 'rotate-180' : ''" />
+            <Icon name="ChevronDown" :size="14" class="transition-transform hidden sm:inline" :class="yearOpen ? 'rotate-180' : ''" />
           </button>
 
           <div v-if="yearOpen" class="fixed inset-0 z-40" @click="yearOpen = false"></div>
@@ -393,7 +398,7 @@ watch(currentPath, () => {
             leave-from-class="opacity-100" leave-to-class="opacity-0 -translate-y-1"
           >
             <div v-if="notifOpen"
-                 class="absolute right-0 mt-2 w-80 rounded-2xl border border-slate-800 bg-slate-900/95 backdrop-blur-xl shadow-2xl z-50 overflow-hidden">
+                 class="fixed top-16 left-4 right-4 md:absolute md:top-auto md:left-auto md:right-0 md:w-80 mt-2 rounded-2xl border border-slate-800 bg-slate-900/95 backdrop-blur-xl shadow-2xl z-50 overflow-hidden">
               <div class="px-4 py-3 border-b border-slate-800 flex items-center justify-between">
                 <span class="text-sm font-bold text-white">{{ t('notifications', 'Notifications') }}</span>
                 <span v-if="notifCount > 0" class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-blue-500/15 text-blue-400 border border-blue-500/20">
@@ -426,7 +431,7 @@ watch(currentPath, () => {
           </Transition>
         </div>
 
-        <div class="w-px h-6 bg-slate-800"></div>
+        <div class="hidden sm:block w-px h-6 bg-slate-800"></div>
 
         <!-- Avatar & Dropdown -->
         <div class="relative">
@@ -489,7 +494,7 @@ watch(currentPath, () => {
 
                 <!-- Profile -->
                 <Link 
-                  :href="route('profile.edit')" 
+                  :href="route('profile.edit', { from: 'erp' })" 
                   class="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-355 hover:text-white hover:bg-slate-800/50 transition-colors"
                   @click="userMenuOpen = false"
                 >
@@ -499,37 +504,59 @@ watch(currentPath, () => {
 
                 <div class="border-t border-slate-800/60 my-1"></div>
 
-                <!-- LMS Link -->
-                <a 
-                  :href="lmsUrl" 
-                  class="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-355 hover:text-white hover:bg-slate-800/50 transition-colors"
-                  @click="userMenuOpen = false"
-                >
-                  <Icon name="Briefcase" :size="15" class="text-slate-500" />
-                  <span>{{ lmsLabel }}</span>
-                </a>
-
-                <!-- ERP Portal (if they have roles to access ERP modules) -->
+                <!-- SITS ERP -->
                 <Link 
                   v-if="hasErpAccess"
                   :href="route('dashboard')" 
-                  class="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-355 hover:text-white hover:bg-slate-800/50 transition-colors"
+                  class="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800/50 transition-colors"
                   @click="userMenuOpen = false"
                 >
-                  <Icon name="ShieldCheck" :size="15" class="text-slate-500" />
-                  <span>ERP Portal</span>
+                  <Icon name="LayoutDashboard" :size="15" class="text-slate-500" />
+                  <span>SITS ERP</span>
                 </Link>
 
                 <!-- Digital Library -->
                 <Link 
-                  v-if="hasLibraryAccess"
                   :href="route('library.dashboard')" 
-                  class="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-355 hover:text-white hover:bg-slate-800/50 transition-colors"
+                  class="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800/50 transition-colors"
                   @click="userMenuOpen = false"
                 >
-                  <Icon name="FolderOpen" :size="15" class="text-slate-500" />
+                  <Icon name="BookOpen" :size="15" class="text-slate-500" />
                   <span>Digital Library</span>
                 </Link>
+
+                <!-- SITS LMS -->
+                <a 
+                  href="https://lms.sits.edu.et" 
+                  target="_blank"
+                  class="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800/50 transition-colors"
+                  @click="userMenuOpen = false"
+                >
+                  <Icon name="GraduationCap" :size="15" class="text-slate-500" />
+                  <span>SITS LMS</span>
+                </a>
+
+                <!-- Moodle -->
+                <a 
+                  href="/go/lms" 
+                  target="_blank"
+                  class="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800/50 transition-colors"
+                  @click="userMenuOpen = false"
+                >
+                  <Icon name="Laptop" :size="15" class="text-slate-500" />
+                  <span>Moodle</span>
+                </a>
+
+                <!-- Website Admin Console -->
+                <a 
+                  v-if="isWebsiteAdmin"
+                  :href="route('website.admin.dashboard')" 
+                  class="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800/50 transition-colors"
+                  @click="userMenuOpen = false"
+                >
+                  <Icon name="Globe" :size="15" class="text-slate-500" />
+                  <span>Website Admin</span>
+                </a>
 
                 <div class="border-t border-slate-800/60 my-1"></div>
 

@@ -63,17 +63,33 @@
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.05) !important;
             color: #f8fafc !important;
-            border-radius: 1rem !important;
+            border-radius: 1.5rem !important;
+            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25) !important;
+            overflow: hidden !important;
         }
         .card-header {
-            background: rgba(15, 23, 42, 0.6) !important;
+            background: rgba(15, 23, 42, 0.2) !important;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
             color: #ffffff !important;
             font-weight: 700;
+            padding: 1.25rem 1.5rem !important;
+            border-top-left-radius: 1.5rem !important;
+            border-top-right-radius: 1.5rem !important;
+        }
+        .card-body {
+            padding: 1.5rem !important;
+        }
+        .table-responsive {
+            border-radius: 1rem !important;
+            border: 1px solid rgba(255, 255, 255, 0.05) !important;
+            background-color: rgba(15, 23, 42, 0.2) !important;
+            overflow: hidden !important;
         }
         .table {
             color: #cbd5e1 !important;
             border-color: rgba(255, 255, 255, 0.05) !important;
+            margin-bottom: 0 !important;
+            border-collapse: collapse !important;
         }
         .table-striped tbody tr:nth-of-type(odd) {
             background-color: rgba(255, 255, 255, 0.01) !important;
@@ -85,12 +101,16 @@
         }
         .table td, .table th {
             border-color: rgba(255, 255, 255, 0.05) !important;
-            padding: 1rem 0.75rem !important;
+            padding: 1rem 1.5rem !important;
             vertical-align: middle !important;
         }
-        .thead-dark th {
+        .thead-dark th, thead th {
             background-color: rgba(15, 23, 42, 0.8) !important;
-            color: #ffffff !important;
+            color: #94a3b8 !important;
+            text-transform: uppercase !important;
+            font-size: 0.75rem !important;
+            font-weight: 700 !important;
+            letter-spacing: 0.05em !important;
             border-bottom: 2px solid rgba(255, 255, 255, 0.08) !important;
         }
         .form-control, .form-select {
@@ -107,6 +127,11 @@
         }
         label {
             color: #94a3b8 !important;
+        }
+
+        /* Remove underlines from all links in the admin panel */
+        a, a:hover, a:focus, a:active, a:visited {
+            text-decoration: none !important;
         }
     </style>
 </head>

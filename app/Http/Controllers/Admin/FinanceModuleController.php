@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\AttendancePermissionController;
 use App\Http\Controllers\ClosedDayController;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\EmployeeLoanController;
 use App\Http\Controllers\MassPermissionController;
 use App\Models\AttendanceImport;
 use App\Models\AttendanceRecord;
@@ -58,6 +59,11 @@ class FinanceModuleController extends Controller
         if ($routeName === 'admin.mass-permissions') {
             return Inertia::render('Admin/Finance/MassPermissions/Index',
                 $base + MassPermissionController::pageProps($request->user()));
+        }
+
+        if ($routeName === 'admin.loans') {
+            return Inertia::render('Admin/Finance/Loans/Index',
+                $base + EmployeeLoanController::pageProps($request->user()));
         }
 
         if ($routeName === 'admin.attendance') {

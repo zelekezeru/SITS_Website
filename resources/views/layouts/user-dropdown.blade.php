@@ -23,14 +23,16 @@
             <p class="text-xs font-semibold text-white truncate">{{ auth()->user()->name }}</p>
         </li>
         <li><a href="{{ route('portal') }}" class="block px-4 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800/40 transition">{{ __('app.dashboard') }}</a></li>
-        <li><a href="{{ route('profile.edit') }}" class="block px-4 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800/40 transition">{{ __('app.view_profile') }}</a></li>
+        <li><a href="{{ route('profile.edit', ['from' => 'website']) }}" class="block px-4 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800/40 transition">{{ __('app.view_profile') }}</a></li>
         <li class="border-t border-slate-800/60 my-1.5"></li>
-        <li><a href="/go/lms" class="block px-4 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800/40 transition">{{ $lmsLabel }}</a></li>
         @if ($user->hasAnyRole(['SUPERADMIN', 'ADMIN', 'EDITOR', 'TRAINER', 'STAFF', 'LIBRARIAN']))
-            <li><a href="/dashboard" class="block px-4 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800/40 transition">{{ __('app.erp_portal') }}</a></li>
+            <li><a href="/dashboard" class="flex items-center px-4 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800/40 transition"><i class="fa fa-dashboard w-4 mr-2 text-slate-500"></i> SITS ERP</a></li>
         @endif
-        @if ($user->hasAnyRole(['STUDENT', 'TRAINER', 'LIBRARIAN', 'ADMIN', 'SUPERADMIN', 'STAFF', 'EDITOR']))
-            <li><a href="/library/portal" class="block px-4 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800/40 transition">{{ __('app.digital_library') }}</a></li>
+        <li><a href="/library/portal" class="flex items-center px-4 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800/40 transition"><i class="fa fa-book w-4 mr-2 text-slate-500"></i> Digital Library</a></li>
+        <li><a href="https://lms.sits.edu.et" target="_blank" class="flex items-center px-4 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800/40 transition"><i class="fa fa-graduation-cap w-4 mr-2 text-slate-500"></i> SITS LMS</a></li>
+        <li><a href="/go/lms" target="_blank" class="flex items-center px-4 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800/40 transition"><i class="fa fa-laptop w-4 mr-2 text-slate-500"></i> Moodle</a></li>
+        @if ($user->hasAnyRole(['SUPERADMIN', 'ADMIN', 'EDITOR']))
+            <li><a href="{{ route('website.admin.dashboard') }}" class="flex items-center px-4 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800/40 transition"><i class="fa fa-globe w-4 mr-2 text-slate-500"></i> Website Admin</a></li>
         @endif
         <li class="border-t border-slate-800/60 my-1.5"></li>
         <li>

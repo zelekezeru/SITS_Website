@@ -36,11 +36,11 @@ const setLocale = (value) => {
   <div class="relative">
     <button
       @click="open = !open"
-      class="flex items-center gap-1.5 h-9 px-3 rounded-xl border border-slate-800 bg-slate-900/50 text-xs font-semibold text-slate-300 hover:border-slate-700 transition-colors focus:outline-none cursor-pointer"
+      class="flex items-center justify-center gap-1.5 h-9 w-9 sm:w-auto px-0 sm:px-3 rounded-xl border border-slate-800 bg-slate-900/50 text-xs font-semibold text-slate-300 hover:border-slate-700 transition-colors focus:outline-none cursor-pointer"
     >
       <Icon name="Globe" :size="14" class="text-slate-400" />
-      <span>{{ currentLabel }}</span>
-      <Icon name="ChevronDown" :size="12" class="text-slate-500 transition-transform duration-200" :class="open ? 'rotate-180' : ''" />
+      <span class="hidden sm:inline">{{ currentLabel }}</span>
+      <Icon name="ChevronDown" :size="12" class="text-slate-500 transition-transform duration-200 hidden sm:inline" :class="open ? 'rotate-180' : ''" />
     </button>
 
     <!-- click-away overlay -->

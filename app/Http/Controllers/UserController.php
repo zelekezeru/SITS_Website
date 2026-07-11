@@ -103,14 +103,27 @@ class UserController extends Controller
     }
 
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(User $user)
     {
-        $user->delete();
+        if ($user->hasRole('President / Super Admin')) {
+            return redirect()->route('users.list')
+                ->with('error', 'The superadmin account cannot be deactivated.');
+        }
+
+        $exists = \App\Models\DeactivationRequest::where('user_id', $user->id)
+            ->where('status', 'pending')
+            ->exists();
+
+        if (!$exists) {
+            \App\Models\DeactivationRequest::create([
+                'user_id' => $user->id,
+                'type' => 'archive',
+                'status' => 'pending',
+                'reason' => 'Requested Archive by Admin',
+            ]);
+        }
 
         return redirect()->route('users.list')
-            ->with('success', 'User deleted successfully');
+            ->with('success', 'Archive request has been submitted for admin approval.');
     }
 }

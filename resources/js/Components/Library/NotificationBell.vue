@@ -64,7 +64,7 @@ onUnmounted(() => document.removeEventListener('keydown', onKey));
         <!-- dropdown -->
         <div
             v-if="open"
-            class="absolute right-0 z-40 mt-2 w-80 origin-top-right rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-lg"
+            class="fixed top-16 left-4 right-4 md:absolute md:top-auto md:left-auto md:right-0 md:w-80 z-40 mt-2 origin-top-right rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-lg"
         >
             <div class="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 px-4 py-2.5">
                 <p class="text-sm font-semibold text-gray-900 dark:text-white">Notifications</p>

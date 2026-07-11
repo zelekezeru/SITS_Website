@@ -234,6 +234,8 @@ Route::middleware(['auth', 'active', 'password.fresh'])->group(function () {
         Route::delete('/admin/organization/archive/documents/{document}', [\App\Http\Controllers\Admin\OrganizationArchiveController::class, 'destroy'])->name('admin.organization.archive.documents.destroy');
         Route::post('/admin/users/{user}/role', [AdminCrudController::class, 'updateUserRole'])->name('admin.users.role.update');
         Route::post('/admin/users/{user}/toggle', [AdminCrudController::class, 'toggleUserApproval'])->name('admin.users.toggle');
+        Route::post('/admin/deactivations/{request}/approve', [AdminCrudController::class, 'approveDeactivation'])->name('admin.deactivations.approve');
+        Route::post('/admin/deactivations/{request}/reject', [AdminCrudController::class, 'rejectDeactivation'])->name('admin.deactivations.reject');
     });
 
     /*
@@ -245,6 +247,17 @@ Route::middleware(['auth', 'active', 'password.fresh'])->group(function () {
         Route::post('/admin/closed-days', [\App\Http\Controllers\ClosedDayController::class, 'store'])->name('admin.closed-days.store');
         Route::put('/admin/closed-days/{closedDay}', [\App\Http\Controllers\ClosedDayController::class, 'update'])->name('admin.closed-days.update');
         Route::delete('/admin/closed-days/{closedDay}', [\App\Http\Controllers\ClosedDayController::class, 'destroy'])->name('admin.closed-days.destroy');
+    });
+
+    /*
+    |----------------------------------------------------------------------
+    | Employee salary loans (auto payroll deduction + manual settlement)
+    |----------------------------------------------------------------------
+    */
+    Route::middleware('can:manage deductions')->group(function () {
+        Route::post('/admin/loans', [\App\Http\Controllers\EmployeeLoanController::class, 'store'])->name('admin.loans.store');
+        Route::post('/admin/loans/{loan}/payments', [\App\Http\Controllers\EmployeeLoanController::class, 'payment'])->name('admin.loans.payments.store');
+        Route::post('/admin/loans/{loan}/cancel', [\App\Http\Controllers\EmployeeLoanController::class, 'cancel'])->name('admin.loans.cancel');
     });
 
     Route::get('/finance/mass-permissions', [\App\Http\Controllers\MassPermissionController::class, 'index'])

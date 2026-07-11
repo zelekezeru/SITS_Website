@@ -38,6 +38,19 @@
             <!-- Finalization Panel -->
             <div v-if="canFinalize && termination.status === 'pending'" class="border-t border-gray-200 pt-6 mt-6">
               <h3 class="text-lg font-semibold mb-4">Finalize Termination</h3>
+
+              <!-- Loan clearance gate -->
+              <div v-if="!loanClearance.cleared" class="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-3">
+                <p class="text-sm font-semibold text-red-800">Outstanding salary loan — clearance blocked</p>
+                <p class="text-sm text-red-700 mt-1">
+                  This employee still owes <span class="font-bold">{{ money(loanClearance.outstanding) }} ETB</span>.
+                  Settle the balance under <span class="font-semibold">Finance → Loans</span> (record a settlement payment) before finalizing.
+                </p>
+              </div>
+              <div v-else class="mb-4 rounded-md border border-green-200 bg-green-50 px-4 py-3">
+                <p class="text-sm font-medium text-green-800">✓ No outstanding salary loans — cleared for finalization.</p>
+              </div>
+
               <form @submit.prevent="submitFinalize" class="space-y-4">
                 <div>
                   <label class="block text-sm font-medium mb-2">Severance Amount (ETB)</label>
@@ -59,8 +72,8 @@
                   </label>
                 </div>
 
-                <button type="submit" :disabled="submitting" class="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400">
-                  {{ submitting ? 'Processing...' : 'Finalize Termination' }}
+                <button type="submit" :disabled="submitting || !loanClearance.cleared" class="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed">
+                  {{ submitting ? 'Processing...' : (!loanClearance.cleared ? 'Settle Loan to Finalize' : 'Finalize Termination') }}
                 </button>
               </form>
             </div>
@@ -94,7 +107,10 @@ import { Link, router } from '@inertiajs/vue3';
 const props = defineProps({
   termination: Object,
   canFinalize: Boolean,
+  loanClearance: { type: Object, default: () => ({ outstanding: 0, cleared: true }) },
 });
+
+const money = (n) => Number(n || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 const finalizeData = ref({
   severance_amount: props.termination.severance_amount || '',

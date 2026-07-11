@@ -1,5 +1,5 @@
 <x-admin-layout>
-    <div class="col-md-12 pt-5 mt-5 container">
+    <div class="col-md-12 pt-2 mt-2 container">
         <div class="card">
             <h2 class="card-header text-center">List Of Trainers</h2>
             <div class="card-body">

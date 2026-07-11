@@ -15,6 +15,7 @@ const props = defineProps({
   users: { type: Array, default: () => [] },
   roles: { type: Array, default: () => [] },
   permissions: { type: Array, default: () => [] },
+  deactivationRequests: { type: Array, default: () => [] },
 });
 
 const { confirm } = useConfirm();
@@ -23,6 +24,7 @@ const permissionSearch = ref('');
 
 const activeTab = computed(() => {
   if (props.routeName === 'admin.users.approvals') return 'approvals';
+  if (props.routeName === 'admin.users.deactivations') return 'deactivations';
   if (props.routeName === 'admin.users.roles') return 'roles';
   return 'all';
 });
@@ -66,6 +68,26 @@ const changeUserRole = async (id, roleName) => {
   });
   if (confirmed) {
     router.post(`/admin/users/${id}/role`, { role: roleName }, { preserveScroll: true });
+  }
+};
+
+const approveRequest = async (id) => {
+  const confirmed = await confirm({
+    title: 'Approve Deactivation',
+    message: 'Are you sure you want to approve this deactivation request? The user will be deactivated.',
+  });
+  if (confirmed) {
+    router.post(`/admin/deactivations/${id}/approve`, {}, { preserveScroll: true });
+  }
+};
+
+const rejectRequest = async (id) => {
+  const confirmed = await confirm({
+    title: 'Reject Deactivation',
+    message: 'Are you sure you want to reject this request?',
+  });
+  if (confirmed) {
+    router.post(`/admin/deactivations/${id}/reject`, {}, { preserveScroll: true });
   }
 };
 
@@ -114,6 +136,19 @@ const hasPermission = (role, permissionName) => {
           class="bg-amber-500/10 text-amber-400 border border-amber-500/20 px-1.5 py-0.5 rounded text-[10px]"
         >
           {{ users.filter(u => !u.is_approved).length }}
+        </span>
+      </Link>
+      <Link
+        href="/admin/users/deactivations"
+        class="pb-3 px-4 text-xs font-bold tracking-wide transition-colors whitespace-nowrap flex items-center gap-1.5 cursor-pointer"
+        :class="activeTab === 'deactivations' ? 'text-blue-400 border-b-2 border-blue-500' : 'text-slate-500 hover:text-slate-350'"
+      >
+        <span>Deactivation Requests</span>
+        <span 
+          v-if="deactivationRequests.filter(r => r.status === 'pending').length > 0"
+          class="bg-rose-500/10 text-rose-400 border border-rose-500/20 px-1.5 py-0.5 rounded text-[10px]"
+        >
+          {{ deactivationRequests.filter(r => r.status === 'pending').length }}
         </span>
       </Link>
       <Link
@@ -178,6 +213,67 @@ const hasPermission = (role, permissionName) => {
               <tr v-if="!filteredUsers.length">
                 <td colspan="4" class="py-8 text-center text-slate-650 italic text-xs">
                   No users found.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── TAB: DEACTIVATION REQUESTS ─── -->
+    <div v-if="activeTab === 'deactivations'" class="space-y-4">
+      <div class="rounded-2xl border border-slate-900 bg-slate-900/10 shadow-md p-6">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="border-b border-slate-900 text-xs font-semibold text-slate-500 uppercase">
+                <th class="pb-3">User Name</th>
+                <th class="pb-3">Email Address</th>
+                <th class="pb-3">Request Type</th>
+                <th class="pb-3">Status</th>
+                <th class="pb-3">Reason</th>
+                <th class="pb-3 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="text-sm divide-y divide-slate-900">
+              <tr v-for="req in deactivationRequests" :key="req.id" class="hover:bg-slate-900/40 transition-colors">
+                <td class="py-4 font-semibold text-slate-200">{{ req.user?.name }}</td>
+                <td class="py-4 text-slate-400 font-mono text-xs">{{ req.user?.email }}</td>
+                <td class="py-4">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-slate-900 border border-slate-800"
+                        :class="req.type === 'delete' ? 'text-rose-400 border-rose-500/10' : req.type === 'archive' ? 'text-amber-400 border-amber-500/10' : 'text-blue-400 border-blue-500/10'">
+                    {{ req.type }}
+                  </span>
+                </td>
+                <td class="py-4">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider"
+                        :class="req.status === 'approved' ? 'bg-emerald-500/10 text-emerald-400' : req.status === 'rejected' ? 'bg-rose-500/10 text-rose-400' : 'bg-amber-500/10 text-amber-400'">
+                    {{ req.status }}
+                  </span>
+                </td>
+                <td class="py-4 text-slate-450 text-xs max-w-xs truncate" :title="req.reason">{{ req.reason || 'No reason specified' }}</td>
+                <td class="py-4 text-right">
+                  <div v-if="req.status === 'pending'" class="flex justify-end gap-2">
+                    <button 
+                      @click="approveRequest(req.id)"
+                      class="px-2.5 py-1 text-xs rounded-lg font-bold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/25 cursor-pointer"
+                    >
+                      Approve
+                    </button>
+                    <button 
+                      @click="rejectRequest(req.id)"
+                      class="px-2.5 py-1 text-xs rounded-lg font-bold bg-rose-500/10 hover:bg-rose-500/20 text-rose-450 border border-rose-500/25 cursor-pointer"
+                    >
+                      Reject
+                    </button>
+                  </div>
+                  <span v-else class="text-xs text-slate-600 italic">Handled</span>
+                </td>
+              </tr>
+              <tr v-if="!deactivationRequests.length">
+                <td colspan="6" class="py-8 text-center text-slate-650 italic text-xs">
+                  No deactivation or delete requests found.
                 </td>
               </tr>
             </tbody>

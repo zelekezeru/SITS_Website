@@ -430,8 +430,9 @@ class ModuleController extends Controller
         // ==========================================
         // ADMINISTRATION MODULE
         // ==========================================
-        if (in_array($routeName, ['admin.users', 'admin.users.index', 'admin.users.approvals', 'admin.users.roles'])) {
+        if (in_array($routeName, ['admin.users', 'admin.users.index', 'admin.users.approvals', 'admin.users.roles', 'admin.users.deactivations'])) {
             $users = User::with('roles')->orderBy('name')->get();
+            $deactivationRequests = \App\Models\DeactivationRequest::with('user')->latest()->get();
 
             return Inertia::render('Admin/Administration/UsersAccess', [
                 'module' => $module,
@@ -440,6 +441,7 @@ class ModuleController extends Controller
                 'users' => $users,
                 'roles' => Role::with('permissions')->get(),
                 'permissions' => \Spatie\Permission\Models\Permission::all(),
+                'deactivationRequests' => $deactivationRequests,
             ]);
         }
 

@@ -136,12 +136,12 @@ onUnmounted(() => document.removeEventListener('keydown', handleKeydown));
     <!-- Trigger button -->
     <button
         @click="isOpen = true"
-        class="flex items-center gap-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-3 py-1.5 text-sm text-gray-500 dark:text-gray-400 hover:border-indigo-300 dark:hover:border-indigo-700 hover:text-gray-700 dark:hover:text-gray-200 transition w-48"
+        class="flex items-center justify-center sm:justify-start gap-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 h-9 w-9 sm:h-auto sm:w-48 p-0 sm:px-3 sm:py-1.5 text-sm text-gray-500 dark:text-gray-400 hover:border-indigo-300 dark:hover:border-indigo-700 hover:text-gray-700 dark:hover:text-gray-200 transition"
     >
         <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
-        <span class="flex-1 text-left truncate">Search…</span>
+        <span class="hidden sm:inline flex-1 text-left truncate">Search…</span>
         <kbd class="hidden sm:inline-flex items-center gap-0.5 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-1.5 py-0.5 text-[10px] font-medium text-gray-400 dark:text-gray-500">
             <span>Ctrl</span><span>K</span>
         </kbd>
