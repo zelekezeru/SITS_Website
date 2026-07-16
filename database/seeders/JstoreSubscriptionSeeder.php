@@ -36,15 +36,25 @@ class JstoreSubscriptionSeeder extends Seeder
         $records = [];
         try {
             \Illuminate\Support\Facades\DB::connection('joomla')->getPdo();
-            
+
             $prefix = config('database.connections.joomla.prefix', 'josn9_');
-            $rows = \Illuminate\Support\Facades\DB::connection('joomla')->select("
-                SELECT s.id as sub_id, s.user_id, u.email, s.price as amount_paid, s.created_date as start_date, s.expiry_date, s.status, p.title as plan_name
-                FROM {$prefix}jstore_subscriptions s
-                LEFT JOIN {$prefix}users u ON s.user_id = u.id
-                LEFT JOIN {$prefix}jstore_packages p ON s.package_id = p.id
-            ");
-            
+            try {
+                $rows = \Illuminate\Support\Facades\DB::connection('joomla')->select("
+                    SELECT s.id as sub_id, s.user_id, u.email, s.price as amount_paid, s.created_date as start_date, s.expiry_date, s.status, p.title as plan_name
+                    FROM {$prefix}jstore_subscriptions s
+                    LEFT JOIN {$prefix}users u ON s.user_id = u.id
+                    LEFT JOIN {$prefix}jstore_packages p ON s.package_id = p.id
+                ");
+            } catch (\Illuminate\Database\QueryException $e) {
+                // Connection works but our guessed table names don't exist.
+                // Discover what subscription-ish tables the Joomla DB actually
+                // has, so the operator can report back the real names.
+                $this->command->warn('Expected JSTORE tables not found under prefix "' . $prefix . '": ' . $e->getMessage());
+                $this->discoverCandidateTables();
+
+                return;
+            }
+
             foreach ($rows as $row) {
                 $planType = 'monthly';
                 $name = strtolower($row->plan_name ?? '');
@@ -110,6 +120,44 @@ class JstoreSubscriptionSeeder extends Seeder
 
         if (empty($records)) {
             $this->command->warn('⚠  No JSTORE records configured yet. Fill in $records in JstoreSubscriptionSeeder.php after exporting the Joomla database.');
+        }
+    }
+
+    /**
+     * List tables in the Joomla DB that look like they belong to a
+     * subscription / membership / e-commerce extension. Run when the guessed
+     * JSTORE table names miss, so the real extension's tables can be spotted
+     * (J2Store, OS Membership, Akeeba Subs, PayPlans, …) and the import
+     * query rewritten against them.
+     */
+    private function discoverCandidateTables(): void
+    {
+        try {
+            $db = config('database.connections.joomla.database');
+            $candidates = \Illuminate\Support\Facades\DB::connection('joomla')->select(
+                "SELECT TABLE_NAME, TABLE_ROWS FROM information_schema.TABLES
+                 WHERE TABLE_SCHEMA = ?
+                   AND (TABLE_NAME LIKE '%jstore%' OR TABLE_NAME LIKE '%j2store%'
+                     OR TABLE_NAME LIKE '%subscri%' OR TABLE_NAME LIKE '%member%'
+                     OR TABLE_NAME LIKE '%akeeba%' OR TABLE_NAME LIKE '%payplan%')
+                 ORDER BY TABLE_NAME",
+                [$db]
+            );
+
+            if (empty($candidates)) {
+                $this->command->warn('No subscription-like tables found in the Joomla DB at all — the subscription extension may live in a different database, or was never installed here.');
+
+                return;
+            }
+
+            $this->command->info('Subscription-like tables actually present in the Joomla DB:');
+            $this->command->table(
+                ['Table', '~Rows'],
+                array_map(fn ($t) => [$t->TABLE_NAME, $t->TABLE_ROWS], $candidates)
+            );
+            $this->command->info('→ Update the SELECT in JstoreSubscriptionSeeder to match these tables, then re-run.');
+        } catch (\Throwable $e) {
+            $this->command->warn('Could not inspect information_schema: ' . $e->getMessage());
         }
     }
 }
