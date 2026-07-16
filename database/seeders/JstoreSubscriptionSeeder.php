@@ -137,25 +137,43 @@ class JstoreSubscriptionSeeder extends Seeder
             $candidates = \Illuminate\Support\Facades\DB::connection('joomla')->select(
                 "SELECT TABLE_NAME, TABLE_ROWS FROM information_schema.TABLES
                  WHERE TABLE_SCHEMA = ?
-                   AND (TABLE_NAME LIKE '%jstore%' OR TABLE_NAME LIKE '%j2store%'
+                   AND (TABLE_NAME LIKE '%jstor%' OR TABLE_NAME LIKE '%j2store%'
                      OR TABLE_NAME LIKE '%subscri%' OR TABLE_NAME LIKE '%member%'
-                     OR TABLE_NAME LIKE '%akeeba%' OR TABLE_NAME LIKE '%payplan%')
+                     OR TABLE_NAME LIKE '%akeeba%' OR TABLE_NAME LIKE '%payplan%'
+                     OR TABLE_NAME LIKE '%shop%' OR TABLE_NAME LIKE '%order%')
                  ORDER BY TABLE_NAME",
                 [$db]
             );
 
-            if (empty($candidates)) {
-                $this->command->warn('No subscription-like tables found in the Joomla DB at all — the subscription extension may live in a different database, or was never installed here.');
-
-                return;
+            if (! empty($candidates)) {
+                $this->command->info('Subscription-like tables actually present in the Joomla DB:');
+                $this->command->table(
+                    ['Table', '~Rows'],
+                    array_map(fn ($t) => [$t->TABLE_NAME, $t->TABLE_ROWS], $candidates)
+                );
             }
 
-            $this->command->info('Subscription-like tables actually present in the Joomla DB:');
-            $this->command->table(
-                ['Table', '~Rows'],
-                array_map(fn ($t) => [$t->TABLE_NAME, $t->TABLE_ROWS], $candidates)
+            // Full component inventory: group every table by the token after the
+            // Joomla prefix. An extension with an unexpected name (so none of the
+            // LIKE patterns above hit it) still shows up here.
+            $prefix = config('database.connections.joomla.prefix', 'josn9_');
+            $components = \Illuminate\Support\Facades\DB::connection('joomla')->select(
+                "SELECT SUBSTRING_INDEX(SUBSTRING(TABLE_NAME, ?), '_', 1) AS component,
+                        COUNT(*) AS tbl_count,
+                        COALESCE(SUM(TABLE_ROWS), 0) AS total_rows
+                 FROM information_schema.TABLES
+                 WHERE TABLE_SCHEMA = ? AND TABLE_NAME LIKE ?
+                 GROUP BY component
+                 ORDER BY total_rows DESC, component",
+                [strlen($prefix) + 1, $db, $prefix.'%']
             );
-            $this->command->info('→ Update the SELECT in JstoreSubscriptionSeeder to match these tables, then re-run.');
+
+            $this->command->info('Component inventory (every extension with tables in this DB):');
+            $this->command->table(
+                ['Component', 'Tables', '~Total rows'],
+                array_map(fn ($c) => [$c->component, $c->tbl_count, $c->total_rows], $components)
+            );
+            $this->command->info('→ If no commerce/subscription component appears with data, the JSTORE subscriptions were never stored in this Joomla DB — fill $records manually (or import from CSV) instead.');
         } catch (\Throwable $e) {
             $this->command->warn('Could not inspect information_schema: ' . $e->getMessage());
         }
