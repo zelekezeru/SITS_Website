@@ -51,7 +51,11 @@ class HandleInertiaRequests extends Middleware
                     'profile_image'     => $user->profile_image,
                     'roles'             => $user->roles->pluck('name'),
                 ] : null,
-                'permissions' => $user ? $user->getPermissionNames() : [],
+                // getAllPermissions() = direct + role-inherited. getPermissionNames()
+                // (Spatie 6.x) returns ONLY direct permissions, and since every user
+                // here is granted access via roles, that would ship an empty list and
+                // collapse every permission-gated nav item (e.g. the library sidebar).
+                'permissions' => $user ? $user->getAllPermissions()->pluck('name')->values() : [],
                 'pending_users' => $isPresident
                     ? \App\Models\User::where('is_approved', false)->get(['id', 'name', 'email'])
                     : [],
