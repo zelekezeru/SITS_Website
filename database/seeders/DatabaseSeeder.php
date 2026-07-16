@@ -26,7 +26,7 @@ class DatabaseSeeder extends Seeder
             LibraryPermissionsSeeder::class,    // Library ILS permissions → unified SITS roles
 
             // ---- ERP reference data ----
-            OrganizationSeeder::class,          // campuses, departments, positions
+            // OrganizationSeeder::class,          // campuses, departments, positions
             JobDescriptionSeeder::class,        // JDs + versions (needs positions)
             TaxBracketSeeder::class,
             PayrollSettingsSeeder::class,
