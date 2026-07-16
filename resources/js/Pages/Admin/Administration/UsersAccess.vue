@@ -61,13 +61,33 @@ const toggleUserApproval = async (id, currentStatus) => {
   }
 };
 
-const changeUserRole = async (id, roleName) => {
+// Roles the user does NOT yet hold (candidates for the "add role" dropdown).
+const availableRolesFor = (user) => {
+  const owned = new Set((user.roles || []).map(r => r.name));
+  return props.roles.filter(r => !owned.has(r.name));
+};
+
+// Persist the FULL desired role set; the backend syncs additions/removals.
+const setUserRoles = (id, roleNames) => {
+  router.post(`/admin/users/${id}/role`, { roles: roleNames }, { preserveScroll: true });
+};
+
+const addRole = (user, roleName) => {
+  if (!roleName) return;
+  const next = [...(user.roles || []).map(r => r.name), roleName];
+  setUserRoles(user.id, next);
+};
+
+const removeRole = async (user, roleName) => {
+  // Keep at least one role so accounts never become orphaned.
+  if ((user.roles || []).length <= 1) return;
   const confirmed = await confirm({
-    title: 'Change User Role',
-    message: `Are you sure you want to change this user's role to "${roleName}"?`,
+    title: 'Remove Role',
+    message: `Remove the "${roleName}" role from ${user.name}?`,
   });
   if (confirmed) {
-    router.post(`/admin/users/${id}/role`, { role: roleName }, { preserveScroll: true });
+    const next = (user.roles || []).map(r => r.name).filter(n => n !== roleName);
+    setUserRoles(user.id, next);
   }
 };
 
@@ -180,7 +200,7 @@ const hasPermission = (role, permissionName) => {
               <tr class="border-b border-slate-900 text-xs font-semibold text-slate-500 uppercase">
                 <th class="pb-3">User Name</th>
                 <th class="pb-3">Email Address</th>
-                <th class="pb-3" v-if="activeTab === 'all'">System Role</th>
+                <th class="pb-3" v-if="activeTab === 'all'">System Roles</th>
                 <th class="pb-3 text-right">Approved Status</th>
               </tr>
             </thead>
@@ -189,14 +209,34 @@ const hasPermission = (role, permissionName) => {
                 <td class="py-4 font-semibold text-slate-200">{{ user.name }}</td>
                 <td class="py-4 text-slate-400 font-mono text-xs">{{ user.email }}</td>
                 <td class="py-4" v-if="activeTab === 'all'">
-                  <select 
-                    :value="user.roles?.[0]?.name || ''"
-                    @change="changeUserRole(user.id, $event.target.value)"
-                    class="bg-slate-950/60 border border-slate-850 focus:border-blue-500/50 rounded-lg px-3 py-1.5 text-slate-200 text-xs focus:outline-none"
-                  >
-                    <option value="" disabled>Select Role</option>
-                    <option v-for="role in roles" :key="role.id" :value="role.name">{{ role.name }}</option>
-                  </select>
+                  <div class="flex flex-wrap items-center gap-1.5 max-w-md">
+                    <!-- Current roles (removable chips) -->
+                    <span
+                      v-for="role in (user.roles || [])"
+                      :key="role.id"
+                      class="inline-flex items-center gap-1 pl-2.5 pr-1.5 py-1 rounded-lg bg-blue-500/10 border border-blue-500/25 text-blue-300 text-[11px] font-semibold"
+                    >
+                      {{ role.name }}
+                      <button
+                        v-if="(user.roles || []).length > 1"
+                        @click="removeRole(user, role.name)"
+                        class="w-4 h-4 flex items-center justify-center rounded hover:bg-rose-500/20 hover:text-rose-400 transition-colors cursor-pointer leading-none"
+                        title="Remove role"
+                      >&times;</button>
+                    </span>
+                    <span v-if="!(user.roles || []).length" class="text-[11px] text-slate-600 italic">No role assigned</span>
+
+                    <!-- Add another role -->
+                    <select
+                      v-if="availableRolesFor(user).length"
+                      value=""
+                      @change="addRole(user, $event.target.value); $event.target.value = ''"
+                      class="bg-slate-950/60 border border-slate-850 focus:border-blue-500/50 rounded-lg px-2 py-1 text-slate-300 text-[11px] focus:outline-none cursor-pointer"
+                    >
+                      <option value="" disabled selected>+ Add role</option>
+                      <option v-for="role in availableRolesFor(user)" :key="role.id" :value="role.name">{{ role.name }}</option>
+                    </select>
+                  </div>
                 </td>
                 <td class="py-4 text-right">
                   <button 

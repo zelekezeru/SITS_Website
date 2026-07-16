@@ -42,8 +42,13 @@ class HomeController extends Controller
     {
         $user = auth()->user();
 
-        // Redirect employees directly to their ERP landing page
-        if ($user && !$user->roles->isEmpty() && !$user->hasRole('STUDENT')) {
+        // Send users to their dedicated ERP landing page — but ONLY when their
+        // role actually resolves to one. Roles without a dedicated landing
+        // (Librarian, SUPERADMIN-only, students, plain website users…) fall back
+        // to THIS portal hub; redirecting them here again would loop
+        // (/portal → /portal → …) and surface as ERR_TOO_MANY_REDIRECTS, so
+        // those users render the hub directly instead.
+        if ($user && \App\Support\RoleLanding::routeName($user) !== \App\Support\RoleLanding::FALLBACK) {
             return redirect(\App\Support\RoleLanding::url($user));
         }
 

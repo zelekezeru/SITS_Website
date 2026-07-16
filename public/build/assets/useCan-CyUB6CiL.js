@@ -1,1 +1,0 @@
-import{B as u,k as c}from"./app-XuxZkYkN.js";function l(){const o=u(),n=c(()=>o.props.auth?.permissions??[]),e=c(()=>o.props.auth?.roles??[]),a=s=>n.value.includes(s);return{can:a,hasRole:s=>e.value.includes(s),canAny:(...s)=>s.some(t=>a(t)),permissions:n,roles:e}}export{l as u};

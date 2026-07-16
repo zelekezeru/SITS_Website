@@ -81,11 +81,14 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user): RedirectResponse
     {
-        // Validate input data
+        // Validate input data. Accept either a multi-role `roles[]` array or a
+        // single legacy `role` string.
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . $user->id,
-            'role' => 'required|string|exists:roles,name',
+            'roles'   => ['required_without:role', 'array', 'min:1'],
+            'roles.*' => ['string', 'exists:roles,name'],
+            'role'    => ['required_without:roles', 'string', 'exists:roles,name'],
         ]);
 
         // Update user details
@@ -94,8 +97,8 @@ class UserController extends Controller
             'email' => $validatedData['email'],
         ]);
 
-        // Sync user role
-        $user->syncRoles($validatedData['role']);
+        // Sync user roles (full desired set)
+        $user->syncRoles($validatedData['roles'] ?? [$validatedData['role']]);
 
         // Redirect with a success message
         return redirect()->route('users.list')

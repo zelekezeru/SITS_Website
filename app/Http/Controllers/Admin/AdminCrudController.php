@@ -143,13 +143,21 @@ class AdminCrudController extends Controller
 
     public function updateUserRole(Request $request, User $user)
     {
-        $request->validate([
-            'role' => ['required', 'string', 'exists:roles,name'],
+        // A user may hold several roles at once (Spatie many-to-many). The UI
+        // posts the FULL desired set each time; syncRoles reconciles additions
+        // and removals in one call. A single legacy `role` string is still
+        // accepted for backward compatibility.
+        $data = $request->validate([
+            'roles'   => ['required_without:role', 'array', 'min:1'],
+            'roles.*' => ['string', 'exists:roles,name'],
+            'role'    => ['required_without:roles', 'string', 'exists:roles,name'],
         ]);
 
-        $user->syncRoles([$request->role]);
+        $roles = $data['roles'] ?? [$data['role']];
 
-        return redirect()->back()->with('success', "User role updated successfully.");
+        $user->syncRoles($roles);
+
+        return redirect()->back()->with('success', 'User roles updated successfully.');
     }
 
     public function toggleUserApproval(User $user)
