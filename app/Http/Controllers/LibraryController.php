@@ -89,28 +89,15 @@ class LibraryController extends Controller
     }
 
     /**
-     * The subscriber-only digital library portal.
-     * Shows all available books and resources.
+     * JSTOR digital library portal gateway.
+     *
+     * Access policy: any authenticated SITS user may access JSTOR.
+     * (JSTOR Open Africa Access — sits.edu.et referring-URL scheme.)
+     * No subscription check is required; authentication is the gate.
      */
     public function portal()
     {
-        $user = Auth::user();
-
-        $subscription = LibrarySubscription::where('user_id', $user->id)
-            ->active()
-            ->latest()
-            ->first();
-
-        // Admin/Superadmin/Librarian bypass subscription check
-        $hasBypass = $user->hasAnyRole(['SUPERADMIN', 'ADMIN', 'LIBRARIAN', 'President / Super Admin']);
-
-        // If no active subscription and no bypass, redirect to plans
-        if (! $subscription && ! $hasBypass) {
-            return redirect()->route('library.plans')
-                ->with('info', 'You need an active subscription to access the library portal.');
-        }
-
-        $targetUrl = config('services.jstore.url', 'https://library.sits.edu.et');
+        $targetUrl = config('services.jstore.url', 'https://www.jstor.org/');
         return redirect()->away($targetUrl);
     }
 
