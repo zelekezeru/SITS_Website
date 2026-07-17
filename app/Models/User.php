@@ -197,15 +197,24 @@ class User extends Authenticatable
     }
 
     /**
-     * The user's primary role as a library Role enum, or null when the user's
-     * top role is a SITS/ERP role that isn't part of the library enum
-     * (tryFrom keeps this graceful during the unified-RBAC transition).
+     * The user's primary role as a library Role enum. The unified SITS roles
+     * use different names (LIBRARIAN, TRAINER, …) than the library enum's
+     * values, so they are translated here; tryFrom keeps any legacy lowercase
+     * names graceful during the unified-RBAC transition.
      */
     public function primaryRole(): ?Role
     {
         $roleName = $this->roles->first()?->name;
 
-        return $roleName ? Role::tryFrom($roleName) : null;
+        return match ($roleName) {
+            'SUPERADMIN', 'President / Super Admin' => Role::SUPER_ADMIN,
+            'ADMIN'             => Role::CAMPUS_ADMIN,
+            'LIBRARIAN'         => Role::LIBRARIAN,
+            'TRAINER'           => Role::INSTRUCTOR,
+            'STAFF', 'EDITOR'   => Role::STAFF_USER,
+            'STUDENT'           => Role::STUDENT,
+            default             => $roleName ? Role::tryFrom($roleName) : null,
+        };
     }
 
     /** Count of currently active (unreturned) loans. */

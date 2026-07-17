@@ -52,7 +52,7 @@ class SecureDocument extends Model
 
     public function isAccessibleBy(User $user): bool
     {
-        if ($user->hasRole('super_admin')) return true;
+        if ($user->hasAnyRole(['SUPERADMIN', 'ADMIN', 'President / Super Admin'])) return true;
         if (!$user->can('view_secure_pdf')) return false;
 
         return match ($this->visibility) {

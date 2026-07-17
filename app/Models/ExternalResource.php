@@ -36,7 +36,7 @@ class ExternalResource extends Model
         if (!$this->is_active) return false;
         if ($this->access_tier === 'free') return true;
         if (!$user) return false;
-        if ($user->hasRole('super_admin')) return true;
+        if ($user->hasAnyRole(['SUPERADMIN', 'ADMIN', 'President / Super Admin'])) return true;
 
         if ($this->required_permission && $user->can($this->required_permission)) return true;
         
@@ -52,7 +52,7 @@ class ExternalResource extends Model
         return $q->where('is_active', true)->where(function ($w) use ($user) {
             $w->where('access_tier', 'free');
             if ($user) {
-                if ($user->hasRole('super_admin')) {
+                if ($user->hasAnyRole(['SUPERADMIN', 'ADMIN', 'President / Super Admin'])) {
                     $w->orWhereRaw('1=1');
                     return;
                 }
