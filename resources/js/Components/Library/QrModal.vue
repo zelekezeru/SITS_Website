@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 import { ref, watch } from 'vue'
 
 const props = defineProps({
@@ -77,7 +77,7 @@ const printQr = () => {
         >
             <div v-if="show" class="fixed inset-0 z-[100] flex items-center justify-center p-4 overflow-hidden" @click.self="emit('close')">
                 <!-- Premium Backdrop -->
-                <div class="absolute inset-0 bg-gray-900/40 backdrop-blur-xl transition-opacity" @click="emit('close')" />
+                <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-xl transition-opacity" @click="emit('close')" />
 
                 <!-- Panel -->
                 <Transition
@@ -88,15 +88,15 @@ const printQr = () => {
                     leave-from-class="opacity-100 scale-100 translate-y-0"
                     leave-to-class="opacity-0 scale-95 translate-y-4"
                 >
-                    <div v-if="show" class="relative bg-white dark:bg-gray-900 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] w-full max-w-sm border border-white/20 dark:border-gray-800 z-10 overflow-hidden">
+                    <div v-if="show" class="relative bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] w-full max-w-sm border border-white/20 dark:border-slate-800 z-10 overflow-hidden">
                         
                         <!-- Header Area -->
                         <div class="px-8 pt-8 pb-4 flex items-start justify-between">
                             <div class="min-w-0">
                                 <p class="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-600 dark:text-indigo-400 mb-1">Secure Discovery</p>
-                                <h3 class="font-black text-xl text-gray-900 dark:text-white truncate leading-tight">{{ title }}</h3>
+                                <h3 class="font-black text-xl text-slate-900 dark:text-white truncate leading-tight">{{ title }}</h3>
                             </div>
-                            <button @click="emit('close')" class="p-2 bg-gray-50 dark:bg-gray-800 rounded-xl text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all active:scale-90">
+                            <button @click="emit('close')" class="p-2 bg-slate-50 dark:bg-slate-800 rounded-xl text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all active:scale-90">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
                             </button>
                         </div>
@@ -104,11 +104,11 @@ const printQr = () => {
                         <!-- Content Area -->
                         <div class="px-8 pb-8 flex flex-col items-center">
                             
-                            <div class="w-full aspect-square bg-gray-50 dark:bg-gray-800/50 rounded-[2rem] border-2 border-dashed border-gray-200 dark:border-gray-700 flex flex-col items-center justify-center p-6 mb-6 relative group">
+                            <div class="w-full aspect-square bg-slate-50 dark:bg-slate-800/50 rounded-[2rem] border-2 border-dashed border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center p-6 mb-6 relative group">
                                 <!-- Loading -->
                                 <div v-if="loading" class="flex flex-col items-center gap-4">
                                     <div class="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
-                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Generating...</span>
+                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Generating...</span>
                                 </div>
 
                                 <!-- Error -->
@@ -116,7 +116,7 @@ const printQr = () => {
                                     <div class="p-3 bg-red-50 dark:bg-red-900/20 rounded-2xl text-red-500">
                                         <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                     </div>
-                                    <p class="text-xs font-bold text-gray-500 dark:text-gray-400">Generation Failed</p>
+                                    <p class="text-xs font-bold text-slate-500 dark:text-slate-400">Generation Failed</p>
                                 </div>
 
                                 <!-- QR SVG Content -->
@@ -130,8 +130,8 @@ const printQr = () => {
                             </div>
 
                             <div class="text-center space-y-1 mb-8">
-                                <p class="text-xs font-bold text-gray-800 dark:text-gray-200 uppercase tracking-wider">Universal Scan Key</p>
-                                <p class="text-[11px] text-gray-500 dark:text-gray-500 font-medium px-4 leading-relaxed">
+                                <p class="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">Universal Scan Key</p>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-500 font-medium px-4 leading-relaxed">
                                     This QR code provides instant mobile access to this resource.
                                 </p>
                             </div>
@@ -141,7 +141,7 @@ const printQr = () => {
                                 <button
                                     @click="download"
                                     :disabled="!svgContent"
-                                    class="flex items-center justify-center gap-2 py-3.5 bg-gray-900 dark:bg-indigo-600 text-white text-[11px] font-black uppercase tracking-widest rounded-2xl hover:bg-gray-800 dark:hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-lg shadow-gray-500/10 dark:shadow-indigo-500/20 active:scale-95"
+                                    class="flex items-center justify-center gap-2 py-3.5 bg-slate-900 dark:bg-indigo-600 text-white text-[11px] font-black uppercase tracking-widest rounded-2xl hover:bg-slate-800 dark:hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-lg shadow-slate-500/10 dark:shadow-indigo-500/20 active:scale-95"
                                 >
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                                     Save SVG
@@ -149,7 +149,7 @@ const printQr = () => {
                                 <button 
                                     @click="printQr"
                                     :disabled="!svgContent"
-                                    class="flex items-center justify-center gap-2 py-3.5 bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-100 dark:border-gray-700 text-[11px] font-black uppercase tracking-widest rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-40 transition-all active:scale-95"
+                                    class="flex items-center justify-center gap-2 py-3.5 bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-100 dark:border-slate-700 text-[11px] font-black uppercase tracking-widest rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-40 transition-all active:scale-95"
                                 >
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
                                     Print

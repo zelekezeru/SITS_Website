@@ -1,6 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
-import ApplicationLogo from '@/Components/Library/ApplicationLogo.vue';
+import { ref, computed, reactive, onMounted, onUnmounted, watch } from 'vue';
 import NotificationBell from '@/Components/Library/NotificationBell.vue';
 import Toast from '@/Components/Library/Toast.vue';
 import GlobalSearch from '@/Components/Library/GlobalSearch.vue';
@@ -25,13 +24,15 @@ const flash = computed(() => page.props.flash ?? {});
 
 const can = (permission) => permissions.value.includes(permission);
 
-const sidebarOpen = ref(false);
 const { isDark, toggle: toggleDarkMode } = useDarkMode();
 
 const userAvatar = computed(() => {
     const img = auth.value?.user?.profile_image;
     return img ? `/storage/${img}` : '/img/user.png';
 });
+
+const initials = computed(() =>
+    (auth.value?.user?.name ?? 'S').split(' ').map((p) => p[0]).slice(0, 2).join('').toUpperCase());
 
 const hasErpAccess = computed(() => {
     const roles = (auth.value?.user?.roles ?? []).map(r => r.toLowerCase());
@@ -44,44 +45,31 @@ const isWebsiteAdmin = computed(() => {
     return roles.some(r => ['superadmin', 'admin', 'editor'].includes(r));
 });
 
-const lmsLabel = computed(() => {
-    const roles = (auth.value?.user?.roles ?? []).map(r => r.toLowerCase());
-    if (roles.includes('student')) return t('Student Portal');
-    if (roles.includes('trainer')) return t('Instructor Portal');
-    return t('LMS Portal', 'LMS Portal');
-});
+// ── Sidebar collapse + mobile drawer (persisted) ───────────────────────────
+const collapsed = ref(false);
+const mobileOpen = ref(false);
 
-const lmsUrl = computed(() => {
-    const roles = (auth.value?.user?.roles ?? []).map(r => r.toLowerCase());
-    if (roles.includes('student') || roles.includes('trainer')) {
-        return '/go/lms';
-    }
-    return 'https://lms.sits.edu.et';
+onMounted(() => {
+    collapsed.value = localStorage.getItem('sits.library.sidebar.collapsed') === '1';
+    document.addEventListener('click', handleOutsideClick);
 });
+onUnmounted(() => document.removeEventListener('click', handleOutsideClick));
 
-const hasLibraryAccess = computed(() => {
-    const roles = (auth.value?.user?.roles ?? []).map(r => r.toLowerCase());
-    const allowed = ['student', 'trainer', 'librarian', 'admin', 'superadmin', 'president / super admin', 'staff', 'editor'];
-    return roles.some(r => allowed.includes(r));
-});
+const toggleCollapsed = () => {
+    collapsed.value = !collapsed.value;
+    localStorage.setItem('sits.library.sidebar.collapsed', collapsed.value ? '1' : '0');
+};
 
+// ── User menu ──────────────────────────────────────────────────────────────
 const userMenuOpen = ref(false);
 const userMenuRef = ref(null);
-
 const handleOutsideClick = (e) => {
     if (userMenuRef.value && !userMenuRef.value.contains(e.target)) {
         userMenuOpen.value = false;
     }
 };
 
-onMounted(() => {
-    document.addEventListener('click', handleOutsideClick);
-});
-
-onUnmounted(() => {
-    document.removeEventListener('click', handleOutsideClick);
-});
-
+// ── Expandable groups (persisted) ──────────────────────────────────────────
 const loadExpandedState = () => {
     try {
         const saved = localStorage.getItem('sits_library_sidebar_expanded');
@@ -90,7 +78,6 @@ const loadExpandedState = () => {
         return {};
     }
 };
-
 const expandedGroups = ref(loadExpandedState());
 
 const toggleGroup = (groupLabel) => {
@@ -104,7 +91,7 @@ const isGroupExpanded = (groupLabel) => {
     if (expandedGroups.value[groupLabel] === undefined) {
         const group = navGroups.value.find(g => g.label === groupLabel);
         const hasActiveItem = group?.items.some(item => route().current(item.route)) ?? false;
-        if (groupLabel === 'Overview' || groupLabel === 'My Library' || hasActiveItem) {
+        if (groupLabel === t('Overview') || groupLabel === t('My Library') || hasActiveItem) {
             return true;
         }
         return false;
@@ -112,32 +99,24 @@ const isGroupExpanded = (groupLabel) => {
     return expandedGroups.value[groupLabel];
 };
 
-
+// ── Navigation (permission-scoped, Lucide icon names) ──────────────────────
 const navGroups = computed(() => {
     const groups = [];
 
     groups.push({
         label: t('Overview'),
         items: [
-            {
-                label: t('Dashboard'),
-                route: 'library.dashboard',
-                icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6',
-            },
+            { label: t('Dashboard'), route: 'library.dashboard', icon: 'LayoutDashboard' },
         ],
     });
 
     if (can('view_books')) {
         const items = [
-            {
-                label: t('Catalog'),
-                route: 'library.catalog.index',
-                icon: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253',
-            },
+            { label: t('Catalog'), route: 'library.catalog.index', icon: 'LibraryBig' },
         ];
         if (can('create_book')) {
-            items.push({ label: t('Add Book'), route: 'library.books.create', icon: 'M12 4v16m8-8H4' });
-            items.push({ label: t('Scan & Place'), route: 'library.scan.place', icon: 'M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z' });
+            items.push({ label: t('Add Book'), route: 'library.books.create', icon: 'BookPlus' });
+            items.push({ label: t('Scan & Place'), route: 'library.scan.place', icon: 'ScanLine' });
         }
         groups.push({ label: t('Library'), items });
     }
@@ -145,128 +124,161 @@ const navGroups = computed(() => {
     groups.push({
         label: t('My Library'),
         items: [
-            { label: t('My Loans'), route: 'library.my.loans', icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2' },
-            { label: t('My Holds'), route: 'library.my.holds', icon: 'M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9' },
-            { label: t('My Fines'), route: 'library.my.fines', icon: 'M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z' },
-            { label: t('Resources'), route: 'library.resources.index', icon: 'M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1' },
+            { label: t('My Loans'), route: 'library.my.loans', icon: 'BookMarked' },
+            { label: t('My Holds'), route: 'library.my.holds', icon: 'Bookmark' },
+            { label: t('My Fines'), route: 'library.my.fines', icon: 'ReceiptText' },
+            { label: t('Resources'), route: 'library.resources.index', icon: 'Link2' },
         ],
     });
 
     if (can('checkout_book') || can('return_book') || can('collect_fine')) {
         const items = [];
-        if (can('checkout_book')) items.push({ label: t('Checkout Desk'), route: 'library.circulation.desk', icon: 'M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z' });
-        if (can('return_book')) items.push({ label: t('Returns'), route: 'library.circulation.returns', icon: 'M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6' });
-        if (can('collect_fine')) items.push({ label: t('Fines'), route: 'library.fines.index', icon: 'M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z' });
+        if (can('checkout_book')) items.push({ label: t('Checkout Desk'), route: 'library.circulation.desk', icon: 'ScanBarcode' });
+        if (can('return_book')) items.push({ label: t('Returns'), route: 'library.circulation.returns', icon: 'Undo2' });
+        if (can('collect_fine')) items.push({ label: t('Fines'), route: 'library.fines.index', icon: 'HandCoins' });
         groups.push({ label: t('Circulation'), items });
     }
 
     if (can('request_transfer') || can('approve_transfer') || can('receive_transfer')) {
         groups.push({
             label: t('Transfers'),
-            items: [{ label: t('Transfers'), route: 'library.transfers.index', icon: 'M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4' }],
+            items: [{ label: t('Transfers'), route: 'library.transfers.index', icon: 'ArrowLeftRight' }],
         });
     }
 
     if (can('view_secure_pdf')) {
         groups.push({
             label: t('Digital Archive'),
-            items: [{ label: t('Archive'), route: 'library.archive.index', icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' }],
+            items: [{ label: t('Archive'), route: 'library.archive.index', icon: 'Archive' }],
         });
     }
 
     const adminItems = [];
-    if (can('manage_users'))          adminItems.push({ label: t('Users'),           route: 'library.users.index',            icon: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z' });
-    if (can('manage_campus'))         adminItems.push({ label: t('Campuses'),        route: 'library.campuses.index',         icon: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-2 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4' });
-    if (can('manage_campus'))         adminItems.push({ label: t('Subscriptions'),   route: 'library.subscriptions',          icon: 'M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z', external: true });
-    if (can('manage_external_links')) adminItems.push({ label: t('Ext. Resources'),  route: 'library.resources.index',  icon: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z' });
-    if (can('manage_campus'))         adminItems.push({ label: t('Audit Log'),       route: 'library.admin.audit',            icon: 'M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' });
-    if (can('view_loans'))            adminItems.push({ label: t('Reports'),          route: 'library.reports.index',          icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' });
-    if (can('manage_shelf_box'))      adminItems.push({ label: t('Stocktake'),        route: 'library.stocktakes.index',       icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4' });
+    if (can('manage_users'))          adminItems.push({ label: t('Users'),          route: 'library.users.index',      icon: 'Users' });
+    if (can('manage_campus'))         adminItems.push({ label: t('Campuses'),       route: 'library.campuses.index',   icon: 'Building2' });
+    if (can('manage_campus'))         adminItems.push({ label: t('Subscriptions'),  route: 'library.subscriptions',    icon: 'CreditCard', external: true });
+    if (can('manage_external_links')) adminItems.push({ label: t('Ext. Resources'), route: 'library.resources.index',  icon: 'Globe' });
+    if (can('manage_campus'))         adminItems.push({ label: t('Audit Log'),      route: 'library.admin.audit',      icon: 'ScrollText' });
+    if (can('view_loans'))            adminItems.push({ label: t('Reports'),        route: 'library.reports.index',    icon: 'BarChart3' });
+    if (can('manage_shelf_box'))      adminItems.push({ label: t('Stocktake'),      route: 'library.stocktakes.index', icon: 'ClipboardCheck' });
     if (adminItems.length) groups.push({ label: t('Administration'), items: adminItems });
 
     return groups;
 });
 
+// Flatten for breadcrumb resolution.
+const activeCrumb = computed(() => {
+    for (const group of navGroups.value) {
+        for (const item of group.items) {
+            if (!item.external && route().current(item.route)) {
+                return { section: group.label, label: item.label };
+            }
+        }
+    }
+    return { section: t('Digital Library'), label: t('Dashboard') };
+});
+
 const roleBadge = computed(() => {
     const map = {
-        super_admin:  { label: 'Super Admin',  cls: 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300' },
-        campus_admin: { label: 'Campus Admin', cls: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300' },
-        librarian:    { label: 'Librarian',    cls: 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300' },
-        instructor:   { label: 'Instructor',   cls: 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300' },
-        staff_user:   { label: 'Staff',        cls: 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300' },
-        student:      { label: 'Student',      cls: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300' },
+        super_admin:  { label: 'Super Admin',  cls: 'bg-violet-500/10 text-violet-600 dark:text-violet-300 border-violet-500/20' },
+        campus_admin: { label: 'Campus Admin', cls: 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 border-indigo-500/20' },
+        librarian:    { label: 'Librarian',    cls: 'bg-blue-500/10 text-blue-600 dark:text-blue-300 border-blue-500/20' },
+        instructor:   { label: 'Instructor',   cls: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-300 border-emerald-500/20' },
+        staff_user:   { label: 'Staff',        cls: 'bg-slate-500/10 text-slate-600 dark:text-slate-300 border-slate-500/20' },
+        student:      { label: 'Student',      cls: 'bg-amber-500/10 text-amber-600 dark:text-amber-300 border-amber-500/20' },
     };
-    const details = map[role.value] ?? { label: 'User', cls: 'bg-gray-100 text-gray-600' };
-    return {
-        label: t(details.label),
-        cls: details.cls
-    };
+    const details = map[role.value] ?? { label: 'Member', cls: 'bg-slate-500/10 text-slate-600 dark:text-slate-300 border-slate-500/20' };
+    return { label: t(details.label), cls: details.cls };
+});
+
+watch(() => page.url, () => {
+    mobileOpen.value = false;
+    userMenuOpen.value = false;
 });
 </script>
 
 <template>
-    <div class="flex h-screen overflow-hidden bg-gray-50 dark:bg-gray-950">
+    <div class="relative min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100">
+        <!-- Ambient glow (dark) -->
+        <div class="pointer-events-none absolute top-[-15%] right-[-8%] w-[520px] h-[520px] rounded-full bg-indigo-600/10 blur-[150px] hidden dark:block"></div>
+        <div class="pointer-events-none absolute bottom-[-15%] left-[-8%] w-[520px] h-[520px] rounded-full bg-violet-600/10 blur-[150px] hidden dark:block"></div>
 
-        <!-- Mobile sidebar backdrop -->
-        <div
-            v-if="sidebarOpen"
-            class="fixed inset-0 z-20 bg-black/40 lg:hidden"
-            @click="sidebarOpen = false"
-        />
+        <!-- Mobile backdrop -->
+        <Transition enter-active-class="transition-opacity duration-200" enter-from-class="opacity-0"
+                    leave-active-class="transition-opacity duration-200" leave-to-class="opacity-0">
+            <div v-if="mobileOpen" class="fixed inset-0 z-40 bg-slate-950/70 backdrop-blur-sm lg:hidden" @click="mobileOpen = false" />
+        </Transition>
 
-        <!-- ── Sidebar ──────────────────────────────────────────────────── -->
+        <!-- ===================== SIDEBAR ===================== -->
         <aside
-            :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-            class="fixed inset-y-0 left-0 z-30 flex w-64 flex-col bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 transition-transform duration-200 lg:static lg:translate-x-0"
+            class="fixed inset-y-0 left-0 z-50 flex flex-col border-r border-slate-200 dark:border-slate-900 bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl transition-all duration-300 ease-in-out lg:translate-x-0"
+            :class="[
+                collapsed ? 'w-[76px]' : 'w-[268px]',
+                mobileOpen ? 'translate-x-0' : '-translate-x-full',
+            ]"
         >
-            <!-- Logo -->
-            <div class="flex h-16 shrink-0 items-center gap-3 px-5 border-b border-gray-200 dark:border-gray-800">
-                <Link :href="route('library.dashboard')" class="flex items-center gap-2.5">
-                    <ApplicationLogo class="h-7 w-7 fill-current text-indigo-600 dark:text-indigo-400" />
-                    <span class="text-sm font-bold text-gray-900 dark:text-white tracking-tight">SITS Library</span>
+            <!-- Brand -->
+            <div class="h-16 flex items-center gap-3 px-4 border-b border-slate-200 dark:border-slate-900 shrink-0">
+                <Link :href="route('library.dashboard')" class="flex items-center gap-3 group">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-violet-500 p-0.5 shadow-lg shadow-indigo-500/25 shrink-0 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+                        <div class="w-full h-full bg-white dark:bg-slate-950 rounded-[10px] flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                            <Icon name="LibraryBig" :size="20" :stroke-width="2" />
+                        </div>
+                    </div>
+                    <div v-if="!collapsed" class="min-w-0">
+                        <p class="text-sm font-bold tracking-tight text-slate-900 dark:text-white leading-tight">SITS Library</p>
+                        <p class="text-[10px] text-indigo-500 dark:text-indigo-400/80 font-semibold uppercase tracking-widest truncate">Digital Repository</p>
+                    </div>
                 </Link>
+                <button class="ml-auto hidden lg:flex items-center justify-center w-7 h-7 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors"
+                        @click="toggleCollapsed" :title="collapsed ? t('Expand') : t('Collapse')">
+                    <Icon :name="collapsed ? 'PanelLeftOpen' : 'PanelLeftClose'" :size="18" />
+                </button>
             </div>
 
-            <!-- Navigation -->
-            <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-4">
-                <div v-for="group in navGroups" :key="group.label" class="space-y-1">
-                    <button
-                        @click="toggleGroup(group.label)"
-                        class="w-full flex items-center justify-between mb-1 px-2 py-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400 rounded transition text-left"
-                    >
+            <!-- Nav -->
+            <nav class="flex-1 overflow-y-auto overflow-x-hidden py-4 px-3 space-y-5 sidebar-scroll">
+                <div v-for="group in navGroups" :key="group.label">
+                    <!-- Group header -->
+                    <button v-if="!collapsed"
+                            @click="toggleGroup(group.label)"
+                            class="w-full flex items-center justify-between px-3 mb-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-600 hover:text-indigo-500 dark:hover:text-indigo-400 transition-colors">
                         <span>{{ group.label }}</span>
-                        <svg
-                            class="h-3 w-3 transform transition-transform duration-200"
-                            :class="isGroupExpanded(group.label) ? 'rotate-0' : '-rotate-90'"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                        >
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
-                        </svg>
+                        <Icon name="ChevronDown" :size="13"
+                              class="transition-transform duration-200" :class="isGroupExpanded(group.label) ? '' : '-rotate-90'" />
                     </button>
-                    <div
-                        class="grid transition-all duration-300 ease-in-out"
-                        :class="isGroupExpanded(group.label) ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0 pointer-events-none'"
-                    >
+                    <div v-else class="mx-3 mb-2 border-t border-slate-200 dark:border-slate-900"></div>
+
+                    <!-- Items -->
+                    <div class="grid transition-all duration-300 ease-in-out"
+                         :class="(collapsed || isGroupExpanded(group.label)) ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0 pointer-events-none'">
                         <div class="overflow-hidden">
-                            <ul class="space-y-0.5 px-0.5">
-                                <li v-for="item in group.items" :key="item.route" class="relative">
-                                    <div v-if="route().current(item.route)" class="absolute left-0 top-1.5 bottom-1.5 w-1 rounded-r bg-indigo-600 dark:bg-indigo-400"></div>
+                            <ul class="space-y-1">
+                                <li v-for="item in group.items" :key="item.route" class="group/item relative">
                                     <component
                                         :is="item.external ? 'a' : Link"
                                         :href="route(item.route, item.params || {})"
                                         :target="item.target || '_self'"
-                                        class="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition duration-200"
-                                        :class="route().current(item.route)
-                                            ? 'bg-indigo-50/80 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 font-bold shadow-sm shadow-indigo-100/10'
-                                            : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/60 hover:text-gray-900 dark:hover:text-gray-200'"
+                                        class="w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-150"
+                                        :class="[
+                                            route().current(item.route)
+                                                ? 'bg-gradient-to-r from-indigo-500/15 to-violet-500/5 text-indigo-700 dark:text-white shadow-sm'
+                                                : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100/70 dark:hover:bg-slate-900/60',
+                                            collapsed ? 'justify-center' : '',
+                                        ]"
                                     >
-                                        <svg class="h-[17px] w-[17px] shrink-0 transition-transform duration-300 group-hover:scale-110" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" :d="item.icon" />
-                                        </svg>
-                                        {{ item.label }}
+                                        <span class="relative flex items-center justify-center shrink-0">
+                                            <span v-if="route().current(item.route)" class="absolute -left-3 h-5 w-1 rounded-r bg-indigo-500"></span>
+                                            <Icon :name="item.icon" :size="19" :class="route().current(item.route) ? 'text-indigo-500 dark:text-indigo-400' : ''" />
+                                        </span>
+                                        <span v-if="!collapsed" class="flex-1 text-left truncate">{{ item.label }}</span>
                                     </component>
+
+                                    <!-- Collapsed tooltip -->
+                                    <span v-if="collapsed"
+                                          class="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3 z-50 whitespace-nowrap rounded-lg bg-slate-800 dark:bg-slate-800 px-2.5 py-1.5 text-xs font-medium text-slate-100 border border-slate-700 opacity-0 group-hover/item:opacity-100 transition-opacity shadow-xl">
+                                        {{ item.label }}
+                                    </span>
                                 </li>
                             </ul>
                         </div>
@@ -274,38 +286,43 @@ const roleBadge = computed(() => {
                 </div>
             </nav>
 
-            <!-- User footer -->
-            <div class="shrink-0 border-t border-gray-200 dark:border-gray-800 p-4">
-                <div class="flex items-center gap-3">
-                    <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-white text-sm font-semibold">
-                        {{ auth.user.name.charAt(0).toUpperCase() }}
+            <!-- User card -->
+            <div class="border-t border-slate-200 dark:border-slate-900 p-3 shrink-0">
+                <div class="flex items-center gap-3" :class="collapsed ? 'justify-center' : ''">
+                    <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-indigo-500 to-violet-500 flex items-center justify-center text-xs font-bold text-white shrink-0 overflow-hidden">
+                        <img v-if="auth.user.profile_image" :src="userAvatar" alt="" class="w-full h-full object-cover" />
+                        <span v-else>{{ initials }}</span>
                     </div>
-                    <div class="min-w-0 flex-1">
-                        <p class="truncate text-sm font-medium text-gray-900 dark:text-white">{{ auth.user.name }}</p>
-                        <span class="inline-flex items-center rounded-full px-1.5 py-0.5 text-[10px] font-semibold" :class="roleBadge.cls">
+                    <div v-if="!collapsed" class="min-w-0 flex-1">
+                        <p class="text-sm font-semibold text-slate-900 dark:text-white truncate">{{ auth.user.name }}</p>
+                        <span class="inline-flex items-center rounded-full border px-1.5 py-0.5 text-[10px] font-semibold" :class="roleBadge.cls">
                             {{ roleBadge.label }}
                         </span>
                     </div>
+                    <Link v-if="!collapsed" :href="route('logout')" method="post" as="button"
+                          class="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 transition-colors" :title="t('Sign out')">
+                        <Icon name="LogOut" :size="17" />
+                    </Link>
                 </div>
             </div>
         </aside>
 
-        <!-- ── Main content ─────────────────────────────────────────────── -->
-        <div class="flex flex-1 flex-col min-w-0 overflow-hidden">
-
-            <!-- Top bar -->
-            <header class="flex h-16 shrink-0 items-center gap-2 sm:gap-4 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-3 sm:px-6">
-                <button
-                    class="lg:hidden rounded-lg p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
-                    @click="sidebarOpen = !sidebarOpen"
-                >
-                    <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-                    </svg>
+        <!-- ===================== MAIN ===================== -->
+        <div class="relative z-10 transition-all duration-300 ease-in-out" :class="collapsed ? 'lg:pl-[76px]' : 'lg:pl-[268px]'">
+            <!-- Topbar -->
+            <header class="sticky top-0 z-30 min-h-16 py-2.5 flex items-center gap-2 sm:gap-3 px-3 sm:px-6 border-b border-slate-200 dark:border-slate-900 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md">
+                <button class="lg:hidden w-9 h-9 flex items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-900" @click="mobileOpen = true">
+                    <Icon name="Menu" :size="20" />
                 </button>
 
-                <div class="hidden sm:block flex-1 min-w-0 [&_h2]:truncate [&_h2]:text-sm [&_h2]:sm:text-xl [&_h2]:font-semibold">
-                    <slot name="header" />
+                <!-- Breadcrumb + page header slot -->
+                <div class="min-w-0 flex-1">
+                    <p class="hidden sm:block text-[11px] text-slate-400 dark:text-slate-500 font-medium uppercase tracking-wider truncate">{{ activeCrumb.section }}</p>
+                    <div class="min-w-0 [&_h2]:truncate [&_h2]:text-base [&_h2]:sm:text-lg [&_h2]:font-bold [&_h2]:tracking-tight [&_h2]:normal-case [&_h2]:text-slate-900 dark:[&_h2]:text-white">
+                        <slot name="header">
+                            <h2 class="-mt-0.5">{{ activeCrumb.label }}</h2>
+                        </slot>
+                    </div>
                 </div>
 
                 <div class="flex items-center gap-1.5 sm:gap-2">
@@ -314,83 +331,69 @@ const roleBadge = computed(() => {
                     <NotificationBell />
                     <button
                         @click="toggleDarkMode"
-                        class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition mr-2"
+                        class="w-9 h-9 flex items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-900 hover:text-slate-800 dark:hover:text-slate-200 transition"
                         :title="isDark ? t('Switch to light mode') : t('Switch to dark mode')"
                     >
-                        <svg v-if="isDark" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M16.95 16.95l.707.707M7.05 7.05l.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-                        <svg v-else class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                        <Icon :name="isDark ? 'Sun' : 'Moon'" :size="19" />
                     </button>
+
+                    <div class="hidden sm:block w-px h-6 bg-slate-200 dark:bg-slate-800"></div>
 
                     <!-- User Profile Dropdown -->
                     <div class="relative" ref="userMenuRef">
-                      <button @click="userMenuOpen = !userMenuOpen"
-                        class="flex items-center gap-2 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition focus:outline-none cursor-pointer">
-                        <img :src="userAvatar" alt="Profile" class="h-8 w-8 rounded-full object-cover ring-2 ring-indigo-500/20" />
-                        <span class="text-xs font-semibold text-gray-700 dark:text-gray-300 hidden sm:inline-block">{{ auth.user.name }}</span>
-                        <svg class="w-3 h-3 text-gray-500 hidden sm:block transition-transform duration-200" :class="{'rotate-180': userMenuOpen}" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
-                        </svg>
-                      </button>
+                        <button @click="userMenuOpen = !userMenuOpen"
+                            class="flex items-center gap-2 p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-900 border border-transparent hover:border-slate-200 dark:hover:border-slate-800 transition focus:outline-none cursor-pointer">
+                            <img :src="userAvatar" alt="Profile" class="h-8 w-8 rounded-full object-cover ring-2 ring-indigo-500/20" />
+                            <Icon name="ChevronDown" :size="14" class="text-slate-400 hidden sm:block transition-transform duration-200" :class="{'rotate-180': userMenuOpen}" />
+                        </button>
 
-                      <Transition enter-active-class="transition ease-out duration-150" enter-from-class="opacity-0 scale-95" enter-to-class="opacity-100 scale-100"
-                        leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100 scale-100" leave-to-class="opacity-0 scale-95">
-                        <ul v-if="userMenuOpen" class="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl shadow-2xl py-2 z-50">
-                          <li class="px-4 py-2 border-b border-gray-100 dark:border-gray-800 mb-1 sm:hidden">
-                            <p class="text-[10px] text-gray-400 dark:text-gray-500 uppercase tracking-wider">{{ t('Logged in as') }}</p>
-                            <p class="text-xs font-semibold text-gray-900 dark:text-white truncate">{{ auth.user.name }}</p>
-                          </li>
-                          <li><Link :href="route('portal')" class="block px-4 py-2.5 text-xs text-gray-650 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800/40 transition">{{ t('Dashboard Hub', 'Dashboard Hub') }}</Link></li>
-                          <li><Link :href="route('profile.edit', { from: 'library' })" class="block px-4 py-2.5 text-xs text-gray-650 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800/40 transition">{{ t('View Profile', 'View Profile') }}</Link></li>
-                          <li class="border-t border-gray-150 dark:border-gray-800 my-1"></li>
-                          <li v-if="hasErpAccess">
-                            <Link :href="route('dashboard')" class="flex items-center gap-2.5 px-4 py-2.5 text-xs text-gray-650 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800/40 transition">
-                              <Icon name="LayoutDashboard" :size="15" class="text-gray-400 dark:text-gray-500" />
-                              <span>SITS ERP</span>
-                            </Link>
-                          </li>
-                          <li>
-                            <Link :href="route('library.dashboard')" class="flex items-center gap-2.5 px-4 py-2.5 text-xs text-gray-650 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800/40 transition">
-                              <Icon name="BookOpen" :size="15" class="text-gray-400 dark:text-gray-500" />
-                              <span>Digital Library</span>
-                            </Link>
-                          </li>
-                          <li>
-                            <a href="https://lms.sits.edu.et" target="_blank" class="flex items-center gap-2.5 px-4 py-2.5 text-xs text-gray-650 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800/40 transition">
-                              <Icon name="GraduationCap" :size="15" class="text-gray-400 dark:text-gray-500" />
-                              <span>SITS LMS</span>
-                            </a>
-                          </li>
-                          <li>
-                            <a href="/go/lms" target="_blank" class="flex items-center gap-2.5 px-4 py-2.5 text-xs text-gray-650 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800/40 transition">
-                              <Icon name="Laptop" :size="15" class="text-gray-400 dark:text-gray-500" />
-                              <span>Moodle</span>
-                            </a>
-                          </li>
-                          <li v-if="isWebsiteAdmin">
-                            <a :href="route('website.admin.dashboard')" class="flex items-center gap-2.5 px-4 py-2.5 text-xs text-gray-650 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800/40 transition">
-                              <Icon name="Globe" :size="15" class="text-gray-400 dark:text-gray-500" />
-                              <span>Website Admin</span>
-                            </a>
-                          </li>
-                          <li class="border-t border-gray-150 dark:border-gray-800 my-1"></li>
-                          <li>
-                            <Link :href="route('logout')" method="post" as="button" class="block w-full text-left px-4 py-2.5 text-xs text-rose-500 hover:text-rose-455 hover:bg-rose-500/10 transition cursor-pointer">{{ t('Sign out') }}</Link>
-                          </li>
-                        </ul>
-                      </Transition>
+                        <Transition enter-active-class="transition ease-out duration-150" enter-from-class="opacity-0 scale-95" enter-to-class="opacity-100 scale-100"
+                            leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100 scale-100" leave-to-class="opacity-0 scale-95">
+                            <div v-if="userMenuOpen" class="absolute right-0 mt-2 w-60 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl shadow-2xl z-50 overflow-hidden">
+                                <div class="px-4 py-3 border-b border-slate-100 dark:border-slate-800/60">
+                                    <p class="text-[10px] text-slate-400 dark:text-slate-500 font-semibold uppercase tracking-wider">{{ t('Logged in as') }}</p>
+                                    <p class="text-sm font-bold text-slate-900 dark:text-white truncate">{{ auth.user.name }}</p>
+                                </div>
+                                <div class="py-1">
+                                    <Link :href="route('portal')" @click="userMenuOpen = false" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                        <Icon name="LayoutDashboard" :size="15" class="text-slate-400 dark:text-slate-500" /><span>{{ t('Dashboard Hub') }}</span>
+                                    </Link>
+                                    <Link :href="route('profile.edit', { from: 'library' })" @click="userMenuOpen = false" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                        <Icon name="User" :size="15" class="text-slate-400 dark:text-slate-500" /><span>{{ t('View Profile') }}</span>
+                                    </Link>
+                                    <div class="border-t border-slate-100 dark:border-slate-800/60 my-1"></div>
+                                    <Link v-if="hasErpAccess" :href="route('dashboard')" @click="userMenuOpen = false" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                        <Icon name="LayoutDashboard" :size="15" class="text-slate-400 dark:text-slate-500" /><span>SITS ERP</span>
+                                    </Link>
+                                    <a href="https://lms.sits.edu.et" target="_blank" @click="userMenuOpen = false" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                        <Icon name="GraduationCap" :size="15" class="text-slate-400 dark:text-slate-500" /><span>SITS LMS</span>
+                                    </a>
+                                    <a href="/go/lms" target="_blank" @click="userMenuOpen = false" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                        <Icon name="Laptop" :size="15" class="text-slate-400 dark:text-slate-500" /><span>Moodle</span>
+                                    </a>
+                                    <a v-if="isWebsiteAdmin" :href="route('website.admin.dashboard')" @click="userMenuOpen = false" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                        <Icon name="Globe" :size="15" class="text-slate-400 dark:text-slate-500" /><span>Website Admin</span>
+                                    </a>
+                                    <div class="border-t border-slate-100 dark:border-slate-800/60 my-1"></div>
+                                    <Link :href="route('logout')" method="post" as="button" @click="userMenuOpen = false" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-left text-xs font-bold text-rose-500 hover:bg-rose-500/10 hover:text-rose-400 transition-colors cursor-pointer">
+                                        <Icon name="LogOut" :size="15" /><span>{{ t('Sign out') }}</span>
+                                    </Link>
+                                </div>
+                            </div>
+                        </Transition>
                     </div>
                 </div>
             </header>
 
             <!-- Page content -->
-            <main class="flex-1 overflow-y-auto">
+            <main class="min-h-[calc(100vh-4rem)]">
                 <!-- Flash messages -->
                 <div v-if="flash.success || flash.error" class="px-4 pt-4 sm:px-6">
                     <div
-                        class="mx-auto max-w-7xl rounded-lg border px-4 py-3 text-sm"
+                        class="mx-auto max-w-7xl rounded-xl border px-4 py-3 text-sm font-medium"
                         :class="flash.success
-                            ? 'border-green-200 bg-green-50 text-green-800 dark:border-green-900 dark:bg-green-950/40 dark:text-green-300'
-                            : 'border-red-200 bg-red-50 text-red-800 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300'"
+                            ? 'border-emerald-500/30 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300'
+                            : 'border-rose-500/30 bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300'"
                     >
                         {{ flash.success || flash.error }}
                     </div>
@@ -399,8 +402,16 @@ const roleBadge = computed(() => {
             </main>
         </div>
 
+        <!-- Toast notifications -->
+        <Toast />
     </div>
-
-    <!-- Toast notifications (replaces inline flash) -->
-    <Toast />
 </template>
+
+<style scoped>
+.sidebar-scroll::-webkit-scrollbar { width: 6px; }
+.sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
+.sidebar-scroll::-webkit-scrollbar-thumb { background: rgb(203 213 225 / 0.6); border-radius: 3px; }
+.sidebar-scroll::-webkit-scrollbar-thumb:hover { background: rgb(148 163 184 / 0.8); }
+:global(.dark) .sidebar-scroll::-webkit-scrollbar-thumb { background: rgb(30 41 59); }
+:global(.dark) .sidebar-scroll::-webkit-scrollbar-thumb:hover { background: rgb(51 65 85); }
+</style>

@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { Link, router, usePage } from '@inertiajs/vue3';
 
@@ -43,7 +43,7 @@ onUnmounted(() => document.removeEventListener('keydown', onKey));
     <div class="relative">
         <button
             @click="toggle"
-            class="relative rounded-lg p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+            class="relative rounded-lg p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
             title="Notifications"
             aria-label="Notifications"
         >
@@ -64,10 +64,10 @@ onUnmounted(() => document.removeEventListener('keydown', onKey));
         <!-- dropdown -->
         <div
             v-if="open"
-            class="fixed top-16 left-4 right-4 md:absolute md:top-auto md:left-auto md:right-0 md:w-80 z-40 mt-2 origin-top-right rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-lg"
+            class="fixed top-16 left-4 right-4 md:absolute md:top-auto md:left-auto md:right-0 md:w-80 z-40 mt-2 origin-top-right rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-lg"
         >
-            <div class="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 px-4 py-2.5">
-                <p class="text-sm font-semibold text-gray-900 dark:text-white">Notifications</p>
+            <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 px-4 py-2.5">
+                <p class="text-sm font-semibold text-slate-900 dark:text-white">Notifications</p>
                 <button
                     v-if="unread > 0"
                     @click="markAllRead"
@@ -78,7 +78,7 @@ onUnmounted(() => document.removeEventListener('keydown', onKey));
             </div>
 
             <div class="max-h-96 overflow-y-auto">
-                <p v-if="!recent.length" class="px-4 py-8 text-center text-sm text-gray-400">
+                <p v-if="!recent.length" class="px-4 py-8 text-center text-sm text-slate-400">
                     You're all caught up.
                 </p>
 
@@ -87,7 +87,7 @@ onUnmounted(() => document.removeEventListener('keydown', onKey));
                     :key="n.id"
                     :href="route('library.notifications.read', n.id)"
                     @click="close"
-                    class="flex items-start gap-3 border-b border-gray-50 dark:border-gray-800/50 px-4 py-3 transition hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                    class="flex items-start gap-3 border-b border-slate-50 dark:border-slate-800/50 px-4 py-3 transition hover:bg-slate-50 dark:hover:bg-slate-800/50"
                     :class="!n.read_at ? 'bg-indigo-50/40 dark:bg-indigo-950/20' : ''"
                 >
                     <span class="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg" :class="colorFor(n.data.category)">
@@ -96,9 +96,9 @@ onUnmounted(() => document.removeEventListener('keydown', onKey));
                         </svg>
                     </span>
                     <span class="min-w-0 flex-1">
-                        <span class="block text-sm font-medium text-gray-900 dark:text-white">{{ n.data.title }}</span>
-                        <span class="block truncate text-xs text-gray-500 dark:text-gray-400">{{ n.data.message }}</span>
-                        <span class="mt-0.5 block text-[11px] text-gray-400">{{ n.created_at }}</span>
+                        <span class="block text-sm font-medium text-slate-900 dark:text-white">{{ n.data.title }}</span>
+                        <span class="block truncate text-xs text-slate-500 dark:text-slate-400">{{ n.data.message }}</span>
+                        <span class="mt-0.5 block text-[11px] text-slate-400">{{ n.created_at }}</span>
                     </span>
                     <span v-if="!n.read_at" class="mt-1 h-2 w-2 shrink-0 rounded-full bg-indigo-500" />
                 </Link>
@@ -107,7 +107,7 @@ onUnmounted(() => document.removeEventListener('keydown', onKey));
             <Link
                 :href="route('library.notifications.index')"
                 @click="close"
-                class="block border-t border-gray-100 dark:border-gray-800 px-4 py-2.5 text-center text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                class="block border-t border-slate-100 dark:border-slate-800 px-4 py-2.5 text-center text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800/50"
             >
                 View all notifications
             </Link>

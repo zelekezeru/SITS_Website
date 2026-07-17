@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 import { Link } from '@inertiajs/vue3';
 
 defineProps({
@@ -11,11 +11,11 @@ defineProps({
         <div class="flex flex-wrap justify-center -mb-1">
             <template v-for="(link, key) in links" :key="key">
                 <div v-if="link.url === null" 
-                     class="mr-1 mb-1 px-4 py-3 text-sm leading-4 text-gray-400 border rounded dark:border-gray-800" 
+                     class="mr-1 mb-1 px-4 py-3 text-sm leading-4 text-slate-400 border rounded dark:border-slate-800" 
                      v-html="link.label" />
                 <Link v-else 
                       class="mr-1 mb-1 px-4 py-3 text-sm leading-4 border rounded hover:bg-white focus:border-indigo-500 focus:text-indigo-500 transition-colors" 
-                      :class="{ 'bg-indigo-600 text-white hover:bg-indigo-700': link.active, 'bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 dark:border-gray-800 dark:hover:bg-gray-800': !link.active }" 
+                      :class="{ 'bg-indigo-600 text-white hover:bg-indigo-700': link.active, 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 dark:border-slate-800 dark:hover:bg-slate-800': !link.active }" 
                       :href="link.url" 
                       v-html="link.label" />
             </template>

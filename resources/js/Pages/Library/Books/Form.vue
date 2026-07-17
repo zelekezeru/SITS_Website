@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/Library/AuthenticatedLayout.vue';
 import { computed } from 'vue';
@@ -33,7 +33,7 @@ const submit = () => {
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            <h2 class="font-semibold text-xl text-slate-800 leading-tight">
                 {{ isEditing ? 'Edit Book: ' + book.title : 'Add New Book' }}
             </h2>
         </template>
@@ -45,34 +45,34 @@ const submit = () => {
                     <form @submit.prevent="submit" class="space-y-6">
                         
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Title</label>
-                            <input v-model="form.title" type="text" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required />
+                            <label class="block text-sm font-medium text-slate-700">Title</label>
+                            <input v-model="form.title" type="text" class="mt-1 block w-full border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required />
                             <div v-if="form.errors.title" class="text-red-600 text-sm mt-1">{{ form.errors.title }}</div>
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Authors (comma separated)</label>
-                            <input v-model="form.authors" type="text" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required />
+                            <label class="block text-sm font-medium text-slate-700">Authors (comma separated)</label>
+                            <input v-model="form.authors" type="text" class="mt-1 block w-full border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required />
                             <div v-if="form.errors.authors" class="text-red-600 text-sm mt-1">{{ form.errors.authors }}</div>
                         </div>
 
                         <div class="grid grid-cols-2 gap-6">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700">ISBN</label>
-                                <input v-model="form.isbn" type="text" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" />
+                                <label class="block text-sm font-medium text-slate-700">ISBN</label>
+                                <input v-model="form.isbn" type="text" class="mt-1 block w-full border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" />
                                 <div v-if="form.errors.isbn" class="text-red-600 text-sm mt-1">{{ form.errors.isbn }}</div>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700">Copy Number</label>
-                                <input v-model="form.copy_number" type="number" min="1" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required />
+                                <label class="block text-sm font-medium text-slate-700">Copy Number</label>
+                                <input v-model="form.copy_number" type="number" min="1" class="mt-1 block w-full border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required />
                                 <div v-if="form.errors.copy_number" class="text-red-600 text-sm mt-1">{{ form.errors.copy_number }}</div>
                             </div>
                         </div>
 
                         <div class="grid grid-cols-2 gap-6">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700">Status</label>
-                                <select v-model="form.status" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
+                                <label class="block text-sm font-medium text-slate-700">Status</label>
+                                <select v-model="form.status" class="mt-1 block w-full border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
                                     <option value="available">Available</option>
                                     <option value="checked_out">Checked Out</option>
                                     <option value="withdrawn">Withdrawn</option>
@@ -83,14 +83,14 @@ const submit = () => {
                             </div>
                             
                             <div>
-                                <label class="block text-sm font-medium text-gray-700">Location (Shelf Box)</label>
-                                <select v-model="form.current_shelf_box_id" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                                <label class="block text-sm font-medium text-slate-700">Location (Shelf Box)</label>
+                                <select v-model="form.current_shelf_box_id" class="mt-1 block w-full border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
                                     <option value="">-- Unassigned --</option>
                                     <optgroup v-for="campus in campuses" :key="campus.id" :label="campus.name">
                                         <template v-for="floor in campus.floors" :key="floor.id">
                                             <template v-for="row in floor.rows" :key="row.id">
                                                 <option v-for="box in row.shelf_boxes" :key="box.id" :value="box.id">
-                                                    {{ campus.code }} › {{ floor.name }} › {{ box.label }}
+                                                    {{ campus.code }} â€º {{ floor.name }} â€º {{ box.label }}
                                                 </option>
                                             </template>
                                         </template>
@@ -101,7 +101,7 @@ const submit = () => {
                         </div>
 
                         <div class="flex items-center justify-end space-x-4 pt-4 border-t">
-                            <Link :href="route('library.books.index')" class="text-gray-600 hover:text-gray-900 font-medium">Cancel</Link>
+                            <Link :href="route('library.books.index')" class="text-slate-600 hover:text-slate-900 font-medium">Cancel</Link>
                             <button type="submit" :disabled="form.processing" class="inline-flex items-center px-6 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-sm text-white uppercase tracking-widest hover:bg-indigo-700 disabled:opacity-50 transition ease-in-out duration-150">
                                 {{ isEditing ? 'Update Book' : 'Save Book' }}
                             </button>

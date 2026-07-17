@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 import { ref, watch } from 'vue'
 import { QrcodeStream } from 'vue-qrcode-reader'
 import axios from 'axios'
@@ -112,11 +112,11 @@ function buzz() {
     <AuthenticatedLayout>
         <template #header>
             <div class="flex justify-between items-center">
-                <h2 class="font-black text-2xl text-gray-900 dark:text-white leading-tight tracking-tight uppercase">Circulation Intelligence</h2>
+                <h2 class="font-black text-2xl text-slate-900 dark:text-white leading-tight tracking-tight uppercase">Circulation Intelligence</h2>
                 <button 
                     @click="reset" 
                     v-if="borrower" 
-                    class="px-6 py-2 bg-gray-50 dark:bg-gray-800 text-[10px] font-black uppercase tracking-widest text-gray-500 dark:text-gray-400 rounded-xl hover:text-gray-900 dark:hover:text-white transition-all border border-gray-100 dark:border-gray-700"
+                    class="px-6 py-2 bg-slate-50 dark:bg-slate-800 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 rounded-xl hover:text-slate-900 dark:hover:text-white transition-all border border-slate-100 dark:border-slate-700"
                 >
                     Terminate Session
                 </button>
@@ -128,7 +128,7 @@ function buzz() {
                 
                 <!-- Scanner Viewport -->
                 <div class="lg:col-span-5 space-y-6">
-                    <div class="relative rounded-[2.5rem] overflow-hidden bg-black shadow-2xl border-4 border-white dark:border-gray-800 aspect-square group transition-all duration-500">
+                    <div class="relative rounded-[2.5rem] overflow-hidden bg-black shadow-2xl border-4 border-white dark:border-slate-800 aspect-square group transition-all duration-500">
                         <qrcode-stream @detect="onDecode" class="absolute inset-0" />
                         
                         <!-- Smart Overlay -->
@@ -185,12 +185,12 @@ function buzz() {
                     </div>
 
                     <!-- Manual Entry -->
-                    <div class="bg-white dark:bg-gray-900 p-6 rounded-[2rem] shadow-xl border border-gray-100 dark:border-gray-800">
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-[2rem] shadow-xl border border-slate-100 dark:border-slate-800">
                         <form @submit.prevent="handleManualSubmit" class="flex gap-3">
                             <input 
                                 v-model="manualInput" 
                                 type="text" 
-                                class="flex-1 rounded-2xl border-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 text-sm focus:ring-2 focus:ring-indigo-500 transition-all" 
+                                class="flex-1 rounded-2xl border-slate-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 text-sm focus:ring-2 focus:ring-indigo-500 transition-all" 
                                 :placeholder="phase === 'await_borrower' ? 'Enter Name, Email or ID...' : 'Enter Book Hash...'"
                             />
                             <button type="submit" class="px-6 py-3 bg-indigo-600 text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-indigo-700 transition-all active:scale-95">
@@ -209,18 +209,18 @@ function buzz() {
 
                         <!-- Multiple matches: let staff pick the right patron -->
                         <div v-if="candidates.length" class="mt-4 space-y-2">
-                            <p class="text-[10px] font-black uppercase tracking-widest text-gray-400">{{ candidates.length }} matches — select borrower</p>
+                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">{{ candidates.length }} matches â€” select borrower</p>
                             <button
                                 v-for="c in candidates"
                                 :key="c.id"
                                 @click="lookupUser(c.id)"
-                                class="w-full flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-700 hover:border-indigo-400 dark:hover:border-indigo-600 transition-all text-left"
+                                class="w-full flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-700 hover:border-indigo-400 dark:hover:border-indigo-600 transition-all text-left"
                             >
                                 <div>
-                                    <div class="text-sm font-bold text-gray-900 dark:text-white">{{ c.name }}</div>
-                                    <div class="text-xs text-gray-500 dark:text-gray-400">{{ c.email }}</div>
+                                    <div class="text-sm font-bold text-slate-900 dark:text-white">{{ c.name }}</div>
+                                    <div class="text-xs text-slate-500 dark:text-slate-400">{{ c.email }}</div>
                                 </div>
-                                <span class="text-[10px] font-mono text-gray-300 dark:text-gray-600">#{{ c.id }}</span>
+                                <span class="text-[10px] font-mono text-slate-300 dark:text-slate-600">#{{ c.id }}</span>
                             </button>
                         </div>
                     </div>
@@ -233,14 +233,14 @@ function buzz() {
                         enter-from-class="opacity-0 translate-x-12"
                         enter-to-class="opacity-100 translate-x-0"
                     >
-                        <div v-if="borrower" class="bg-white dark:bg-gray-900 p-8 rounded-[2.5rem] shadow-xl border border-indigo-100 dark:border-indigo-900/30 relative overflow-hidden">
+                        <div v-if="borrower" class="bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] shadow-xl border border-indigo-100 dark:border-indigo-900/30 relative overflow-hidden">
                             <div class="absolute -right-10 -top-10 w-40 h-40 bg-indigo-500/5 rounded-full blur-3xl"></div>
                             
                             <div class="relative z-10">
                                 <div class="flex items-start justify-between">
                                     <div>
-                                        <h3 class="text-2xl font-black text-gray-900 dark:text-white leading-tight uppercase tracking-tight">{{ borrower.name }}</h3>
-                                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mt-1">{{ borrower.email }}</p>
+                                        <h3 class="text-2xl font-black text-slate-900 dark:text-white leading-tight uppercase tracking-tight">{{ borrower.name }}</h3>
+                                        <p class="text-sm font-medium text-slate-500 dark:text-slate-400 mt-1">{{ borrower.email }}</p>
                                     </div>
                                     <div class="px-3 py-1 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-full text-[10px] font-black uppercase tracking-widest border border-emerald-100 dark:border-emerald-800/30">
                                         Identity Verified
@@ -248,20 +248,20 @@ function buzz() {
                                 </div>
                                 
                                 <div class="mt-8 grid grid-cols-2 gap-6">
-                                    <div class="p-6 bg-gray-50 dark:bg-gray-800/50 rounded-3xl border dark:border-gray-800 transition-all hover:border-indigo-500/30">
-                                        <div class="text-3xl font-black text-gray-900 dark:text-white tabular-nums">{{ borrower.active_loans_count }}</div>
-                                        <div class="text-[10px] text-gray-400 dark:text-gray-500 uppercase font-black tracking-widest mt-1">Active Loans</div>
+                                    <div class="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-3xl border dark:border-slate-800 transition-all hover:border-indigo-500/30">
+                                        <div class="text-3xl font-black text-slate-900 dark:text-white tabular-nums">{{ borrower.active_loans_count }}</div>
+                                        <div class="text-[10px] text-slate-400 dark:text-slate-500 uppercase font-black tracking-widest mt-1">Active Loans</div>
                                     </div>
                                     <div class="p-6 rounded-3xl border transition-all" 
                                         :class="borrower.fines.length 
                                             ? 'bg-red-50 dark:bg-red-900/20 border-red-100 dark:border-red-900/30' 
-                                            : 'bg-gray-50 dark:bg-gray-800/50 dark:border-gray-800'">
+                                            : 'bg-slate-50 dark:bg-slate-800/50 dark:border-slate-800'">
                                         <div class="text-3xl font-black tabular-nums" 
-                                            :class="borrower.fines.length ? 'text-red-600 dark:text-red-400' : 'text-gray-900 dark:text-white'">
+                                            :class="borrower.fines.length ? 'text-red-600 dark:text-red-400' : 'text-slate-900 dark:text-white'">
                                             {{ currency }} {{ borrower.fines.reduce((sum, f) => sum + (parseFloat(f.amount) - parseFloat(f.paid_amount)), 0).toFixed(2) }}
                                         </div>
                                         <div class="text-[10px] uppercase font-black tracking-widest mt-1" 
-                                            :class="borrower.fines.length ? 'text-red-500/70 dark:text-red-400/70' : 'text-gray-400 dark:text-gray-500'">
+                                            :class="borrower.fines.length ? 'text-red-500/70 dark:text-red-400/70' : 'text-slate-400 dark:text-slate-500'">
                                             Outstanding Fines
                                         </div>
                                     </div>
@@ -269,25 +269,25 @@ function buzz() {
                             </div>
                         </div>
 
-                        <div v-else class="bg-white dark:bg-gray-900 p-12 rounded-[2.5rem] shadow-xl border dark:border-gray-800 text-center flex flex-col items-center justify-center min-h-[300px] border-dashed border-2">
-                            <div class="w-20 h-20 bg-gray-50 dark:bg-gray-800/50 rounded-3xl flex items-center justify-center mb-6 text-gray-300 dark:text-gray-700">
+                        <div v-else class="bg-white dark:bg-slate-900 p-12 rounded-[2.5rem] shadow-xl border dark:border-slate-800 text-center flex flex-col items-center justify-center min-h-[300px] border-dashed border-2">
+                            <div class="w-20 h-20 bg-slate-50 dark:bg-slate-800/50 rounded-3xl flex items-center justify-center mb-6 text-slate-300 dark:text-slate-700">
                                 <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 21h7a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v11m0 5l4.879-4.879m0 0a3 3 0 104.243-4.242 3 3 0 00-4.243 4.242z" /></svg>
                             </div>
-                            <p class="text-sm font-black uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500">Intelligence Awaiting Borrower Scan</p>
+                            <p class="text-sm font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">Intelligence Awaiting Borrower Scan</p>
                         </div>
                     </Transition>
 
                     <!-- Session Activity -->
-                    <div v-if="transactions.length > 0" class="bg-white dark:bg-gray-900 rounded-[2.5rem] shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden flex flex-col max-h-[400px]">
-                        <div class="px-8 py-5 border-b dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50 flex items-center justify-between">
-                            <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Recent Session Scans</h3>
-                            <span class="text-[10px] font-mono text-gray-300">{{ transactions.length }} Ops</span>
+                    <div v-if="transactions.length > 0" class="bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-xl border border-slate-100 dark:border-slate-800 overflow-hidden flex flex-col max-h-[400px]">
+                        <div class="px-8 py-5 border-b dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 flex items-center justify-between">
+                            <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Recent Session Scans</h3>
+                            <span class="text-[10px] font-mono text-slate-300">{{ transactions.length }} Ops</span>
                         </div>
-                        <ul class="divide-y dark:divide-gray-800 overflow-y-auto">
-                            <li v-for="(t, i) in transactions" :key="t.timestamp.getTime()" class="p-6 transition-colors" :class="t.success ? 'bg-white dark:bg-gray-900' : 'bg-red-50/30 dark:bg-red-900/10'">
+                        <ul class="divide-y dark:divide-slate-800 overflow-y-auto">
+                            <li v-for="(t, i) in transactions" :key="t.timestamp.getTime()" class="p-6 transition-colors" :class="t.success ? 'bg-white dark:bg-slate-900' : 'bg-red-50/30 dark:bg-red-900/10'">
                                 <div class="flex items-start justify-between gap-4">
                                     <div>
-                                        <div class="text-sm font-black uppercase tracking-tight" :class="t.success ? 'text-gray-900 dark:text-gray-100' : 'text-red-900 dark:text-red-400'">
+                                        <div class="text-sm font-black uppercase tracking-tight" :class="t.success ? 'text-slate-900 dark:text-slate-100' : 'text-red-900 dark:text-red-400'">
                                             {{ t.message }}
                                         </div>
                                         <div v-if="t.success" class="flex items-center gap-2 mt-2">
@@ -296,7 +296,7 @@ function buzz() {
                                             </span>
                                         </div>
                                     </div>
-                                    <div class="text-[10px] font-black text-gray-300 dark:text-gray-600 uppercase">
+                                    <div class="text-[10px] font-black text-slate-300 dark:text-slate-600 uppercase">
                                         {{ t.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }}
                                     </div>
                                 </div>

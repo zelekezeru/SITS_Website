@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 import { ref, computed } from 'vue';
 import AuthenticatedLayout from '@/Layouts/Library/AuthenticatedLayout.vue';
 import EmptyState from '@/Components/Library/EmptyState.vue';
@@ -31,11 +31,11 @@ const statusColors = {
     overdue_returned: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300',
     waiting: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300',
     ready: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300',
-    expired: 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300',
+    expired: 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300',
     fulfilled: 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300',
     open: 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300',
     paid: 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300',
-    waived: 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300',
+    waived: 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300',
 };
 
 const roleBadge = computed(() => {
@@ -44,82 +44,82 @@ const roleBadge = computed(() => {
         campus_admin: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300',
         librarian:    'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300',
         instructor:   'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300',
-        staff_user:   'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300',
+        staff_user:   'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300',
         student:      'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300',
     };
-    return map[props.patron.role_value] ?? 'bg-gray-100 text-gray-600';
+    return map[props.patron.role_value] ?? 'bg-slate-100 text-slate-600';
 });
 </script>
 
 <template>
-    <Head :title="`${patron.name} — Patron Profile`" />
+    <Head :title="`${patron.name} â€” Patron Profile`" />
 
     <AuthenticatedLayout>
         <template #header>
             <div class="flex items-center gap-2">
-                <Link :href="route('library.users.index')" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                <Link :href="route('library.users.index')" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
                     <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
                 </Link>
-                <h1 class="text-base font-semibold text-gray-900 dark:text-white">Patron Profile</h1>
+                <h1 class="text-base font-semibold text-slate-900 dark:text-white">Patron Profile</h1>
             </div>
         </template>
 
         <div class="p-6 max-w-7xl mx-auto space-y-6">
 
             <!-- Patron header card -->
-            <div class="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">
+            <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6">
                 <div class="flex flex-col sm:flex-row items-start gap-5">
                     <div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white text-2xl font-bold">
                         {{ patron.name.charAt(0).toUpperCase() }}
                     </div>
                     <div class="flex-1 min-w-0">
-                        <h2 class="text-xl font-bold text-gray-900 dark:text-white">{{ patron.name }}</h2>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">{{ patron.email }}</p>
+                        <h2 class="text-xl font-bold text-slate-900 dark:text-white">{{ patron.name }}</h2>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">{{ patron.email }}</p>
                         <div class="flex flex-wrap items-center gap-2 mt-2">
                             <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold" :class="roleBadge">
                                 {{ patron.role }}
                             </span>
-                            <span class="text-xs text-gray-400">•</span>
-                            <span class="text-xs text-gray-500 dark:text-gray-400">{{ patron.campus }}</span>
-                            <span class="text-xs text-gray-400">•</span>
-                            <span class="text-xs text-gray-500 dark:text-gray-400">Member since {{ patron.member_since }}</span>
+                            <span class="text-xs text-slate-400">â€¢</span>
+                            <span class="text-xs text-slate-500 dark:text-slate-400">{{ patron.campus }}</span>
+                            <span class="text-xs text-slate-400">â€¢</span>
+                            <span class="text-xs text-slate-500 dark:text-slate-400">Member since {{ patron.member_since }}</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Summary stat chips -->
                 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mt-6">
-                    <div class="rounded-xl bg-gray-50 dark:bg-gray-800 p-3 text-center">
+                    <div class="rounded-xl bg-slate-50 dark:bg-slate-800 p-3 text-center">
                         <p class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">{{ summary.total_loans }}</p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">Total Loans</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Total Loans</p>
                     </div>
-                    <div class="rounded-xl bg-gray-50 dark:bg-gray-800 p-3 text-center">
+                    <div class="rounded-xl bg-slate-50 dark:bg-slate-800 p-3 text-center">
                         <p class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ summary.active_loans }}</p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">Active</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Active</p>
                     </div>
-                    <div class="rounded-xl bg-gray-50 dark:bg-gray-800 p-3 text-center">
+                    <div class="rounded-xl bg-slate-50 dark:bg-slate-800 p-3 text-center">
                         <p class="text-2xl font-bold text-red-600 dark:text-red-400">{{ summary.overdue_loans }}</p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">Overdue</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Overdue</p>
                     </div>
-                    <div class="rounded-xl bg-gray-50 dark:bg-gray-800 p-3 text-center">
+                    <div class="rounded-xl bg-slate-50 dark:bg-slate-800 p-3 text-center">
                         <p class="text-2xl font-bold text-green-600 dark:text-green-400">{{ summary.active_holds }}</p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">Active Holds</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Active Holds</p>
                     </div>
-                    <div class="rounded-xl bg-gray-50 dark:bg-gray-800 p-3 text-center">
+                    <div class="rounded-xl bg-slate-50 dark:bg-slate-800 p-3 text-center">
                         <p class="text-2xl font-bold text-amber-600 dark:text-amber-400">{{ currency }} {{ summary.total_fines }}</p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">Total Fines</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Total Fines</p>
                     </div>
-                    <div class="rounded-xl bg-gray-50 dark:bg-gray-800 p-3 text-center">
+                    <div class="rounded-xl bg-slate-50 dark:bg-slate-800 p-3 text-center">
                         <p class="text-2xl font-bold text-rose-600 dark:text-rose-400">{{ currency }} {{ summary.outstanding_fines }}</p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">Outstanding</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Outstanding</p>
                     </div>
                 </div>
             </div>
 
             <!-- Tabs -->
-            <div class="flex gap-1 overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-1">
+            <div class="flex gap-1 overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-1">
                 <button
                     v-for="tab in tabs"
                     :key="tab.key"
@@ -127,7 +127,7 @@ const roleBadge = computed(() => {
                     class="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition whitespace-nowrap"
                     :class="activeTab === tab.key
                         ? 'bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300'
-                        : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800'"
+                        : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800'"
                 >
                     <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" :d="tab.icon" />
@@ -142,15 +142,15 @@ const roleBadge = computed(() => {
             <div v-if="activeTab === 'overview'" class="space-y-4">
                 <div class="grid gap-4 lg:grid-cols-2">
                     <!-- Recent loans -->
-                    <div class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5">
-                        <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-3">Recent Loans</h3>
+                    <div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5">
+                        <h3 class="text-sm font-semibold text-slate-900 dark:text-white mb-3">Recent Loans</h3>
                         <div v-if="loans.data.length" class="space-y-2">
-                            <div v-for="loan in loans.data.slice(0, 5)" :key="loan.id" class="flex items-center justify-between py-2 border-b border-gray-100 dark:border-gray-800 last:border-0">
+                            <div v-for="loan in loans.data.slice(0, 5)" :key="loan.id" class="flex items-center justify-between py-2 border-b border-slate-100 dark:border-slate-800 last:border-0">
                                 <div class="min-w-0 flex-1">
-                                    <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ loan.book_title }}</p>
-                                    <p class="text-xs text-gray-400">{{ loan.checked_out_at }} — Due: {{ loan.due_on }}</p>
+                                    <p class="text-sm font-medium text-slate-900 dark:text-white truncate">{{ loan.book_title }}</p>
+                                    <p class="text-xs text-slate-400">{{ loan.checked_out_at }} â€” Due: {{ loan.due_on }}</p>
                                 </div>
-                                <span class="text-xs px-2 py-0.5 rounded-full font-medium" :class="statusColors[loan.status] ?? 'bg-gray-100 text-gray-600'">
+                                <span class="text-xs px-2 py-0.5 rounded-full font-medium" :class="statusColors[loan.status] ?? 'bg-slate-100 text-slate-600'">
                                     {{ loan.status.replace(/_/g, ' ') }}
                                 </span>
                             </div>
@@ -159,14 +159,14 @@ const roleBadge = computed(() => {
                     </div>
 
                     <!-- Recent activity -->
-                    <div class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5">
-                        <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-3">Recent Activity</h3>
+                    <div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5">
+                        <h3 class="text-sm font-semibold text-slate-900 dark:text-white mb-3">Recent Activity</h3>
                         <div v-if="activities.length" class="space-y-2">
-                            <div v-for="activity in activities.slice(0, 8)" :key="activity.id" class="flex items-start gap-2 py-2 border-b border-gray-100 dark:border-gray-800 last:border-0">
+                            <div v-for="activity in activities.slice(0, 8)" :key="activity.id" class="flex items-start gap-2 py-2 border-b border-slate-100 dark:border-slate-800 last:border-0">
                                 <div class="h-1.5 w-1.5 rounded-full bg-indigo-500 mt-2 shrink-0" />
                                 <div>
-                                    <p class="text-sm text-gray-700 dark:text-gray-300">{{ activity.description }}</p>
-                                    <p class="text-xs text-gray-400">{{ activity.created_at }}</p>
+                                    <p class="text-sm text-slate-700 dark:text-slate-300">{{ activity.description }}</p>
+                                    <p class="text-xs text-slate-400">{{ activity.created_at }}</p>
                                 </div>
                             </div>
                         </div>
@@ -177,28 +177,28 @@ const roleBadge = computed(() => {
 
             <!-- Loans tab -->
             <div v-if="activeTab === 'loans'">
-                <div class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-hidden">
+                <div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden">
                     <table v-if="loans.data.length" class="w-full text-sm">
-                        <thead class="bg-gray-50 dark:bg-gray-800">
+                        <thead class="bg-slate-50 dark:bg-slate-800">
                             <tr>
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Book</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Checked Out</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Due</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Returned</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Status</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Book</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Checked Out</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Due</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Returned</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Status</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
-                            <tr v-for="loan in loans.data" :key="loan.id" class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
-                                <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">{{ loan.book_title }}</td>
-                                <td class="px-4 py-3 text-gray-500 dark:text-gray-400">{{ loan.checked_out_at }}</td>
-                                <td class="px-4 py-3" :class="loan.is_overdue ? 'text-red-600 dark:text-red-400 font-medium' : 'text-gray-500 dark:text-gray-400'">
+                        <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                            <tr v-for="loan in loans.data" :key="loan.id" class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                                <td class="px-4 py-3 font-medium text-slate-900 dark:text-white">{{ loan.book_title }}</td>
+                                <td class="px-4 py-3 text-slate-500 dark:text-slate-400">{{ loan.checked_out_at }}</td>
+                                <td class="px-4 py-3" :class="loan.is_overdue ? 'text-red-600 dark:text-red-400 font-medium' : 'text-slate-500 dark:text-slate-400'">
                                     {{ loan.due_on }}
                                     <span v-if="loan.days_overdue > 0" class="text-xs"> ({{ loan.days_overdue }}d late)</span>
                                 </td>
-                                <td class="px-4 py-3 text-gray-500 dark:text-gray-400">{{ loan.returned_at ?? '—' }}</td>
+                                <td class="px-4 py-3 text-slate-500 dark:text-slate-400">{{ loan.returned_at ?? 'â€”' }}</td>
                                 <td class="px-4 py-3">
-                                    <span class="text-xs px-2 py-0.5 rounded-full font-medium" :class="statusColors[loan.status] ?? 'bg-gray-100 text-gray-600'">
+                                    <span class="text-xs px-2 py-0.5 rounded-full font-medium" :class="statusColors[loan.status] ?? 'bg-slate-100 text-slate-600'">
                                         {{ loan.status.replace(/_/g, ' ') }}
                                     </span>
                                 </td>
@@ -211,21 +211,21 @@ const roleBadge = computed(() => {
 
             <!-- Holds tab -->
             <div v-if="activeTab === 'holds'">
-                <div class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-hidden">
+                <div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden">
                     <table v-if="holds.length" class="w-full text-sm">
-                        <thead class="bg-gray-50 dark:bg-gray-800">
+                        <thead class="bg-slate-50 dark:bg-slate-800">
                             <tr>
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Book</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Campus</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Placed</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Status</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Book</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Campus</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Placed</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Status</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+                        <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
                             <tr v-for="hold in holds" :key="hold.id">
-                                <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">{{ hold.book_title }}</td>
-                                <td class="px-4 py-3 text-gray-500 dark:text-gray-400">{{ hold.campus ?? 'Any' }}</td>
-                                <td class="px-4 py-3 text-gray-500 dark:text-gray-400">{{ hold.placed_at }}</td>
+                                <td class="px-4 py-3 font-medium text-slate-900 dark:text-white">{{ hold.book_title }}</td>
+                                <td class="px-4 py-3 text-slate-500 dark:text-slate-400">{{ hold.campus ?? 'Any' }}</td>
+                                <td class="px-4 py-3 text-slate-500 dark:text-slate-400">{{ hold.placed_at }}</td>
                                 <td class="px-4 py-3">
                                     <span class="text-xs px-2 py-0.5 rounded-full font-medium" :class="statusColors[hold.status]">{{ hold.status }}</span>
                                 </td>
@@ -238,25 +238,25 @@ const roleBadge = computed(() => {
 
             <!-- Fines tab -->
             <div v-if="activeTab === 'fines'">
-                <div class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-hidden">
+                <div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden">
                     <table v-if="fines.length" class="w-full text-sm">
-                        <thead class="bg-gray-50 dark:bg-gray-800">
+                        <thead class="bg-slate-50 dark:bg-slate-800">
                             <tr>
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Book</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Reason</th>
-                                <th class="px-4 py-3 text-right text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Amount</th>
-                                <th class="px-4 py-3 text-right text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Paid</th>
-                                <th class="px-4 py-3 text-right text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Balance</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Status</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Book</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Reason</th>
+                                <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Amount</th>
+                                <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Paid</th>
+                                <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Balance</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Status</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+                        <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
                             <tr v-for="fine in fines" :key="fine.id">
-                                <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">{{ fine.book_title ?? '—' }}</td>
-                                <td class="px-4 py-3 text-gray-500 dark:text-gray-400 capitalize">{{ fine.reason }}</td>
-                                <td class="px-4 py-3 text-right text-gray-700 dark:text-gray-300">{{ currency }} {{ fine.amount }}</td>
+                                <td class="px-4 py-3 font-medium text-slate-900 dark:text-white">{{ fine.book_title ?? 'â€”' }}</td>
+                                <td class="px-4 py-3 text-slate-500 dark:text-slate-400 capitalize">{{ fine.reason }}</td>
+                                <td class="px-4 py-3 text-right text-slate-700 dark:text-slate-300">{{ currency }} {{ fine.amount }}</td>
                                 <td class="px-4 py-3 text-right text-green-600 dark:text-green-400">{{ currency }} {{ fine.paid_amount }}</td>
-                                <td class="px-4 py-3 text-right font-medium" :class="fine.balance > 0 ? 'text-red-600 dark:text-red-400' : 'text-gray-400'">
+                                <td class="px-4 py-3 text-right font-medium" :class="fine.balance > 0 ? 'text-red-600 dark:text-red-400' : 'text-slate-400'">
                                     {{ currency }} {{ fine.balance }}
                                 </td>
                                 <td class="px-4 py-3">
@@ -271,19 +271,19 @@ const roleBadge = computed(() => {
 
             <!-- Activity tab -->
             <div v-if="activeTab === 'activity'">
-                <div class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5">
+                <div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5">
                     <div v-if="activities.length" class="space-y-3">
-                        <div v-for="activity in activities" :key="activity.id" class="flex items-start gap-3 pb-3 border-b border-gray-100 dark:border-gray-800 last:border-0 last:pb-0">
+                        <div v-for="activity in activities" :key="activity.id" class="flex items-start gap-3 pb-3 border-b border-slate-100 dark:border-slate-800 last:border-0 last:pb-0">
                             <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400">
                                 <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
                             </div>
                             <div>
-                                <p class="text-sm text-gray-700 dark:text-gray-300">{{ activity.description }}</p>
+                                <p class="text-sm text-slate-700 dark:text-slate-300">{{ activity.description }}</p>
                                 <div class="flex items-center gap-2 mt-0.5">
                                     <span v-if="activity.subject" class="text-xs text-indigo-600 dark:text-indigo-400 font-medium">{{ activity.subject }}</span>
-                                    <span class="text-xs text-gray-400">{{ activity.created_at }}</span>
+                                    <span class="text-xs text-slate-400">{{ activity.created_at }}</span>
                                 </div>
                             </div>
                         </div>

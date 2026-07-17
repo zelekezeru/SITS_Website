@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 import { ref } from 'vue'
 import { QrcodeStream } from 'vue-qrcode-reader'
 import axios from 'axios'
@@ -74,10 +74,10 @@ function buzz() {
     <AuthenticatedLayout>
         <template #header>
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-                <h2 class="font-black text-2xl text-gray-900 dark:text-white leading-tight tracking-tight uppercase">Returns Intelligence</h2>
-                <div class="flex items-center gap-3 bg-white dark:bg-gray-800 p-2 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
-                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-2">Receiving Point:</label>
-                    <select v-model="returnCampusId" class="border-none bg-transparent text-sm font-bold text-gray-700 dark:text-gray-200 focus:ring-0 min-w-[150px]">
+                <h2 class="font-black text-2xl text-slate-900 dark:text-white leading-tight tracking-tight uppercase">Returns Intelligence</h2>
+                <div class="flex items-center gap-3 bg-white dark:bg-slate-800 p-2 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-2">Receiving Point:</label>
+                    <select v-model="returnCampusId" class="border-none bg-transparent text-sm font-bold text-slate-700 dark:text-slate-200 focus:ring-0 min-w-[150px]">
                         <option v-for="c in campuses" :key="c.id" :value="c.id">{{ c.name }}</option>
                     </select>
                 </div>
@@ -89,7 +89,7 @@ function buzz() {
                 
                 <!-- Scanner Viewport -->
                 <div class="lg:col-span-5 space-y-6">
-                    <div class="relative rounded-[2.5rem] overflow-hidden bg-black shadow-2xl border-4 border-white dark:border-gray-800 aspect-square group transition-all duration-500">
+                    <div class="relative rounded-[2.5rem] overflow-hidden bg-black shadow-2xl border-4 border-white dark:border-slate-800 aspect-square group transition-all duration-500">
                         <qrcode-stream @detect="onDecode" class="absolute inset-0" />
                         
                         <!-- Smart Overlay -->
@@ -126,13 +126,13 @@ function buzz() {
                     </div>
 
                     <!-- Manual Input Panel -->
-                    <div class="bg-white dark:bg-gray-900 p-6 rounded-[2rem] shadow-xl border border-gray-100 dark:border-gray-800">
-                        <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">Manual Entry Correction</label>
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-[2rem] shadow-xl border border-slate-100 dark:border-slate-800">
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Manual Entry Correction</label>
                         <form @submit.prevent="handleManualSubmit" class="flex gap-3">
                             <input 
                                 v-model="manualInput" 
                                 type="text" 
-                                class="flex-1 rounded-2xl border-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 text-sm focus:ring-2 focus:ring-indigo-500 transition-all font-mono" 
+                                class="flex-1 rounded-2xl border-slate-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 text-sm focus:ring-2 focus:ring-indigo-500 transition-all font-mono" 
                                 placeholder="Paste or type book hash..." 
                             />
                             <button type="submit" class="px-6 py-3 bg-indigo-600 text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-indigo-700 transition-all active:scale-95">
@@ -144,11 +144,11 @@ function buzz() {
 
                 <!-- Session Intelligence (Log) -->
                 <div class="lg:col-span-7 flex flex-col gap-6">
-                    <div class="bg-white dark:bg-gray-900 rounded-[2.5rem] shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden flex flex-col h-[650px] transition-all">
-                        <div class="px-8 py-6 border-b dark:border-gray-800 flex items-center justify-between">
+                    <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-xl border border-slate-100 dark:border-slate-800 overflow-hidden flex flex-col h-[650px] transition-all">
+                        <div class="px-8 py-6 border-b dark:border-slate-800 flex items-center justify-between">
                             <div>
-                                <h3 class="text-sm font-black text-gray-900 dark:text-white uppercase tracking-widest">Session Intelligence</h3>
-                                <p class="text-[10px] text-gray-400 font-medium mt-0.5">Real-time return activity log</p>
+                                <h3 class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-widest">Session Intelligence</h3>
+                                <p class="text-[10px] text-slate-400 font-medium mt-0.5">Real-time return activity log</p>
                             </div>
                             <div class="text-[10px] font-black text-indigo-500 bg-indigo-50 dark:bg-indigo-900/30 px-3 py-1 rounded-full uppercase tracking-tighter">
                                 {{ transactions.length }} Actions
@@ -170,12 +170,12 @@ function buzz() {
                                                 <div class="text-sm font-black uppercase tracking-tight" :class="t.success ? 'text-emerald-900 dark:text-emerald-200' : 'text-red-900 dark:text-red-200'">
                                                     {{ t.message }}
                                                 </div>
-                                                <div class="text-[10px] font-mono text-gray-400 dark:text-gray-500 mt-1 uppercase tracking-tighter">
+                                                <div class="text-[10px] font-mono text-slate-400 dark:text-slate-500 mt-1 uppercase tracking-tighter">
                                                     Hash Ref: {{ t.hash.substring(0, 24) }}...
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="text-[10px] font-black text-gray-300 dark:text-gray-600 uppercase tabular-nums">
+                                        <div class="text-[10px] font-black text-slate-300 dark:text-slate-600 uppercase tabular-nums">
                                             {{ t.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) }}
                                         </div>
                                     </div>

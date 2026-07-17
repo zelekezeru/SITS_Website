@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 import { Head, Link } from '@inertiajs/vue3';
 import ApplicationLogo from '@/Components/Library/ApplicationLogo.vue';
 import { useDarkMode } from '@/composables/useDarkMode';
@@ -42,7 +42,7 @@ const features = [
     {
         icon: 'M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1',
         title: 'External Resources',
-        description: 'Curated access to licensed databases, online journals, and research tools — all in one place.',
+        description: 'Curated access to licensed databases, online journals, and research tools â€” all in one place.',
     },
 ];
 
@@ -56,12 +56,12 @@ const stats = [
 </script>
 
 <template>
-    <Head title="Welcome — SITS Library" />
+    <Head title="Welcome â€” SITS Library" />
 
-    <div class="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100">
+    <div class="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100">
 
         <!-- Nav -->
-        <header class="fixed inset-x-0 top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur border-b border-gray-200 dark:border-gray-800">
+        <header class="fixed inset-x-0 top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur border-b border-slate-200 dark:border-slate-800">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
                 <div class="flex items-center gap-3">
                     <ApplicationLogo class="h-8 w-8 text-indigo-600 dark:text-indigo-400 fill-current" />
@@ -82,7 +82,7 @@ const stats = [
                     <template v-else>
                         <Link
                             :href="route('login')"
-                            class="rounded-lg px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+                            class="rounded-lg px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
                         >
                             {{ __('Sign in') }}
                         </Link>
@@ -95,13 +95,13 @@ const stats = [
                         </Link>
                     </template>
 
-                    <div class="h-6 w-px bg-gray-200 dark:bg-gray-800 mx-2 hidden sm:block"></div>
+                    <div class="h-6 w-px bg-slate-200 dark:bg-slate-800 mx-2 hidden sm:block"></div>
 
                     <LanguageSwitcher />
 
                     <button
                         @click="toggleDarkMode"
-                        class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+                        class="rounded-lg p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
                         :title="isDark ? __('Switch to light mode') : __('Switch to dark mode')"
                     >
                         <svg v-if="isDark" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M16.95 16.95l.707.707M7.05 7.05l.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
@@ -131,8 +131,8 @@ const stats = [
                     {{ __('Your campus library, everywhere.') }}
                 </h1>
 
-                <p class="text-xl text-gray-650 dark:text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed">
-                    {{ __('Search the catalog, manage loans, access digital resources, and track books across all campuses — from a single, unified platform.') }}
+                <p class="text-xl text-slate-650 dark:text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">
+                    {{ __('Search the catalog, manage loans, access digital resources, and track books across all campuses â€” from a single, unified platform.') }}
                 </p>
 
                 <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -160,7 +160,7 @@ const stats = [
                         <Link
                             v-if="canRegister"
                             :href="route('register')"
-                            class="inline-flex items-center gap-2 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-8 py-3.5 text-base font-semibold text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition"
+                            class="inline-flex items-center gap-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-8 py-3.5 text-base font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition"
                         >
                             {{ __('Create account') }}
                         </Link>
@@ -170,11 +170,11 @@ const stats = [
         </section>
 
         <!-- Stats strip -->
-        <section class="border-y border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+        <section class="border-y border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
                 <dl class="grid grid-cols-2 gap-8 lg:grid-cols-4">
                     <div v-for="stat in stats" :key="stat.label" class="text-center">
-                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ __(stat.label) }}</dt>
+                        <dt class="text-sm font-medium text-slate-500 dark:text-slate-400">{{ __(stat.label) }}</dt>
                         <dd class="mt-1 text-2xl font-bold text-indigo-600 dark:text-indigo-400">{{ __(stat.value) }}</dd>
                     </div>
                 </dl>
@@ -186,7 +186,7 @@ const stats = [
             <div class="max-w-7xl mx-auto">
                 <div class="text-center mb-16">
                     <h2 class="text-3xl sm:text-4xl font-bold tracking-tight mb-4">{{ __('Everything a modern library needs') }}</h2>
-                    <p class="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                    <p class="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
                         {{ __('Built for institutions with multiple campuses, complex workflows, and a growing digital collection.') }}
                     </p>
                 </div>
@@ -195,7 +195,7 @@ const stats = [
                     <div
                         v-for="feature in features"
                         :key="feature.title"
-                        class="group rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 hover:border-indigo-300 dark:hover:border-indigo-700 hover:shadow-md transition"
+                        class="group rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 hover:border-indigo-300 dark:hover:border-indigo-700 hover:shadow-md transition"
                     >
                         <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 mb-4 group-hover:bg-indigo-100 dark:group-hover:bg-indigo-900 transition">
                             <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
@@ -203,7 +203,7 @@ const stats = [
                             </svg>
                         </div>
                         <h3 class="text-base font-semibold mb-2">{{ __(feature.title) }}</h3>
-                        <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{{ __(feature.description) }}</p>
+                        <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">{{ __(feature.description) }}</p>
                     </div>
                 </div>
             </div>
@@ -243,8 +243,8 @@ const stats = [
         </section>
 
         <!-- Footer -->
-        <footer class="border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 py-8 px-4 sm:px-6 lg:px-8">
-            <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-505 dark:text-gray-400">
+        <footer class="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-8 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-slate-505 dark:text-slate-400">
                 <div class="flex items-center gap-2">
                     <ApplicationLogo class="h-5 w-5 text-indigo-600 dark:text-indigo-400 fill-current" />
                     <span>{{ __('SITS Library Management System') }}</span>

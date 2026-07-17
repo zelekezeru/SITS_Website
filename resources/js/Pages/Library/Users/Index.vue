@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 import { Head, Link, router } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/Library/AuthenticatedLayout.vue';
 import Pagination from '@/Components/Library/Pagination.vue';
@@ -13,7 +13,7 @@ const getRoleBadgeClass = (role) => {
         campus_admin: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/40 dark:text-indigo-300',
         librarian: 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300',
     };
-    return map[role] || 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400';
+    return map[role] || 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-400';
 };
 </script>
 
@@ -23,7 +23,7 @@ const getRoleBadgeClass = (role) => {
     <AuthenticatedLayout>
         <template #header>
             <div class="flex items-center justify-between">
-                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200 leading-tight">
                     Manage Users
                 </h2>
                 <Link 
@@ -37,25 +37,25 @@ const getRoleBadgeClass = (role) => {
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white dark:bg-gray-900 overflow-hidden shadow-sm sm:rounded-lg border border-transparent dark:border-gray-800">
+                <div class="bg-white dark:bg-slate-900 overflow-hidden shadow-sm sm:rounded-lg border border-transparent dark:border-slate-800">
                     <div class="p-6">
                         <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-800">
+                            <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-800">
                                 <thead>
                                     <tr>
-                                        <th class="px-6 py-3 bg-gray-50 dark:bg-gray-800/50 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Name</th>
-                                        <th class="px-6 py-3 bg-gray-50 dark:bg-gray-800/50 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Email</th>
-                                        <th class="px-6 py-3 bg-gray-50 dark:bg-gray-800/50 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Roles</th>
-                                        <th class="px-6 py-3 bg-gray-50 dark:bg-gray-800/50 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Joined</th>
-                                        <th class="px-6 py-3 bg-gray-50 dark:bg-gray-800/50 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
+                                        <th class="px-6 py-3 bg-slate-50 dark:bg-slate-800/50 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Name</th>
+                                        <th class="px-6 py-3 bg-slate-50 dark:bg-slate-800/50 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Email</th>
+                                        <th class="px-6 py-3 bg-slate-50 dark:bg-slate-800/50 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Roles</th>
+                                        <th class="px-6 py-3 bg-slate-50 dark:bg-slate-800/50 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Joined</th>
+                                        <th class="px-6 py-3 bg-slate-50 dark:bg-slate-800/50 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-800">
-                                    <tr v-for="user in users.data" :key="user.id" class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition">
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                                <tbody class="bg-white dark:bg-slate-900 divide-y divide-slate-200 dark:divide-slate-800">
+                                    <tr v-for="user in users.data" :key="user.id" class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900 dark:text-slate-100">
                                             {{ user.name }}
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
                                             {{ user.email }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
@@ -65,7 +65,7 @@ const getRoleBadgeClass = (role) => {
                                                 </span>
                                             </div>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
                                             {{ new Date(user.created_at).toLocaleDateString() }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-3">

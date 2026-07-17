@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 import { onMounted } from 'vue';
 import { Head } from '@inertiajs/vue3';
 
@@ -24,8 +24,8 @@ onMounted(() => {
                 <img :src="route('library.copies.qr', copy.id)" class="h-16 w-16" />
                 <div class="flex-1 flex flex-col justify-center overflow-hidden">
                     <div class="text-[10px] font-bold truncate">{{ copy.book.title }}</div>
-                    <div class="text-[8px] text-gray-600 truncate mt-1">ID: {{ copy.id }}</div>
-                    <div class="text-[8px] text-gray-600 font-mono mt-1">{{ copy.barcode || copy.tracking_hash.substring(0,8) }}</div>
+                    <div class="text-[8px] text-slate-600 truncate mt-1">ID: {{ copy.id }}</div>
+                    <div class="text-[8px] text-slate-600 font-mono mt-1">{{ copy.barcode || copy.tracking_hash.substring(0,8) }}</div>
                 </div>
             </div>
         </div>

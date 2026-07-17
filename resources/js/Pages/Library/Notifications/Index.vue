@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 import AuthenticatedLayout from '@/Layouts/Library/AuthenticatedLayout.vue';
 import Pagination from '@/Components/Library/Pagination.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
@@ -39,12 +39,12 @@ const fmt = (iso) => new Date(iso).toLocaleString();
 
     <AuthenticatedLayout>
         <template #header>
-            <h1 class="text-base font-semibold text-gray-900 dark:text-white">Notifications</h1>
+            <h1 class="text-base font-semibold text-slate-900 dark:text-white">Notifications</h1>
         </template>
 
         <div class="mx-auto max-w-3xl p-6 space-y-4">
             <div class="flex items-center justify-between">
-                <p class="text-sm text-gray-500 dark:text-gray-400">
+                <p class="text-sm text-slate-500 dark:text-slate-400">
                     <span v-if="unreadCount">{{ unreadCount }} unread</span>
                     <span v-else>No unread notifications</span>
                 </p>
@@ -57,15 +57,15 @@ const fmt = (iso) => new Date(iso).toLocaleString();
                 </button>
             </div>
 
-            <div class="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
-                <p v-if="!notifications.data.length" class="px-4 py-16 text-center text-sm text-gray-400">
+            <div class="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+                <p v-if="!notifications.data.length" class="px-4 py-16 text-center text-sm text-slate-400">
                     You have no notifications yet.
                 </p>
 
                 <div
                     v-for="n in notifications.data"
                     :key="n.id"
-                    class="flex items-start gap-3 border-b border-gray-50 dark:border-gray-800/50 px-4 py-4 last:border-0"
+                    class="flex items-start gap-3 border-b border-slate-50 dark:border-slate-800/50 px-4 py-4 last:border-0"
                     :class="!n.read_at ? 'bg-indigo-50/40 dark:bg-indigo-950/20' : ''"
                 >
                     <span class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg" :class="colorFor(n.data.category)">
@@ -74,13 +74,13 @@ const fmt = (iso) => new Date(iso).toLocaleString();
                         </svg>
                     </span>
                     <Link :href="route('library.notifications.read', n.id)" class="min-w-0 flex-1">
-                        <span class="block text-sm font-medium text-gray-900 dark:text-white">{{ n.data.title }}</span>
-                        <span class="block text-xs text-gray-500 dark:text-gray-400">{{ n.data.message }}</span>
-                        <span class="mt-0.5 block text-[11px] text-gray-400">{{ fmt(n.created_at) }}</span>
+                        <span class="block text-sm font-medium text-slate-900 dark:text-white">{{ n.data.title }}</span>
+                        <span class="block text-xs text-slate-500 dark:text-slate-400">{{ n.data.message }}</span>
+                        <span class="mt-0.5 block text-[11px] text-slate-400">{{ fmt(n.created_at) }}</span>
                     </Link>
                     <button
                         @click="remove(n.id)"
-                        class="shrink-0 rounded-lg p-1.5 text-gray-300 hover:bg-gray-100 hover:text-red-500 dark:hover:bg-gray-800"
+                        class="shrink-0 rounded-lg p-1.5 text-slate-300 hover:bg-slate-100 hover:text-red-500 dark:hover:bg-slate-800"
                         title="Delete"
                     >
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">

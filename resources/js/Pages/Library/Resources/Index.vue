@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 import { ref } from 'vue'
 import { Head, Link } from '@inertiajs/vue3'
 import AuthenticatedLayout from '@/Layouts/Library/AuthenticatedLayout.vue'
@@ -24,10 +24,10 @@ const openQr = (res) => {
         <template #header>
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
                 <div>
-                    <h2 class="font-black text-3xl text-gray-900 dark:text-white leading-tight tracking-tight">
+                    <h2 class="font-black text-3xl text-slate-900 dark:text-white leading-tight tracking-tight">
                         External Resources
                     </h2>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">Access integrated databases and academic tools</p>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1 font-medium">Access integrated databases and academic tools</p>
                 </div>
                 <div v-if="$page.props.auth.permissions.includes('manage_external_links')" class="flex items-center gap-4">
                     <Link 
@@ -38,7 +38,7 @@ const openQr = (res) => {
                     </Link>
                     <Link 
                         :href="route('library.admin.resources.index')" 
-                        class="hidden sm:inline-flex text-xs font-black uppercase tracking-widest text-gray-500 dark:text-gray-400 hover:text-indigo-600 transition-colors"
+                        class="hidden sm:inline-flex text-xs font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-indigo-600 transition-colors"
                     >
                         Manage All
                     </Link>
@@ -49,12 +49,12 @@ const openQr = (res) => {
         <div class="py-10">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
                 
-                <div v-if="Object.keys(resources).length === 0" class="text-center py-20 bg-white dark:bg-gray-900 rounded-[2.5rem] shadow-xl border border-gray-100 dark:border-gray-800 flex flex-col items-center">
-                    <div class="w-20 h-20 bg-gray-50 dark:bg-gray-800 rounded-3xl flex items-center justify-center text-gray-400 dark:text-gray-600 mb-6">
+                <div v-if="Object.keys(resources).length === 0" class="text-center py-20 bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-xl border border-slate-100 dark:border-slate-800 flex flex-col items-center">
+                    <div class="w-20 h-20 bg-slate-50 dark:bg-slate-800 rounded-3xl flex items-center justify-center text-slate-400 dark:text-slate-600 mb-6">
                         <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100">No resources available</h3>
-                    <p class="mt-2 text-gray-500 dark:text-gray-400 max-w-xs mx-auto text-sm">
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100">No resources available</h3>
+                    <p class="mt-2 text-slate-500 dark:text-slate-400 max-w-xs mx-auto text-sm">
                         You don't have access to any external resources at this time.
                     </p>
                 </div>
@@ -69,18 +69,18 @@ const openQr = (res) => {
                         <div 
                             v-for="res in group" 
                             :key="res.id" 
-                            class="group bg-white dark:bg-gray-900 overflow-hidden shadow-xl shadow-gray-200/50 dark:shadow-none rounded-[2.5rem] border border-gray-100 dark:border-gray-800 flex flex-col hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+                            class="group bg-white dark:bg-slate-900 overflow-hidden shadow-xl shadow-slate-200/50 dark:shadow-none rounded-[2.5rem] border border-slate-100 dark:border-slate-800 flex flex-col hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
                         >
                             <div class="p-8 flex-1">
                                 <div class="flex items-start justify-between mb-6">
                                     <div class="flex items-center space-x-4">
-                                        <div class="w-14 h-14 bg-gray-50 dark:bg-gray-800/50 rounded-2xl flex items-center justify-center text-indigo-600 dark:text-indigo-400 overflow-hidden shadow-inner group-hover:scale-110 transition-transform duration-500">
+                                        <div class="w-14 h-14 bg-slate-50 dark:bg-slate-800/50 rounded-2xl flex items-center justify-center text-indigo-600 dark:text-indigo-400 overflow-hidden shadow-inner group-hover:scale-110 transition-transform duration-500">
                                             <img v-if="res.logo_path" :src="res.logo_path" :alt="res.name" class="w-full h-full object-contain" />
                                             <svg v-else class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" /></svg>
                                         </div>
                                         <div>
-                                            <h4 class="font-black text-gray-900 dark:text-white text-lg leading-tight">{{ res.name }}</h4>
-                                            <span class="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">{{ res.provider }}</span>
+                                            <h4 class="font-black text-slate-900 dark:text-white text-lg leading-tight">{{ res.name }}</h4>
+                                            <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{{ res.provider }}</span>
                                         </div>
                                     </div>
                                     <span :class="{
@@ -92,21 +92,21 @@ const openQr = (res) => {
                                         {{ res.access_tier }}
                                     </span>
                                 </div>
-                                <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed line-clamp-3 font-medium">
+                                <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed line-clamp-3 font-medium">
                                     {{ res.description || 'Access ' + res.name + ' database for research and reference.' }}
                                 </p>
                             </div>
                             
-                            <div class="bg-gray-50 dark:bg-gray-800/30 px-8 py-5 border-t border-gray-100 dark:border-gray-800 flex justify-between items-center group-hover:bg-indigo-50/50 dark:group-hover:bg-indigo-900/10 transition-colors">
-                                <!-- QR button → opens modal -->
-                                <button @click="openQr(res)" class="p-2.5 bg-white dark:bg-gray-800 text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all rounded-xl shadow-sm hover:scale-110" title="Show QR Code">
+                            <div class="bg-slate-50 dark:bg-slate-800/30 px-8 py-5 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center group-hover:bg-indigo-50/50 dark:group-hover:bg-indigo-900/10 transition-colors">
+                                <!-- QR button â†’ opens modal -->
+                                <button @click="openQr(res)" class="p-2.5 bg-white dark:bg-slate-800 text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all rounded-xl shadow-sm hover:scale-110" title="Show QR Code">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" /></svg>
                                 </button>
                                 <a 
                                     :href="route('library.resources.go', res.id)" 
                                     target="_blank" 
                                     rel="noopener noreferrer" 
-                                    class="px-5 py-2.5 bg-gray-900 dark:bg-indigo-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-gray-800 dark:hover:bg-indigo-500 transition-all shadow-lg shadow-gray-500/10 dark:shadow-indigo-500/20 flex items-center group/btn"
+                                    class="px-5 py-2.5 bg-slate-900 dark:bg-indigo-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-slate-800 dark:hover:bg-indigo-500 transition-all shadow-lg shadow-slate-500/10 dark:shadow-indigo-500/20 flex items-center group/btn"
                                 >
                                     Open Portal
                                     <svg class="w-4 h-4 ml-2 transition-transform group-hover/btn:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>

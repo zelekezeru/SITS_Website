@@ -1,1 +1,0 @@
-import{j as t}from"./app-CfCLJkjo.js";const e=t(document.documentElement.classList.contains("dark"));function s(){return{isDark:e,toggle:()=>{e.value=!e.value,e.value?(document.documentElement.classList.add("dark"),localStorage.setItem("theme","dark")):(document.documentElement.classList.remove("dark"),localStorage.setItem("theme","light"))}}}export{s as u};

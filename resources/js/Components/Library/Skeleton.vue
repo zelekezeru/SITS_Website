@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 defineProps({
     width: { type: String, default: 'w-full' },
     height: { type: String, default: 'h-4' },
@@ -9,6 +9,6 @@ defineProps({
 <template>
     <div
         :class="[width, height, rounded]"
-        class="animate-pulse bg-gray-200 dark:bg-gray-700"
+        class="animate-pulse bg-slate-200 dark:bg-slate-700"
     />
 </template>

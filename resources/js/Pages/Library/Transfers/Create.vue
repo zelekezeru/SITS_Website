@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 import { useForm } from '@inertiajs/vue3'
 import AuthenticatedLayout from '@/Layouts/Library/AuthenticatedLayout.vue'
 import { QrcodeStream } from 'vue-qrcode-reader'
@@ -38,20 +38,20 @@ function beep() {
 <template>
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-black text-2xl text-gray-900 dark:text-white leading-tight tracking-tight uppercase">Request Transfer</h2>
+            <h2 class="font-black text-2xl text-slate-900 dark:text-white leading-tight tracking-tight uppercase">Request Transfer</h2>
         </template>
 
         <div class="max-w-2xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-900 rounded-[2.5rem] shadow-2xl border border-gray-100 dark:border-gray-800 p-10 transition-all">
+            <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-2xl border border-slate-100 dark:border-slate-800 p-10 transition-all">
                 <form @submit.prevent="form.post(route('library.transfers.store'))" class="space-y-8">
                     
                     <div>
-                        <label class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-4">Copy Identification</label>
-                        <div class="flex rounded-2xl shadow-sm overflow-hidden border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800">
+                        <label class="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-4">Copy Identification</label>
+                        <div class="flex rounded-2xl shadow-sm overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800">
                             <input 
                                 v-model="form.copy_hash" 
                                 type="text" 
-                                class="flex-1 border-none bg-transparent text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm transition-all font-mono" 
+                                class="flex-1 border-none bg-transparent text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm transition-all font-mono" 
                                 placeholder="Scan or type tracking hash..." 
                                 required 
                             />
@@ -73,7 +73,7 @@ function beep() {
                             leave-from-class="opacity-100 scale-100"
                             leave-to-class="opacity-0 scale-95"
                         >
-                            <div v-if="showScanner" class="mt-6 aspect-video bg-black rounded-[2rem] overflow-hidden border-4 border-white dark:border-gray-800 shadow-2xl relative group">
+                            <div v-if="showScanner" class="mt-6 aspect-video bg-black rounded-[2rem] overflow-hidden border-4 border-white dark:border-slate-800 shadow-2xl relative group">
                                 <qrcode-stream @detect="onDecode" />
                                 
                                 <!-- Smart Overlay -->
@@ -94,11 +94,11 @@ function beep() {
                     </div>
 
                     <div>
-                        <label class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-4">Destination Campus</label>
+                        <label class="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-4">Destination Campus</label>
                         <select 
                             v-model="form.to_campus_id" 
                             required 
-                            class="block w-full rounded-2xl border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-indigo-500 transition-all sm:text-sm font-bold p-4"
+                            class="block w-full rounded-2xl border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500 transition-all sm:text-sm font-bold p-4"
                         >
                             <option value="">Select Target Destination...</option>
                             <option v-for="c in campuses" :key="c.id" :value="c.id">{{ c.name }} ({{ c.code }})</option>
@@ -106,17 +106,17 @@ function beep() {
                     </div>
 
                     <div>
-                        <label class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-4">Justification / Reason</label>
+                        <label class="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-4">Justification / Reason</label>
                         <textarea 
                             v-model="form.reason" 
                             rows="4" 
-                            class="block w-full rounded-2xl border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-indigo-500 transition-all sm:text-sm p-4" 
+                            class="block w-full rounded-2xl border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500 transition-all sm:text-sm p-4" 
                             placeholder="Why is this transfer necessary? (Optional context)"
                         ></textarea>
                     </div>
 
-                    <div class="flex items-center justify-between pt-8 border-t border-gray-50 dark:border-gray-800">
-                        <p class="text-[10px] text-gray-400 dark:text-gray-500 font-black uppercase tracking-widest italic">Admin approval required</p>
+                    <div class="flex items-center justify-between pt-8 border-t border-slate-50 dark:border-slate-800">
+                        <p class="text-[10px] text-slate-400 dark:text-slate-500 font-black uppercase tracking-widest italic">Admin approval required</p>
                         <button 
                             type="submit" 
                             :disabled="form.processing" 

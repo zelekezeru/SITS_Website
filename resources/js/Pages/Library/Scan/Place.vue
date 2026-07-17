@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 import { ref, computed } from 'vue'
 import { QrcodeStream } from 'vue-qrcode-reader'
 import { router } from '@inertiajs/vue3'
@@ -116,12 +116,12 @@ function buzz() {
   <AuthenticatedLayout>
     <template #header>
         <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200 leading-tight">
                 Scan & Place
             </h2>
             <div class="hidden sm:flex items-center gap-2">
                 <span class="flex h-2 w-2 rounded-full" :class="phase === 'await_box' ? 'bg-amber-500 animate-pulse' : 'bg-emerald-500'"></span>
-                <span class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <span class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                     {{ phase === 'await_box' ? 'Initializing' : 'Ready for copies' }}
                 </span>
             </div>
@@ -133,7 +133,7 @@ function buzz() {
         
         <!-- Scanner Column -->
         <div class="lg:col-span-5 space-y-6">
-          <div class="relative rounded-3xl overflow-hidden bg-black shadow-2xl border-4 border-white dark:border-gray-800 aspect-square group">
+          <div class="relative rounded-3xl overflow-hidden bg-black shadow-2xl border-4 border-white dark:border-slate-800 aspect-square group">
               <!-- QR Scanner -->
               <qrcode-stream @detect="onDecode" class="w-full h-full object-cover" />
               
@@ -177,24 +177,24 @@ function buzz() {
           </div>
           
           <!-- Manual Input Card -->
-          <div class="bg-white dark:bg-gray-900 p-6 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 transition-all">
+          <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-800 transition-all">
               <div class="flex items-center gap-3 mb-4">
                   <div class="p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-xl text-indigo-600 dark:text-indigo-400">
                       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                   </div>
-                  <h3 class="font-bold text-gray-800 dark:text-gray-200">Manual Entry</h3>
+                  <h3 class="font-bold text-slate-800 dark:text-slate-200">Manual Entry</h3>
               </div>
               <form @submit.prevent="handleManualSubmit" class="flex gap-2">
                   <input 
                     v-model="manualHash" 
                     type="text" 
-                    class="flex-1 rounded-2xl border-gray-200 dark:border-gray-700 dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm focus:ring-2 focus:ring-indigo-500 transition-all" 
+                    class="flex-1 rounded-2xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-sm focus:ring-2 focus:ring-indigo-500 transition-all" 
                     placeholder="Enter tracking hash..." 
                   />
                   <button 
                     type="submit" 
                     :disabled="!manualHash"
-                    class="px-6 py-2 bg-gray-900 dark:bg-indigo-600 text-white rounded-2xl text-sm font-bold hover:bg-gray-800 dark:hover:bg-indigo-500 disabled:opacity-50 transition shadow-lg shadow-gray-500/10"
+                    class="px-6 py-2 bg-slate-900 dark:bg-indigo-600 text-white rounded-2xl text-sm font-bold hover:bg-slate-800 dark:hover:bg-indigo-500 disabled:opacity-50 transition shadow-lg shadow-slate-500/10"
                   >
                     Add
                   </button>
@@ -226,29 +226,29 @@ function buzz() {
           </Transition>
 
           <!-- List Section -->
-          <div class="flex-1 bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 flex flex-col overflow-hidden">
-            <div class="p-6 border-b dark:border-gray-800 flex items-center justify-between">
-                <h3 class="font-black text-gray-900 dark:text-gray-100 uppercase tracking-wider text-sm flex items-center gap-2">
+          <div class="flex-1 bg-white dark:bg-slate-900 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-800 flex flex-col overflow-hidden">
+            <div class="p-6 border-b dark:border-slate-800 flex items-center justify-between">
+                <h3 class="font-black text-slate-900 dark:text-slate-100 uppercase tracking-wider text-sm flex items-center gap-2">
                     Scanned Copies
                     <span v-if="copies.length" class="bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 px-2 py-0.5 rounded-lg text-xs">{{ copies.length }}</span>
                 </h3>
-                <div class="text-xs text-gray-500 font-medium">Newest at top</div>
+                <div class="text-xs text-slate-500 font-medium">Newest at top</div>
             </div>
 
             <div class="flex-1 overflow-y-auto max-h-[400px] sm:max-h-none">
                 <TransitionGroup 
                     tag="ul" 
                     name="list"
-                    class="divide-y dark:divide-gray-800"
+                    class="divide-y dark:divide-slate-800"
                 >
-                    <li v-for="c in copies" :key="c.hash" class="p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                    <li v-for="c in copies" :key="c.hash" class="p-4 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                         <div class="flex items-center gap-4">
-                            <div class="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-400">
+                            <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
                             </div>
                             <div>
-                                <div class="font-bold text-gray-900 dark:text-gray-100 leading-none mb-1">{{ c.title }}</div>
-                                <div class="text-xs text-gray-500 flex items-center gap-1">
+                                <div class="font-bold text-slate-900 dark:text-slate-100 leading-none mb-1">{{ c.title }}</div>
+                                <div class="text-xs text-slate-500 flex items-center gap-1">
                                     <span class="truncate max-w-[120px]">{{ c.currently_at ?? 'Unshelved' }}</span>
                                     <svg class="w-3 h-3 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
                                     <span class="text-indigo-600 dark:text-indigo-400 font-bold uppercase tracking-tighter">{{ box?.label }}</span>
@@ -262,17 +262,17 @@ function buzz() {
                         </div>
                     </li>
                     <li v-if="!copies.length" key="empty" class="p-12 text-center flex flex-col items-center">
-                        <div class="w-16 h-16 bg-gray-50 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4 border border-dashed border-gray-200 dark:border-gray-700">
-                            <svg class="w-8 h-8 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                        <div class="w-16 h-16 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4 border border-dashed border-slate-200 dark:border-slate-700">
+                            <svg class="w-8 h-8 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                         </div>
-                        <h4 class="font-bold text-gray-400 dark:text-gray-600 uppercase tracking-widest text-xs">Waiting for Scans</h4>
-                        <p class="text-xs text-gray-400 mt-1">Scan book copy barcodes or enter hashes manually.</p>
+                        <h4 class="font-bold text-slate-400 dark:text-slate-600 uppercase tracking-widest text-xs">Waiting for Scans</h4>
+                        <p class="text-xs text-slate-400 mt-1">Scan book copy barcodes or enter hashes manually.</p>
                     </li>
                 </TransitionGroup>
             </div>
 
             <!-- Footer Actions -->
-            <div class="p-6 bg-gray-50 dark:bg-gray-800/30 border-t dark:border-gray-800 space-y-4">
+            <div class="p-6 bg-slate-50 dark:bg-slate-800/30 border-t dark:border-slate-800 space-y-4">
                 <div class="flex gap-3">
                     <button 
                         :disabled="!copies.length || busy" 
@@ -283,7 +283,7 @@ function buzz() {
                     </button>
                     <button 
                         @click="reset" 
-                        class="px-6 py-4 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 font-bold uppercase tracking-widest text-sm hover:bg-gray-100 dark:hover:bg-gray-800 active:scale-95 transition-all"
+                        class="px-6 py-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 font-bold uppercase tracking-widest text-sm hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-95 transition-all"
                     >
                         Reset
                     </button>

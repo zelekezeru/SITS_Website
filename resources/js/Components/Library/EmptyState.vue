@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 defineProps({
     title: { type: String, default: 'No data yet' },
     description: { type: String, default: '' },
@@ -10,13 +10,13 @@ defineProps({
 
 <template>
     <div class="flex flex-col items-center justify-center py-16 px-6 text-center">
-        <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-gray-100 dark:bg-gray-800 mb-4">
-            <svg class="h-8 w-8 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+        <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-800 mb-4">
+            <svg class="h-8 w-8 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" :d="icon" />
             </svg>
         </div>
-        <h3 class="text-sm font-semibold text-gray-900 dark:text-white">{{ title }}</h3>
-        <p v-if="description" class="mt-1 text-sm text-gray-500 dark:text-gray-400 max-w-sm">
+        <h3 class="text-sm font-semibold text-slate-900 dark:text-white">{{ title }}</h3>
+        <p v-if="description" class="mt-1 text-sm text-slate-500 dark:text-slate-400 max-w-sm">
             {{ description }}
         </p>
         <slot />

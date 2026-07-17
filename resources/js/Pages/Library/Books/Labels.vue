@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 import { Head } from '@inertiajs/vue3';
 
 defineProps({
@@ -11,8 +11,8 @@ defineProps({
     
     <div class="print-container">
         <!-- Optional Print Button (hidden when actually printing) -->
-        <div class="no-print p-4 bg-gray-100 flex justify-between items-center mb-8 shadow-sm">
-            <h1 class="text-lg font-bold text-gray-800">Print QR Labels ({{ books.length }})</h1>
+        <div class="no-print p-4 bg-slate-100 flex justify-between items-center mb-8 shadow-sm">
+            <h1 class="text-lg font-bold text-slate-800">Print QR Labels ({{ books.length }})</h1>
             <button onclick="window.print()" class="px-4 py-2 bg-indigo-600 text-white rounded font-medium hover:bg-indigo-700">Print Now</button>
         </div>
 

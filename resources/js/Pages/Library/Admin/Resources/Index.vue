@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 import { Head, Link, router } from '@inertiajs/vue3'
 import AuthenticatedLayout from '@/Layouts/Library/AuthenticatedLayout.vue'
 
@@ -19,7 +19,7 @@ const deleteResource = (id) => {
     <AuthenticatedLayout>
         <template #header>
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200 leading-tight">
                     Manage External Resources
                 </h2>
                 <Link :href="route('library.admin.resources.create')" class="w-full sm:w-auto text-center inline-flex items-center justify-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 transition shadow-sm">
@@ -31,25 +31,25 @@ const deleteResource = (id) => {
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-                <div class="bg-white dark:bg-gray-900 overflow-hidden shadow-sm sm:rounded-lg border border-transparent dark:border-gray-800">
+                <div class="bg-white dark:bg-slate-900 overflow-hidden shadow-sm sm:rounded-lg border border-transparent dark:border-slate-800">
                     <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-800">
+                        <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-800">
                             <thead>
-                                <tr class="bg-gray-50 dark:bg-gray-800/50">
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Name</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Category</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Tier</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
-                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
+                                <tr class="bg-slate-50 dark:bg-slate-800/50">
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Name</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Category</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Tier</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-800">
-                                <tr v-for="res in resources" :key="res.id" class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition">
+                            <tbody class="bg-white dark:bg-slate-900 divide-y divide-slate-200 dark:divide-slate-800">
+                                <tr v-for="res in resources" :key="res.id" class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition">
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ res.name }}</div>
-                                        <div class="text-xs text-gray-500 dark:text-gray-500">{{ res.provider }}</div>
+                                        <div class="text-sm font-medium text-slate-900 dark:text-slate-100">{{ res.name }}</div>
+                                        <div class="text-xs text-slate-500 dark:text-slate-500">{{ res.provider }}</div>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
                                         {{ res.category }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
@@ -67,7 +67,7 @@ const deleteResource = (id) => {
                                             <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
                                             Active
                                         </span>
-                                        <span v-else class="text-gray-400 dark:text-gray-600 text-sm flex items-center">
+                                        <span v-else class="text-slate-400 dark:text-slate-600 text-sm flex items-center">
                                             Inactive
                                         </span>
                                     </td>

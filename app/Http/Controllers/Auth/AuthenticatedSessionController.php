@@ -32,7 +32,7 @@ class AuthenticatedSessionController extends Controller
 
         }
         else {
-            return view('auth.login');
+            return view('oauth.login');
         }
 
     }

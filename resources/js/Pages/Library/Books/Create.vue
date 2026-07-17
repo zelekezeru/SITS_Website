@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/Library/AuthenticatedLayout.vue';
 import { ref } from 'vue';
@@ -59,7 +59,7 @@ const submit = () => {
         <template #header>
             <div class="flex items-center space-x-4">
                 <Link :href="route('library.catalog.index')" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 transition">&larr; Back to Catalog</Link>
-                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight border-l pl-4 border-gray-300 dark:border-gray-700">
+                <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200 leading-tight border-l pl-4 border-slate-300 dark:border-slate-700">
                     Add New Title
                 </h2>
             </div>
@@ -67,27 +67,27 @@ const submit = () => {
 
         <div class="py-12">
             <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white dark:bg-gray-900 overflow-hidden shadow-sm sm:rounded-lg p-8 border border-transparent dark:border-gray-800">
+                <div class="bg-white dark:bg-slate-900 overflow-hidden shadow-sm sm:rounded-lg p-8 border border-transparent dark:border-slate-800">
                     
                     <form @submit.prevent="submit" class="space-y-6">
                         
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Title <span class="text-red-500">*</span></label>
-                            <input v-model="form.title" type="text" class="mt-1 block w-full bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required />
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Title <span class="text-red-500">*</span></label>
+                            <input v-model="form.title" type="text" class="mt-1 block w-full bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required />
                             <div v-if="form.errors.title" class="text-red-600 dark:text-red-400 text-sm mt-1">{{ form.errors.title }}</div>
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Subtitle</label>
-                            <input v-model="form.subtitle" type="text" class="mt-1 block w-full bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" />
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Subtitle</label>
+                            <input v-model="form.subtitle" type="text" class="mt-1 block w-full bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" />
                             <div v-if="form.errors.subtitle" class="text-red-600 dark:text-red-400 text-sm mt-1">{{ form.errors.subtitle }}</div>
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">ISBN</label>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">ISBN</label>
                                 <div class="mt-1 flex gap-2">
-                                    <input v-model="form.isbn" type="text" placeholder="e.g. 9780132350884" class="block w-full bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" />
+                                    <input v-model="form.isbn" type="text" placeholder="e.g. 9780132350884" class="block w-full bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" />
                                     <button 
                                         type="button" 
                                         @click="lookupIsbn"
@@ -100,60 +100,60 @@ const submit = () => {
                                 <div v-if="form.errors.isbn" class="text-red-600 dark:text-red-400 text-sm mt-1">{{ form.errors.isbn }}</div>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Publisher</label>
-                                <input v-model="form.publisher" type="text" class="mt-1 block w-full bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" />
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Publisher</label>
+                                <input v-model="form.publisher" type="text" class="mt-1 block w-full bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" />
                                 <div v-if="form.errors.publisher" class="text-red-600 dark:text-red-400 text-sm mt-1">{{ form.errors.publisher }}</div>
                             </div>
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Call Number</label>
-                                <input v-model="form.call_number" type="text" placeholder="e.g. QA76.73.J38" class="mt-1 block w-full bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" />
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Call Number</label>
+                                <input v-model="form.call_number" type="text" placeholder="e.g. QA76.73.J38" class="mt-1 block w-full bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" />
                                 <div v-if="form.errors.call_number" class="text-red-600 dark:text-red-400 text-sm mt-1">{{ form.errors.call_number }}</div>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Classification Type</label>
-                                <select v-model="form.classification_type" class="mt-1 block w-full bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Classification Type</label>
+                                <select v-model="form.classification_type" class="mt-1 block w-full bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
                                     <option value="dewey">Dewey Decimal</option>
                                     <option value="loc">Library of Congress</option>
                                 </select>
                                 <div v-if="form.errors.classification_type" class="text-red-600 dark:text-red-400 text-sm mt-1">{{ form.errors.classification_type }}</div>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Page Count</label>
-                                <input v-model="form.page_count" type="number" min="1" class="mt-1 block w-full bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" />
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Page Count</label>
+                                <input v-model="form.page_count" type="number" min="1" class="mt-1 block w-full bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" />
                                 <div v-if="form.errors.page_count" class="text-red-600 dark:text-red-400 text-sm mt-1">{{ form.errors.page_count }}</div>
                             </div>
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Subject / Tags</label>
-                                <input v-model="form.subject" type="text" placeholder="e.g. Computer Science, Algorithms" class="mt-1 block w-full bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" />
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Subject / Tags</label>
+                                <input v-model="form.subject" type="text" placeholder="e.g. Computer Science, Algorithms" class="mt-1 block w-full bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" />
                                 <div v-if="form.errors.subject" class="text-red-600 dark:text-red-400 text-sm mt-1">{{ form.errors.subject }}</div>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Cover URL</label>
-                                <input v-model="form.cover_url" type="text" placeholder="e.g. https://covers.openlibrary.org/..." class="mt-1 block w-full bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" />
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Cover URL</label>
+                                <input v-model="form.cover_url" type="text" placeholder="e.g. https://covers.openlibrary.org/..." class="mt-1 block w-full bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" />
                                 <div v-if="form.errors.cover_url" class="text-red-600 dark:text-red-400 text-sm mt-1">{{ form.errors.cover_url }}</div>
                             </div>
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Published Year</label>
-                                <input v-model="form.published_year" type="number" min="1000" max="2100" class="mt-1 block w-full bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" />
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Published Year</label>
+                                <input v-model="form.published_year" type="number" min="1000" max="2100" class="mt-1 block w-full bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" />
                                 <div v-if="form.errors.published_year" class="text-red-600 dark:text-red-400 text-sm mt-1">{{ form.errors.published_year }}</div>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Edition</label>
-                                <input v-model="form.edition" type="text" placeholder="e.g. 2nd Edition" class="mt-1 block w-full bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" />
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Edition</label>
+                                <input v-model="form.edition" type="text" placeholder="e.g. 2nd Edition" class="mt-1 block w-full bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" />
                                 <div v-if="form.errors.edition" class="text-red-600 dark:text-red-400 text-sm mt-1">{{ form.errors.edition }}</div>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Language</label>
-                                <select v-model="form.language" class="mt-1 block w-full bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Language</label>
+                                <select v-model="form.language" class="mt-1 block w-full bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
                                     <option value="en">English</option>
                                     <option value="sw">Swahili</option>
                                     <option value="fr">French</option>
@@ -164,19 +164,19 @@ const submit = () => {
                         
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
-                                <textarea v-model="form.description" rows="4" class="mt-1 block w-full bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"></textarea>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Description</label>
+                                <textarea v-model="form.description" rows="4" class="mt-1 block w-full bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"></textarea>
                                 <div v-if="form.errors.description" class="text-red-600 dark:text-red-400 text-sm mt-1">{{ form.errors.description }}</div>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Internal Notes</label>
-                                <textarea v-model="form.notes" rows="4" class="mt-1 block w-full bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"></textarea>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Internal Notes</label>
+                                <textarea v-model="form.notes" rows="4" class="mt-1 block w-full bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"></textarea>
                                 <div v-if="form.errors.notes" class="text-red-600 dark:text-red-400 text-sm mt-1">{{ form.errors.notes }}</div>
                             </div>
                         </div>
 
-                        <div class="flex items-center justify-end space-x-4 pt-4 border-t border-gray-100 dark:border-gray-800">
-                            <Link :href="route('library.catalog.index')" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 font-medium transition">Cancel</Link>
+                        <div class="flex items-center justify-end space-x-4 pt-4 border-t border-slate-100 dark:border-slate-800">
+                            <Link :href="route('library.catalog.index')" class="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium transition">Cancel</Link>
                             <button type="submit" :disabled="form.processing" class="inline-flex items-center px-6 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-sm text-white uppercase tracking-widest hover:bg-indigo-700 disabled:opacity-50 transition ease-in-out duration-150 shadow-lg shadow-indigo-500/20">
                                 Save Title
                             </button>

@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 import { ref } from 'vue'
 import { Head, Link, router } from '@inertiajs/vue3'
 import AuthenticatedLayout from '@/Layouts/Library/AuthenticatedLayout.vue'
@@ -39,10 +39,10 @@ const openQr = (doc) => {
         <template #header>
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
                 <div>
-                    <h2 class="font-black text-3xl text-gray-900 dark:text-white leading-tight tracking-tight">
+                    <h2 class="font-black text-3xl text-slate-900 dark:text-white leading-tight tracking-tight">
                         Digital Archive
                     </h2>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">Manage and access secure digital documents</p>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1 font-medium">Manage and access secure digital documents</p>
                 </div>
                 <Link 
                     v-if="can_upload" 
@@ -58,12 +58,12 @@ const openQr = (doc) => {
         <div class="py-10">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 
-                <div v-if="documents.length === 0" class="text-center py-20 bg-white dark:bg-gray-900 rounded-[2.5rem] shadow-xl border border-gray-100 dark:border-gray-800 flex flex-col items-center">
+                <div v-if="documents.length === 0" class="text-center py-20 bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-xl border border-slate-100 dark:border-slate-800 flex flex-col items-center">
                     <div class="w-20 h-20 bg-indigo-50 dark:bg-indigo-900/20 rounded-3xl flex items-center justify-center text-indigo-600 dark:text-indigo-400 mb-6">
                         <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" /></svg>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100">Empty Archive</h3>
-                    <p class="mt-2 text-gray-500 dark:text-gray-400 max-w-xs mx-auto text-sm">
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100">Empty Archive</h3>
+                    <p class="mt-2 text-slate-500 dark:text-slate-400 max-w-xs mx-auto text-sm">
                         No documents found. Start by uploading your first PDF to the secure storage.
                     </p>
                 </div>
@@ -72,7 +72,7 @@ const openQr = (doc) => {
                     <div 
                         v-for="doc in documents" 
                         :key="doc.id" 
-                        class="group bg-white dark:bg-gray-900/50 backdrop-blur-xl rounded-[2.5rem] p-7 border border-gray-100 dark:border-gray-800 shadow-xl shadow-gray-200/50 dark:shadow-none hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between relative overflow-hidden"
+                        class="group bg-white dark:bg-slate-900/50 backdrop-blur-xl rounded-[2.5rem] p-7 border border-slate-100 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between relative overflow-hidden"
                     >
                         <!-- Card Glow Effect -->
                         <div class="absolute -right-10 -top-10 w-32 h-32 bg-indigo-500/5 dark:bg-indigo-500/10 rounded-full blur-3xl transition-all duration-500 group-hover:scale-150"></div>
@@ -82,12 +82,12 @@ const openQr = (doc) => {
                                 <div class="p-4 bg-indigo-50 dark:bg-indigo-900/40 rounded-2xl text-indigo-600 dark:text-indigo-400 shadow-inner">
                                     <svg class="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                                 </div>
-                                <div class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-800/50 px-3 py-1 rounded-full">
+                                <div class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-800/50 px-3 py-1 rounded-full">
                                     Secure PDF
                                 </div>
                             </div>
                             
-                            <h3 class="font-black text-gray-900 dark:text-white text-xl leading-tight mb-2 line-clamp-2" :title="doc.title">
+                            <h3 class="font-black text-slate-900 dark:text-white text-xl leading-tight mb-2 line-clamp-2" :title="doc.title">
                                 {{ doc.title }}
                             </h3>
                             
@@ -99,10 +99,10 @@ const openQr = (doc) => {
                             </div>
 
                             <div class="flex flex-wrap gap-2 mt-auto">
-                                <span class="text-[10px] px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded-lg font-bold uppercase tracking-wider">
+                                <span class="text-[10px] px-3 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-lg font-bold uppercase tracking-wider">
                                     {{ formatSize(doc.size_bytes) }}
                                 </span>
-                                <span class="text-[10px] px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded-lg font-bold uppercase tracking-wider">
+                                <span class="text-[10px] px-3 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-lg font-bold uppercase tracking-wider">
                                     {{ doc.visibility.replace('_', ' ') }}
                                 </span>
                             </div>
@@ -111,14 +111,14 @@ const openQr = (doc) => {
                         <div class="mt-8 flex gap-3 relative z-10">
                             <Link 
                                 :href="route('library.archive.show', doc.id)" 
-                                class="flex-1 text-center py-3.5 bg-gray-900 dark:bg-indigo-600 text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-gray-800 dark:hover:bg-indigo-500 transition-all active:scale-95 shadow-lg shadow-gray-500/10 dark:shadow-indigo-500/20"
+                                class="flex-1 text-center py-3.5 bg-slate-900 dark:bg-indigo-600 text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-slate-800 dark:hover:bg-indigo-500 transition-all active:scale-95 shadow-lg shadow-slate-500/10 dark:shadow-indigo-500/20"
                             >
                                 Open Reader
                             </Link>
                             
                             <button 
                                 @click="openQr(doc)" 
-                                class="p-3.5 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all hover:bg-gray-50 active:scale-90 shadow-sm" 
+                                class="p-3.5 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all hover:bg-slate-50 active:scale-90 shadow-sm" 
                                 title="Show QR Code"
                             >
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" /></svg>
@@ -127,7 +127,7 @@ const openQr = (doc) => {
                             <button 
                                 v-if="can_upload" 
                                 @click="deleteDoc(doc.id)" 
-                                class="p-3.5 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-2xl transition-all active:scale-90" 
+                                class="p-3.5 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-2xl transition-all active:scale-90" 
                                 title="Delete Document"
                             >
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>

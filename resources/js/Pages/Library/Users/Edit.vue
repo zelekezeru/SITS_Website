@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/Library/AuthenticatedLayout.vue';
 import InputError from '@/Components/Library/InputError.vue';
@@ -38,7 +38,7 @@ const deleteUser = () => {
     <AuthenticatedLayout>
         <template #header>
             <div class="flex items-center justify-between">
-                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200 leading-tight">
                     Edit User: {{ user.name }}
                 </h2>
                 <button @click="deleteUser" class="text-sm font-medium text-red-600 hover:text-red-900">
@@ -49,7 +49,7 @@ const deleteUser = () => {
 
         <div class="py-12">
             <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white dark:bg-gray-900 overflow-hidden shadow-sm sm:rounded-lg border border-transparent dark:border-gray-800">
+                <div class="bg-white dark:bg-slate-900 overflow-hidden shadow-sm sm:rounded-lg border border-transparent dark:border-slate-800">
                     <div class="p-6">
                         <form @submit.prevent="submit" class="space-y-6">
                             <div>
@@ -64,9 +64,9 @@ const deleteUser = () => {
                                 <InputError class="mt-2" :message="form.errors.email" />
                             </div>
 
-                            <div class="border-t border-gray-100 dark:border-gray-800 pt-6">
-                                <h3 class="text-sm font-medium text-gray-900 dark:text-gray-200 mb-1">Change Password</h3>
-                                <p class="text-xs text-gray-500 mb-4">Leave blank to keep current password.</p>
+                            <div class="border-t border-slate-100 dark:border-slate-800 pt-6">
+                                <h3 class="text-sm font-medium text-slate-900 dark:text-slate-200 mb-1">Change Password</h3>
+                                <p class="text-xs text-slate-500 mb-4">Leave blank to keep current password.</p>
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
                                         <InputLabel for="password" value="New Password" />
@@ -82,18 +82,18 @@ const deleteUser = () => {
                             </div>
 
                             <div>
-                                <span class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Roles</span>
+                                <span class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Roles</span>
                                 <div class="grid grid-cols-2 gap-2">
                                     <label v-for="role in roles" :key="role.id" class="inline-flex items-center">
-                                        <input type="checkbox" :value="role.name" v-model="form.roles" class="rounded border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500" />
-                                        <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">{{ role.name.replace('_', ' ') }}</span>
+                                        <input type="checkbox" :value="role.name" v-model="form.roles" class="rounded border-slate-300 dark:border-slate-700 text-indigo-600 shadow-sm focus:ring-indigo-500" />
+                                        <span class="ml-2 text-sm text-slate-600 dark:text-slate-400">{{ role.name.replace('_', ' ') }}</span>
                                     </label>
                                 </div>
                                 <InputError class="mt-2" :message="form.errors.roles" />
                             </div>
 
-                            <div class="flex items-center justify-end mt-4 pt-4 border-t border-gray-100 dark:border-gray-800">
-                                <Link :href="route('library.users.index')" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 mr-4">
+                            <div class="flex items-center justify-end mt-4 pt-4 border-t border-slate-100 dark:border-slate-800">
+                                <Link :href="route('library.users.index')" class="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 mr-4">
                                     Cancel
                                 </Link>
                                 <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">

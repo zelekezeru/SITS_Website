@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 import { ref, computed } from 'vue';
 import AuthenticatedLayout from '@/Layouts/Library/AuthenticatedLayout.vue';
 import EmptyState from '@/Components/Library/EmptyState.vue';
@@ -85,7 +85,7 @@ const borrowerItems = computed(() =>
 
     <AuthenticatedLayout>
         <template #header>
-            <h1 class="text-base font-semibold text-gray-900 dark:text-white">Reports & Analytics</h1>
+            <h1 class="text-base font-semibold text-slate-900 dark:text-white">Reports & Analytics</h1>
         </template>
 
         <div class="p-6 max-w-7xl mx-auto space-y-6">
@@ -93,7 +93,7 @@ const borrowerItems = computed(() =>
             <!-- Report type selector + date range -->
             <div class="flex flex-col sm:flex-row gap-4">
                 <!-- Report tabs -->
-                <div class="flex gap-1 overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-1 flex-1">
+                <div class="flex gap-1 overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-1 flex-1">
                     <button
                         v-for="r in reports"
                         :key="r.key"
@@ -101,7 +101,7 @@ const borrowerItems = computed(() =>
                         class="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition whitespace-nowrap"
                         :class="selectedReport === r.key
                             ? 'bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300'
-                            : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'"
+                            : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'"
                     >
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" :d="reportIcons[r.icon]" />
@@ -111,10 +111,10 @@ const borrowerItems = computed(() =>
                 </div>
 
                 <!-- Date range -->
-                <div v-if="selectedReport !== 'collection' && selectedReport !== 'overdue'" class="flex items-center gap-2 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-3 py-2 shrink-0">
-                    <input v-model="dateFrom" type="date" class="border-none bg-transparent text-sm text-gray-700 dark:text-gray-300 focus:ring-0 w-32" />
-                    <span class="text-gray-400">→</span>
-                    <input v-model="dateTo" type="date" class="border-none bg-transparent text-sm text-gray-700 dark:text-gray-300 focus:ring-0 w-32" />
+                <div v-if="selectedReport !== 'collection' && selectedReport !== 'overdue'" class="flex items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 shrink-0">
+                    <input v-model="dateFrom" type="date" class="border-none bg-transparent text-sm text-slate-700 dark:text-slate-300 focus:ring-0 w-32" />
+                    <span class="text-slate-400">â†’</span>
+                    <input v-model="dateTo" type="date" class="border-none bg-transparent text-sm text-slate-700 dark:text-slate-300 focus:ring-0 w-32" />
                     <button @click="loadReport" class="rounded-lg bg-indigo-600 px-3 py-1 text-xs font-medium text-white hover:bg-indigo-700 transition">
                         Apply
                     </button>
@@ -124,7 +124,7 @@ const borrowerItems = computed(() =>
                 <div class="relative shrink-0">
                     <button
                         @click="exportOpen = !exportOpen"
-                        class="flex h-full items-center gap-1.5 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition"
+                        class="flex h-full items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition"
                     >
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -133,10 +133,10 @@ const borrowerItems = computed(() =>
                     </button>
                     <div
                         v-if="exportOpen"
-                        class="absolute right-0 z-10 mt-2 w-40 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 py-1 shadow-lg"
+                        class="absolute right-0 z-10 mt-2 w-40 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-1 shadow-lg"
                     >
                         <button v-for="fmt in ['xlsx', 'csv', 'pdf']" :key="fmt" @click="exportReport(fmt)"
-                            class="block w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 uppercase">
+                            class="block w-full px-4 py-2 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 uppercase">
                             {{ fmt }}
                         </button>
                     </div>
@@ -146,22 +146,22 @@ const borrowerItems = computed(() =>
             <!-- Circulation Report -->
             <template v-if="selectedReport === 'circulation' && data?.summary">
                 <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
-                    <div v-for="(value, key) in data.summary" :key="key" class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4">
-                        <p class="text-xs font-medium text-gray-500 dark:text-gray-400 capitalize">{{ key.replace(/_/g, ' ') }}</p>
+                    <div v-for="(value, key) in data.summary" :key="key" class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4">
+                        <p class="text-xs font-medium text-slate-500 dark:text-slate-400 capitalize">{{ key.replace(/_/g, ' ') }}</p>
                         <p class="mt-1 text-xl font-bold text-indigo-600 dark:text-indigo-400">{{ value ?? 0 }}</p>
                     </div>
                 </div>
                 <div class="grid gap-4 lg:grid-cols-3">
-                    <div v-if="data.trend?.length" class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5 lg:col-span-2">
-                        <p class="mb-3 text-sm font-semibold text-gray-900 dark:text-white">Daily Circulation Trend</p>
+                    <div v-if="data.trend?.length" class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 lg:col-span-2">
+                        <p class="mb-3 text-sm font-semibold text-slate-900 dark:text-white">Daily Circulation Trend</p>
                         <LineChart :data="data.trend.map(d => ({ date: d.date, checkout: d.checkouts, return: d.returns }))" />
                     </div>
-                    <div v-if="loanStatusSegments.length" class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5">
-                        <p class="mb-3 text-sm font-semibold text-gray-900 dark:text-white">Loans by Status</p>
+                    <div v-if="loanStatusSegments.length" class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5">
+                        <p class="mb-3 text-sm font-semibold text-slate-900 dark:text-white">Loans by Status</p>
                         <DonutChart :segments="loanStatusSegments" />
                     </div>
-                    <div v-if="topBooksItems.length" class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5 lg:col-span-3">
-                        <p class="mb-3 text-sm font-semibold text-gray-900 dark:text-white">Top Borrowed Titles</p>
+                    <div v-if="topBooksItems.length" class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 lg:col-span-3">
+                        <p class="mb-3 text-sm font-semibold text-slate-900 dark:text-white">Top Borrowed Titles</p>
                         <BarChart :items="topBooksItems" bar-class="bg-indigo-500" />
                     </div>
                 </div>
@@ -170,18 +170,18 @@ const borrowerItems = computed(() =>
             <!-- Collection Report -->
             <template v-if="selectedReport === 'collection' && data?.summary">
                 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-                    <div v-for="(value, key) in data.summary" :key="key" class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4">
-                        <p class="text-xs font-medium text-gray-500 dark:text-gray-400 capitalize">{{ key.replace(/_/g, ' ') }}</p>
+                    <div v-for="(value, key) in data.summary" :key="key" class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4">
+                        <p class="text-xs font-medium text-slate-500 dark:text-slate-400 capitalize">{{ key.replace(/_/g, ' ') }}</p>
                         <p class="mt-1 text-xl font-bold text-blue-600 dark:text-blue-400">{{ value }}</p>
                     </div>
                 </div>
                 <div class="grid gap-4 lg:grid-cols-2">
-                    <div v-if="campusItems.length" class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5">
-                        <p class="mb-3 text-sm font-semibold text-gray-900 dark:text-white">Copies by Campus</p>
+                    <div v-if="campusItems.length" class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5">
+                        <p class="mb-3 text-sm font-semibold text-slate-900 dark:text-white">Copies by Campus</p>
                         <BarChart :items="campusItems" bar-class="bg-teal-500" />
                     </div>
-                    <div v-if="categoryItems.length" class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5">
-                        <p class="mb-3 text-sm font-semibold text-gray-900 dark:text-white">Titles by Category</p>
+                    <div v-if="categoryItems.length" class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5">
+                        <p class="mb-3 text-sm font-semibold text-slate-900 dark:text-white">Titles by Category</p>
                         <BarChart :items="categoryItems" bar-class="bg-violet-500" />
                     </div>
                 </div>
@@ -190,15 +190,15 @@ const borrowerItems = computed(() =>
             <!-- Fines Report -->
             <template v-if="selectedReport === 'fines' && data?.summary">
                 <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
-                    <div v-for="(value, key) in data.summary" :key="key" class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4">
-                        <p class="text-xs font-medium text-gray-500 dark:text-gray-400 capitalize">{{ key.replace(/_/g, ' ') }}</p>
+                    <div v-for="(value, key) in data.summary" :key="key" class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4">
+                        <p class="text-xs font-medium text-slate-500 dark:text-slate-400 capitalize">{{ key.replace(/_/g, ' ') }}</p>
                         <p class="mt-1 text-xl font-bold text-amber-600 dark:text-amber-400">
                             {{ typeof value === 'number' && key.includes('count') ? value : `${currency} ${value}` }}
                         </p>
                     </div>
                 </div>
-                <div v-if="data.trend?.length" class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5">
-                    <p class="mb-3 text-sm font-semibold text-gray-900 dark:text-white">Fines Trend — Assessed vs Collected</p>
+                <div v-if="data.trend?.length" class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5">
+                    <p class="mb-3 text-sm font-semibold text-slate-900 dark:text-white">Fines Trend â€” Assessed vs Collected</p>
                     <LineChart :data="data.trend.map(d => ({ date: d.date, checkout: d.assessed, return: d.collected }))" />
                 </div>
             </template>
@@ -206,18 +206,18 @@ const borrowerItems = computed(() =>
             <!-- Patrons Report -->
             <template v-if="selectedReport === 'patrons' && data?.summary">
                 <div class="grid grid-cols-3 gap-3">
-                    <div v-for="(value, key) in data.summary" :key="key" class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4">
-                        <p class="text-xs font-medium text-gray-500 dark:text-gray-400 capitalize">{{ key.replace(/_/g, ' ') }}</p>
+                    <div v-for="(value, key) in data.summary" :key="key" class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4">
+                        <p class="text-xs font-medium text-slate-500 dark:text-slate-400 capitalize">{{ key.replace(/_/g, ' ') }}</p>
                         <p class="mt-1 text-xl font-bold text-green-600 dark:text-green-400">{{ value }}</p>
                     </div>
                 </div>
                 <div class="grid gap-4 lg:grid-cols-2">
-                    <div v-if="borrowerItems.length" class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5">
-                        <p class="mb-3 text-sm font-semibold text-gray-900 dark:text-white">Top Borrowers</p>
+                    <div v-if="borrowerItems.length" class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5">
+                        <p class="mb-3 text-sm font-semibold text-slate-900 dark:text-white">Top Borrowers</p>
                         <BarChart :items="borrowerItems" bar-class="bg-indigo-500" />
                     </div>
-                    <div v-if="data.top_debtors?.length" class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5">
-                        <p class="mb-3 text-sm font-semibold text-gray-900 dark:text-white">Top Outstanding Fines</p>
+                    <div v-if="data.top_debtors?.length" class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5">
+                        <p class="mb-3 text-sm font-semibold text-slate-900 dark:text-white">Top Outstanding Fines</p>
                         <BarChart :items="data.top_debtors.map(d => ({ label: d.name, value: parseFloat(d.balance) }))" bar-class="bg-rose-500" />
                     </div>
                 </div>
@@ -225,32 +225,32 @@ const borrowerItems = computed(() =>
 
             <!-- Campus Report -->
             <template v-if="selectedReport === 'campus' && data?.comparison">
-                <div class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-hidden">
+                <div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden">
                     <table class="w-full text-sm">
-                        <thead class="bg-gray-50 dark:bg-gray-800">
+                        <thead class="bg-slate-50 dark:bg-slate-800">
                             <tr>
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Campus</th>
-                                <th class="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Copies</th>
-                                <th class="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Checkouts</th>
-                                <th class="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Returns</th>
-                                <th class="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Transfers In</th>
-                                <th class="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Transfers Out</th>
-                                <th class="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Utilization</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Campus</th>
+                                <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Copies</th>
+                                <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Checkouts</th>
+                                <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Returns</th>
+                                <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Transfers In</th>
+                                <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Transfers Out</th>
+                                <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Utilization</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
-                            <tr v-for="c in data.comparison" :key="c.code" class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
-                                <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">
+                        <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                            <tr v-for="c in data.comparison" :key="c.code" class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                                <td class="px-4 py-3 font-medium text-slate-900 dark:text-white">
                                     {{ c.campus }}
-                                    <span class="text-xs text-gray-400 ml-1">({{ c.code }})</span>
+                                    <span class="text-xs text-slate-400 ml-1">({{ c.code }})</span>
                                 </td>
-                                <td class="px-4 py-3 text-right text-gray-600 dark:text-gray-300">{{ c.copies }}</td>
+                                <td class="px-4 py-3 text-right text-slate-600 dark:text-slate-300">{{ c.copies }}</td>
                                 <td class="px-4 py-3 text-right text-blue-600 dark:text-blue-400 font-medium">{{ c.checkouts }}</td>
                                 <td class="px-4 py-3 text-right text-green-600 dark:text-green-400">{{ c.returns }}</td>
-                                <td class="px-4 py-3 text-right text-gray-600 dark:text-gray-300">{{ c.transfers_in }}</td>
-                                <td class="px-4 py-3 text-right text-gray-600 dark:text-gray-300">{{ c.transfers_out }}</td>
+                                <td class="px-4 py-3 text-right text-slate-600 dark:text-slate-300">{{ c.transfers_in }}</td>
+                                <td class="px-4 py-3 text-right text-slate-600 dark:text-slate-300">{{ c.transfers_out }}</td>
                                 <td class="px-4 py-3 text-right">
-                                    <span class="font-medium" :class="c.utilization > 50 ? 'text-emerald-600 dark:text-emerald-400' : c.utilization > 20 ? 'text-amber-600 dark:text-amber-400' : 'text-gray-400'">
+                                    <span class="font-medium" :class="c.utilization > 50 ? 'text-emerald-600 dark:text-emerald-400' : c.utilization > 20 ? 'text-amber-600 dark:text-amber-400' : 'text-slate-400'">
                                         {{ c.utilization }}%
                                     </span>
                                 </td>
@@ -263,45 +263,45 @@ const borrowerItems = computed(() =>
             <!-- Overdue Loans Report -->
             <template v-if="selectedReport === 'overdue' && data?.summary">
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    <div v-for="(value, key) in data.summary" :key="key" class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4">
-                        <p class="text-xs font-medium text-gray-500 dark:text-gray-400 capitalize">{{ key.replace(/_/g, ' ') }}</p>
+                    <div v-for="(value, key) in data.summary" :key="key" class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4">
+                        <p class="text-xs font-medium text-slate-500 dark:text-slate-400 capitalize">{{ key.replace(/_/g, ' ') }}</p>
                         <p class="mt-1 text-xl font-bold text-rose-600 dark:text-rose-400">
                             {{ key === 'total_fines_due' ? `${currency} ${value}` : value }}
                         </p>
                     </div>
                 </div>
-                <div v-if="data.loans?.length" class="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-x-auto">
+                <div v-if="data.loans?.length" class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-x-auto">
                     <table class="w-full text-sm">
-                        <thead class="bg-gray-50 dark:bg-gray-800">
+                        <thead class="bg-slate-50 dark:bg-slate-800">
                             <tr>
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Patron</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Title</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Barcode</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Campus</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Due</th>
-                                <th class="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Days Late</th>
-                                <th class="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Fine</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Patron</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Title</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Barcode</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Campus</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Due</th>
+                                <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Days Late</th>
+                                <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Fine</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
-                            <tr v-for="l in data.loans" :key="l.id" class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                        <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                            <tr v-for="l in data.loans" :key="l.id" class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
                                 <td class="px-4 py-3">
                                     <Link :href="route('library.patrons.show', l.user_id)" class="font-medium text-indigo-600 dark:text-indigo-400 hover:underline">
                                         {{ l.patron }}
                                     </Link>
-                                    <p class="text-xs text-gray-400">{{ l.email }}</p>
+                                    <p class="text-xs text-slate-400">{{ l.email }}</p>
                                 </td>
-                                <td class="px-4 py-3 text-gray-900 dark:text-white">{{ l.title }}</td>
-                                <td class="px-4 py-3 font-mono text-xs text-gray-500">{{ l.barcode }}</td>
-                                <td class="px-4 py-3 text-gray-600 dark:text-gray-300">{{ l.campus }}</td>
-                                <td class="px-4 py-3 text-gray-600 dark:text-gray-300">{{ l.due_on }}</td>
+                                <td class="px-4 py-3 text-slate-900 dark:text-white">{{ l.title }}</td>
+                                <td class="px-4 py-3 font-mono text-xs text-slate-500">{{ l.barcode }}</td>
+                                <td class="px-4 py-3 text-slate-600 dark:text-slate-300">{{ l.campus }}</td>
+                                <td class="px-4 py-3 text-slate-600 dark:text-slate-300">{{ l.due_on }}</td>
                                 <td class="px-4 py-3 text-right">
                                     <span class="font-bold" :class="l.days_overdue > 14 ? 'text-rose-600 dark:text-rose-400' : 'text-amber-600 dark:text-amber-400'">
                                         {{ l.days_overdue }}
                                     </span>
                                 </td>
-                                <td class="px-4 py-3 text-right text-gray-900 dark:text-white font-medium">
-                                    {{ l.fine_balance > 0 ? `${currency} ${l.fine_balance}` : '—' }}
+                                <td class="px-4 py-3 text-right text-slate-900 dark:text-white font-medium">
+                                    {{ l.fine_balance > 0 ? `${currency} ${l.fine_balance}` : 'â€”' }}
                                 </td>
                             </tr>
                         </tbody>
