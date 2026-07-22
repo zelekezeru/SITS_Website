@@ -1,6 +1,21 @@
 <?php
 
 use App\Models\AttendanceLog;
+use App\Models\Employee;
+use App\Models\User;
+
+function makeEmployee(string $name, ?string $deviceCode = null): Employee
+{
+    static $seq = 0;
+    $seq++;
+
+    return Employee::create([
+        'user_id' => User::factory()->create()->id,
+        'staff_no' => 'SITS-TEST-'.$seq,
+        'full_name_en' => $name,
+        'device_employee_code' => $deviceCode,
+    ]);
+}
 
 beforeEach(function () {
     config()->set('services.hikvision.webhook_secret', 'test-secret');
@@ -73,4 +88,41 @@ it('de-duplicates rapid repeat scans for a single entry (face then card)', funct
     $this->postJson($url, hikPayload(['AccessControllerEvent' => ['subEventType' => 1]]))->assertOk();  // card, same second
 
     expect(AttendanceLog::count())->toBe(1);
+});
+
+it('auto-links an unknown device code to an employee by exact, unique name', function () {
+    $employee = makeEmployee('Abebe Kebede'); // no device code yet
+
+    $this->postJson('/hikvision/webhook?token=test-secret', hikPayload([
+        'AccessControllerEvent' => ['employeeNoString' => '9001', 'name' => 'Abebe Kebede'],
+    ]))->assertOk();
+
+    expect($employee->fresh()->device_employee_code)->toBe('9001');
+    expect(AttendanceLog::first()->employee_id)->toBe($employee->id);
+});
+
+it('does not auto-link when the name matches more than one employee', function () {
+    $a = makeEmployee('Sara Tesfaye');
+    $b = makeEmployee('Sara Tesfaye');
+
+    $this->postJson('/hikvision/webhook?token=test-secret', hikPayload([
+        'AccessControllerEvent' => ['employeeNoString' => '9002', 'name' => 'Sara Tesfaye'],
+    ]))->assertOk();
+
+    expect($a->fresh()->device_employee_code)->toBeNull();
+    expect($b->fresh()->device_employee_code)->toBeNull();
+    expect(AttendanceLog::first()->employee_id)->toBeNull(); // logged, but left for manual reconcile
+});
+
+it('does not hijack a code already assigned to another employee', function () {
+    $owner = makeEmployee('Kebede Alemu', '9003');
+    $other = makeEmployee('Alemu Kebede'); // different person, no code
+
+    $this->postJson('/hikvision/webhook?token=test-secret', hikPayload([
+        'AccessControllerEvent' => ['employeeNoString' => '9003', 'name' => 'Alemu Kebede'],
+    ]))->assertOk();
+
+    expect($other->fresh()->device_employee_code)->toBeNull();
+    // Code 9003 still resolves to its original owner.
+    expect(AttendanceLog::first()->employee_id)->toBe($owner->id);
 });

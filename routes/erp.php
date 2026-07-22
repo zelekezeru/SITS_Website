@@ -222,6 +222,7 @@ Route::middleware(['auth', 'active', 'password.fresh'])->group(function () {
         Route::delete('/admin/attendance-imports/{attendanceImport}', [AttendanceImportController::class, 'destroy'])->name('admin.attendance-imports.destroy');
         Route::get('/admin/attendance-logs', [\App\Http\Controllers\Admin\AttendanceLogController::class, 'index'])->name('admin.attendance-logs');
         Route::post('/admin/attendance-logs/sync', [\App\Http\Controllers\Admin\AttendanceLogController::class, 'sync'])->name('admin.attendance-logs.sync');
+        Route::post('/admin/attendance-logs/reconcile', [\App\Http\Controllers\Admin\AttendanceLogController::class, 'reconcile'])->name('admin.attendance-logs.reconcile');
 
         // Fiscal-year viewing context
         Route::post('/admin/fiscal-year', [\App\Http\Controllers\Admin\FiscalYearController::class, 'view'])->name('admin.fiscal-year.view');

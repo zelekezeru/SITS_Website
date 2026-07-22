@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Employee;
 use App\Models\AttendanceLog;
+use App\Services\Attendance\AttendanceDeviceMatcher;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -12,6 +13,10 @@ use Carbon\Carbon;
 
 class HikvisionWebhookController extends Controller
 {
+    public function __construct(private AttendanceDeviceMatcher $deviceMatcher)
+    {
+    }
+
     /**
      * Receives event alerts from HikVision Access Control devices (HTTP
      * Listening / event notification). The device is on the college LAN with
@@ -66,6 +71,17 @@ class HikvisionWebhookController extends Controller
         // Match the device code to a system employee (nullable — unmatched
         // codes are still logged so they surface for reconciliation).
         $employee = Employee::where('device_employee_code', $event['employeeNo'])->first();
+
+        // Self-heal: if the code is unknown but the terminal sent the enrolled
+        // person's name, conservatively auto-link it (exact, unique match only)
+        // so future punches for this person resolve by code automatically.
+        if (! $employee && ! empty($event['name'])) {
+            $employee = $this->deviceMatcher->resolveByName($event['name'], $event['employeeNo']);
+
+            if ($employee) {
+                Log::info("HikVision Webhook: auto-linked device code {$event['employeeNo']} to {$employee->full_name_en} by name.");
+            }
+        }
 
         $log = AttendanceLog::create([
             'employee_id' => $employee?->id,
@@ -171,6 +187,7 @@ class HikvisionWebhookController extends Controller
                     $data['employeeNoString'] ?? null,
                     isset($data['employeeNo']) ? (string) $data['employeeNo'] : null,
                 ),
+                'name' => $event['name'] ?? $data['name'] ?? null,
                 'deviceName' => $event['deviceName'] ?? $data['deviceName'] ?? null,
                 'dateTime' => $data['dateTime'] ?? $event['dateTime'] ?? null,
                 'attendanceStatus' => $event['attendanceStatus'] ?? $data['attendanceStatus'] ?? null,
@@ -193,6 +210,7 @@ class HikvisionWebhookController extends Controller
                         'employeeNo' => $event
                             ? $this->firstNonEmpty((string) ($event->employeeNoString ?? ''), (string) ($event->employeeNo ?? ''))
                             : null,
+                        'name' => $event ? $this->stringOrNull((string) ($event->name ?? '')) : null,
                         'deviceName' => $this->firstNonEmpty(
                             $event ? (string) ($event->deviceName ?? '') : null,
                             (string) ($xml->deviceName ?? ''),

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\AttendanceLog;
+use App\Models\Employee;
 use App\Models\PayrollPeriod;
 use App\Services\Attendance\AttendanceSyncService;
 use Illuminate\Http\Request;
@@ -61,7 +62,7 @@ class AttendanceLogController extends Controller
             'matched_swipes' => AttendanceLog::whereNotNull('employee_id')->count(),
             'unmatched_swipes' => AttendanceLog::whereNull('employee_id')->count(),
             'is_authenticated' => (string) config('services.hikvision.webhook_secret', '') !== '',
-            'webhook_url' => url('/api/hikvision/webhook'),
+            'webhook_url' => url('/hikvision/webhook'),
         ];
 
         return Inertia::render('Admin/Finance/AttendanceLogs/Index', [
@@ -72,6 +73,7 @@ class AttendanceLogController extends Controller
             ],
             'attendanceLogs' => $logs,
             'stats' => $stats,
+            'employees' => Employee::orderBy('full_name_en')->get(['id', 'full_name_en', 'employee_id', 'device_employee_code']),
             'payrollPeriods' => PayrollPeriod::monthly()->forActiveYear()->orderByDesc('start_date')->get(),
             'filters' => [
                 'search' => $search,
@@ -101,5 +103,37 @@ class AttendanceLogController extends Controller
         $result = $service->sync($period);
 
         return redirect()->back()->with('success', "Successfully aggregated and synced {$result['synced']} employee attendance records from real-time logs.");
+    }
+
+    /**
+     * Manually link an unmatched device code to an employee, then back-fill every
+     * past log carrying that code so history attributes to the right person and
+     * all future punches resolve automatically.
+     */
+    public function reconcile(Request $request)
+    {
+        $data = $request->validate([
+            'device_employee_code' => ['required', 'string'],
+            'employee_id' => ['required', 'exists:employees,id'],
+        ]);
+
+        $employee = Employee::findOrFail($data['employee_id']);
+
+        // Guard against stealing a code already claimed by someone else.
+        $conflict = Employee::where('device_employee_code', $data['device_employee_code'])
+            ->where('id', '!=', $employee->id)
+            ->first();
+
+        if ($conflict) {
+            return redirect()->back()->with('error', "Device code {$data['device_employee_code']} is already linked to {$conflict->full_name_en}.");
+        }
+
+        $employee->update(['device_employee_code' => $data['device_employee_code']]);
+
+        $backfilled = AttendanceLog::where('device_employee_code', $data['device_employee_code'])
+            ->whereNull('employee_id')
+            ->update(['employee_id' => $employee->id]);
+
+        return redirect()->back()->with('success', "Linked code {$data['device_employee_code']} to {$employee->full_name_en} and updated {$backfilled} past log(s).");
     }
 }

@@ -12,6 +12,7 @@ const props = defineProps({
   module: { type: Object, required: true },
   attendanceLogs: { type: Object, required: true }, // paginated response
   stats: { type: Object, required: true },
+  employees: { type: Array, default: () => [] },
   payrollPeriods: { type: Array, default: () => [] },
   filters: {
     type: Object,
@@ -58,6 +59,27 @@ const copyWebhookUrl = () => {
 const syncForm = useForm({
   payroll_period_id: '',
 });
+
+// Manual reconciliation of an unmatched device code to an employee.
+const reconcileLog = ref(null);
+const reconcileForm = useForm({ device_employee_code: '', employee_id: '' });
+
+const openReconcile = (log) => {
+  reconcileLog.value = log;
+  reconcileForm.clearErrors();
+  reconcileForm.device_employee_code = log.device_employee_code;
+  reconcileForm.employee_id = '';
+};
+
+const submitReconcile = () => {
+  reconcileForm.post('/admin/attendance-logs/reconcile', {
+    preserveScroll: true,
+    onSuccess: () => {
+      reconcileLog.value = null;
+      reconcileForm.reset();
+    },
+  });
+};
 
 const submitSync = () => {
   syncForm.post('/admin/attendance-logs/sync', {
@@ -293,9 +315,17 @@ const formatJson = (data) => {
                     {{ log.employee.employee_id }}
                   </span>
                 </div>
-                <div v-else class="flex items-center gap-1.5 text-amber-400 text-xs font-semibold">
-                  <Icon name="AlertTriangle" :size="13" />
-                  <span>Unmatched Code</span>
+                <div v-else class="flex items-center gap-2">
+                  <span class="flex items-center gap-1.5 text-amber-400 text-xs font-semibold">
+                    <Icon name="AlertTriangle" :size="13" />
+                    <span>Unmatched Code</span>
+                  </span>
+                  <button
+                    @click="openReconcile(log)"
+                    class="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-md border border-blue-500/30 bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 transition cursor-pointer"
+                  >
+                    Assign
+                  </button>
                 </div>
               </td>
 
@@ -395,6 +425,60 @@ const formatJson = (data) => {
             Close
           </button>
         </div>
+      </div>
+    </div>
+
+    <!-- Reconcile / Assign Employee Modal -->
+    <div v-if="reconcileLog" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm" @click="reconcileLog = null"></div>
+      <div class="relative w-full max-w-md rounded-3xl border border-slate-900 bg-slate-950 p-6 shadow-2xl space-y-6">
+        <div>
+          <h3 class="text-xl font-bold text-white">Link Device Code to Employee</h3>
+          <p class="text-xs text-slate-400 mt-1">
+            Assign device code
+            <code class="text-blue-400 font-mono bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800">{{ reconcileLog.device_employee_code }}</code>
+            to an employee. This updates all past logs with this code and links future punches automatically.
+          </p>
+        </div>
+
+        <form @submit.prevent="submitReconcile" class="space-y-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Employee</label>
+            <select
+              v-model="reconcileForm.employee_id"
+              required
+              class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-850 text-white text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            >
+              <option value="" disabled>Choose an employee…</option>
+              <option v-for="emp in employees" :key="emp.id" :value="emp.id">
+                {{ emp.full_name_en }}<template v-if="emp.employee_id"> ({{ emp.employee_id }})</template><template v-if="emp.device_employee_code"> — already code {{ emp.device_employee_code }}</template>
+              </option>
+            </select>
+            <span v-if="reconcileForm.errors.employee_id" class="text-xs text-rose-500 mt-1.5 block">
+              {{ reconcileForm.errors.employee_id }}
+            </span>
+            <span v-if="reconcileForm.errors.device_employee_code" class="text-xs text-rose-500 mt-1.5 block">
+              {{ reconcileForm.errors.device_employee_code }}
+            </span>
+          </div>
+
+          <div class="flex justify-end gap-3 pt-2">
+            <button
+              type="button"
+              @click="reconcileLog = null"
+              class="px-4 py-2.5 text-xs font-semibold text-slate-400 hover:text-white transition cursor-pointer"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              :disabled="reconcileForm.processing || !reconcileForm.employee_id"
+              class="px-5 py-2.5 text-xs font-semibold bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl transition shadow-md shadow-blue-500/10 cursor-pointer"
+            >
+              {{ reconcileForm.processing ? 'Linking…' : 'Link Employee' }}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
 
