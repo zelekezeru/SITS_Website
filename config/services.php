@@ -51,6 +51,55 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | HikVision Access Control — real-time attendance webhook
+    |--------------------------------------------------------------------------
+    | The terminal POSTs each authenticated punch to /hikvision/webhook. Because
+    | that endpoint is public, it is guarded by a shared secret the device must
+    | present (as ?token=, an X-Webhook-Token header, or the password half of
+    | HTTP Basic auth) and, optionally, an IP allow-list.
+    |
+    | Event filtering keeps payroll data clean: only genuine access-granted
+    | punches are stored. Door/exit-button, tamper and heartbeat events carry no
+    | employee number and are dropped; non-access "major" event types are
+    | dropped; and rapid duplicate scans (e.g. face + card for one entry) are
+    | de-duplicated. Tighten `granted_sub_event_types` once you see your own
+    | device's codes in the attendance_logs.raw_payload column.
+    */
+    'hikvision' => [
+        // Shared secret the device must present. Leave blank to DISABLE the
+        // check — not recommended on a public server, the endpoint is open.
+        'webhook_secret' => env('HIKVISION_WEBHOOK_SECRET', ''),
+
+        // Optional comma-separated allow-list of device source IPs. Empty = any.
+        'allowed_ips' => array_values(array_filter(array_map(
+            'trim',
+            explode(',', (string) env('HIKVISION_WEBHOOK_IPS', ''))
+        ))),
+
+        // AccessControllerEvent.majorEventType values that count as access
+        // events (5 = authentication event). Others (1=alarm, 2=exception,
+        // 3=operation…) are ignored. Empty = accept any major type.
+        'major_event_types' => array_values(array_filter(array_map(
+            'trim',
+            explode(',', (string) env('HIKVISION_MAJOR_EVENT_TYPES', '5'))
+        ))),
+
+        // Optional allow-list of subEventType codes that mean "authentication
+        // passed" on YOUR firmware (e.g. 1=card, 38=fingerprint, 75=face).
+        // Empty = accept any subEventType (the employeeNo + major-type filters
+        // already exclude anonymous/failed attempts).
+        'granted_sub_event_types' => array_values(array_filter(array_map(
+            'trim',
+            explode(',', (string) env('HIKVISION_GRANTED_SUB_EVENT_TYPES', ''))
+        ))),
+
+        // Seconds within which a repeat punch (same employee + device +
+        // direction) is treated as a duplicate and skipped. 0 = never dedupe.
+        'dedup_seconds' => (int) env('HIKVISION_DEDUP_SECONDS', 60),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | SITS Library — payments & AI (merged from sits-library)
     |--------------------------------------------------------------------------
     */
