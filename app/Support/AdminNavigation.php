@@ -154,6 +154,8 @@ class AdminNavigation
                                 'Calendar of official holidays and institutional closed days.'),
                             self::child('Mass Permissions', 'admin.mass-permissions', '/admin/mass-permissions',
                                 'Batch excuse absences for holidays and closed days across all employees.'),
+                            self::child('Biometric Swipes & Webhook Logs', 'admin.attendance-logs', '/admin/attendance-logs',
+                                'Real-time biometric punch logs and raw HikVision webhook events.'),
                         ]),
                     self::item('Attendance Imports', 'admin.attendance-imports', '/admin/attendance-imports', 'UploadCloud',
                         'Import HikVision biometric attendance Excel reports for review before they post to payroll.',

@@ -134,56 +134,86 @@ class HikvisionWebhookController extends Controller
     {
         $contentType = (string) $request->header('Content-Type', '');
 
+        // 1. Check for JSON payload or JSON/form input inside multipart/form-data
+        $data = null;
         if ($request->isJson() || str_contains($contentType, 'application/json')) {
             $data = $request->json()->all();
-            $event = $data['AccessControllerEvent'] ?? [];
+        } elseif ($request->has('event_log')) {
+            $eventLog = $request->input('event_log');
+            if (is_string($eventLog)) {
+                $decoded = json_decode($eventLog, true);
+                $data = is_array($decoded) ? $decoded : null;
+
+                if ($data === null && str_contains($eventLog, '<?xml')) {
+                    try {
+                        $xml = simplexml_load_string($eventLog, 'SimpleXMLElement', LIBXML_NOCDATA);
+                        if ($xml) {
+                            $data = json_decode(json_encode($xml), true);
+                        }
+                    } catch (\Throwable $e) {
+                        // proceed to fallbacks
+                    }
+                }
+            } elseif (is_array($eventLog)) {
+                $data = $eventLog;
+            }
+        } elseif (!empty($request->all())) {
+            $data = $request->all();
+        }
+
+        if (is_array($data) && !empty($data)) {
+            $event = $data['AccessControllerEvent'] ?? $data;
 
             return [
                 'employeeNo' => $this->firstNonEmpty(
                     $event['employeeNoString'] ?? null,
                     isset($event['employeeNo']) ? (string) $event['employeeNo'] : null,
+                    $data['employeeNoString'] ?? null,
+                    isset($data['employeeNo']) ? (string) $data['employeeNo'] : null,
                 ),
                 'deviceName' => $event['deviceName'] ?? $data['deviceName'] ?? null,
-                'dateTime' => $data['dateTime'] ?? null,
-                'attendanceStatus' => $event['attendanceStatus'] ?? null,
+                'dateTime' => $data['dateTime'] ?? $event['dateTime'] ?? null,
+                'attendanceStatus' => $event['attendanceStatus'] ?? $data['attendanceStatus'] ?? null,
                 'majorEventType' => $this->stringOrNull($event['majorEventType'] ?? $data['majorEventType'] ?? null),
                 'subEventType' => $this->stringOrNull($event['subEventType'] ?? $data['subEventType'] ?? null),
                 'payload' => $data,
             ];
         }
 
+        // 2. Fallback XML parsing directly from raw content
         try {
-            $xml = simplexml_load_string($request->getContent(), 'SimpleXMLElement', LIBXML_NOCDATA);
-            if (!$xml) {
-                return null;
+            $content = $request->getContent();
+            if (!empty($content)) {
+                $xml = simplexml_load_string($content, 'SimpleXMLElement', LIBXML_NOCDATA);
+                if ($xml) {
+                    $payload = json_decode(json_encode($xml), true);
+                    $event = $xml->AccessControllerEvent ?? null;
+
+                    return [
+                        'employeeNo' => $event
+                            ? $this->firstNonEmpty((string) ($event->employeeNoString ?? ''), (string) ($event->employeeNo ?? ''))
+                            : null,
+                        'deviceName' => $this->firstNonEmpty(
+                            $event ? (string) ($event->deviceName ?? '') : null,
+                            (string) ($xml->deviceName ?? ''),
+                        ),
+                        'dateTime' => $this->stringOrNull((string) ($xml->dateTime ?? '')),
+                        'attendanceStatus' => $event ? $this->stringOrNull((string) ($event->attendanceStatus ?? '')) : null,
+                        'majorEventType' => $event
+                            ? $this->stringOrNull((string) ($event->majorEventType ?? ''))
+                            : $this->stringOrNull((string) ($xml->majorEventType ?? '')),
+                        'subEventType' => $event
+                            ? $this->stringOrNull((string) ($event->subEventType ?? ''))
+                            : $this->stringOrNull((string) ($xml->subEventType ?? '')),
+                        'payload' => $payload,
+                    ];
+                }
             }
-
-            $payload = json_decode(json_encode($xml), true);
-            $event = $xml->AccessControllerEvent ?? null;
-
-            return [
-                'employeeNo' => $event
-                    ? $this->firstNonEmpty((string) ($event->employeeNoString ?? ''), (string) ($event->employeeNo ?? ''))
-                    : null,
-                'deviceName' => $this->firstNonEmpty(
-                    $event ? (string) ($event->deviceName ?? '') : null,
-                    (string) ($xml->deviceName ?? ''),
-                ),
-                'dateTime' => $this->stringOrNull((string) ($xml->dateTime ?? '')),
-                'attendanceStatus' => $event ? $this->stringOrNull((string) ($event->attendanceStatus ?? '')) : null,
-                'majorEventType' => $event
-                    ? $this->stringOrNull((string) ($event->majorEventType ?? ''))
-                    : $this->stringOrNull((string) ($xml->majorEventType ?? '')),
-                'subEventType' => $event
-                    ? $this->stringOrNull((string) ($event->subEventType ?? ''))
-                    : $this->stringOrNull((string) ($xml->subEventType ?? '')),
-                'payload' => $payload,
-            ];
         } catch (\Throwable $e) {
             Log::error('HikVision Webhook: Failed parsing XML payload', ['error' => $e->getMessage()]);
-
-            return null;
         }
+
+        return null;
     }
 
     /**

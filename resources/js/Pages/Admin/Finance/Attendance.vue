@@ -229,12 +229,21 @@ const submitSync = () => {
           <h3 class="text-lg font-bold text-slate-200">Biometric Live Swipes</h3>
           <p class="text-xs text-slate-500">Real-time attendance logs pushed directly from internet-connected HikVision terminals.</p>
         </div>
-        <button 
-          @click="showSyncModal = true"
-          class="text-sm font-semibold bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white px-5 py-2.5 rounded-xl transition-all duration-200 shadow-md shadow-emerald-500/10 hover:shadow-emerald-500/20 cursor-pointer"
-        >
-          Sync Biometric Logs
-        </button>
+        <div class="flex items-center gap-3">
+          <Link 
+            href="/admin/attendance-logs" 
+            class="text-xs font-semibold bg-slate-900 hover:bg-slate-850 border border-slate-800 text-blue-400 hover:text-blue-300 px-4 py-2.5 rounded-xl transition cursor-pointer flex items-center gap-1.5"
+          >
+            <Icon name="Globe" :size="14" />
+            Open Full Webhook Inspector
+          </Link>
+          <button 
+            @click="showSyncModal = true"
+            class="text-sm font-semibold bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white px-5 py-2.5 rounded-xl transition-all duration-200 shadow-md shadow-emerald-500/10 hover:shadow-emerald-500/20 cursor-pointer"
+          >
+            Sync Biometric Logs
+          </button>
+        </div>
       </div>
 
       <div class="rounded-2xl border border-slate-900 bg-slate-900/10 shadow-md p-6">

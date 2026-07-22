@@ -220,6 +220,7 @@ Route::middleware(['auth', 'active', 'password.fresh'])->group(function () {
         Route::post('/admin/attendance-imports/{attendanceImport}/approve', [AttendanceImportController::class, 'approve'])->middleware('can:approve attendance')->name('admin.attendance-imports.approve');
         Route::post('/admin/attendance-imports/{attendanceImport}/reject', [AttendanceImportController::class, 'reject'])->middleware('can:approve attendance')->name('admin.attendance-imports.reject');
         Route::delete('/admin/attendance-imports/{attendanceImport}', [AttendanceImportController::class, 'destroy'])->name('admin.attendance-imports.destroy');
+        Route::get('/admin/attendance-logs', [\App\Http\Controllers\Admin\AttendanceLogController::class, 'index'])->name('admin.attendance-logs');
         Route::post('/admin/attendance-logs/sync', [\App\Http\Controllers\Admin\AttendanceLogController::class, 'sync'])->name('admin.attendance-logs.sync');
 
         // Fiscal-year viewing context
