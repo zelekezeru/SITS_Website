@@ -101,6 +101,14 @@ const formatJson = (data) => {
   }
   return JSON.stringify(data, null, 2);
 };
+
+// Always render swipe times in East Africa Time (GMT+3, Nairobi/Addis Ababa),
+// independent of the viewer's browser timezone, so a punch never appears shifted.
+const EAT_TZ = 'Africa/Nairobi';
+const formatSwipe = (value, opts = { dateStyle: 'medium', timeStyle: 'medium' }) => {
+  if (!value) return '—';
+  return new Date(value).toLocaleString('en-US', { timeZone: EAT_TZ, ...opts });
+};
 </script>
 
 <template>
@@ -304,7 +312,7 @@ const formatJson = (data) => {
             <tr v-for="log in attendanceLogs.data" :key="log.id" class="hover:bg-slate-900/40 transition-colors">
               <!-- Swipe Time -->
               <td class="py-4 font-mono text-slate-300 text-xs">
-                {{ new Date(log.swipe_time).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'medium' }) }}
+                {{ formatSwipe(log.swipe_time) }}
               </td>
 
               <!-- Employee Name -->
@@ -399,7 +407,7 @@ const formatJson = (data) => {
           <div>
             <h3 class="text-lg font-bold text-white">HikVision Raw Event Payload</h3>
             <p class="text-xs text-slate-400 mt-1">
-              Log #{{ activePayloadLog.id }} · Swipe at {{ new Date(activePayloadLog.swipe_time).toLocaleString() }}
+              Log #{{ activePayloadLog.id }} · Swipe at {{ formatSwipe(activePayloadLog.swipe_time) }}
             </p>
           </div>
           <button

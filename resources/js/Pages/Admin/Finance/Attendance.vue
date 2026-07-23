@@ -261,7 +261,7 @@ const submitSync = () => {
             <tbody class="text-sm divide-y divide-slate-900">
               <tr v-for="log in attendanceLogs" :key="log.id" class="hover:bg-slate-900/40">
                 <td class="py-4 font-mono text-slate-300">
-                  {{ new Date(log.swipe_time).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) }}
+                  {{ new Date(log.swipe_time).toLocaleString('en-US', { timeZone: 'Africa/Nairobi', dateStyle: 'medium', timeStyle: 'short' }) }}
                 </td>
                 <td class="py-4 font-semibold text-slate-200">{{ log.employee?.full_name_en || 'Unmatched Code' }}</td>
                 <td class="py-4 font-mono text-slate-550">{{ log.device_employee_code }}</td>
