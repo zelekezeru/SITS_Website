@@ -57,7 +57,19 @@ class HikvisionWebhookController extends Controller
             return response()->json(['message' => "Ignored: {$reason}"], 200);
         }
 
-        $swipeTime = $event['dateTime'] ? Carbon::parse($event['dateTime']) : now();
+        // Interpret the device time in its configured local zone, then store it
+        // in the app timezone. HikVision firmwares commonly send an offset-less
+        // "YYYY-MM-DDTHH:MM:SS" wall-clock; read against the app's UTC default
+        // that shifted every punch +3h (18:40 saved as 18:40 UTC, shown 21:40).
+        // Parsing in the device zone anchors naive strings to the right instant
+        // (a string that carries a real offset keeps it); converting to the app
+        // zone is required because Eloquent stores a Carbon's own wall-clock
+        // as-is rather than normalizing it to the column's UTC.
+        $deviceTz = config('services.hikvision.timezone', 'Africa/Addis_Ababa');
+        $appTz = config('app.timezone', 'UTC');
+        $swipeTime = $event['dateTime']
+            ? Carbon::parse($event['dateTime'], $deviceTz)->setTimezone($appTz)
+            : now();
         $direction = $this->normalizeDirection($event['attendanceStatus']);
 
         // 4. De-duplicate: a single entry often fires more than one event

@@ -96,6 +96,14 @@ return [
         // Seconds within which a repeat punch (same employee + device +
         // direction) is treated as a duplicate and skipped. 0 = never dedupe.
         'dedup_seconds' => (int) env('HIKVISION_DEDUP_SECONDS', 60),
+
+        // Wall-clock timezone the terminal reports punches in. Many HikVision
+        // firmwares send a naive "YYYY-MM-DDTHH:MM:SS" with NO offset (or a
+        // wrong +00:00); parsed against the app's UTC default that shifts every
+        // punch +3h. We interpret offset-less device times in this zone so they
+        // store correctly. A string that DOES carry a real offset is respected
+        // as-is (the zone below is ignored for it).
+        'timezone' => env('HIKVISION_TIMEZONE', 'Africa/Addis_Ababa'),
     ],
 
     /*

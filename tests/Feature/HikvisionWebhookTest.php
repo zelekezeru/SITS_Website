@@ -59,6 +59,31 @@ it('logs a valid access-granted punch when the token is correct', function () {
     expect($log->direction)->toBe('in');
 });
 
+it('stores an offset-less device time as Ethiopian local time (no +3h shift)', function () {
+    config()->set('services.hikvision.timezone', 'Africa/Addis_Ababa');
+
+    // The terminal reports 18:40 local with NO timezone offset — the common
+    // HikVision case that previously got read as 18:40 UTC and displayed 21:40.
+    $this->postJson('/hikvision/webhook?token=test-secret', hikPayload([
+        'dateTime' => '2026-07-23T18:40:00',
+    ]))->assertOk();
+
+    // 18:40 EAT === 15:40 UTC in storage; the frontend renders it back as 18:40.
+    expect(AttendanceLog::first()->swipe_time->utc()->format('Y-m-d H:i'))
+        ->toBe('2026-07-23 15:40');
+});
+
+it('respects an explicit offset in the device time', function () {
+    config()->set('services.hikvision.timezone', 'Africa/Addis_Ababa');
+
+    $this->postJson('/hikvision/webhook?token=test-secret', hikPayload([
+        'dateTime' => '2026-07-22T08:30:00+03:00',
+    ]))->assertOk();
+
+    expect(AttendanceLog::first()->swipe_time->utc()->format('Y-m-d H:i'))
+        ->toBe('2026-07-22 05:30');
+});
+
 it('accepts the token via the X-Webhook-Token header', function () {
     $this->postJson('/hikvision/webhook', hikPayload(), ['X-Webhook-Token' => 'test-secret'])->assertOk();
 
