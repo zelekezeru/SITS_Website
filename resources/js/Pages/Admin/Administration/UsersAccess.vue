@@ -182,14 +182,23 @@ const hasPermission = (role, permissionName) => {
 
     <!-- ─── TAB: USERS LIST & PENDING APPROVALS ─── -->
     <div v-if="activeTab === 'all' || activeTab === 'approvals'" class="space-y-4">
-      <!-- Search -->
-      <div class="flex max-w-md">
-        <input 
-          v-model="searchQuery"
-          type="text"
-          placeholder="Search by name or email..."
-          class="w-full bg-slate-950/60 border border-slate-850 focus:border-blue-500/50 rounded-xl px-4 py-2.5 text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-all text-xs"
-        />
+      <!-- Search + Register -->
+      <div class="flex items-center justify-between gap-4 flex-wrap">
+        <div class="flex flex-1 min-w-[200px] max-w-md">
+          <input
+            v-model="searchQuery"
+            type="text"
+            placeholder="Search by name or email..."
+            class="w-full bg-slate-950/60 border border-slate-850 focus:border-blue-500/50 rounded-xl px-4 py-2.5 text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-all text-xs"
+          />
+        </div>
+        <a
+          href="/register"
+          class="shrink-0 inline-flex items-center gap-2 text-xs font-semibold bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white px-5 py-2.5 rounded-xl transition-all duration-200 shadow-md shadow-blue-500/10 hover:shadow-blue-500/20 cursor-pointer"
+        >
+          <Icon name="Plus" :size="16" />
+          Register New User
+        </a>
       </div>
 
       <!-- Users Table -->

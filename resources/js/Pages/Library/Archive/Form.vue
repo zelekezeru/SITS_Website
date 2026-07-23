@@ -67,7 +67,13 @@ const submit = () => {
                             required
                         />
                         <InputError class="mt-2" :message="form.errors.pdf" />
-                        <p class="mt-1 text-xs text-slate-500">Maximum size: 50MB</p>
+                        <p class="mt-1 text-xs text-slate-500">PDF format · no file-size limit</p>
+                        <progress
+                            v-if="form.progress"
+                            :value="form.progress.percentage"
+                            max="100"
+                            class="mt-2 w-full h-1.5"
+                        >{{ form.progress.percentage }}%</progress>
                     </div>
 
                     <div>

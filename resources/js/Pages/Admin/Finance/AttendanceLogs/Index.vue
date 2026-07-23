@@ -311,8 +311,8 @@ const formatJson = (data) => {
               <td class="py-4">
                 <div v-if="log.employee" class="flex items-center gap-2">
                   <span class="font-semibold text-slate-200">{{ log.employee.full_name_en }}</span>
-                  <span v-if="log.employee.employee_id" class="text-[10px] font-mono text-slate-500 bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800">
-                    {{ log.employee.employee_id }}
+                  <span v-if="log.employee.staff_no" class="text-[10px] font-mono text-slate-500 bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800">
+                    {{ log.employee.staff_no }}
                   </span>
                 </div>
                 <div v-else class="flex items-center gap-2">
@@ -451,7 +451,7 @@ const formatJson = (data) => {
             >
               <option value="" disabled>Choose an employee…</option>
               <option v-for="emp in employees" :key="emp.id" :value="emp.id">
-                {{ emp.full_name_en }}<template v-if="emp.employee_id"> ({{ emp.employee_id }})</template><template v-if="emp.device_employee_code"> — already code {{ emp.device_employee_code }}</template>
+                {{ emp.full_name_en }}<template v-if="emp.staff_no"> ({{ emp.staff_no }})</template><template v-if="emp.device_employee_code"> — already code {{ emp.device_employee_code }}</template>
               </option>
             </select>
             <span v-if="reconcileForm.errors.employee_id" class="text-xs text-rose-500 mt-1.5 block">

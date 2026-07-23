@@ -53,16 +53,23 @@ class SecureDocumentController extends Controller
 
         $request->validate([
             'title' => 'required|string|max:255',
-            'pdf'   => 'required|file|mimes:pdf|max:51200', // 50 MB
+            // No size cap here — the practical limit is PHP's upload_max_filesize
+            // / post_max_size (and the web server's body limit) on the host.
+            'pdf'   => 'required|file|mimes:pdf',
             'book_id' => 'nullable|exists:books,id',
             'visibility' => 'in:role_gated,document_gated,public_authenticated',
         ]);
 
         $disk = 'archive';
-        $relativePath = sprintf('books/%s/%s.pdf', now()->format('Y'), Str::uuid());
-        
-        Storage::disk($disk)->put($relativePath, file_get_contents($request->file('pdf')));
-        
+
+        // Stream the upload straight to the archive disk so arbitrarily large
+        // PDFs are never loaded into memory in one go.
+        $relativePath = $request->file('pdf')->storeAs(
+            'books/'.now()->format('Y'),
+            Str::uuid().'.pdf',
+            $disk
+        );
+
         $absPath = Storage::disk($disk)->path($relativePath);
         $sha = hash_file('sha256', $absPath);
 
@@ -79,7 +86,7 @@ class SecureDocumentController extends Controller
             'visibility'        => $request->visibility ?? 'role_gated',
         ]);
 
-        return redirect()->route('archive.index')->with('success', 'Document uploaded successfully.');
+        return redirect()->route('library.archive.index')->with('success', 'Document uploaded successfully.');
     }
 
     public function destroy(SecureDocument $document)
@@ -138,7 +145,7 @@ class SecureDocumentController extends Controller
 
     public function qr(SecureDocument $document)
     {
-        $url = route('archive.show', $document->id);
+        $url = route('library.archive.show', $document->id);
         $svg = QrCode::format('svg')
             ->size(300)
             ->errorCorrection('M')

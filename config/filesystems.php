@@ -44,6 +44,17 @@ return [
             'throw' => false,
         ],
 
+        // Private disk for the Library's Secure Digital Archive (PDFs). Kept
+        // OUTSIDE the web root and never linked publicly — documents are served
+        // only by SecureDocumentController::stream() after auth + visibility
+        // checks. 'throw' is on so a misconfiguration fails loudly instead of
+        // silently dropping uploads.
+        'archive' => [
+            'driver' => 'local',
+            'root' => storage_path('app/archive'),
+            'throw' => true,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

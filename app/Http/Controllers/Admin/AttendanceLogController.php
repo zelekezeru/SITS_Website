@@ -32,7 +32,7 @@ class AttendanceLogController extends Controller
                   ->orWhereHas('employee', function ($eq) use ($search) {
                       $eq->where('full_name_en', 'like', "%{$search}%")
                          ->orWhere('full_name_am', 'like', "%{$search}%")
-                         ->orWhere('employee_id', 'like', "%{$search}%");
+                         ->orWhere('staff_no', 'like', "%{$search}%");
                   });
             });
         }
@@ -73,7 +73,7 @@ class AttendanceLogController extends Controller
             ],
             'attendanceLogs' => $logs,
             'stats' => $stats,
-            'employees' => Employee::orderBy('full_name_en')->get(['id', 'full_name_en', 'employee_id', 'device_employee_code']),
+            'employees' => Employee::orderBy('full_name_en')->get(['id', 'full_name_en', 'staff_no', 'device_employee_code']),
             'payrollPeriods' => PayrollPeriod::monthly()->forActiveYear()->orderByDesc('start_date')->get(),
             'filters' => [
                 'search' => $search,
