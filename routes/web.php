@@ -94,6 +94,12 @@ Route::middleware(['auth', 'role:SUPERADMIN|ADMIN|EDITOR'])->group(function () {
     Route::resource('trainers',      TrainerController::class);
     Route::resource('subscriptions', SubscriptionController::class);
     Route::resource('galleries',     GalleryController::class);
+
+    // ── Moodle Migration & Sync Tools (SUPERADMIN only)
+    Route::middleware('role:SUPERADMIN')->group(function () {
+        Route::get('/admin/moodle-tools', [\App\Http\Controllers\Admin\MoodleMigrationExecutorController::class, 'index'])->name('admin.moodle-tools.index');
+        Route::post('/admin/moodle-tools/run/{action}', [\App\Http\Controllers\Admin\MoodleMigrationExecutorController::class, 'runAction'])->name('admin.moodle-tools.run');
+    });
 });
 
 // ─── Public Resource Routes (placed after admin list views to avoid interception) ──

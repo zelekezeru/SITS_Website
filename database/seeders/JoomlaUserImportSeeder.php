@@ -48,6 +48,16 @@ class JoomlaUserImportSeeder extends Seeder
         'Guest'               => 'STUDENT',
     ];
 
+    /**
+     * Weight of Laravel roles for resolving conflicts when a user belongs to multiple groups.
+     */
+    protected array $roleWeights = [
+        'SUPERADMIN' => 10,
+        'ADMIN'      => 8,
+        'EDITOR'     => 5,
+        'STUDENT'    => 1,
+    ];
+
     public function run(): void
     {
         $joomlaUsers = [];
@@ -64,12 +74,26 @@ class JoomlaUserImportSeeder extends Seeder
             ");
             
             foreach ($rows as $row) {
-                $joomlaUsers[] = [
-                    'joomla_id' => $row->joomla_id,
-                    'name'      => $row->name,
-                    'email'     => $row->email,
-                    'group'     => $row->group_name ?? 'Registered',
-                ];
+                $email = trim($row->email);
+                if (empty($email)) {
+                    continue;
+                }
+
+                $roleName = $this->roleMap[$row->group_name ?? 'Registered'] ?? 'STUDENT';
+
+                if (isset($joomlaUsers[$email])) {
+                    $currentWeight = $this->roleWeights[$joomlaUsers[$email]['role']] ?? 0;
+                    $newWeight = $this->roleWeights[$roleName] ?? 0;
+                    if ($newWeight > $currentWeight) {
+                        $joomlaUsers[$email]['role'] = $roleName;
+                    }
+                } else {
+                    $joomlaUsers[$email] = [
+                        'name'  => $row->name,
+                        'email' => $email,
+                        'role'  => $roleName,
+                    ];
+                }
             }
         } catch (\Exception $e) {
             $this->command->warn('Could not connect to Joomla database: ' . $e->getMessage());
@@ -80,23 +104,24 @@ class JoomlaUserImportSeeder extends Seeder
         $imported = 0;
         $skipped  = 0;
 
-        foreach ($joomlaUsers as $row) {
+        foreach ($joomlaUsers as $email => $data) {
             // Skip if email already exists
-            if (User::where('email', $row['email'])->exists()) {
+            if (User::where('email', $email)->exists()) {
                 $skipped++;
                 continue;
             }
 
-            $roleName = $this->roleMap[$row['group']] ?? 'STUDENT';
-
             $user = User::create([
-                'name'     => $row['name'],
-                'email'    => $row['email'],
+                'name'     => $data['name'],
+                'email'    => $email,
                 'password' => $defaultPassword,
-                'role'     => $roleName,
+                'role'     => $data['role'],
+                'is_approved' => true,
+                'is_active'   => true,
+                'password_changed' => false,
             ]);
 
-            $role = Role::where('name', $roleName)->first();
+            $role = Role::where('name', $data['role'])->first();
             if ($role) {
                 $user->assignRole($role);
             }
