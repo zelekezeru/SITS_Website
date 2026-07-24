@@ -140,6 +140,17 @@ const rejectPeriod = () => {
     onSuccess: () => { rejectPeriodModal.value = null; rejectPeriodNotes.value = ''; },
   });
 };
+
+// Revert an un-finalised run (processing / submitted / approved) back to open so
+// Finance can recompute and resubmit. Locked/paid periods stay immutable.
+const revertable = (s) => ['processing', 'pending_approval', 'approved'].includes(s);
+const revertPeriod = async (id) => {
+  const confirmed = await confirm({
+    title: 'Revert Payroll Run',
+    message: 'Revert this period back to open? Payslips are kept as drafts and the submit/approve trail is cleared, so Finance can recompute and resubmit for approval.',
+  });
+  if (confirmed) router.post(`/admin/payroll/${id}/revert`, {}, { preserveScroll: true });
+};
 </script>
 
 <template>
@@ -214,6 +225,13 @@ const rejectPeriod = () => {
               >
                 Open
               </Link>
+              <span
+                v-if="period.status === 'processing'"
+                class="text-[10px] font-semibold text-amber-400/80 italic"
+                title="Approve appears once Finance submits this period for approval."
+              >
+                Awaiting Finance submission
+              </span>
               <template v-if="period.status === 'pending_approval'">
                 <button
                   @click="rejectPeriodModal = period.id"
@@ -228,6 +246,14 @@ const rejectPeriod = () => {
                   Approve
                 </button>
               </template>
+              <button
+                v-if="revertable(period.status)"
+                @click="revertPeriod(period.id)"
+                class="text-[10px] font-bold px-3 py-1.5 bg-slate-900 hover:bg-slate-850 border border-slate-850 text-orange-400 rounded-lg transition-colors cursor-pointer inline-flex items-center gap-1"
+                title="Revert this run back to open so Finance can recompute and resubmit."
+              >
+                <Icon name="Undo2" :size="12" /> Revert
+              </button>
               <button
                 v-if="['open', 'processing', 'approved'].includes(period.status)"
                 @click="lockPeriod(period.id)"

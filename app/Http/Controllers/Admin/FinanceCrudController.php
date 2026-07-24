@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\PayrollStatus;
 use App\Http\Controllers\Controller;
 use App\Models\PayrollPeriod;
 use App\Models\Payslip;
@@ -131,6 +132,66 @@ class FinanceCrudController extends Controller
         ]);
 
         return redirect()->back()->with('success', "Payroll for {$period->name} sent back to Finance.");
+    }
+
+    /**
+     * Revert a payroll run back to an editable state so Finance can recompute and
+     * resubmit. Allowed only up to "approved" — a locked or paid period is
+     * immutable and must stay that way. Payslips are dropped back to draft (kept,
+     * not deleted, so nothing is lost) and the submit/approve trail is cleared.
+     */
+    public function revertPeriod(Request $request, PayrollPeriod $period)
+    {
+        $revertable = in_array($period->status, [
+            PayrollStatus::Processing,
+            PayrollStatus::PendingApproval,
+            PayrollStatus::Approved,
+        ], true);
+
+        if (! $revertable) {
+            return redirect()->back()->with('error', 'Only a processing, submitted or approved period can be reverted. Locked and paid periods are immutable.');
+        }
+
+        DB::transaction(function () use ($period) {
+            $period->update([
+                'status' => PayrollStatus::Open,
+                'submitted_at' => null,
+                'approved_by' => null,
+                'approved_at' => null,
+                'review_notes' => null,
+            ]);
+            // Keep the computed payslips but return them to draft so Finance can
+            // recompute/edit before submitting again.
+            $period->payslips()->update(['status' => 'draft']);
+        });
+
+        return redirect()->back()->with('success', "{$period->name} reverted to open — Finance can recompute and resubmit for approval.");
+    }
+
+    // ==========================================
+    // ATTENDANCE EXEMPTIONS
+    // ==========================================
+
+    /**
+     * Flip an employee's attendance-exempt flag. Exempt staff are skipped by the
+     * attendance sync and never incur absence deductions; the reason is kept for
+     * audit and cleared when they're returned to tracking.
+     */
+    public function toggleAttendanceExemption(Request $request, Employee $employee)
+    {
+        $data = $request->validate([
+            'attendance_exempt' => ['required', 'boolean'],
+            'attendance_exempt_reason' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $employee->update([
+            'attendance_exempt' => $data['attendance_exempt'],
+            'attendance_exempt_reason' => $data['attendance_exempt'] ? ($data['attendance_exempt_reason'] ?? null) : null,
+        ]);
+
+        $verb = $data['attendance_exempt'] ? 'exempted from' : 'returned to';
+
+        return redirect()->back()->with('success', "{$employee->full_name_en} {$verb} attendance tracking.");
     }
 
     // ==========================================

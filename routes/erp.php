@@ -207,6 +207,8 @@ Route::middleware(['auth', 'active', 'password.fresh'])->group(function () {
         Route::get('/admin/payroll/{period}', [FinanceCrudController::class, 'showPeriod'])->name('admin.payroll.periods.show');
         Route::post('/admin/payroll/{period}/approve', [FinanceCrudController::class, 'approvePeriod'])->name('admin.payroll.periods.approve');
         Route::post('/admin/payroll/{period}/reject', [FinanceCrudController::class, 'rejectPeriod'])->name('admin.payroll.periods.reject');
+        Route::post('/admin/payroll/{period}/revert', [FinanceCrudController::class, 'revertPeriod'])->middleware('can:approve payroll')->name('admin.payroll.periods.revert');
+        Route::post('/admin/attendance-exemptions/{employee}/toggle', [FinanceCrudController::class, 'toggleAttendanceExemption'])->middleware('can:validate attendance')->name('admin.attendance-exemptions.toggle');
         Route::get('/admin/payslips/{payslip}/pdf', [FinanceCrudController::class, 'payslipPdf'])->name('admin.payslips.pdf');
         Route::post('/admin/tax/brackets', [FinanceCrudController::class, 'storeTaxBracket'])->name('admin.tax.brackets.store');
         Route::put('/admin/tax/brackets/{bracket}', [FinanceCrudController::class, 'updateTaxBracket'])->name('admin.tax.brackets.update');

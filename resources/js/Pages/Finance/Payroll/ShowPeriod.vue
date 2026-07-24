@@ -75,6 +75,14 @@ const approve = async () => {
   if (ok) router.post(`/admin/payroll/${props.period.id}/approve`, {}, { preserveScroll: true });
 };
 
+const revert = async () => {
+  const ok = await confirm({
+    title: 'Revert Payroll Run',
+    message: `Revert ${props.period.name} back to open? Payslips are kept as drafts and the submit/approve trail is cleared, so Finance can recompute and resubmit.`,
+  });
+  if (ok) router.post(`/admin/payroll/${props.period.id}/revert`, {}, { preserveScroll: true });
+};
+
 const rejectModalOpen = ref(false);
 const rejectNotes = ref('');
 const reject = () => {
@@ -166,6 +174,11 @@ const flatAssignments = computed(() => Object.values(props.assignments).flat());
               Approve
             </button>
           </template>
+          <button v-if="can.revert" @click="revert"
+                  class="text-xs font-semibold px-4 py-2.5 border border-slate-800 hover:border-orange-700 text-orange-400 bg-slate-900/60 rounded-xl transition-colors cursor-pointer inline-flex items-center gap-1.5"
+                  title="Revert this run back to open so Finance can recompute and resubmit.">
+            <Icon name="Undo2" :size="14" /> Revert
+          </button>
         </div>
       </div>
 
@@ -175,8 +188,16 @@ const flatAssignments = computed(() => Object.values(props.assignments).flat());
         <span class="font-semibold">Returned by the President:</span> {{ period.review_notes }}
       </div>
       <div v-else-if="period.status === 'pending_approval'"
-           class="relative z-10 mt-4 rounded-xl border border-amber-500/30 bg-amber-950/20 px-4 py-3 text-sm text-amber-200">
-        Submitted{{ period.submitted_at ? ' on ' + period.submitted_at : '' }} — awaiting the President's approval.
+           class="relative z-10 mt-4 rounded-xl border border-amber-500/30 bg-amber-950/20 px-4 py-3 text-sm text-amber-200 flex flex-wrap items-center justify-between gap-3">
+        <span>Submitted{{ period.submitted_at ? ' on ' + period.submitted_at : '' }} — awaiting the President's approval.</span>
+        <Link v-if="can.approveHint" :href="`/admin/payroll/${period.id}`"
+              class="font-semibold text-amber-100 underline underline-offset-2 hover:text-white shrink-0">
+          Approve it on the Payroll admin page →
+        </Link>
+      </div>
+      <div v-else-if="isAdmin && period.status === 'processing'"
+           class="relative z-10 mt-4 rounded-xl border border-slate-700/50 bg-slate-900/40 px-4 py-3 text-sm text-slate-300">
+        Prepared by Finance — the <span class="font-semibold text-slate-100">Approve</span> action appears once Finance submits this period for approval.
       </div>
       <div v-else-if="period.approved_by"
            class="relative z-10 mt-4 rounded-xl border border-emerald-500/30 bg-emerald-950/20 px-4 py-3 text-sm text-emerald-200">

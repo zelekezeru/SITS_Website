@@ -10,13 +10,18 @@ import Icon from '@/Components/Icon.vue';
 
 const props = defineProps({
   module: { type: Object, required: true },
+  merged: { type: Array, default: () => [] },
   attendanceRecords: { type: Array, default: () => [] },
   attendanceLogs: { type: Array, default: () => [] },
   payrollPeriods: { type: Array, default: () => [] },
   filters: { type: Object, default: () => ({ duration_type: 'this_month', start_date: '', end_date: '' }) },
 });
 
-const activeTab = ref('summaries'); // 'summaries' or 'logs'
+const activeTab = ref('reconciled'); // 'reconciled' | 'summaries' | 'logs'
+
+const fmtSeen = (s) => s
+  ? new Date(s.replace(' ', 'T')).toLocaleString('en-US', { timeZone: 'Africa/Nairobi', dateStyle: 'medium', timeStyle: 'short' })
+  : '—';
 const showSyncModal = ref(false);
 
 const filterForm = ref({
@@ -149,8 +154,16 @@ const submitSync = () => {
 
     <!-- Tab Selector -->
     <div class="flex border-b border-slate-900 gap-6 text-sm mb-2">
-      <button 
-        @click="activeTab = 'summaries'" 
+      <button
+        @click="activeTab = 'reconciled'"
+        class="pb-3 font-semibold transition-all cursor-pointer relative"
+        :class="activeTab === 'reconciled' ? 'text-blue-400' : 'text-slate-500 hover:text-slate-350'"
+      >
+        By Employee (Live + Stored)
+        <span v-if="activeTab === 'reconciled'" class="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500 rounded-full"></span>
+      </button>
+      <button
+        @click="activeTab = 'summaries'"
         class="pb-3 font-semibold transition-all cursor-pointer relative"
         :class="activeTab === 'summaries' ? 'text-blue-400' : 'text-slate-500 hover:text-slate-350'"
       >
@@ -165,6 +178,78 @@ const submitSync = () => {
         Real-time Swipes
         <span v-if="activeTab === 'logs'" class="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500 rounded-full"></span>
       </button>
+    </div>
+
+    <!-- Reconciled (Live + Stored) Tab -->
+    <div v-if="activeTab === 'reconciled'" class="rounded-2xl border border-slate-900 bg-slate-900/10 shadow-md p-6">
+      <div class="flex items-start justify-between gap-4 mb-4 flex-wrap">
+        <p class="text-xs text-slate-500 max-w-2xl">
+          Each employee's <span class="text-emerald-400 font-semibold">live device swipes</span> for the range next to their
+          <span class="text-blue-400 font-semibold">stored payroll summary</span>. Live is real-time from the terminals; stored is what payroll will use once synced.
+        </p>
+        <div class="flex items-center gap-4 text-[10px] font-semibold uppercase tracking-wider shrink-0">
+          <span class="flex items-center gap-1.5 text-emerald-400"><span class="w-2 h-2 rounded-full bg-emerald-500"></span>Live</span>
+          <span class="flex items-center gap-1.5 text-blue-400"><span class="w-2 h-2 rounded-full bg-blue-500"></span>Stored</span>
+        </div>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse whitespace-nowrap">
+          <thead>
+            <tr class="border-b border-slate-900 text-[10px] font-semibold text-slate-500 uppercase">
+              <th class="pb-3 pr-4 sticky left-0 bg-slate-900/10">Employee</th>
+              <th class="pb-3 px-3 text-center text-emerald-500/70">Live Swipes</th>
+              <th class="pb-3 px-3 text-center text-emerald-500/70">Days Present</th>
+              <th class="pb-3 px-3 text-emerald-500/70">Last Seen</th>
+              <th class="pb-3 px-3 text-center text-blue-400/70">Work Hrs</th>
+              <th class="pb-3 px-3 text-center text-blue-400/70">Late</th>
+              <th class="pb-3 px-3 text-center text-blue-400/70">Absent</th>
+              <th class="pb-3 px-3 text-center text-blue-400/70">Permitted</th>
+              <th class="pb-3 px-3 text-blue-400/70">Stored Source</th>
+            </tr>
+          </thead>
+          <tbody class="text-sm divide-y divide-slate-900">
+            <tr v-for="row in merged" :key="row.employee_id" class="hover:bg-slate-900/40"
+                :class="row.attendance_exempt ? 'opacity-60' : ''">
+              <td class="py-3.5 pr-4 font-semibold text-slate-200 sticky left-0 bg-slate-950/10">
+                {{ row.name }}
+                <span v-if="row.attendance_exempt" class="ml-1 text-[9px] font-bold uppercase px-1 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/20">Exempt</span>
+                <span class="block text-[11px] text-slate-500 font-mono font-normal">{{ row.staff_no || '—' }}</span>
+              </td>
+              <!-- Live -->
+              <td class="py-3.5 px-3 text-center font-mono" :class="row.live ? 'text-emerald-300 font-bold' : 'text-slate-600'">
+                {{ row.live ? row.live.swipes : '0' }}
+              </td>
+              <td class="py-3.5 px-3 text-center font-mono" :class="row.live ? 'text-slate-300' : 'text-slate-600'">
+                {{ row.live ? row.live.days_present : '0' }}
+              </td>
+              <td class="py-3.5 px-3 font-mono text-[12px]" :class="row.live ? 'text-slate-400' : 'text-slate-600'">
+                {{ row.live ? fmtSeen(row.live.last_seen) : '—' }}
+              </td>
+              <!-- Stored -->
+              <template v-if="row.stored">
+                <td class="py-3.5 px-3 text-center font-mono text-slate-300">{{ Number(row.stored.work_hours).toFixed(1) }}h</td>
+                <td class="py-3.5 px-3 text-center font-mono" :class="row.stored.late_minutes > 0 ? 'text-amber-500 font-semibold' : 'text-slate-500'">{{ row.stored.late_minutes }}m</td>
+                <td class="py-3.5 px-3 text-center font-mono" :class="row.stored.absent_days > 0 ? 'text-rose-400 font-bold' : 'text-slate-500'">{{ row.stored.absent_days }}d</td>
+                <td class="py-3.5 px-3 text-center font-mono" :class="row.stored.permitted_days > 0 ? 'text-emerald-400' : 'text-slate-500'">{{ row.stored.permitted_days }}d</td>
+                <td class="py-3.5 px-3">
+                  <span class="px-2 py-0.5 text-[9px] rounded-full font-bold border uppercase"
+                        :class="row.stored.source === 'excel_import' ? 'bg-purple-500/10 border-purple-500/25 text-purple-300' : 'bg-blue-500/10 border-blue-500/25 text-blue-300'">
+                    {{ (row.stored.source || 'device').replace('_', ' ') }}
+                  </span>
+                </td>
+              </template>
+              <template v-else>
+                <td colspan="5" class="py-3.5 px-3 text-[12px] text-slate-600 italic">
+                  No stored summary yet — sync this period to compute it.
+                </td>
+              </template>
+            </tr>
+            <tr v-if="!merged.length">
+              <td colspan="9" class="py-8 text-center text-slate-650 italic">No active employees to reconcile.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <!-- Summaries Tab -->

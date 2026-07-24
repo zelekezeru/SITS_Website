@@ -217,6 +217,16 @@ class PayrollController extends Controller
                 'manageDeductions' => $canPrepare && $user->can('manage deductions'),
                 'export' => $hasPayslips && ($isAdmin || $user->can('export payroll')),
                 'approve' => $isAdmin && $user->can('approve payroll') && $period->isPendingApproval(),
+                // Revert a run back to editable — authority action, up to "approved"
+                // only (locked/paid stay immutable).
+                'revert' => $isAdmin && $user->can('approve payroll') && \in_array($period->status, [
+                    \App\Enums\PayrollStatus::Processing,
+                    \App\Enums\PayrollStatus::PendingApproval,
+                    \App\Enums\PayrollStatus::Approved,
+                ], true),
+                // Finance-side pointer: an approver looking at a submitted period on
+                // the Finance page approves it from the admin Payroll page.
+                'approveHint' => ! $isAdmin && $user->can('approve payroll') && $period->isPendingApproval(),
             ],
         ];
     }

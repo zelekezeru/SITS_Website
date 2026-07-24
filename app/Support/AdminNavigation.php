@@ -148,6 +148,8 @@ class AdminNavigation
                         ['Device / Excel / manual sources', 'Overtime tiers (1.5×/2×/2.5×)', 'Late & absence tracking', 'Verification & lock'], [
                             self::child('Attendance Records', 'admin.attendance.records', '/admin/attendance',
                                 'Attendance with raw → pending_review → verified → locked lifecycle.'),
+                            self::child('Attendance Exemptions', 'admin.attendance-exemptions', '/admin/attendance-exemptions',
+                                'Employees excluded from attendance tracking and absence deductions — toggle who is exempt.'),
                             self::child('Attendance Permissions', 'admin.attendance-permissions', '/admin/attendance-permissions',
                                 'Excused-absence requests created by Admin/Operations and approved before payroll.'),
                             self::child('Closed Days (Holidays)', 'admin.closed-days', '/admin/closed-days',
