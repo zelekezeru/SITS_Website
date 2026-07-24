@@ -145,6 +145,27 @@ class PayrollController extends Controller
         return $pdf->download('payroll_'.str_replace(' ', '_', $period->name).'.pdf');
     }
 
+    public function exportCbe(PayrollPeriod $period, Request $request, PayrollSheetExport $export)
+    {
+        $rows = PayrollSheetPresenter::rows($period, $this->scopeIds($request));
+
+        return $export->downloadCbeFormat($period, $rows);
+    }
+
+    public function exportTaxSchedule(PayrollPeriod $period, Request $request, PayrollSheetExport $export)
+    {
+        $rows = PayrollSheetPresenter::rows($period, $this->scopeIds($request));
+
+        return $export->downloadTaxSchedule($period, $rows);
+    }
+
+    public function exportPensionSchedule(PayrollPeriod $period, Request $request, PayrollSheetExport $export)
+    {
+        $rows = PayrollSheetPresenter::rows($period, $this->scopeIds($request));
+
+        return $export->downloadPensionSchedule($period, $rows);
+    }
+
     /** @return array<int> employee ids when scope=selected/individual, else [] (all) */
     private function scopeIds(Request $request): array
     {
@@ -192,6 +213,7 @@ class PayrollController extends Controller
             'totals' => PayrollSheetPresenter::totals($rows),
             'columns' => PayrollSheetPresenter::COLUMNS,
             'assignments' => PayrollSheetPresenter::assignmentsByEmployee($period),
+            'variance' => \App\Services\Payroll\PayrollVariancePresenter::analyze($period),
             'employees' => Employee::where('is_active', true)
                 ->orderBy('full_name_en')
                 ->get(['id', 'full_name_en', 'staff_no']),

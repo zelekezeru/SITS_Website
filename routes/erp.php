@@ -349,6 +349,9 @@ Route::middleware(['auth', 'active', 'password.fresh'])->group(function () {
         Route::delete('/finance/payroll/{period}/assignments/{assignment}', [FinancePayrollController::class, 'destroyAssignment'])->middleware('can:manage deductions')->name('finance.payroll.assignments.destroy');
         Route::get('/finance/payroll/{period}/export/excel', [FinancePayrollController::class, 'exportExcel'])->middleware('can:export payroll')->name('finance.payroll.export.excel');
         Route::get('/finance/payroll/{period}/export/pdf', [FinancePayrollController::class, 'exportPdf'])->middleware('can:export payroll')->name('finance.payroll.export.pdf');
+        Route::get('/finance/payroll/{period}/export/cbe', [FinancePayrollController::class, 'exportCbe'])->middleware('can:export payroll')->name('finance.payroll.export.cbe');
+        Route::get('/finance/payroll/{period}/export/tax-schedule', [FinancePayrollController::class, 'exportTaxSchedule'])->middleware('can:export payroll')->name('finance.payroll.export.tax-schedule');
+        Route::get('/finance/payroll/{period}/export/pension-schedule', [FinancePayrollController::class, 'exportPensionSchedule'])->middleware('can:export payroll')->name('finance.payroll.export.pension-schedule');
     });
 
     /*

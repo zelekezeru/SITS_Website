@@ -83,4 +83,79 @@ class PayrollSheetExport
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         ]);
     }
+
+    /** Stream CBE Direct Bank Bulk Payout File (CSV) */
+    public function downloadCbeFormat(PayrollPeriod $period, array $rows): StreamedResponse
+    {
+        $filename = 'cbe_payroll_'.str_replace(' ', '_', $period->name).'.csv';
+
+        return response()->streamDownload(function () use ($rows, $period) {
+            $handle = fopen('php://output', 'w');
+            fputcsv($handle, ['ACCOUNT_NUMBER', 'AMOUNT', 'BENEFICIARY_NAME', 'STAFF_NO', 'NARRATION']);
+
+            foreach ($rows as $row) {
+                fputcsv($handle, [
+                    $row['staff_no'] ?? '',
+                    number_format((float) $row['net_pay'], 2, '.', ''),
+                    $row['name'],
+                    $row['staff_no'] ?? '',
+                    "Salary Payment - {$period->name}",
+                ]);
+            }
+            fclose($handle);
+        }, $filename, ['Content-Type' => 'text/csv']);
+    }
+
+    /** Stream ERCA Monthly PIT Tax Schedule Return (CSV) */
+    public function downloadTaxSchedule(PayrollPeriod $period, array $rows): StreamedResponse
+    {
+        $filename = 'tax_schedule_'.str_replace(' ', '_', $period->name).'.csv';
+
+        return response()->streamDownload(function () use ($rows) {
+            $handle = fopen('php://output', 'w');
+            fputcsv($handle, ['STAFF_NO', 'EMPLOYEE_NAME', 'BASIC_SALARY', 'TAXABLE_ALLOWANCES', 'OVERTIME', 'TAXABLE_INCOME', 'PIT_WITHHELD']);
+
+            foreach ($rows as $row) {
+                $allowances = ($row['mobile_allowance'] ?? 0) + ($row['transport_allowance'] ?? 0) + ($row['housing_allowance'] ?? 0) + ($row['cash_allowance'] ?? 0);
+                fputcsv($handle, [
+                    $row['staff_no'] ?? '',
+                    $row['name'],
+                    number_format((float) $row['base_salary'], 2, '.', ''),
+                    number_format((float) $allowances, 2, '.', ''),
+                    number_format((float) $row['overtime'], 2, '.', ''),
+                    number_format((float) $row['taxable_income'], 2, '.', ''),
+                    number_format((float) $row['income_tax'], 2, '.', ''),
+                ]);
+            }
+            fclose($handle);
+        }, $filename, ['Content-Type' => 'text/csv']);
+    }
+
+    /** Stream Pension Agency (POEPA/Public) 7% & 11% Schedule (CSV) */
+    public function downloadPensionSchedule(PayrollPeriod $period, array $rows): StreamedResponse
+    {
+        $filename = 'pension_schedule_'.str_replace(' ', '_', $period->name).'.csv';
+
+        return response()->streamDownload(function () use ($rows) {
+            $handle = fopen('php://output', 'w');
+            fputcsv($handle, ['STAFF_NO', 'EMPLOYEE_NAME', 'BASIC_SALARY', 'EMPLOYEE_PENSION_7PCT', 'EMPLOYER_PENSION_11PCT', 'TOTAL_PENSION_18PCT']);
+
+            foreach ($rows as $row) {
+                $empPen = (float) ($row['employee_pension'] ?? 0);
+                $emprPen = (float) ($row['employer_pension'] ?? 0);
+                $totalPen = $empPen + $emprPen;
+
+                fputcsv($handle, [
+                    $row['staff_no'] ?? '',
+                    $row['name'],
+                    number_format((float) $row['base_salary'], 2, '.', ''),
+                    number_format($empPen, 2, '.', ''),
+                    number_format($emprPen, 2, '.', ''),
+                    number_format($totalPen, 2, '.', ''),
+                ]);
+            }
+            fclose($handle);
+        }, $filename, ['Content-Type' => 'text/csv']);
+    }
 }
+
