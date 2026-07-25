@@ -60,16 +60,16 @@ return [
         ],
 
         'joomla' => [
-            'driver' => 'mysql',
-            'host' => env('JOOMLA_DB_HOST', '127.0.0.1'),
-            'port' => env('JOOMLA_DB_PORT', '3306'),
-            'database' => env('JOOMLA_DB_DATABASE', 'sitseduorg_joomla'),
-            'username' => env('JOOMLA_DB_USERNAME', 'sitseduorg_joomla'),
-            'password' => env('JOOMLA_DB_PASSWORD', ''),
-            'charset' => 'utf8mb4',
+            'driver'    => 'mysql',
+            'host'      => env('JOOMLA_DB_HOST', '127.0.0.1'),
+            'port'      => env('JOOMLA_DB_PORT', '3306'),
+            'database'  => env('JOOMLA_DB_DATABASE', 'sitseduorg_vxgb731'),
+            'username'  => env('JOOMLA_DB_USERNAME', 'sitseduorg_vxgb731'),
+            'password'  => env('JOOMLA_DB_PASSWORD', ''),
+            'charset'   => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
-            'prefix' => env('JOOMLA_DB_PREFIX', 'josn9_'),
-            'strict' => true,
+            'prefix'    => env('JOOMLA_DB_PREFIX', 'vxgtm_'),
+            'strict'    => false,
         ],
 
         'mariadb' => [
