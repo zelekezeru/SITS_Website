@@ -15,7 +15,7 @@ class ImportMoodleUsers extends Command
      *
      * @var string
      */
-    protected $signature = 'moodle:import-users {--config= : Path to Moodle config.php} {--verbose : Show detailed output} {--dry-run : Simulate without writing to DB}';
+    protected $signature = 'moodle:import-users {--config= : Path to Moodle config.php} {--dry-run : Simulate without writing to DB}';
 
     /**
      * The console command description.
