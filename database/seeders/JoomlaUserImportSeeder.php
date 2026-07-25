@@ -4,33 +4,13 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
-use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\DB;
 
 /**
  * JoomlaUserImportSeeder
  *
- * Imports Joomla user accounts from jos_users into the Laravel users table.
- *
- * HOW TO USE:
- * 1. In Joomla's phpMyAdmin, run:
- *      SELECT id, name, username, email, usertype, block
- *      FROM jos_users
- *      WHERE block = 0
- *      ORDER BY id;
- *
- * 2. Export the result as CSV or JSON.
- *
- * 3. Paste the rows into $joomlaUsers below (or parse the CSV file).
- *
- * 4. Run: php artisan db:seed --class=JoomlaUserImportSeeder
- *
- * Role Mapping (Joomla → Laravel):
- *   Super Administrator → SUPERADMIN
- *   Administrator       → ADMIN
- *   Author / Editor     → EDITOR
- *   Manager             → EDITOR
- *   Registered          → STUDENT (default for all others)
+ * Imports Joomla and Moodle user accounts from SQL dump files directly into the Laravel users table,
+ * preserving existing password hashes so users can log in immediately with their existing credentials.
  */
 class JoomlaUserImportSeeder extends Seeder
 {
@@ -60,105 +40,176 @@ class JoomlaUserImportSeeder extends Seeder
 
     public function run(): void
     {
-        $joomlaUsers = [];
-        try {
-            \Illuminate\Support\Facades\DB::connection('joomla')->getPdo();
+        $dumpFiles = [
+            'c:/Users/hp/Downloads/sitseduorg_joomla.sql',
+            'c:/Users/hp/Downloads/sitseduorg_jo749sb.sql',
+            'c:/Users/hp/Downloads/sitseduorg_moodle.sql',
+        ];
 
-            // Auto-discover the correct table prefix by finding a *_users table
-            $tables = \Illuminate\Support\Facades\DB::connection('joomla')
-                ->select("SHOW TABLES");
-            $tableNames = array_map(fn($t) => array_values((array)$t)[0], $tables);
-
-            $configuredPrefix = config('database.connections.joomla.prefix', 'vxgtm_');
-            $prefix = $configuredPrefix;
-
-            // Try to find the users table: check configured prefix first, then discover
-            $usersTable = $prefix . 'users';
-            if (!in_array($usersTable, $tableNames)) {
-                // Find any table ending in _users
-                $found = array_filter($tableNames, fn($t) => str_ends_with($t, '_users'));
-                if (!empty($found)) {
-                    $firstUsersTable = array_values($found)[0];
-                    $prefix = substr($firstUsersTable, 0, strrpos($firstUsersTable, '_users') + 1);
-                    $this->command->info("Discovered Joomla table prefix: '{$prefix}' (found table: {$firstUsersTable})");
-                } else {
-                    $this->command->warn("Could not find any *_users table. Available tables: " . implode(', ', $tableNames));
-                    throw new \RuntimeException("No users table found in Joomla database.");
-                }
-            } else {
-                $this->command->info("Using Joomla table prefix: '{$prefix}'");
-            }
-
-            $rows = \Illuminate\Support\Facades\DB::connection('joomla')->select("
-                SELECT u.id as joomla_id, u.name, u.email, g.title as group_name
-                FROM {$prefix}users u
-                LEFT JOIN {$prefix}user_usergroup_map m ON u.id = m.user_id
-                LEFT JOIN {$prefix}usergroups g ON m.group_id = g.id
-                WHERE u.block = 0
-            ");
-
-            $this->command->info("Found " . count($rows) . " Joomla user records.");
-
-            foreach ($rows as $row) {
-                $email = trim($row->email);
-                if (empty($email)) {
-                    continue;
-                }
-
-                $roleName = $this->roleMap[$row->group_name ?? 'Registered'] ?? 'STUDENT';
-
-                if (isset($joomlaUsers[$email])) {
-                    $currentWeight = $this->roleWeights[$joomlaUsers[$email]['role']] ?? 0;
-                    $newWeight = $this->roleWeights[$roleName] ?? 0;
-                    if ($newWeight > $currentWeight) {
-                        $joomlaUsers[$email]['role'] = $roleName;
-                    }
-                } else {
-                    $joomlaUsers[$email] = [
-                        'name'  => $row->name,
-                        'email' => $email,
-                        'role'  => $roleName,
-                    ];
-                }
-            }
-        } catch (\Exception $e) {
-            $this->command->warn('Could not connect to Joomla database: ' . $e->getMessage());
-            $this->command->info('Falling back to empty/stub user array.');
-        }
-
-        $defaultPassword = Hash::make('ChangeMe@2026');
         $imported = 0;
+        $updated  = 0;
         $skipped  = 0;
 
-        foreach ($joomlaUsers as $email => $data) {
-            // Skip if email already exists
-            if (User::where('email', $email)->exists()) {
-                $skipped++;
+        $parsedUsers = [];
+
+        foreach ($dumpFiles as $file) {
+            if (!file_exists($file)) {
                 continue;
             }
 
-            $user = User::create([
-                'name'     => $data['name'],
-                'email'    => $email,
-                'password' => $defaultPassword,
-                'role'     => $data['role'],
-                'is_approved' => true,
-                'is_active'   => true,
-                'password_changed' => false,
-            ]);
+            $this->command?->info("Processing user dump file: " . basename($file));
+            $content = file_get_contents($file);
 
-            $role = Role::where('name', $data['role'])->first();
-            if ($role) {
-                $user->assignRole($role);
+            // 1. Parse usergroups (if present)
+            $groups = [];
+            if (preg_match_all('/INSERT INTO [`"]?josn9_usergroups[`"]?\s*\(([^\)]+)\)\s*VALUES\s*(.*?);/is', $content, $matches, PREG_SET_ORDER)) {
+                foreach ($matches as $m) {
+                    preg_match_all('/\((.*?)\)(?:,\s*|\s*$)/s', $m[2], $rows);
+                    foreach ($rows[1] as $r) {
+                        $v = str_getcsv($r, ',', "'");
+                        if (count($v) >= 3) {
+                            $groups[trim($v[0])] = trim($v[2]); // id => title
+                        }
+                    }
+                }
             }
 
-            $imported++;
+            // 2. Parse user-group mapping
+            $userGroupMap = [];
+            if (preg_match_all('/INSERT INTO [`"]?josn9_user_usergroup_map[`"]?\s*\(([^\)]+)\)\s*VALUES\s*(.*?);/is', $content, $matches, PREG_SET_ORDER)) {
+                foreach ($matches as $m) {
+                    preg_match_all('/\((.*?)\)(?:,\s*|\s*$)/s', $m[2], $rows);
+                    foreach ($rows[1] as $r) {
+                        $v = str_getcsv($r, ',', "'");
+                        if (count($v) >= 2) {
+                            $uId = trim($v[0]);
+                            $gId = trim($v[1]);
+                            $gTitle = $groups[$gId] ?? 'Registered';
+                            $userGroupMap[$uId][$gTitle] = true;
+                        }
+                    }
+                }
+            }
+
+            // 3. Parse Joomla Users (josn9_users)
+            if (preg_match_all('/INSERT INTO [`"]?josn9_users[`"]?\s*\(([^\)]+)\)\s*VALUES\s*(.*?);/is', $content, $matches, PREG_SET_ORDER)) {
+                foreach ($matches as $m) {
+                    $cols = array_map(fn($c) => trim(str_replace('`', '', $c)), explode(',', $m[1]));
+                    preg_match_all('/\((.*?)\)(?:,\s*|\s*$)/s', $m[2], $rows);
+                    foreach ($rows[1] as $r) {
+                        $v = str_getcsv($r, ',', "'");
+                        if (count($v) >= count($cols)) {
+                            $row = array_combine(array_slice($cols, 0, count($v)), $v);
+                            $email = strtolower(trim($row['email'] ?? ''));
+                            if (empty($email)) continue;
+
+                            $uGroups = array_keys($userGroupMap[$row['id']] ?? ['Registered' => true]);
+                            
+                            // Determine highest role
+                            $bestRole = 'STUDENT';
+                            $bestWeight = 0;
+                            foreach ($uGroups as $g) {
+                                $rName = $this->roleMap[$g] ?? 'STUDENT';
+                                $w = $this->roleWeights[$rName] ?? 0;
+                                if ($w > $bestWeight) {
+                                    $bestWeight = $w;
+                                    $bestRole = $rName;
+                                }
+                            }
+
+                            $parsedUsers[$email] = [
+                                'name'     => trim($row['name'] ?? $row['username']),
+                                'email'    => $email,
+                                'password' => trim($row['password']),
+                                'role'     => $bestRole,
+                            ];
+                        }
+                    }
+                }
+            }
+
+            // 4. Parse Moodle Users (mdl_user)
+            if (preg_match_all('/INSERT INTO [`"]?mdl_user[`"]?\s*\(([^\)]+)\)\s*VALUES\s*(.*?);/is', $content, $matches, PREG_SET_ORDER)) {
+                foreach ($matches as $m) {
+                    $cols = array_map(fn($c) => trim(str_replace('`', '', $c)), explode(',', $m[1]));
+                    preg_match_all('/\((.*?)\)(?:,\s*|\s*$)/s', $m[2], $rows);
+                    foreach ($rows[1] as $r) {
+                        $v = str_getcsv($r, ',', "'");
+                        if (count($v) >= count($cols)) {
+                            $row = array_combine(array_slice($cols, 0, count($v)), $v);
+                            $email = strtolower(trim($row['email'] ?? ''));
+                            $username = trim($row['username'] ?? '');
+
+                            if (empty($email) || $username === 'guest' || !empty($row['deleted'])) {
+                                continue;
+                            }
+
+                            $name = trim(($row['firstname'] ?? '') . ' ' . ($row['lastname'] ?? ''));
+                            if (empty($name)) $name = $username;
+
+                            $role = ($username === 'admin') ? 'SUPERADMIN' : 'STUDENT';
+
+                            if (!isset($parsedUsers[$email])) {
+                                $parsedUsers[$email] = [
+                                    'name'     => $name,
+                                    'email'    => $email,
+                                    'password' => trim($row['password']),
+                                    'role'     => $role,
+                                ];
+                            }
+                        }
+                    }
+                }
+            }
         }
 
-        $this->command->info("Joomla User Import: {$imported} users imported, {$skipped} skipped (already exist).");
+        $this->command?->info("Parsed total of " . count($parsedUsers) . " unique users from SQL dumps.");
 
-        if (empty($joomlaUsers)) {
-            $this->command->warn('⚠  No Joomla users configured yet. Fill in $joomlaUsers in JoomlaUserImportSeeder.php after exporting jos_users.');
+        // Insert/Update into Laravel database
+        foreach ($parsedUsers as $email => $data) {
+            $user = User::where('email', $email)->first();
+
+            if (!$user) {
+                // Direct DB insert or create to preserve the EXACT password hash ($2y$10$...)
+                $userId = DB::table('users')->insertGetId([
+                    'name'              => $data['name'],
+                    'email'             => $email,
+                    'password'          => $data['password'],
+                    'role'              => $data['role'],
+                    'is_approved'       => true,
+                    'is_active'         => true,
+                    'password_changed'  => true,
+                    'email_verified_at' => now(),
+                    'created_at'        => now(),
+                    'updated_at'        => now(),
+                ]);
+
+                $user = User::find($userId);
+                if ($user) {
+                    $user->assignRole($data['role']);
+                }
+
+                $imported++;
+            } else {
+                // Update password hash if needed and sync role
+                DB::table('users')->where('id', $user->id)->update([
+                    'password' => $data['password'],
+                ]);
+
+                // Upgrade role if higher weight
+                $currentWeight = $this->roleWeights[$user->role] ?? 0;
+                $newWeight     = $this->roleWeights[$data['role']] ?? 0;
+
+                if ($newWeight > $currentWeight) {
+                    $user->role = $data['role'];
+                    $user->save();
+                }
+
+                $user->assignRole($user->role);
+                $updated++;
+            }
         }
+
+        $this->command?->info("User Migration Complete: {$imported} imported, {$updated} updated/synced, {$skipped} skipped.");
     }
 }
