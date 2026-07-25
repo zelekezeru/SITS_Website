@@ -15,7 +15,7 @@ class ImportMoodleUsers extends Command
      *
      * @var string
      */
-    protected $signature = 'moodle:import-users {--config= : Path to Moodle config.php}';
+    protected $signature = 'moodle:import-users {--config= : Path to Moodle config.php} {--verbose : Show detailed output} {--dry-run : Simulate without writing to DB}';
 
     /**
      * The console command description.
@@ -81,13 +81,28 @@ class ImportMoodleUsers extends Command
 
         $prefix = $moodleConfig['prefix'] ?? 'mdl_';
 
-        $this->info("Fetching Moodle users...");
-        $stmt = $pdo->prepare("SELECT id, username, firstname, lastname, email FROM {$prefix}user WHERE deleted = 0 AND username != 'guest' AND id > 2");
+        // Diagnostic: count all rows in user table
+        $countStmt = $pdo->query("SELECT COUNT(*) as total FROM {$prefix}user");
+        $totalRows = $countStmt->fetchColumn();
+        $this->info("Total rows in {$prefix}user table: $totalRows");
+
+        $this->info("Fetching Moodle users (non-deleted, non-guest)...");
+        $stmt = $pdo->prepare(
+            "SELECT id, username, firstname, lastname, email, deleted, suspended"
+            . " FROM {$prefix}user"
+            . " WHERE deleted = 0 AND username != 'guest'"
+        );
         $stmt->execute();
         $moodleUsers = $stmt->fetchAll();
 
+        $this->info("Found " . count($moodleUsers) . " non-deleted non-guest users.");
+
         if (empty($moodleUsers)) {
-            $this->warn("No active users found in Moodle user table.");
+            $this->warn("No active users found in Moodle user table. Showing sample of raw table:");
+            $sample = $pdo->query("SELECT id, username, email, deleted, suspended FROM {$prefix}user LIMIT 5")->fetchAll();
+            foreach ($sample as $s) {
+                $this->line(" id={$s['id']} username={$s['username']} email={$s['email']} deleted={$s['deleted']} suspended={$s['suspended']}");
+            }
             return 0;
         }
 

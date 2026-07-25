@@ -63,8 +63,32 @@ class JoomlaUserImportSeeder extends Seeder
         $joomlaUsers = [];
         try {
             \Illuminate\Support\Facades\DB::connection('joomla')->getPdo();
-            
-            $prefix = config('database.connections.joomla.prefix', 'josn9_');
+
+            // Auto-discover the correct table prefix by finding a *_users table
+            $tables = \Illuminate\Support\Facades\DB::connection('joomla')
+                ->select("SHOW TABLES");
+            $tableNames = array_map(fn($t) => array_values((array)$t)[0], $tables);
+
+            $configuredPrefix = config('database.connections.joomla.prefix', 'vxgtm_');
+            $prefix = $configuredPrefix;
+
+            // Try to find the users table: check configured prefix first, then discover
+            $usersTable = $prefix . 'users';
+            if (!in_array($usersTable, $tableNames)) {
+                // Find any table ending in _users
+                $found = array_filter($tableNames, fn($t) => str_ends_with($t, '_users'));
+                if (!empty($found)) {
+                    $firstUsersTable = array_values($found)[0];
+                    $prefix = substr($firstUsersTable, 0, strrpos($firstUsersTable, '_users') + 1);
+                    $this->command->info("Discovered Joomla table prefix: '{$prefix}' (found table: {$firstUsersTable})");
+                } else {
+                    $this->command->warn("Could not find any *_users table. Available tables: " . implode(', ', $tableNames));
+                    throw new \RuntimeException("No users table found in Joomla database.");
+                }
+            } else {
+                $this->command->info("Using Joomla table prefix: '{$prefix}'");
+            }
+
             $rows = \Illuminate\Support\Facades\DB::connection('joomla')->select("
                 SELECT u.id as joomla_id, u.name, u.email, g.title as group_name
                 FROM {$prefix}users u
@@ -72,7 +96,9 @@ class JoomlaUserImportSeeder extends Seeder
                 LEFT JOIN {$prefix}usergroups g ON m.group_id = g.id
                 WHERE u.block = 0
             ");
-            
+
+            $this->command->info("Found " . count($rows) . " Joomla user records.");
+
             foreach ($rows as $row) {
                 $email = trim($row->email);
                 if (empty($email)) {
