@@ -231,7 +231,10 @@ class PeopleCrudController extends Controller
             'evaluationPeriods' => EvaluationPeriod::orderBy('start_date', 'desc')->get(),
             'payrollComponents' => \App\Models\PayrollComponent::orderBy('name')->get(),
             'payrollPeriods'    => \App\Models\PayrollPeriod::orderByDesc('start_date')->get(),
-            'scheduleTypes'     => array_column(\App\Enums\ScheduleType::cases(), 'value'),
+            // Same {value,label} shape the payroll period page sends, so the shared
+            // payroll-config modal binds the value (not the whole option) either way.
+            'scheduleTypes'     => collect(\App\Enums\ScheduleType::cases())
+                ->map(fn ($t) => ['value' => $t->value, 'label' => $t->label()]),
             'credentials'       => $employee->user ? [
                 'password_changed' => $employee->user->password_changed,
                 'default_password' => $employee->user->password_changed ? null : $employee->user->default_password,

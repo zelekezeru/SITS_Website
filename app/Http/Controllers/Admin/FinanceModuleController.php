@@ -48,6 +48,10 @@ class FinanceModuleController extends Controller
             ]);
         }
 
+        if ($routeName === 'admin.payroll.config') {
+            return Inertia::render('Admin/Finance/PayrollConfig', $base + PayrollConfigController::pageProps());
+        }
+
         if ($routeName === 'admin.attendance-permissions') {
             return Inertia::render('Admin/Finance/AttendancePermissions/Index',
                 $base + AttendancePermissionController::pageProps($request->user()));

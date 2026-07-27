@@ -26,6 +26,14 @@ class PayrollSettingsSeeder extends Seeder
             ['payroll', 'ot_rest_multiplier', '2.00', 'decimal', 'Overtime — weekly rest day'],
             ['payroll', 'ot_holiday_multiplier', '2.50', 'decimal', 'Overtime — public holiday'],
 
+            // Unpaid-absence policy. Absence is always applied POST-TAX — it is
+            // withheld from taxed pay and never reduces taxable income. Defaults
+            // reproduce the original hard-coded behaviour exactly.
+            ['payroll', 'absence_deduction_enabled', 'true', 'boolean', 'Deduct pay for unpermitted absent days'],
+            ['payroll', 'absence_deduction_basis', 'base', 'string', 'Daily-rate basis for absence: base (basic salary) or gross (basic + allowances)'],
+            ['payroll', 'absence_deduction_rate', '1.00', 'decimal', 'Days of pay withheld per absent day (1.00 = one day)'],
+            ['payroll', 'absence_grace_days', '0', 'decimal', 'Unpermitted absent days forgiven each month before deductions start'],
+
             ['scoring', 'weight_auto_score', '0.40', 'decimal', 'Evaluation blend — system/auto'],
             ['scoring', 'weight_manager_score', '0.40', 'decimal', 'Evaluation blend — manager/dept head'],
             ['scoring', 'weight_executive_score', '0.20', 'decimal', 'Evaluation blend — executive'],

@@ -43,19 +43,35 @@ watch(() => props.employee?.id, (newId) => {
   if (newId) fetchConfig();
 }, { immediate: true });
 
+const flagsError = ref('');
+const flagsSaved = ref(false);
+
 const updateFlags = async () => {
   saving.value = true;
+  flagsError.value = '';
+  flagsSaved.value = false;
   try {
     await axios.post(`/${props.apiPrefix}/employees/${props.employee.id}/payroll-config`, config.value.flags);
+    flagsSaved.value = true;
     emit('updated');
   } catch (e) {
-    console.error('Failed to update config', e);
+    const data = e?.response?.data;
+    const first = data?.errors ? Object.values(data.errors)[0]?.[0] : null;
+    flagsError.value = first || data?.message || 'Could not save these rules.';
   } finally {
     saving.value = false;
   }
 };
 
 // ─── ASSIGNMENTS ─────────────────────────────────────────────────────────────
+// Callers hand `scheduleTypes` over as either plain enum values or {value,label}
+// pairs — normalise so the <option> always binds the value, never the object.
+const scheduleOptions = computed(() => (props.scheduleTypes ?? []).map(st => (
+  typeof st === 'string'
+    ? { value: st, label: st.replace(/_/g, ' ').replace(/\b\w/g, m => m.toUpperCase()) }
+    : st
+)));
+
 const assignFormOpen = ref(false);
 const assignForm = useForm({
   payroll_component_id: '',
@@ -66,15 +82,41 @@ const assignForm = useForm({
   note: '',
 });
 
+// A one-time entry needs the period it lands in; a range needs both bounds.
+const needsStartPeriod = computed(() => assignForm.schedule_type !== 'monthly');
+const needsEndPeriod = computed(() => assignForm.schedule_type === 'range');
+
+const assignError = ref('');
+const assignErrors = ref({});
+const assignSaving = ref(false);
+
+/** Pull the message(s) out of a Laravel 422 response for display. */
+const readError = (e, fallback) => {
+  const data = e?.response?.data;
+  assignErrors.value = data?.errors ?? {};
+  const first = data?.errors ? Object.values(data.errors)[0]?.[0] : null;
+
+  return first || data?.message || fallback;
+};
+
 const submitAssignment = async () => {
+  assignError.value = '';
+  assignErrors.value = {};
+  assignSaving.value = true;
   try {
-    await axios.post(`/${props.apiPrefix}/employees/${props.employee.id}/assignments`, assignForm.data());
+    await axios.post(`/${props.apiPrefix}/employees/${props.employee.id}/assignments`, {
+      ...assignForm.data(),
+      start_period_id: assignForm.start_period_id || null,
+      end_period_id: assignForm.end_period_id || null,
+    });
     assignForm.reset();
     assignFormOpen.value = false;
     await fetchConfig();
     emit('updated');
   } catch (e) {
-    console.error('Failed to assign component', e);
+    assignError.value = readError(e, 'Could not assign this component.');
+  } finally {
+    assignSaving.value = false;
   }
 };
 
@@ -85,7 +127,7 @@ const deleteAssignment = async (assignmentId) => {
     await fetchConfig();
     emit('updated');
   } catch (e) {
-    console.error('Failed to delete assignment', e);
+    assignError.value = readError(e, 'Could not remove this assignment.');
   }
 };
 
@@ -157,6 +199,13 @@ const money = (n) => Number(n || 0).toLocaleString(undefined, { minimumFractionD
             <label class="block text-xs font-semibold text-slate-400 mb-1">Exemption Reason</label>
             <input type="text" v-model="config.flags.attendance_exempt_reason" class="w-full bg-slate-950 border-slate-800 rounded-xl text-sm focus:border-blue-500 focus:ring-blue-500/20 text-slate-200" placeholder="e.g. Executive management..." />
           </div>
+
+          <p v-if="flagsError" class="text-xs text-rose-400 bg-rose-500/10 border border-rose-500/20 rounded-lg px-3 py-2">
+            {{ flagsError }}
+          </p>
+          <p v-else-if="flagsSaved" class="text-xs text-emerald-400">
+            Rules saved — recompute the period to apply them.
+          </p>
         </section>
 
         <!-- Assignments Section -->
@@ -192,20 +241,23 @@ const money = (n) => Number(n || 0).toLocaleString(undefined, { minimumFractionD
               <div>
                 <label class="block text-xs font-semibold text-slate-400 mb-1">Schedule Type</label>
                 <select v-model="assignForm.schedule_type" class="w-full bg-slate-900 border-slate-800 rounded-xl text-sm focus:border-blue-500 focus:ring-blue-500/20 text-slate-200">
-                  <option v-for="st in scheduleTypes" :key="st" :value="st">{{ st }}</option>
+                  <option v-for="st in scheduleOptions" :key="st.value" :value="st.value">{{ st.label }}</option>
                 </select>
               </div>
-              <div v-if="assignForm.schedule_type === 'one_time' || assignForm.schedule_type === 'recurring_limited'">
-                <label class="block text-xs font-semibold text-slate-400 mb-1">Start Period</label>
+              <div v-if="needsStartPeriod">
+                <label class="block text-xs font-semibold text-slate-400 mb-1">
+                  Start Period <span class="text-rose-400">*</span>
+                </label>
                 <select v-model="assignForm.start_period_id" class="w-full bg-slate-900 border-slate-800 rounded-xl text-sm focus:border-blue-500 focus:ring-blue-500/20 text-slate-200">
-                  <option value="">(Current)</option>
+                  <option value="">— select a period —</option>
                   <option v-for="p in periods" :key="p.id" :value="p.id">{{ p.name }}</option>
                 </select>
+                <p v-if="assignErrors.start_period_id" class="text-xs text-rose-400 mt-1">{{ assignErrors.start_period_id[0] }}</p>
               </div>
-              <div v-if="assignForm.schedule_type === 'recurring_limited'">
+              <div v-if="needsEndPeriod">
                 <label class="block text-xs font-semibold text-slate-400 mb-1">End Period</label>
                 <select v-model="assignForm.end_period_id" class="w-full bg-slate-900 border-slate-800 rounded-xl text-sm focus:border-blue-500 focus:ring-blue-500/20 text-slate-200">
-                  <option value="">(None)</option>
+                  <option value="">(Open-ended)</option>
                   <option v-for="p in periods" :key="p.id" :value="p.id">{{ p.name }}</option>
                 </select>
               </div>
@@ -214,11 +266,23 @@ const money = (n) => Number(n || 0).toLocaleString(undefined, { minimumFractionD
                 <input type="text" v-model="assignForm.note" class="w-full bg-slate-900 border-slate-800 rounded-xl text-sm focus:border-blue-500 focus:ring-blue-500/20 text-slate-200" />
               </div>
             </div>
+            <p v-if="assignError" class="text-xs text-rose-400 bg-rose-500/10 border border-rose-500/20 rounded-lg px-3 py-2">
+              {{ assignError }}
+            </p>
+
             <div class="flex justify-end gap-3 pt-2">
               <button @click="assignFormOpen = false" class="text-xs font-semibold text-slate-400 hover:text-slate-200 cursor-pointer">Cancel</button>
-              <button @click="submitAssignment" class="text-xs font-bold bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl cursor-pointer">Save Assignment</button>
+              <button @click="submitAssignment" :disabled="assignSaving || !assignForm.payroll_component_id"
+                      class="text-xs font-bold bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl cursor-pointer disabled:opacity-50">
+                {{ assignSaving ? 'Saving…' : 'Save Assignment' }}
+              </button>
             </div>
           </div>
+
+          <!-- Errors raised outside the assign form (e.g. a failed removal) -->
+          <p v-if="assignError && !assignFormOpen" class="text-xs text-rose-400 bg-rose-500/10 border border-rose-500/20 rounded-lg px-3 py-2">
+            {{ assignError }}
+          </p>
 
           <!-- List -->
           <div class="rounded-xl border border-slate-800 overflow-hidden bg-slate-950/30">

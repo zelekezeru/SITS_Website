@@ -139,6 +139,8 @@ class AdminNavigation
                                 'Generate payslips for a period from attendance and salaries.'),
                             self::child('Payroll Setup', 'admin.payroll.components', '/admin/payroll/components',
                                 'Configure allowance, deduction and statutory (pension / provident fund) components.'),
+                            self::child('Payroll Config', 'admin.payroll.config', '/admin/payroll/config',
+                                'Absence-deduction policy, tax & overtime constants, and each employee\'s payroll profile.'),
                         ]),
                     self::item('Loans', 'admin.loans', '/admin/loans', 'Landmark',
                         'Employee salary loans auto-deducted from payroll at a fixed monthly amount until cleared.',

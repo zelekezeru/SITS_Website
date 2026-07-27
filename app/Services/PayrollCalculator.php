@@ -34,9 +34,32 @@ class PayrollCalculator
     private const DEDUCTION_COLUMNS = ['salary_advance', 'other_deduction'];
     private const STATUTORY_COLUMNS = ['employee_pension', 'employer_pension', 'provident_fund_employee', 'provident_fund_employer'];
 
-    /** @param array<string, float> $config */
-    public function __construct(private array $config)
+    /**
+     * Policy defaults, applied to any key a caller leaves out. These reproduce the
+     * statutory/legacy behaviour, so a partial config computes the same figures the
+     * calculator produced before the setting existed.
+     */
+    private const DEFAULTS = [
+        'working_days' => 26,
+        'ot_normal' => 1.5,
+        'ot_night' => 1.5,
+        'ot_rest' => 2.0,
+        'ot_holiday' => 2.5,
+        'transport_cap' => 2200.0,
+        'pension_pre_tax' => true,
+        'absence_enabled' => true,
+        'absence_basis' => 'base',
+        'absence_rate' => 1.0,
+        'absence_grace_days' => 0.0,
+    ];
+
+    /** @var array<string, mixed> */
+    private array $config;
+
+    /** @param array<string, mixed> $config */
+    public function __construct(array $config)
     {
+        $this->config = $config + self::DEFAULTS;
     }
 
     public static function fromSettings(): self
@@ -51,6 +74,11 @@ class PayrollCalculator
             // Whether the employee pension contribution reduces taxable income.
             // True = statutory (Ethiopian law); false = the SITS sheet convention.
             'pension_pre_tax' => filter_var(Setting::get('pension_pre_tax', true), FILTER_VALIDATE_BOOLEAN),
+            // Unpaid-absence policy (always post-tax; see compute()).
+            'absence_enabled' => filter_var(Setting::get('absence_deduction_enabled', true), FILTER_VALIDATE_BOOLEAN),
+            'absence_basis' => (string) (Setting::get('absence_deduction_basis', 'base') ?: 'base'),
+            'absence_rate' => (float) (Setting::get('absence_deduction_rate', 1) ?: 1),
+            'absence_grace_days' => (float) Setting::get('absence_grace_days', 0),
         ]);
     }
 
@@ -83,12 +111,19 @@ class PayrollCalculator
         }
         $overtime = round($overtime, 2);
 
-        // --- Unpaid absence (post-tax) -----------------------------------
-        // Employees marked as attendance_exempt are excluded from absence deductions.
-        $unpermittedDays = ($attendance && ! $employee->attendance_exempt)
-            ? max((int) $attendance->absent_days - (int) $attendance->permitted_days, 0)
+        // --- Unpaid absence days ------------------------------------------
+        // Employees marked as attendance_exempt are excluded from absence deductions,
+        // as are the first `absence_grace_days` unpermitted days each month. The
+        // ETB amount is worked out further down, once allowances are known — the
+        // basis can be configured to include them.
+        $unpermittedDays = ($attendance && ! $employee->attendance_exempt && $this->config['absence_enabled'])
+            ? max(
+                (int) $attendance->absent_days
+                - (int) $attendance->permitted_days
+                - $this->config['absence_grace_days'],
+                0
+            )
             : 0;
-        $absenceDeduction = round($unpermittedDays * $dailyRate, 2);
 
         // --- Columns + lines accumulators --------------------------------
         $cols = array_fill_keys(
@@ -183,6 +218,21 @@ class PayrollCalculator
         );
         // Gross includes the employer-contribution gross-up (matches the sheet's Gross K).
         $gross = Money::round($base + $earningsTotal + $employerContrib);
+
+        // --- Unpaid absence amount (POST-TAX) -----------------------------
+        // Withheld from taxed pay: it is added to total deductions below and is
+        // deliberately kept out of $taxable — an absent day costs the employee the
+        // net, not the gross, of that day. The daily rate is basic-salary based by
+        // default; `absence_deduction_basis = gross` includes allowances, and
+        // `absence_deduction_rate` scales how many days' pay one absent day costs.
+        $absenceBasis = $this->config['absence_basis'] === 'gross'
+            ? $base + $cols['mobile_allowance'] + $cols['transport_allowance']
+                + $cols['housing_allowance'] + $cols['cash_allowance']
+            : $base;
+        $absenceDeduction = round(
+            $unpermittedDays * ($absenceBasis / $workingDays) * $this->config['absence_rate'],
+            2
+        );
 
         $taxable = Money::round($taxableEarnings - $statutoryEmployeePreTax);
         $incomeTax = $this->incomeTax($taxable, $asOf);

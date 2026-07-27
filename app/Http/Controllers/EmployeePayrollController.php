@@ -8,6 +8,7 @@ use App\Models\PayrollComponent;
 use App\Models\PayrollComponentAssignment;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class EmployeePayrollController extends Controller
 {
@@ -25,8 +26,8 @@ class EmployeePayrollController extends Controller
             'assignments' => $employee->componentAssignments->map(fn($a) => [
                 'id' => $a->id,
                 'payroll_component_id' => $a->payroll_component_id,
-                'component_name' => $a->component->name,
-                'component_type' => $a->component->type->value,
+                'component_name' => $a->component?->name,
+                'component_type' => $a->component?->kind->value,
                 'amount' => (float) $a->amount,
                 'schedule_type' => $a->schedule_type->value,
                 'start_period_name' => $a->startPeriod?->name,
@@ -53,6 +54,13 @@ class EmployeePayrollController extends Controller
 
     public function storeAssignment(Request $request, Employee $employee)
     {
+        // The period selects submit '' for "none"; normalise before validating so
+        // the exists rules and the stored foreign keys see a real null.
+        $request->merge([
+            'start_period_id' => $request->input('start_period_id') ?: null,
+            'end_period_id' => $request->input('end_period_id') ?: null,
+        ]);
+
         $data = $request->validate([
             'payroll_component_id' => ['required', 'exists:payroll_components,id'],
             'amount' => ['required', 'numeric', 'min:0'],
@@ -62,23 +70,26 @@ class EmployeePayrollController extends Controller
             'note' => ['nullable', 'string', 'max:255'],
         ]);
 
-        if ($data['schedule_type'] === ScheduleType::OneTime->value && empty($data['start_period_id'])) {
-             return response()->json(['message' => 'Start period is required for one-time assignments.'], 422);
-        }
-
         if ($data['schedule_type'] === ScheduleType::OneTime->value) {
+            if (empty($data['start_period_id'])) {
+                throw ValidationException::withMessages([
+                    'start_period_id' => 'Choose the period this one-time entry applies to.',
+                ]);
+            }
             $data['end_period_id'] = $data['start_period_id'];
         }
 
         $component = PayrollComponent::findOrFail($data['payroll_component_id']);
         if ($component->kind === \App\Enums\PayrollComponentKind::Statutory) {
-            return response()->json(['message' => 'Statutory components cannot be assigned directly.'], 422);
+            throw ValidationException::withMessages([
+                'payroll_component_id' => 'Statutory components apply globally by scheme and cannot be assigned per employee.',
+            ]);
         }
 
         $data['employee_id'] = $employee->id;
         PayrollComponentAssignment::create($data);
 
-        return response()->json(['message' => 'Component assigned successfully.']);
+        return response()->json(['message' => "\"{$component->name}\" assigned. Recompute the period to apply it."]);
     }
 
     public function destroyAssignment(Employee $employee, PayrollComponentAssignment $assignment)

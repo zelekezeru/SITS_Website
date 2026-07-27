@@ -16,6 +16,8 @@ import {
   LibraryBig, BookMarked, Bookmark, ScanLine, ScanBarcode, ArrowLeftRight,
   CreditCard, BarChart3, ClipboardCheck, Boxes, RotateCcw, ScrollText,
   Package, BookCopy, MapPin, BookPlus, Undo2, Layers, QrCode, BookText,
+  // Payroll configuration
+  SlidersHorizontal, ShieldAlert, CalendarX2, Calculator, Info, Loader2,
 } from 'lucide-vue-next';
 
 const map = {
@@ -31,6 +33,8 @@ const map = {
   LibraryBig, BookMarked, Bookmark, ScanLine, ScanBarcode, ArrowLeftRight,
   CreditCard, BarChart3, ClipboardCheck, Boxes, RotateCcw, ScrollText,
   Package, BookCopy, MapPin, BookPlus, Undo2, Layers, QrCode, BookText,
+  // Payroll configuration
+  SlidersHorizontal, ShieldAlert, CalendarX2, Calculator, Info, Loader2,
 };
 
 const props = defineProps({

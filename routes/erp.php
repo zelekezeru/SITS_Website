@@ -390,6 +390,12 @@ Route::middleware(['auth', 'active', 'password.fresh'])->group(function () {
         Route::post('/admin/payroll/components', [PayrollConfigController::class, 'store'])->name('admin.payroll.components.store');
         Route::put('/admin/payroll/components/{component}', [PayrollConfigController::class, 'update'])->name('admin.payroll.components.update');
         Route::delete('/admin/payroll/components/{component}', [PayrollConfigController::class, 'destroy'])->name('admin.payroll.components.destroy');
+
+        // Payroll Config screen: institution-wide policy + per-employee profiles.
+        Route::post('/admin/payroll/config/policy', [PayrollConfigController::class, 'updatePolicy'])->name('admin.payroll.config.policy');
+        Route::post('/admin/payroll/config/employees/{employee}', [PayrollConfigController::class, 'updateEmployee'])->name('admin.payroll.config.employee');
+        Route::post('/admin/payroll/config/employees/{employee}/assignments', [PayrollConfigController::class, 'storeAssignment'])->name('admin.payroll.config.assignments.store');
+        Route::delete('/admin/payroll/config/employees/{employee}/assignments/{assignment}', [PayrollConfigController::class, 'destroyAssignment'])->name('admin.payroll.config.assignments.destroy');
     });
 
     /*
