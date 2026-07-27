@@ -63,6 +63,24 @@ const recompute = () => {
   router.post(`${financeBase}/run`, {}, { preserveScroll: true, onFinish: () => (busy.value = false) });
 };
 
+/**
+ * President-side run, offered only when Finance has not prepared this period and
+ * it is not yet submitted or approved. Goes through the admin endpoint, which
+ * takes the period in the body rather than the URL.
+ */
+const runPayroll = async () => {
+  const ok = await confirm({
+    title: 'Run Payroll',
+    message: `Finance has not prepared ${props.period.name} yet. Generate payslips for every active employee now from salaries, attendance and the standing component assignments?`,
+  });
+  if (!ok) return;
+
+  busy.value = true;
+  router.post('/admin/payroll/run', { payroll_period_id: props.period.id }, {
+    preserveScroll: true, onFinish: () => (busy.value = false),
+  });
+};
+
 const submitForApproval = async () => {
   const ok = await confirm({
     title: 'Submit for Approval',
@@ -160,6 +178,11 @@ const onEmployeeConfigUpdated = () => {
           <button v-if="can.prepare" @click="recompute" :disabled="busy"
                   class="text-xs font-semibold px-4 py-2.5 border border-slate-800 hover:border-blue-700 bg-slate-900/60 text-blue-300 rounded-xl transition-colors cursor-pointer disabled:opacity-50">
             <Icon name="RefreshCw" :size="14" class="inline -mt-0.5 mr-1" />{{ busy ? 'Computing…' : 'Recompute' }}
+          </button>
+          <button v-if="can.run" @click="runPayroll" :disabled="busy"
+                  class="text-xs font-semibold px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl transition-all shadow-md cursor-pointer disabled:opacity-50"
+                  title="Finance has not prepared this period — generate the payslips from here.">
+            <Icon name="Play" :size="14" class="inline -mt-0.5 mr-1" />{{ busy ? 'Running…' : 'Run Payroll' }}
           </button>
           <button v-if="can.manageDeductions" @click="openAdjModal"
                   class="text-xs font-semibold px-4 py-2.5 border border-slate-800 hover:border-slate-700 bg-slate-900/60 text-slate-200 rounded-xl transition-colors cursor-pointer">
@@ -261,7 +284,10 @@ const onEmployeeConfigUpdated = () => {
             </tr>
             <tr v-if="!rows.length">
               <td :colspan="columnKeys.length + 2" class="px-3 py-10 text-center text-slate-500 italic">
-                No payslips yet. <button v-if="can.prepare" @click="recompute" class="text-teal-400 underline">Recompute</button> to generate them.
+                No payslips yet.
+                <button v-if="can.prepare" @click="recompute" class="text-teal-400 underline cursor-pointer">Recompute</button>
+                <button v-else-if="can.run" @click="runPayroll" class="text-blue-400 underline cursor-pointer">Run payroll</button>
+                <template v-if="can.prepare || can.run"> to generate them.</template>
               </td>
             </tr>
           </tbody>

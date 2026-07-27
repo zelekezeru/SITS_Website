@@ -235,6 +235,13 @@ class PayrollController extends Controller
                 ->map(fn ($t) => ['value' => $t->value, 'label' => $t->label()]),
             'can' => [
                 'prepare' => $canPrepare,
+                // Fallback run for the President: Finance has not produced a draft yet
+                // and the period is still editable (never once it is submitted,
+                // approved, locked or paid). Uses the admin run endpoint.
+                'run' => $isAdmin
+                    && $user->can('prepare payroll')
+                    && ! $hasPayslips
+                    && $period->canBeEditedByFinance(),
                 'submit' => $canPrepare && $user->can('submit payroll') && $hasPayslips,
                 'manageDeductions' => $canPrepare && $user->can('manage deductions'),
                 'export' => $hasPayslips && ($isAdmin || $user->can('export payroll')),
