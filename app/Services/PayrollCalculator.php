@@ -204,10 +204,9 @@ class PayrollCalculator
                 }
                 $lines[] = ['type' => 'deduction', 'label' => $component->name, 'amount' => $amount];
             } else {
-                // Employer side: gross-up — paired earning/deduction lines cancel in net.
+                // Employer side: track the total amount for the company ledger,
+                // but do NOT add it to the employee's gross pay or deductions.
                 $employerContrib += $amount;
-                $lines[] = ['type' => 'earning', 'label' => $component->name.' (employer)', 'amount' => $amount];
-                $lines[] = ['type' => 'deduction', 'label' => $component->name.' (employer)', 'amount' => $amount];
             }
         }
 
@@ -216,8 +215,8 @@ class PayrollCalculator
             $overtime + $cols['mobile_allowance'] + $cols['transport_allowance']
             + $cols['housing_allowance'] + $cols['cash_allowance']
         );
-        // Gross includes the employer-contribution gross-up (matches the sheet's Gross K).
-        $gross = Money::round($base + $earningsTotal + $employerContrib);
+        // Gross pay is strictly the employee's base salary plus their earnings.
+        $gross = Money::round($base + $earningsTotal);
 
         // --- Unpaid absence amount (POST-TAX) -----------------------------
         // Withheld from taxed pay: it is added to total deductions below and is
@@ -240,7 +239,7 @@ class PayrollCalculator
         $deductionsTotal = $cols['salary_advance'] + $cols['other_deduction'];
         $totalDeductions = Money::round(
             $incomeTax + $statutoryEmployeePreTax + $statutoryEmployeePostTax
-            + $employerContrib + $absenceDeduction + $deductionsTotal
+            + $absenceDeduction + $deductionsTotal
         );
         $netPay = Money::round($gross - $totalDeductions);
 
