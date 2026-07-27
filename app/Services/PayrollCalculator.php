@@ -31,7 +31,7 @@ use Carbon\Carbon;
 class PayrollCalculator
 {
     private const ALLOWANCE_COLUMNS = ['mobile_allowance', 'transport_allowance', 'housing_allowance', 'cash_allowance'];
-    private const DEDUCTION_COLUMNS = ['salary_advance', 'kircha_deduction', 'other_deduction'];
+    private const DEDUCTION_COLUMNS = ['salary_advance', 'other_deduction'];
     private const STATUTORY_COLUMNS = ['employee_pension', 'employer_pension', 'provident_fund_employee', 'provident_fund_employer'];
 
     /** @param array<string, float> $config */
@@ -186,7 +186,7 @@ class PayrollCalculator
         $taxable = Money::round($taxableEarnings - $statutoryEmployeePreTax);
         $incomeTax = $this->incomeTax($taxable, $asOf);
 
-        $deductionsTotal = $cols['salary_advance'] + $cols['kircha_deduction'] + $cols['other_deduction'];
+        $deductionsTotal = $cols['salary_advance'] + $cols['other_deduction'];
         $totalDeductions = Money::round(
             $incomeTax + $statutoryEmployeePreTax + $statutoryEmployeePostTax
             + $employerContrib + $absenceDeduction + $deductionsTotal

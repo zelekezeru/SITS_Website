@@ -218,8 +218,7 @@ const flatAssignments = computed(() => Object.values(props.assignments).flat());
                 <input type="checkbox" :checked="allSelected" @change="toggleAll" class="rounded border-slate-700 bg-slate-950 text-teal-500 focus:ring-0" />
               </th>
               <th class="px-3 py-3 text-left sticky left-10 bg-slate-950/40">Employee</th>
-              <th class="px-3 py-3 text-left">Grade</th>
-              <th class="px-3 py-3 text-left">Campus</th>
+
               <th v-for="key in columnKeys" :key="key" class="px-3 py-3">{{ columns[key] }}</th>
             </tr>
           </thead>
@@ -232,15 +231,14 @@ const flatAssignments = computed(() => Object.values(props.assignments).flat());
                 {{ row.name }}
                 <span v-if="row.has_provident_fund" class="ml-1 text-[9px] font-bold uppercase px-1 py-0.5 rounded bg-violet-500/15 text-violet-300 border border-violet-500/20">PF</span>
               </td>
-              <td class="px-3 py-2.5 text-left text-slate-400">{{ row.grade || '—' }}</td>
-              <td class="px-3 py-2.5 text-left text-slate-400">{{ row.campus || '—' }}</td>
+
               <td v-for="key in columnKeys" :key="key" class="px-3 py-2.5 font-mono"
                   :class="key === 'net_pay' ? 'text-emerald-300 font-bold' : key === 'gross' ? 'text-slate-100' : 'text-slate-400'">
                 {{ money(row[key]) }}
               </td>
             </tr>
             <tr v-if="!rows.length">
-              <td :colspan="columnKeys.length + 4" class="px-3 py-10 text-center text-slate-500 italic">
+              <td :colspan="columnKeys.length + 2" class="px-3 py-10 text-center text-slate-500 italic">
                 No payslips yet. <button v-if="can.prepare" @click="recompute" class="text-teal-400 underline">Recompute</button> to generate them.
               </td>
             </tr>
@@ -249,7 +247,7 @@ const flatAssignments = computed(() => Object.values(props.assignments).flat());
             <tr class="border-t-2 border-slate-700 bg-slate-950/50 font-bold text-slate-100">
               <td class="px-3 py-3 sticky left-0 bg-slate-950/50"></td>
               <td class="px-3 py-3 text-left sticky left-10 bg-slate-950/50">TOTAL</td>
-              <td></td><td></td>
+
               <td v-for="key in columnKeys" :key="key" class="px-3 py-3 font-mono"
                   :class="key === 'net_pay' ? 'text-emerald-300' : ''">{{ money(totals[key]) }}</td>
             </tr>
@@ -264,7 +262,7 @@ const flatAssignments = computed(() => Object.values(props.assignments).flat());
         <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500">Allowances & Deductions</h3>
         <button v-if="can.manageDeductions" @click="openAdjModal" class="text-[11px] font-bold text-teal-400 hover:text-teal-300">+ Assign Component</button>
       </div>
-      <div v-if="!flatAssignments.length" class="text-sm text-slate-500 italic">No component assignments. Transport, housing, salary advances, kircha and custom items appear here.</div>
+      <div v-if="!flatAssignments.length" class="text-sm text-slate-500 italic">No component assignments. Transport, housing, salary advances and custom items appear here.</div>
       <div v-else class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
         <div v-for="adj in flatAssignments" :key="adj.id" class="flex items-center justify-between gap-3 p-3 rounded-xl border bg-slate-950/30"
              :class="adj.applies_now ? 'border-slate-900' : 'border-slate-900/40 opacity-60'">

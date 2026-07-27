@@ -28,7 +28,6 @@ class PayrollSheetPresenter
         'provident_fund_employee' => 'PF 5%',
         'provident_fund_employer' => 'PF 12.5%',
         'salary_advance' => 'Salary Advance',
-        'kircha_deduction' => 'Kircha',
         'other_deduction' => 'Other Ded.',
         'total_deductions' => 'Total Deductions',
         'net_pay' => 'Net Pay',
@@ -76,8 +75,7 @@ class PayrollSheetPresenter
                 'provident_fund_employee' => (float) $p->provident_fund_employee,
                 'provident_fund_employer' => (float) $p->provident_fund_employer,
                 'salary_advance' => (float) $p->salary_advance,
-                'kircha_deduction' => (float) $p->kircha_deduction,
-                'other_deduction' => (float) $p->other_deduction,
+                'other_deduction' => (float) $p->other_deduction + (float) $p->kircha_deduction,
                 'total_deductions' => (float) $p->total_deductions,
                 'net_pay' => (float) $p->net_pay,
             ];
@@ -96,6 +94,38 @@ class PayrollSheetPresenter
         }
 
         return $totals;
+    }
+
+    /**
+     * Returns only the columns from COLUMNS where at least one row has a non-zero value,
+     * so the payroll table, PDF and Excel hide empty deduction/allowance columns.
+     *
+     * @param  array<int, array<string, mixed>>  $rows
+     * @return array<string, string>
+     */
+    public static function activeColumns(array $rows): array
+    {
+        if (empty($rows)) {
+            return self::COLUMNS;
+        }
+
+        // Always keep these structural columns visible regardless of values.
+        $alwaysShow = ['base_salary', 'gross', 'taxable_income', 'total_deductions', 'net_pay'];
+
+        return array_filter(self::COLUMNS, function (string $label, string $key) use ($rows, $alwaysShow) {
+            if (in_array($key, $alwaysShow, true)) {
+                return true;
+            }
+
+            // Show the column if any row has a non-zero value.
+            foreach ($rows as $row) {
+                if (isset($row[$key]) && (float) $row[$key] != 0.0) {
+                    return true;
+                }
+            }
+
+            return false;
+        }, ARRAY_FILTER_USE_BOTH);
     }
 
     /**

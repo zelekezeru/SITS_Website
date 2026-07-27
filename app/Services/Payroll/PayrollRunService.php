@@ -125,7 +125,7 @@ class PayrollRunService
                         'provident_fund_employee' => $result['provident_fund_employee'],
                         'provident_fund_employer' => $result['provident_fund_employer'],
                         'salary_advance' => $result['salary_advance'],
-                        'kircha_deduction' => $result['kircha_deduction'],
+                        'kircha_deduction' => 0,
                         'other_deduction' => $result['other_deduction'],
                         'loan_deduction' => $loanDeduction,
                         'total_deductions' => $result['total_deductions'],

@@ -139,7 +139,7 @@ class PayrollController extends Controller
             'period' => $period,
             'rows' => $rows,
             'totals' => PayrollSheetPresenter::totals($rows),
-            'columns' => PayrollSheetPresenter::COLUMNS,
+            'columns' => PayrollSheetPresenter::activeColumns($rows),
         ])->setPaper('a4', 'landscape');
 
         return $pdf->download('payroll_'.str_replace(' ', '_', $period->name).'.pdf');
@@ -211,7 +211,7 @@ class PayrollController extends Controller
             ],
             'rows' => $rows,
             'totals' => PayrollSheetPresenter::totals($rows),
-            'columns' => PayrollSheetPresenter::COLUMNS,
+            'columns' => PayrollSheetPresenter::activeColumns($rows),
             'assignments' => PayrollSheetPresenter::assignmentsByEmployee($period),
             'variance' => \App\Services\Payroll\PayrollVariancePresenter::analyze($period),
             'employees' => Employee::where('is_active', true)

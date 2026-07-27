@@ -23,11 +23,12 @@ class PayrollSheetExport
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setTitle('Payroll');
 
+        $columns = PayrollSheetPresenter::activeColumns($rows);
         $headers = array_merge(
             ['#', 'Employee', 'Grade', 'Campus', 'Working Days'],
-            array_values(PayrollSheetPresenter::COLUMNS)
+            array_values($columns)
         );
-        $numericKeys = array_keys(PayrollSheetPresenter::COLUMNS);
+        $numericKeys = array_keys($columns);
 
         // Title + header.
         $lastCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(count($headers));

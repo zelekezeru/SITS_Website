@@ -20,7 +20,7 @@ class PayrollConfigController extends Controller
 {
     private const SHEET_COLUMNS = [
         'allowance' => ['transport_allowance', 'housing_allowance', 'mobile_allowance', 'cash_allowance'],
-        'deduction' => ['salary_advance', 'kircha_deduction', 'other_deduction'],
+        'deduction' => ['salary_advance', 'other_deduction'],
         'statutory' => ['employee_pension', 'employer_pension', 'provident_fund_employee', 'provident_fund_employer'],
     ];
 
