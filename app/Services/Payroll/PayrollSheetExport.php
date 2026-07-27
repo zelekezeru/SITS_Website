@@ -116,8 +116,11 @@ class PayrollSheetExport
             $handle = fopen('php://output', 'w');
             fputcsv($handle, ['STAFF_NO', 'EMPLOYEE_NAME', 'BASIC_SALARY', 'TAXABLE_ALLOWANCES', 'OVERTIME', 'TAXABLE_INCOME', 'PIT_WITHHELD']);
 
+            $pensionPreTax = filter_var(\App\Models\Setting::get('pension_pre_tax', true), FILTER_VALIDATE_BOOLEAN);
+
             foreach ($rows as $row) {
-                $allowances = ($row['mobile_allowance'] ?? 0) + ($row['transport_allowance'] ?? 0) + ($row['housing_allowance'] ?? 0) + ($row['cash_allowance'] ?? 0);
+                $preTaxDeduction = $pensionPreTax ? ($row['employee_pension'] ?? 0) : 0;
+                $allowances = max(0, ($row['taxable_income'] ?? 0) + $preTaxDeduction - ($row['base_salary'] ?? 0) - ($row['overtime'] ?? 0));
                 fputcsv($handle, [
                     $row['staff_no'] ?? '',
                     $row['name'],
