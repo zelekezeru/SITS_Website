@@ -173,9 +173,10 @@ class PayrollCalculator
         // --- Statutory (pension / provident fund) ------------------------
         $statutoryEmployeePreTax = 0.0;   // reduces the tax base
         $statutoryEmployeePostTax = 0.0;  // deducted from net only
-        // SITS sheet convention: employer contributions are added to BOTH gross
-        // and total deductions so they cancel in net (a presentational gross-up).
+        // SITS sheet convention: ONLY employer Provident Fund (not Pension) is added 
+        // to BOTH gross and total deductions so they cancel in net (presentational gross-up).
         $employerContrib = 0.0;
+        $grossUpContrib = 0.0;
         foreach ($statutory as $component) {
             if (! $component->is_active || $component->kind !== PayrollComponentKind::Statutory) {
                 continue;
@@ -206,12 +207,15 @@ class PayrollCalculator
                 }
                 $lines[] = ['type' => 'deduction', 'label' => $component->name, 'amount' => $amount];
             } else {
-                // Employer side: added to BOTH gross pay and total deductions
-                // so they cancel out in the net pay.
+                // Employer side: track total for ledger.
                 $employerContrib += $amount;
-                $lines[] = ['type' => 'deduction', 'label' => $component->name, 'amount' => $amount];
-                // And to earnings so the payslip lines balance
-                $lines[] = ['type' => 'earning', 'label' => $component->name, 'amount' => $amount];
+                
+                // Only Provident Fund is grossed-up in the presentation.
+                if ($component->applies_to === 'pf_members') {
+                    $grossUpContrib += $amount;
+                    $lines[] = ['type' => 'deduction', 'label' => $component->name, 'amount' => $amount];
+                    $lines[] = ['type' => 'earning', 'label' => $component->name, 'amount' => $amount];
+                }
             }
         }
 
@@ -220,8 +224,8 @@ class PayrollCalculator
             $overtime + $cols['mobile_allowance'] + $cols['transport_allowance']
             + $cols['housing_allowance'] + $cols['cash_allowance']
         );
-        // Gross pay includes the employer contributions (which are later deducted).
-        $gross = Money::round($base + $earningsTotal + $employerContrib);
+        // Gross pay includes the gross-up contributions (which are later deducted).
+        $gross = Money::round($base + $earningsTotal + $grossUpContrib);
 
         // --- Unpaid absence amount (POST-TAX) -----------------------------
         // Withheld from taxed pay: it is added to total deductions below and is
@@ -244,7 +248,7 @@ class PayrollCalculator
         $deductionsTotal = $cols['salary_advance'] + $cols['other_deduction'];
         $totalDeductions = Money::round(
             $incomeTax + $statutoryEmployeePreTax + $statutoryEmployeePostTax
-            + $absenceDeduction + $deductionsTotal + $employerContrib
+            + $absenceDeduction + $deductionsTotal + $grossUpContrib
         );
         $netPay = Money::round($gross - $totalDeductions);
 
