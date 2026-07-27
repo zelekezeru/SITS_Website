@@ -79,7 +79,16 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
-        $user->delete();
-        return redirect()->route('users.index')->with('success', 'User deleted.');
+        if ($user->hasRiskyData()) {
+            $details = implode(' ', $user->getRiskyDataDetails());
+            return redirect()->back()
+                ->with('error', "Cannot delete user: {$details}");
+        }
+
+        $origEmail = $user->email;
+        $user->safelySoftDelete();
+
+        return redirect()->back()
+            ->with('success', "User soft-deleted. Email '{$origEmail}' has been freed for reuse.");
     }
 }

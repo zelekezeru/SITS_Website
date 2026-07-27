@@ -16,9 +16,15 @@ use Spatie\Permission\Models\Role;
 class UserController extends Controller
 {
 
-    public function index(): View
+    public function index(Request $request): View
     {
-        $users = User::with('employee')->where('id', '!=', Auth::id())->orderBy('name', 'asc')->paginate(10); // Use pagination to avoid loading too many records at once
+        $query = User::with('employee')->where('id', '!=', Auth::id());
+
+        if ($request->boolean('trashed')) {
+            $query->onlyTrashed();
+        }
+
+        $users = $query->orderBy('name', 'asc')->paginate(10)->withQueryString();
         $roles = Role::all();
 
         return view('users.list', compact('users', 'roles'));
@@ -27,10 +33,15 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function list(): View
+    public function list(Request $request): View
     {
+        $query = User::with('employee')->where('id', '!=', Auth::id());
 
-        $users = User::with('employee')->where('id', '!=', Auth::id())->orderBy('name', 'asc')->paginate(10); // Use pagination to avoid loading too many records at once
+        if ($request->boolean('trashed')) {
+            $query->onlyTrashed();
+        }
+
+        $users = $query->orderBy('name', 'asc')->paginate(10)->withQueryString();
         $roles = Role::all();
 
         return view('users.list', compact('users', 'roles'));
@@ -108,25 +119,29 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
-        if ($user->hasRole('President / Super Admin')) {
-            return redirect()->route('users.list')
-                ->with('error', 'The superadmin account cannot be deactivated.');
+        if ($user->hasRiskyData()) {
+            $details = implode(' ', $user->getRiskyDataDetails());
+            return redirect()->back()
+                ->with('error', "Cannot delete user: {$details}");
         }
 
-        $exists = \App\Models\DeactivationRequest::where('user_id', $user->id)
-            ->where('status', 'pending')
-            ->exists();
+        $origEmail = $user->email;
+        $user->safelySoftDelete();
 
-        if (!$exists) {
-            \App\Models\DeactivationRequest::create([
-                'user_id' => $user->id,
-                'type' => 'archive',
-                'status' => 'pending',
-                'reason' => 'Requested Archive by Admin',
-            ]);
-        }
+        return redirect()->back()
+            ->with('success', "User soft-deleted successfully. The email '{$origEmail}' has been freed for reuse.");
+    }
 
-        return redirect()->route('users.list')
-            ->with('success', 'Archive request has been submitted for admin approval.');
+    public function restore($id): RedirectResponse
+    {
+        $user = User::onlyTrashed()->findOrFail($id);
+        $user->restore();
+        $user->forceFill([
+            'is_active'   => true,
+            'is_approved' => true,
+        ])->save();
+
+        return redirect()->back()
+            ->with('success', "User {$user->name} has been restored successfully.");
     }
 }

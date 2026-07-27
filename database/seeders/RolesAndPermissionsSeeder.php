@@ -71,7 +71,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'view department reports', 'export reports',
             'create conduct issues', 'manage department conduct',
             // Payroll & attendance — same operational reach as Finance (no self-approval).
-            'validate attendance', 'upload attendance', 'create attendance permission',
+            'validate attendance', 'create attendance permission',
             'manage payroll', 'prepare payroll', 'submit payroll', 'export payroll',
             'manage deductions', 'view payslips',
             'create mass permission',
@@ -83,7 +83,6 @@ class RolesAndPermissionsSeeder extends Seeder
         $finance->syncPermissions([
             'view employees', 'view payslips',
             'manage payroll', 'prepare payroll', 'manage deductions', 'submit payroll', 'export payroll',
-            'upload attendance',
             'view strategic plan', 'create tasks', 'manage own tasks', 'comment tasks', 'view own evaluations',
         ]);
 

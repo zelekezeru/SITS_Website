@@ -356,20 +356,6 @@ Route::middleware(['auth', 'active', 'password.fresh'])->group(function () {
 
     /*
     |----------------------------------------------------------------------
-    | Attendance upload
-    |----------------------------------------------------------------------
-    */
-    Route::middleware('can:upload attendance')->group(function () {
-        Route::get('/finance/attendance-imports', [AttendanceImportController::class, 'index'])->name('finance.attendance-imports');
-        Route::get('/finance/attendance-imports/create', [AttendanceImportController::class, 'create'])->name('finance.attendance-imports.create');
-        Route::post('/finance/attendance-imports', [AttendanceImportController::class, 'store'])->name('finance.attendance-imports.store');
-        Route::get('/finance/attendance-imports/{attendanceImport}', [AttendanceImportController::class, 'show'])->name('finance.attendance-imports.show');
-        Route::patch('/finance/attendance-imports/{attendanceImport}/rows/{row}', [AttendanceImportController::class, 'updateRow'])->name('finance.attendance-imports.rows.update');
-        Route::delete('/finance/attendance-imports/{attendanceImport}', [AttendanceImportController::class, 'destroy'])->name('finance.attendance-imports.destroy');
-    });
-
-    /*
-    |----------------------------------------------------------------------
     | Attendance permissions (excused absence)
     |----------------------------------------------------------------------
     */

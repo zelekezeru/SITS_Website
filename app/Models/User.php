@@ -12,6 +12,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
 use Laravel\Passport\HasApiTokens;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Permission\Traits\HasRoles;
@@ -19,7 +21,7 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasApiTokens, HasFactory, HasRoles, LogsActivity, Notifiable;
+    use HasApiTokens, HasFactory, HasRoles, LogsActivity, Notifiable, SoftDeletes;
 
     public function getActivitylogOptions(): LogOptions
     {
@@ -229,5 +231,73 @@ class User extends Authenticatable
         return round((float) $this->fines()
             ->where('status', 'open')
             ->sum(DB::raw('amount - paid_amount')), 2);
+    }
+
+    /**
+     * Check if the user has risky/critical data attached in the system.
+     *
+     * @return array<int, string>
+     */
+    public function getRiskyDataDetails(): array
+    {
+        $reasons = [];
+
+        // 1. Super Admin protection
+        if ($this->hasAnyRole(['SUPERADMIN', 'President / Super Admin']) || $this->id === 1) {
+            $reasons[] = 'User is a Super Administrator account and cannot be deleted.';
+        }
+
+        // 2. ERP Employee Record
+        if ($this->employee()->exists()) {
+            $reasons[] = 'User has an active Employee record attached in ERP.';
+        }
+
+        // 3. Headed Departments
+        if ($this->headedDepartments()->exists()) {
+            $reasons[] = 'User is currently designated as Head of one or more Departments.';
+        }
+
+        // 4. Active / Overdue Library Loans
+        if ($this->loans()->whereIn('status', ['active', 'overdue'])->exists()) {
+            $reasons[] = 'User has active or overdue unreturned library book loans.';
+        }
+
+        // 5. Open Library Fines
+        if ($this->fines()->where('status', 'open')->whereRaw('amount - paid_amount > 0')->exists()) {
+            $reasons[] = 'User has outstanding unpaid library fines.';
+        }
+
+        return $reasons;
+    }
+
+    public function hasRiskyData(): bool
+    {
+        return !empty($this->getRiskyDataDetails());
+    }
+
+    /**
+     * Safely soft-delete the user, freeing up their original email address by renaming
+     * their email to [prefix]_deleted_[id]@sits.edu.et so the original email can be reused.
+     */
+    public function safelySoftDelete(): bool
+    {
+        if ($this->hasRiskyData()) {
+            return false;
+        }
+
+        $emailPrefix = explode('@', $this->email)[0];
+        $sanitizedPrefix = Str::slug($emailPrefix);
+        if (empty($sanitizedPrefix)) {
+            $sanitizedPrefix = 'user';
+        }
+        $deletedEmail = "{$sanitizedPrefix}_deleted_{$this->id}@sits.edu.et";
+
+        $this->forceFill([
+            'email'       => $deletedEmail,
+            'is_active'   => false,
+            'is_approved' => false,
+        ])->save();
+
+        return (bool) $this->delete();
     }
 }

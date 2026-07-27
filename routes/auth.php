@@ -15,7 +15,7 @@ use Spatie\Permission\Middleware\RoleMiddleware;
 use Illuminate\Support\Facades\Schema;
 
 
-if (Schema::hasTable('users') && User::count() !== 0) {
+if (Schema::hasTable('users') && \Illuminate\Support\Facades\DB::table('users')->count() !== 0) {
     Route::middleware(RoleMiddleware::class.':SUPERADMIN')->group(function () {
         Route::get('register', [RegisteredUserController::class, 'create'])
             ->name('register');

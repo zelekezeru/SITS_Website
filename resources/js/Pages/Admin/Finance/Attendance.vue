@@ -83,6 +83,7 @@ const submitSync = () => {
           </div>
         </div>
         <Link
+          v-if="$page.props.portal?.home === '/admin'"
           href="/admin/attendance-imports/create"
           class="shrink-0 text-sm font-semibold bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white px-5 py-2.5 rounded-xl transition-all duration-200 shadow-md shadow-blue-500/10 hover:shadow-blue-500/20 cursor-pointer"
         >

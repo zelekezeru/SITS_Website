@@ -81,7 +81,8 @@ Route::middleware(['auth', 'role:SUPERADMIN|ADMIN|EDITOR'])->group(function () {
     Route::get('library/subscriptions', [LibraryController::class, 'subscriptions'])->name('library.subscriptions');
     Route::post('library/subscriptions/{subscription}/activate', [LibraryController::class, 'activateSubscription'])->name('library.subscriptions.activate');
 
-    // ── Full CRUD Resource routes (create / edit / delete / update)
+    // ── User Management & Soft-delete Restore ──────────────────────────────
+    Route::post('users/{id}/restore', [UserController::class, 'restore'])->name('users.restore');
     Route::resource('users',         UserController::class);
     Route::resource('blogs',         BlogController::class)->except(['index', 'show']);
     Route::resource('contacts',      ContactController::class)->except(['index', 'store']);

@@ -27,8 +27,6 @@ class OperationsNavigation
                 'items' => [
                     self::item('Payroll Periods', 'finance.payroll', '/finance/payroll', 'Banknote',
                         'Prepare monthly payroll, assign components, submit for approval and export.'),
-                    self::item('Attendance Upload', 'finance.attendance-imports', '/finance/attendance-imports', 'UploadCloud',
-                        'Upload device attendance for review before it posts to payroll.'),
                     self::item('Attendance Permissions', 'finance.attendance-permissions', '/finance/attendance-permissions', 'CalendarCheck',
                         'Raise excused-absence requests for the Admin to approve.'),
                     self::item('Mass Permissions', 'finance.mass-permissions', '/finance/mass-permissions', 'CalendarRange',
