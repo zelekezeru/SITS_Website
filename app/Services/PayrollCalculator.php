@@ -84,7 +84,8 @@ class PayrollCalculator
         $overtime = round($overtime, 2);
 
         // --- Unpaid absence (post-tax) -----------------------------------
-        $unpermittedDays = $attendance
+        // Employees marked as attendance_exempt are excluded from absence deductions.
+        $unpermittedDays = ($attendance && ! $employee->attendance_exempt)
             ? max((int) $attendance->absent_days - (int) $attendance->permitted_days, 0)
             : 0;
         $absenceDeduction = round($unpermittedDays * $dailyRate, 2);

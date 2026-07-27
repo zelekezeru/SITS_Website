@@ -293,6 +293,15 @@ class AutoScoreCalculator
      */
     protected function computeAttendanceScore(Employee $employee, EvaluationPeriod $period): array
     {
+        if ($employee->attendance_exempt) {
+            return [
+                'score'        => 100.0,
+                'has_data'     => true,
+                'absent_days'  => 0,
+                'late_minutes' => 0,
+            ];
+        }
+
         $records = AttendanceRecord::where('employee_id', $employee->id)
             ->with('payrollPeriod')
             ->get()
