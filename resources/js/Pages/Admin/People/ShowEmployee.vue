@@ -7,6 +7,7 @@ export default { layout: AdminLayout };
 import { Head, Link, router, useForm } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
 import Icon from '@/Components/Icon.vue';
+import EmployeePayrollConfigModal from '@/Components/EmployeePayrollConfigModal.vue';
 import { useConfirm } from '@/Composables/useConfirm';
 
 const props = defineProps({
@@ -16,6 +17,9 @@ const props = defineProps({
   fortnights:        { type: Array, default: () => [] },
   targets:           { type: Array, default: () => [] },
   evaluationPeriods: { type: Array, default: () => [] },
+  payrollComponents: { type: Array, default: () => [] },
+  payrollPeriods:    { type: Array, default: () => [] },
+  scheduleTypes:     { type: Array, default: () => [] },
   credentials:       { type: Object, default: null },
 });
 
@@ -93,6 +97,9 @@ const completedTasks = computed(() =>
 const totalAttendanceHours = computed(() =>
   (emp.attendance_records || []).reduce((s, a) => s + Number(a.hours_worked || 0), 0).toFixed(1)
 );
+
+// ─── Payroll Config ──────────────────────────────────────────────────────────
+const payrollConfigOpen = ref(false);
 
 // ─── Credentials / password recovery ──────────────────────────────────────────
 const showDefaultPassword = ref(false);
@@ -675,12 +682,20 @@ const handleOpenDocument = (path) => {
     <div v-if="activeTab === 'payrolls'" class="space-y-4">
       <div class="flex items-center justify-between">
         <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500">Payrolls Log</h3>
-        <Link
-          href="/admin/payroll"
-          class="text-xs font-semibold bg-slate-900 hover:bg-slate-800 border border-slate-850 hover:border-slate-700 text-slate-200 px-3.5 py-2 rounded-xl transition-all cursor-pointer inline-flex items-center gap-1.5"
-        >
-          <Icon name="ArrowRight" :size="14" /> Go to Payroll Page
-        </Link>
+        <div class="flex items-center gap-2">
+          <button
+            @click="payrollConfigOpen = true"
+            class="text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white px-3.5 py-2 rounded-xl transition-all cursor-pointer inline-flex items-center gap-1.5"
+          >
+            <Icon name="Settings" :size="14" /> Config
+          </button>
+          <Link
+            href="/admin/payroll"
+            class="text-xs font-semibold bg-slate-900 hover:bg-slate-800 border border-slate-850 hover:border-slate-700 text-slate-200 px-3.5 py-2 rounded-xl transition-all cursor-pointer inline-flex items-center gap-1.5"
+          >
+            <Icon name="ArrowRight" :size="14" /> Go to Payroll Page
+          </Link>
+        </div>
       </div>
 
       <div v-if="!employee.payslips || !employee.payslips.length"
@@ -1394,4 +1409,15 @@ const handleOpenDocument = (path) => {
     </div>
 
   </div>
+
+  <EmployeePayrollConfigModal
+    v-if="payrollConfigOpen"
+    :employee="employee"
+    :components="payrollComponents"
+    :periods="payrollPeriods"
+    :scheduleTypes="scheduleTypes"
+    apiPrefix="admin"
+    @close="payrollConfigOpen = false"
+  />
+
 </template>

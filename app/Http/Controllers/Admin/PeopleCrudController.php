@@ -229,6 +229,9 @@ class PeopleCrudController extends Controller
             'fortnights'        => Fortnight::orderBy('start_date', 'desc')->take(12)->get(),
             'targets'           => Target::orderBy('name')->get(),
             'evaluationPeriods' => EvaluationPeriod::orderBy('start_date', 'desc')->get(),
+            'payrollComponents' => \App\Models\PayrollComponent::orderBy('name')->get(),
+            'payrollPeriods'    => \App\Models\PayrollPeriod::orderByDesc('start_date')->get(),
+            'scheduleTypes'     => array_column(\App\Enums\ScheduleType::cases(), 'value'),
             'credentials'       => $employee->user ? [
                 'password_changed' => $employee->user->password_changed,
                 'default_password' => $employee->user->password_changed ? null : $employee->user->default_password,

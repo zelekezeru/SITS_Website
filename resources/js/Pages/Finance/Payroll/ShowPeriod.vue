@@ -7,6 +7,7 @@ export default { layout: AdminLayout };
 import { Head, Link, router, useForm } from '@inertiajs/vue3';
 import { ref, reactive, computed } from 'vue';
 import Icon from '@/Components/Icon.vue';
+import EmployeePayrollConfigModal from '@/Components/EmployeePayrollConfigModal.vue';
 import { useConfirm } from '@/Composables/useConfirm';
 
 const { confirm } = useConfirm();
@@ -118,6 +119,20 @@ const removeAdj = async (id) => {
 
 const employeeName = (id) => props.employees.find((e) => e.id === id)?.full_name_en ?? '—';
 const flatAssignments = computed(() => Object.values(props.assignments).flat());
+
+// ---- Per-Employee Config -------------------------------------------------
+const employeeConfigOpen = ref(false);
+const activeEmployeeForConfig = ref(null);
+const openEmployeeConfig = (row) => {
+  activeEmployeeForConfig.value = {
+    id: row.employee_id,
+    full_name_en: row.name,
+  };
+  employeeConfigOpen.value = true;
+};
+const onEmployeeConfigUpdated = () => {
+  recompute();
+};
 </script>
 
 <template>
@@ -227,14 +242,21 @@ const flatAssignments = computed(() => Object.values(props.assignments).flat());
               <td class="px-3 py-2.5 text-center sticky left-0 bg-slate-950/20">
                 <input type="checkbox" :checked="selected.has(row.employee_id)" @change="toggleRow(row.employee_id)" class="rounded border-slate-700 bg-slate-950 text-teal-500 focus:ring-0" />
               </td>
-              <td class="px-3 py-2.5 text-left font-semibold text-slate-200 sticky left-10 bg-slate-950/20">
-                {{ row.name }}
-                <span v-if="row.has_provident_fund" class="ml-1 text-[9px] font-bold uppercase px-1 py-0.5 rounded bg-violet-500/15 text-violet-300 border border-violet-500/20">PF</span>
+              <td class="px-3 py-2.5 text-left font-semibold text-slate-200 sticky left-10 bg-slate-950/20 group">
+                <div class="flex items-center justify-between">
+                  <div>
+                    {{ row.name }}
+                    <span v-if="row.has_provident_fund" class="ml-1 text-[9px] font-bold uppercase px-1 py-0.5 rounded bg-violet-500/15 text-violet-300 border border-violet-500/20">PF</span>
+                  </div>
+                  <button @click="openEmployeeConfig(row)" class="text-slate-500 hover:text-blue-400 opacity-0 group-hover:opacity-100 transition-all focus:opacity-100" title="Payroll Config">
+                    <Icon name="Settings" :size="14" />
+                  </button>
+                </div>
               </td>
 
               <td v-for="key in columnKeys" :key="key" class="px-3 py-2.5 font-mono"
-                  :class="key === 'net_pay' ? 'text-emerald-300 font-bold' : key === 'gross' ? 'text-slate-100' : 'text-slate-400'">
-                {{ money(row[key]) }}
+                  :class="key === 'net_pay' ? 'text-emerald-300 font-bold' : key === 'gross' ? 'text-slate-100' : key === 'absence_deduction' ? 'text-rose-400' : key === 'absent_days' ? 'text-amber-300' : 'text-slate-400'">
+                {{ key === 'absent_days' ? (row[key] || 0) : money(row[key]) }}
               </td>
             </tr>
             <tr v-if="!rows.length">
@@ -249,7 +271,9 @@ const flatAssignments = computed(() => Object.values(props.assignments).flat());
               <td class="px-3 py-3 text-left sticky left-10 bg-slate-950/50">TOTAL</td>
 
               <td v-for="key in columnKeys" :key="key" class="px-3 py-3 font-mono"
-                  :class="key === 'net_pay' ? 'text-emerald-300' : ''">{{ money(totals[key]) }}</td>
+                  :class="key === 'net_pay' ? 'text-emerald-300' : key === 'absence_deduction' ? 'text-rose-400' : key === 'absent_days' ? 'text-amber-300' : ''">
+                {{ key === 'absent_days' ? (totals[key] || 0) : money(totals[key]) }}
+              </td>
             </tr>
           </tfoot>
         </table>
@@ -350,5 +374,17 @@ const flatAssignments = computed(() => Object.values(props.assignments).flat());
         </div>
       </div>
     </div>
+
+    <!-- Employee Config Modal -->
+    <EmployeePayrollConfigModal
+      v-if="employeeConfigOpen"
+      :employee="activeEmployeeForConfig"
+      :components="components"
+      :periods="periods"
+      :scheduleTypes="scheduleTypes"
+      apiPrefix="finance"
+      @close="employeeConfigOpen = false"
+      @updated="onEmployeeConfigUpdated"
+    />
   </div>
 </template>

@@ -116,6 +116,10 @@ Route::middleware(['auth', 'active', 'password.fresh'])->group(function () {
         Route::post('/admin/employees/{employee}/status', [EmployeeLifecycleController::class, 'updateStatus'])->name('admin.employees.status.update');
         Route::post('/admin/employees/{employee}/send-reset-link', [PeopleCrudController::class, 'sendResetLink'])->name('admin.employees.send-reset-link');
         Route::delete('/admin/employees/{employee}', [PeopleCrudController::class, 'destroyEmployee'])->name('admin.employees.destroy');
+        Route::get('/admin/employees/{employee}/payroll-config', [\App\Http\Controllers\EmployeePayrollController::class, 'getConfig'])->name('admin.employees.payroll-config.get');
+        Route::post('/admin/employees/{employee}/payroll-config', [\App\Http\Controllers\EmployeePayrollController::class, 'updateConfig'])->name('admin.employees.payroll-config.update');
+        Route::post('/admin/employees/{employee}/assignments', [\App\Http\Controllers\EmployeePayrollController::class, 'storeAssignment'])->name('admin.employees.assignments.store');
+        Route::delete('/admin/employees/{employee}/assignments/{assignment}', [\App\Http\Controllers\EmployeePayrollController::class, 'destroyAssignment'])->name('admin.employees.assignments.destroy');
         Route::post('/admin/job-descriptions', [PeopleCrudController::class, 'storeJobDescription'])->name('admin.job-descriptions.store');
         Route::put('/admin/job-descriptions/{jobDescription}', [PeopleCrudController::class, 'updateJobDescription'])->name('admin.job-descriptions.update');
         Route::delete('/admin/job-descriptions/{jobDescription}', [PeopleCrudController::class, 'destroyJobDescription'])->name('admin.job-descriptions.destroy');
@@ -352,6 +356,11 @@ Route::middleware(['auth', 'active', 'password.fresh'])->group(function () {
         Route::get('/finance/payroll/{period}/export/cbe', [FinancePayrollController::class, 'exportCbe'])->middleware('can:export payroll')->name('finance.payroll.export.cbe');
         Route::get('/finance/payroll/{period}/export/tax-schedule', [FinancePayrollController::class, 'exportTaxSchedule'])->middleware('can:export payroll')->name('finance.payroll.export.tax-schedule');
         Route::get('/finance/payroll/{period}/export/pension-schedule', [FinancePayrollController::class, 'exportPensionSchedule'])->middleware('can:export payroll')->name('finance.payroll.export.pension-schedule');
+
+        Route::get('/finance/employees/{employee}/payroll-config', [\App\Http\Controllers\EmployeePayrollController::class, 'getConfig'])->name('finance.employees.payroll-config.get');
+        Route::post('/finance/employees/{employee}/payroll-config', [\App\Http\Controllers\EmployeePayrollController::class, 'updateConfig'])->name('finance.employees.payroll-config.update');
+        Route::post('/finance/employees/{employee}/assignments', [\App\Http\Controllers\EmployeePayrollController::class, 'storeAssignment'])->name('finance.employees.assignments.store');
+        Route::delete('/finance/employees/{employee}/assignments/{assignment}', [\App\Http\Controllers\EmployeePayrollController::class, 'destroyAssignment'])->name('finance.employees.assignments.destroy');
     });
 
     /*

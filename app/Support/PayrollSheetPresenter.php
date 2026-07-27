@@ -15,6 +15,8 @@ class PayrollSheetPresenter
     /** Numeric columns that make up the sheet and roll up into the totals row. */
     public const COLUMNS = [
         'base_salary' => 'Basic Salary',
+        'absent_days' => 'Absent Days',
+        'absence_deduction' => 'Absence Ded.',
         'overtime' => 'Overtime',
         'mobile_allowance' => 'Mobile Allow.',
         'transport_allowance' => 'Transport Allow.',
@@ -39,15 +41,29 @@ class PayrollSheetPresenter
      */
     public static function rows(PayrollPeriod $period, array $employeeIds = []): array
     {
+        $attendanceMap = \App\Models\AttendanceRecord::query()
+            ->where('payroll_period_id', $period->id)
+            ->when($employeeIds, fn ($q) => $q->whereIn('employee_id', $employeeIds))
+            ->get()
+            ->keyBy('employee_id');
+
         $payslips = $period->payslips()
-            ->with('employee.position', 'employee.department')
+            ->with(['employee.position', 'employee.department', 'lines'])
             ->when($employeeIds, fn ($q) => $q->whereIn('employee_id', $employeeIds))
             ->get()
             ->sortBy(fn ($p) => $p->employee?->full_name_en ?? '')
             ->values();
 
-        return $payslips->map(function ($p, $i) {
+        return $payslips->map(function ($p, $i) use ($attendanceMap) {
             $employee = $p->employee;
+            $att = $attendanceMap->get($p->employee_id);
+
+            $absentDays = ($att && ! ($employee?->attendance_exempt))
+                ? max((int) $att->absent_days - (int) $att->permitted_days, 0)
+                : 0;
+
+            $absenceLine = $p->lines->first(fn ($l) => str_starts_with($l->label, 'Unpaid Absence'));
+            $absenceDeduction = $absenceLine ? (float) $absenceLine->amount : 0.0;
 
             return [
                 'no' => $i + 1,
@@ -61,6 +77,8 @@ class PayrollSheetPresenter
                 'department' => $employee?->department?->name_en,
                 'has_provident_fund' => (bool) ($employee?->has_provident_fund),
                 'working_days' => (float) $p->working_days,
+                'absent_days' => $absentDays,
+                'absence_deduction' => $absenceDeduction,
                 'base_salary' => (float) ($employee?->base_salary ?? 0),
                 'overtime' => (float) $p->overtime,
                 'mobile_allowance' => (float) $p->mobile_allowance,

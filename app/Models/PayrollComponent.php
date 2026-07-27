@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\ComponentSide;
+use App\Enums\EmploymentType;
 use App\Enums\PayrollComponentCalc;
 use App\Enums\PayrollComponentKind;
 use App\Models\Concerns\Blameable;
@@ -86,6 +87,11 @@ class PayrollComponent extends Model
     {
         // Staff exempt from both schemes get no statutory contributions.
         if ($employee->statutory_exempt) {
+            return false;
+        }
+
+        // Part-time and Contract employees are not obligated to deduct pensions or PFs.
+        if ($employee->employment_type === EmploymentType::PartTime || $employee->employment_type === EmploymentType::Contract) {
             return false;
         }
 

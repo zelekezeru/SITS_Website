@@ -37,4 +37,47 @@ class PayrollCalculatorTest extends TestCase
         $this->assertEquals(0.0, $result['absence_deduction']);
         $this->assertEquals(0, $result['unpermitted_days']);
     }
+
+    public function test_part_time_and_contract_employees_are_statutory_exempt(): void
+    {
+        $pensionComponent = new \App\Models\PayrollComponent([
+            'name' => 'Employee Pension',
+            'kind' => \App\Enums\PayrollComponentKind::Statutory,
+            'side' => \App\Enums\ComponentSide::Employee,
+            'applies_to' => 'pension_members',
+            'rate' => 7.0,
+            'is_active' => true,
+        ]);
+
+        $pfComponent = new \App\Models\PayrollComponent([
+            'name' => 'Provident Fund (Employee)',
+            'kind' => \App\Enums\PayrollComponentKind::Statutory,
+            'side' => \App\Enums\ComponentSide::Employee,
+            'applies_to' => 'pf_members',
+            'rate' => 5.0,
+            'is_active' => true,
+        ]);
+
+        $fullTimeEmp = new Employee([
+            'employment_type' => \App\Enums\EmploymentType::FullTime,
+            'has_provident_fund' => false,
+            'statutory_exempt' => false,
+        ]);
+
+        $partTimeEmp = new Employee([
+            'employment_type' => \App\Enums\EmploymentType::PartTime,
+            'has_provident_fund' => false,
+            'statutory_exempt' => false,
+        ]);
+
+        $contractEmp = new Employee([
+            'employment_type' => \App\Enums\EmploymentType::Contract,
+            'has_provident_fund' => true,
+            'statutory_exempt' => false,
+        ]);
+
+        $this->assertTrue($pensionComponent->appliesToEmployee($fullTimeEmp));
+        $this->assertFalse($pensionComponent->appliesToEmployee($partTimeEmp));
+        $this->assertFalse($pfComponent->appliesToEmployee($contractEmp));
+    }
 }

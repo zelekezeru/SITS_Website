@@ -202,9 +202,15 @@ const statusClass = (status) => {
               class="hover:bg-slate-900/40 cursor-pointer group"
               @click="router.visit(`/admin/employees/${emp.id}`)"
             >
-              <td class="py-4 font-mono text-xs text-blue-400 font-semibold">{{ emp.staff_no }}</td>
+              <td class="py-4 font-mono text-xs text-blue-400 font-semibold">
+                <Link :href="`/admin/employees/${emp.id}`" class="hover:underline">
+                  {{ emp.staff_no }}
+                </Link>
+              </td>
               <td class="py-4">
-                <div class="font-semibold text-slate-200 group-hover:text-blue-300 transition-colors">{{ emp.full_name_en }}</div>
+                <Link :href="`/admin/employees/${emp.id}`" class="font-semibold text-slate-200 hover:text-blue-300 transition-colors">
+                  {{ emp.full_name_en }}
+                </Link>
                 <div class="text-xs text-slate-500 mt-0.5">{{ emp.full_name_am || '—' }}</div>
               </td>
               <td class="py-4 text-slate-400">
@@ -230,6 +236,12 @@ const statusClass = (status) => {
                 </span>
               </td>
               <td class="py-4 text-right space-x-2" @click.stop>
+                <Link
+                  :href="`/admin/employees/${emp.id}`"
+                  class="text-[11px] font-bold px-3 py-1.5 border border-blue-900/40 hover:border-blue-700 bg-blue-950/40 hover:bg-blue-900/60 text-blue-300 rounded-lg transition-colors cursor-pointer inline-block"
+                >
+                  View
+                </Link>
                 <button
                   @click="openEditModal(emp)"
                   class="text-[11px] font-bold px-3 py-1.5 border border-slate-850 hover:border-slate-700 bg-slate-900/50 text-slate-300 rounded-lg transition-colors cursor-pointer"
