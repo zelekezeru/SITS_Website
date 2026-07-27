@@ -73,7 +73,7 @@ class PayrollCalculator
             'transport_cap' => (float) Setting::get('transport_allowance_limit', 2200),
             // Whether the employee pension contribution reduces taxable income.
             // True = statutory (Ethiopian law); false = the SITS sheet convention.
-            'pension_pre_tax' => filter_var(Setting::get('pension_pre_tax', true), FILTER_VALIDATE_BOOLEAN),
+            'pension_pre_tax' => filter_var(Setting::get('pension_pre_tax', false), FILTER_VALIDATE_BOOLEAN),
             // Unpaid-absence policy (always post-tax; see compute()).
             'absence_enabled' => filter_var(Setting::get('absence_deduction_enabled', true), FILTER_VALIDATE_BOOLEAN),
             'absence_basis' => (string) (Setting::get('absence_deduction_basis', 'base') ?: 'base'),
@@ -152,11 +152,13 @@ class PayrollCalculator
                     ? $component->sheet_column : 'cash_allowance';
                 $cols[$column] += $amount;
 
-                if ($component->exempt_capped) {
-                    $exempt = min($amount, $this->config['transport_cap'], $base * 0.25);
-                    $taxableEarnings += max($amount - $exempt, 0);
-                } elseif ($component->taxable) {
-                    $taxableEarnings += $amount;
+                if ($component->taxable) {
+                    if ($component->exempt_capped) {
+                        $exempt = min($amount, $this->config['transport_cap'], $base * 0.25);
+                        $taxableEarnings += max($amount - $exempt, 0);
+                    } else {
+                        $taxableEarnings += $amount;
+                    }
                 }
 
                 $lines[] = ['type' => 'earning', 'label' => $component->name, 'amount' => $amount];

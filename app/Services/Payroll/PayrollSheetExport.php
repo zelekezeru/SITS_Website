@@ -116,7 +116,7 @@ class PayrollSheetExport
             $handle = fopen('php://output', 'w');
             fputcsv($handle, ['STAFF_NO', 'EMPLOYEE_NAME', 'BASIC_SALARY', 'TAXABLE_ALLOWANCES', 'OVERTIME', 'TAXABLE_INCOME', 'PIT_WITHHELD']);
 
-            $pensionPreTax = filter_var(\App\Models\Setting::get('pension_pre_tax', true), FILTER_VALIDATE_BOOLEAN);
+            $pensionPreTax = filter_var(\App\Models\Setting::get('pension_pre_tax', false), FILTER_VALIDATE_BOOLEAN);
 
             foreach ($rows as $row) {
                 $preTaxDeduction = $pensionPreTax ? ($row['employee_pension'] ?? 0) : 0;

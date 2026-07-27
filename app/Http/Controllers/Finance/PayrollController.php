@@ -256,6 +256,12 @@ class PayrollController extends Controller
                 // Finance-side pointer: an approver looking at a submitted period on
                 // the Finance page approves it from the admin Payroll page.
                 'approveHint' => ! $isAdmin && $user->can('approve payroll') && $period->isPendingApproval(),
+                // Admin recalculate button: available if not approved, locked, or paid.
+                'recalculateAdmin' => $isAdmin && $user->can('prepare payroll') && ! \in_array($period->status, [
+                    \App\Enums\PayrollStatus::Approved,
+                    \App\Enums\PayrollStatus::Locked,
+                    \App\Enums\PayrollStatus::Paid,
+                ], true),
             ],
         ];
     }

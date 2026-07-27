@@ -18,7 +18,7 @@ class PayrollSettingsSeeder extends Seeder
             // Pension & Provident Fund rates now live in payroll_components (admin-editable);
             // see PayrollComponentSeeder. Only rate-agnostic constants remain here.
             ['payroll', 'working_days_per_month', '26', 'integer', 'Working days per month (daily/hourly rate basis)'],
-            ['payroll', 'pension_pre_tax', 'true', 'boolean', 'Treat employee pension as pre-tax (statutory). Turn off to match the SITS sheet (pension taxed).'],
+            ['payroll', 'pension_pre_tax', 'false', 'boolean', 'Treat employee pension as pre-tax (statutory). Turn off to match the SITS sheet (pension taxed).'],
             ['payroll', 'transport_allowance_limit', '2200.00', 'decimal', 'Non-taxable transport allowance cap (ETB/mo)'],
             ['payroll', 'food_allowance_limit', '0.00', 'decimal', 'Non-taxable food allowance cap (ETB/mo)'],
             ['payroll', 'ot_normal_multiplier', '1.50', 'decimal', 'Overtime — ordinary'],

@@ -81,6 +81,19 @@ const runPayroll = async () => {
   });
 };
 
+const recalculateAdmin = async () => {
+  const ok = await confirm({
+    title: 'Recalculate Payroll',
+    message: `Recalculate ${props.period.name} payroll? This will regenerate payslips based on current employee data and assignments.`,
+  });
+  if (!ok) return;
+
+  busy.value = true;
+  router.post('/admin/payroll/run', { payroll_period_id: props.period.id }, {
+    preserveScroll: true, onFinish: () => (busy.value = false),
+  });
+};
+
 const submitForApproval = async () => {
   const ok = await confirm({
     title: 'Submit for Approval',
@@ -178,6 +191,11 @@ const onEmployeeConfigUpdated = () => {
           <button v-if="can.prepare" @click="recompute" :disabled="busy"
                   class="text-xs font-semibold px-4 py-2.5 border border-slate-800 hover:border-blue-700 bg-slate-900/60 text-blue-300 rounded-xl transition-colors cursor-pointer disabled:opacity-50">
             <Icon name="RefreshCw" :size="14" class="inline -mt-0.5 mr-1" />{{ busy ? 'Computing…' : 'Recompute' }}
+          </button>
+          <button v-if="can.recalculateAdmin" @click="recalculateAdmin" :disabled="busy"
+                  class="text-xs font-semibold px-4 py-2.5 border border-slate-800 hover:border-blue-700 bg-slate-900/60 text-blue-300 rounded-xl transition-colors cursor-pointer disabled:opacity-50"
+                  title="Recalculate the payroll based on current data.">
+            <Icon name="RefreshCw" :size="14" class="inline -mt-0.5 mr-1" />{{ busy ? 'Recalculating…' : 'Recalculate Payroll' }}
           </button>
           <button v-if="can.run" @click="runPayroll" :disabled="busy"
                   class="text-xs font-semibold px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl transition-all shadow-md cursor-pointer disabled:opacity-50"
