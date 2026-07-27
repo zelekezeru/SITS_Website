@@ -99,7 +99,7 @@ const visibleEmployees = computed(() => {
 });
 
 const schemeOf = (e) => {
-  if (e.statutory_exempt) return { label: 'Exempt', tone: 'slate' };
+  if (e.statutory_exempt) return { label: 'No pension/PF', tone: 'slate' };
   if (e.scheme_excluded_by_type) return { label: 'Excluded (type)', tone: 'slate' };
   return e.has_provident_fund
     ? { label: 'Provident Fund', tone: 'violet' }
@@ -465,7 +465,7 @@ const needsEndPeriod = computed(() => assignForm.schedule_type === 'range');
                 </td>
                 <td class="p-3.5 text-center">
                   <span v-if="e.attendance_exempt" class="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded border mr-1" :class="toneClass('emerald')">No absence ded.</span>
-                  <span v-if="e.statutory_exempt" class="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded border" :class="toneClass('amber')">No statutory</span>
+                  <span v-if="e.statutory_exempt" class="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded border" :class="toneClass('amber')">No pension/PF</span>
                   <span v-if="!e.attendance_exempt && !e.statutory_exempt" class="text-slate-700 text-xs">—</span>
                 </td>
                 <td class="p-3.5 text-right text-slate-600">

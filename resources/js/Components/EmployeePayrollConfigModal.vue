@@ -182,7 +182,7 @@ const money = (n) => Number(n || 0).toLocaleString(undefined, { minimumFractionD
               <input type="checkbox" v-model="config.flags.statutory_exempt" class="mt-1 rounded bg-slate-900 border-slate-700 text-blue-500 focus:ring-blue-500/50" />
               <div>
                 <span class="block text-sm font-bold text-slate-200">Statutory Exempt</span>
-                <span class="block text-xs text-slate-500 mt-0.5">Exempt from pension and tax</span>
+                <span class="block text-xs text-slate-500 mt-0.5">No pension or provident fund. Income tax still applies.</span>
               </div>
             </label>
 
