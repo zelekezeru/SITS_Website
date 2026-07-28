@@ -92,6 +92,12 @@ class AttendanceImportService
                     'late_minutes' => $row->late_minutes,
                     'absent_days' => $row->absent_days,
                     'permitted_days' => $row->suggested_permitted_days,
+                    // The device reports two overtime buckets: "normal" (ordinary
+                    // working day, 1.5×) and "special" (weekly rest day, 2.0×).
+                    // Public-holiday overtime is not distinguished by the report and
+                    // stays at zero unless entered by hand.
+                    'overtime_normal' => round($row->overtime_normal_minutes / 60, 2),
+                    'ot_rest' => round($row->overtime_special_minutes / 60, 2),
                     'source' => AttendanceSource::ExcelImport,
                     'status' => AttendanceStatus::Verified,
                 ]

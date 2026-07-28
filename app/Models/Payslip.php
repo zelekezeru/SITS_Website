@@ -16,6 +16,7 @@ class Payslip extends Model
         'grade',
         'campus',
         'working_days',
+        'absent_days',
         'gross',
         'overtime',
         'mobile_allowance',
@@ -39,6 +40,7 @@ class Payslip extends Model
 
     protected $casts = [
         'working_days' => 'decimal:2',
+        'absent_days' => 'integer',
         'gross' => 'decimal:2',
         'overtime' => 'decimal:2',
         'mobile_allowance' => 'decimal:2',

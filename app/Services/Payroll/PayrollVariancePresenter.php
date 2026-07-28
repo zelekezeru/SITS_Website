@@ -11,9 +11,13 @@ use App\Support\PayrollSheetPresenter;
  */
 class PayrollVariancePresenter
 {
-    public static function analyze(PayrollPeriod $period): array
+    /**
+     * @param array<int, array<string, mixed>>|null $currentRows already-built rows for
+     *        $period; pass them in to avoid rebuilding the sheet a second time.
+     */
+    public static function analyze(PayrollPeriod $period, ?array $currentRows = null): array
     {
-        $currentRows = PayrollSheetPresenter::rows($period);
+        $currentRows ??= PayrollSheetPresenter::rows($period);
         $currentTotals = PayrollSheetPresenter::totals($currentRows);
 
         // Find previous monthly period

@@ -10,6 +10,7 @@ use App\Models\PayrollComponent;
 use App\Models\Payslip;
 use App\Models\PayrollPeriod;
 use App\Models\User;
+use App\Enums\PayrollStatus;
 use App\Enums\EmployeeLoanPaymentType;
 use App\Enums\EmployeeLoanStatus;
 use App\Models\EmployeeLoanPayment;
@@ -112,6 +113,7 @@ class PayrollRunService
                         'grade' => $employee->grade,
                         'campus' => $employee->campusName(),
                         'working_days' => $result['working_days'],
+                        'absent_days' => $result['unpermitted_days'],
                         'gross' => $result['gross'],
                         'overtime' => $result['overtime'],
                         'mobile_allowance' => $result['mobile_allowance'],
@@ -125,7 +127,7 @@ class PayrollRunService
                         'provident_fund_employee' => $result['provident_fund_employee'],
                         'provident_fund_employer' => $result['provident_fund_employer'],
                         'salary_advance' => $result['salary_advance'],
-                        'kircha_deduction' => 0,
+                        'kircha_deduction' => $result['kircha_deduction'],
                         'other_deduction' => $result['other_deduction'],
                         'loan_deduction' => $loanDeduction,
                         'total_deductions' => $result['total_deductions'],
@@ -140,8 +142,11 @@ class PayrollRunService
                 }
             }
 
+            // Only an editable period advances to "processing". Recomputing a
+            // period that is already awaiting approval must not silently retract
+            // the submission — the President recalculates and then approves.
             $period->update([
-                'status' => 'processing',
+                'status' => $period->canBeEditedByFinance() ? PayrollStatus::Processing : $period->status,
                 'prepared_by' => $preparedBy?->id ?? $period->prepared_by,
                 'prepared_at' => now(),
             ]);

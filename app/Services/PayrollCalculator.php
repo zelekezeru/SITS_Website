@@ -31,7 +31,7 @@ use Carbon\Carbon;
 class PayrollCalculator
 {
     private const ALLOWANCE_COLUMNS = ['mobile_allowance', 'transport_allowance', 'housing_allowance', 'cash_allowance'];
-    private const DEDUCTION_COLUMNS = ['salary_advance', 'other_deduction'];
+    private const DEDUCTION_COLUMNS = ['salary_advance', 'kircha_deduction', 'other_deduction'];
     private const STATUTORY_COLUMNS = ['employee_pension', 'employer_pension', 'provident_fund_employee', 'provident_fund_employer'];
 
     /**
@@ -46,7 +46,9 @@ class PayrollCalculator
         'ot_rest' => 2.0,
         'ot_holiday' => 2.5,
         'transport_cap' => 2200.0,
-        'pension_pre_tax' => true,
+        // Matches the seeded setting: the SITS sheet convention taxes the employee
+        // pension. Flip the `pension_pre_tax` setting for the statutory treatment.
+        'pension_pre_tax' => false,
         'absence_enabled' => true,
         'absence_basis' => 'base',
         'absence_rate' => 1.0,
@@ -198,7 +200,7 @@ class PayrollCalculator
                 // Pension-scheme employee contribution is pre-tax when the policy says
                 // so (statutory default); PF is always post-tax.
                 $preTax = $component->applies_to === 'pension_members'
-                    && ($this->config['pension_pre_tax'] ?? true);
+                    && $this->config['pension_pre_tax'];
                 if ($preTax) {
                     $statutoryEmployeePreTax += $amount;
                 } else {
@@ -241,7 +243,9 @@ class PayrollCalculator
         $taxable = Money::round($taxableEarnings - $statutoryEmployeePreTax);
         $incomeTax = $this->incomeTax($taxable, $asOf);
 
-        $deductionsTotal = $cols['salary_advance'] + $cols['other_deduction'];
+        // Sum every deduction column so a new one can be added to DEDUCTION_COLUMNS
+        // without silently dropping out of the total.
+        $deductionsTotal = array_sum(array_intersect_key($cols, array_flip(self::DEDUCTION_COLUMNS)));
         $totalDeductions = Money::round(
             $incomeTax + $statutoryEmployeePreTax + $statutoryEmployeePostTax
             + $absenceDeduction + $deductionsTotal + $employerContrib

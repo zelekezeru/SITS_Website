@@ -58,9 +58,14 @@ class PayrollSheetPresenter
             $employee = $p->employee;
             $att = $attendanceMap->get($p->employee_id);
 
-            $absentDays = ($att && ! ($employee?->attendance_exempt))
-                ? max((int) $att->absent_days - (int) $att->permitted_days, 0)
-                : 0;
+            // Prefer the days the run actually charged — stored on the payslip, so
+            // it always matches the absence amount beside it. Payslips generated
+            // before that column existed fall back to the live attendance figure.
+            $absentDays = $p->absent_days !== null
+                ? (int) $p->absent_days
+                : (($att && ! ($employee?->attendance_exempt))
+                    ? max((int) $att->absent_days - (int) $att->permitted_days, 0)
+                    : 0);
 
             $absenceLine = $p->lines->first(fn ($l) => str_starts_with($l->label, 'Unpaid Absence'));
             $absenceDeduction = $absenceLine ? (float) $absenceLine->amount : 0.0;

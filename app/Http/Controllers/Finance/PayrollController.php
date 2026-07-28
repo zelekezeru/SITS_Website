@@ -213,7 +213,7 @@ class PayrollController extends Controller
             'totals' => PayrollSheetPresenter::totals($rows),
             'columns' => PayrollSheetPresenter::activeColumns($rows),
             'assignments' => PayrollSheetPresenter::assignmentsByEmployee($period),
-            'variance' => \App\Services\Payroll\PayrollVariancePresenter::analyze($period),
+            'variance' => \App\Services\Payroll\PayrollVariancePresenter::analyze($period, $rows),
             'employees' => Employee::where('is_active', true)
                 ->orderBy('full_name_en')
                 ->get(['id', 'full_name_en', 'staff_no']),
