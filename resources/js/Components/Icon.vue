@@ -19,6 +19,12 @@ import {
   // Payroll configuration & period actions
   SlidersHorizontal, ShieldAlert, CalendarX2, Calculator, Info, Loader2,
   RefreshCw, Sheet, Play,
+  // Referenced across the app but previously unmapped — these silently fell back
+  // to the Dot placeholder wherever they were used.
+  Activity, BadgeCheck, BarChart2, Calendar, CalendarCheck, CalendarPlus,
+  CalendarRange, CalendarX, Check, CheckCircle, ClipboardList, Compass, Cpu,
+  ExternalLink, GitMerge, GitPullRequest, Receipt, Sigma, Upload, UserCheck,
+  UserCircle, Weight, XCircle, Zap,
 } from 'lucide-vue-next';
 
 const map = {
@@ -37,6 +43,12 @@ const map = {
   // Payroll configuration & period actions
   SlidersHorizontal, ShieldAlert, CalendarX2, Calculator, Info, Loader2,
   RefreshCw, Sheet, Play,
+  // Referenced across the app but previously unmapped — these silently fell back
+  // to the Dot placeholder wherever they were used.
+  Activity, BadgeCheck, BarChart2, Calendar, CalendarCheck, CalendarPlus,
+  CalendarRange, CalendarX, Check, CheckCircle, ClipboardList, Compass, Cpu,
+  ExternalLink, GitMerge, GitPullRequest, Receipt, Sigma, Upload, UserCheck,
+  UserCircle, Weight, XCircle, Zap,
 };
 
 const props = defineProps({

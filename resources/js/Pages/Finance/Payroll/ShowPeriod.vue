@@ -151,6 +151,66 @@ const removeAdj = async (id) => {
 const employeeName = (id) => props.employees.find((e) => e.id === id)?.full_name_en ?? '—';
 const flatAssignments = computed(() => Object.values(props.assignments).flat());
 
+// ---- Allowances & deductions, grouped per employee -----------------------
+// A flat grid of every assignment across all staff is unreadable once the roster
+// grows, so the list collapses by employee and filters by which month applies.
+const adjMonthFilter = ref('this_month'); // this_month | other_months | all
+const adjSearch = ref('');
+const expandedEmployees = ref(new Set());
+
+const ADJ_MONTH_FILTERS = [
+  { key: 'this_month', label: 'Applies this month' },
+  { key: 'other_months', label: 'Other months' },
+  { key: 'all', label: 'All' },
+];
+
+const matchesMonthFilter = (adj) => {
+  if (adjMonthFilter.value === 'this_month') return adj.applies_now;
+  if (adjMonthFilter.value === 'other_months') return !adj.applies_now;
+  return true;
+};
+
+/** [{ employee_id, name, items, earnings, deductions, appliesNow }] sorted by name. */
+const assignmentGroups = computed(() => {
+  const q = adjSearch.value.trim().toLowerCase();
+  const groups = new Map();
+
+  for (const adj of flatAssignments.value) {
+    if (!matchesMonthFilter(adj)) continue;
+
+    const name = employeeName(adj.employee_id);
+    if (q && !`${name} ${adj.component ?? ''}`.toLowerCase().includes(q)) continue;
+
+    if (!groups.has(adj.employee_id)) {
+      groups.set(adj.employee_id, {
+        employee_id: adj.employee_id, name, items: [], earnings: 0, deductions: 0, appliesNow: 0,
+      });
+    }
+
+    const group = groups.get(adj.employee_id);
+    group.items.push(adj);
+    if (adj.is_earning) group.earnings += Number(adj.amount || 0);
+    else group.deductions += Number(adj.amount || 0);
+    if (adj.applies_now) group.appliesNow += 1;
+  }
+
+  return [...groups.values()].sort((a, b) => a.name.localeCompare(b.name));
+});
+
+const visibleAdjCount = computed(() =>
+  assignmentGroups.value.reduce((n, g) => n + g.items.length, 0));
+
+const isExpanded = (id) => expandedEmployees.value.has(id);
+const toggleEmployee = (id) => {
+  const next = new Set(expandedEmployees.value);
+  next.has(id) ? next.delete(id) : next.add(id);
+  expandedEmployees.value = next;
+};
+const expandAll = () => {
+  expandedEmployees.value = new Set(assignmentGroups.value.map((g) => g.employee_id));
+};
+const collapseAll = () => { expandedEmployees.value = new Set(); };
+
 // ---- Per-Employee Config -------------------------------------------------
 const employeeConfigOpen = ref(false);
 const activeEmployeeForConfig = ref(null);
@@ -331,22 +391,80 @@ const onEmployeeConfigUpdated = () => {
         <button v-if="can.manageDeductions" @click="openAdjModal" class="text-[11px] font-bold text-teal-400 hover:text-teal-300">+ Assign Component</button>
       </div>
       <div v-if="!flatAssignments.length" class="text-sm text-slate-500 italic">No component assignments. Transport, housing, salary advances and custom items appear here.</div>
-      <div v-else class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-        <div v-for="adj in flatAssignments" :key="adj.id" class="flex items-center justify-between gap-3 p-3 rounded-xl border bg-slate-950/30"
-             :class="adj.applies_now ? 'border-slate-900' : 'border-slate-900/40 opacity-60'">
-          <div class="min-w-0">
-            <p class="text-sm font-semibold text-slate-200 truncate">{{ employeeName(adj.employee_id) }}</p>
-            <p class="text-[11px] text-slate-500">
-              <span :class="adj.is_earning ? 'text-emerald-400' : 'text-rose-400'">{{ adj.is_earning ? '+' : '−' }}{{ money(adj.amount) }}</span>
-              · {{ adj.component }}
-            </p>
-            <p class="text-[10px] text-slate-600 mt-0.5">
-              {{ adj.schedule_label }}<span v-if="!adj.applies_now"> · not this month</span>
-            </p>
+
+      <template v-else>
+        <!-- Month filter + search -->
+        <div class="flex flex-wrap items-center gap-3 mb-4">
+          <div class="flex gap-1.5">
+            <button v-for="f in ADJ_MONTH_FILTERS" :key="f.key" @click="adjMonthFilter = f.key"
+                    class="text-[11px] font-bold px-3 py-1.5 rounded-lg border transition-colors cursor-pointer"
+                    :class="adjMonthFilter === f.key
+                      ? 'border-teal-500/40 bg-teal-500/10 text-teal-300'
+                      : 'border-slate-850 bg-slate-950/40 text-slate-500 hover:text-slate-300'">
+              {{ f.label }}
+            </button>
           </div>
-          <button v-if="can.manageDeductions" @click="removeAdj(adj.id)" class="text-slate-500 hover:text-rose-400 shrink-0"><Icon name="X" :size="15" /></button>
+          <div class="flex items-center gap-2 flex-1 min-w-[180px] rounded-lg border border-slate-850 bg-slate-950/40 px-3 py-1.5">
+            <Icon name="Search" :size="14" class="text-slate-600" />
+            <input v-model="adjSearch" type="text" placeholder="Employee or component…"
+                   class="flex-1 bg-transparent text-xs text-slate-100 placeholder-slate-600 focus:outline-none" />
+          </div>
+          <div class="flex items-center gap-2 text-[11px] text-slate-600">
+            <span>{{ visibleAdjCount }} item(s)</span>
+            <button @click="expandAll" class="font-bold text-slate-400 hover:text-slate-200 cursor-pointer">Expand all</button>
+            <span class="text-slate-800">·</span>
+            <button @click="collapseAll" class="font-bold text-slate-400 hover:text-slate-200 cursor-pointer">Collapse</button>
+          </div>
         </div>
-      </div>
+
+        <!-- One collapsible row per employee -->
+        <div v-if="!assignmentGroups.length" class="text-sm text-slate-500 italic py-6 text-center">
+          Nothing matches this filter.
+        </div>
+        <div v-else class="space-y-2">
+          <div v-for="g in assignmentGroups" :key="g.employee_id" class="rounded-xl border border-slate-900 bg-slate-950/30 overflow-hidden">
+            <button @click="toggleEmployee(g.employee_id)"
+                    class="w-full flex items-center justify-between gap-3 px-4 py-3 hover:bg-slate-900/40 transition-colors cursor-pointer text-left">
+              <span class="flex items-center gap-2.5 min-w-0">
+                <Icon :name="isExpanded(g.employee_id) ? 'ChevronDown' : 'ChevronRight'" :size="15" class="text-slate-600 shrink-0" />
+                <span class="text-sm font-semibold text-slate-200 truncate">{{ g.name }}</span>
+                <span class="text-[10px] font-bold text-slate-600 shrink-0">{{ g.items.length }}</span>
+              </span>
+              <span class="flex items-center gap-3 shrink-0 font-mono text-xs">
+                <span v-if="g.earnings" class="text-emerald-400">+{{ money(g.earnings) }}</span>
+                <span v-if="g.deductions" class="text-rose-400">−{{ money(g.deductions) }}</span>
+                <span v-if="!g.appliesNow" class="text-[10px] font-sans font-bold uppercase px-1.5 py-0.5 rounded border border-slate-800 text-slate-600">
+                  not this month
+                </span>
+              </span>
+            </button>
+
+            <div v-if="isExpanded(g.employee_id)" class="border-t border-slate-900 divide-y divide-slate-900/70">
+              <div v-for="adj in g.items" :key="adj.id"
+                   class="flex items-center justify-between gap-3 px-4 py-2.5"
+                   :class="adj.applies_now ? '' : 'opacity-60'">
+                <div class="min-w-0">
+                  <p class="text-sm text-slate-300 truncate">
+                    {{ adj.component }}
+                    <span :class="adj.is_earning ? 'text-emerald-400' : 'text-rose-400'" class="font-mono ml-1">
+                      {{ adj.is_earning ? '+' : '−' }}{{ money(adj.amount) }}
+                    </span>
+                  </p>
+                  <p class="text-[10px] text-slate-600 mt-0.5">
+                    {{ adj.schedule_label }}
+                    <template v-if="adj.start_period"> · from {{ adj.start_period }}</template>
+                    <template v-if="adj.end_period"> to {{ adj.end_period }}</template>
+                    <span v-if="!adj.applies_now"> · does not apply to {{ period.name }}</span>
+                  </p>
+                </div>
+                <button v-if="can.manageDeductions" @click="removeAdj(adj.id)" class="text-slate-500 hover:text-rose-400 shrink-0 cursor-pointer">
+                  <Icon name="X" :size="15" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </template>
     </div>
 
     <!-- Assign component modal -->

@@ -54,6 +54,57 @@ const applyMonth = () => {
   periodForm.payment_date = periodForm.end_date;
 };
 
+// ---- Edit an existing period --------------------------------------------
+// The coverage is re-derived from the month picker, so changing the month moves
+// start/end together and the range always stays a full calendar month — the
+// shape every payroll, permission and config screen filters periods by.
+const editModalOpen = ref(false);
+const editingPeriod = ref(null);
+const editMonth = ref('');
+
+const editForm = useForm({ name: '', start_date: '', end_date: '', payment_date: '' });
+
+const applyEditMonth = () => {
+  if (!editMonth.value) return;
+  const [y, m] = editMonth.value.split('-').map(Number);
+  const last = new Date(y, m, 0).getDate();
+  const pad = (n) => String(n).padStart(2, '0');
+  editForm.name = `${MONTH_NAMES[m - 1]} ${y}`;
+  editForm.start_date = `${y}-${pad(m)}-01`;
+  editForm.end_date = `${y}-${pad(m)}-${pad(last)}`;
+};
+
+const editable = (p) => p.status !== 'locked' && p.status !== 'paid';
+
+const openEditPeriod = (period) => {
+  editingPeriod.value = period;
+  editForm.reset();
+  editForm.clearErrors();
+  editForm.name = period.name ?? '';
+  editForm.start_date = (period.start_date ?? '').slice(0, 10);
+  editForm.end_date = (period.end_date ?? '').slice(0, 10);
+  editForm.payment_date = (period.payment_date ?? '').slice(0, 10);
+  editMonth.value = editForm.start_date ? editForm.start_date.slice(0, 7) : '';
+  editModalOpen.value = true;
+};
+
+// Warn before saving when a run already exists and the coverage moved.
+const editCoverageChanged = computed(() => {
+  const p = editingPeriod.value;
+  if (!p) return false;
+  return editForm.start_date !== (p.start_date ?? '').slice(0, 10)
+    || editForm.end_date !== (p.end_date ?? '').slice(0, 10);
+});
+
+const editHasPayslips = computed(() => (editingPeriod.value?.payslips || []).length > 0);
+
+const submitEditPeriod = () => {
+  editForm.put(`/admin/payroll/periods/${editingPeriod.value.id}`, {
+    preserveScroll: true,
+    onSuccess: () => { editModalOpen.value = false; editingPeriod.value = null; },
+  });
+};
+
 const runForm = useForm({
   payroll_period_id: '',
 });
@@ -255,6 +306,14 @@ const revertPeriod = async (id) => {
                 <Icon name="Undo2" :size="12" /> Revert
               </button>
               <button
+                v-if="editable(period)"
+                @click="openEditPeriod(period)"
+                class="text-[10px] font-bold px-3 py-1.5 bg-slate-900 hover:bg-slate-850 border border-slate-850 text-blue-400 rounded-lg transition-colors cursor-pointer inline-flex items-center gap-1"
+                title="Change this period's month, coverage or payment date."
+              >
+                <Icon name="Settings" :size="12" /> Edit
+              </button>
+              <button
                 v-if="['open', 'processing', 'approved'].includes(period.status)"
                 @click="lockPeriod(period.id)"
                 class="text-[10px] font-bold px-3 py-1.5 bg-slate-900 hover:bg-slate-850 border border-slate-850 text-amber-400 rounded-lg transition-colors cursor-pointer"
@@ -272,6 +331,68 @@ const revertPeriod = async (id) => {
             </div>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- Edit Period Modal -->
+    <div v-if="editModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-6 bg-slate-950/80 backdrop-blur-sm">
+      <div class="w-full max-w-lg rounded-3xl border border-slate-900 bg-gradient-to-b from-slate-900 to-slate-950 p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+        <h3 class="text-xl font-bold text-white mb-1">Edit Payroll Period</h3>
+        <p class="text-xs text-slate-500 mb-6">
+          Pick a month and the coverage is set for you. A period must span a full calendar month —
+          payroll, permissions and reports all list periods by that shape.
+        </p>
+
+        <form @submit.prevent="submitEditPeriod" class="space-y-5">
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Month</label>
+            <input v-model="editMonth" @change="applyEditMonth" type="month"
+                   class="w-full bg-slate-950/60 border border-slate-850 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none focus:border-blue-500/50" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Period name</label>
+            <input v-model="editForm.name" type="text" required
+                   class="w-full bg-slate-950/60 border border-slate-850 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none" />
+            <p v-if="editForm.errors.name" class="text-xs text-rose-400 mt-1">{{ editForm.errors.name }}</p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Covers from</label>
+              <input v-model="editForm.start_date" type="date" required
+                     class="w-full bg-slate-950/60 border border-slate-850 rounded-xl px-3 py-3 text-slate-100 text-sm focus:outline-none" />
+              <p v-if="editForm.errors.start_date" class="text-xs text-rose-400 mt-1">{{ editForm.errors.start_date }}</p>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">To</label>
+              <input v-model="editForm.end_date" type="date" required
+                     class="w-full bg-slate-950/60 border border-slate-850 rounded-xl px-3 py-3 text-slate-100 text-sm focus:outline-none" />
+              <p v-if="editForm.errors.end_date" class="text-xs text-rose-400 mt-1">{{ editForm.errors.end_date }}</p>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Payment date</label>
+            <input v-model="editForm.payment_date" type="date"
+                   class="w-full bg-slate-950/60 border border-slate-850 rounded-xl px-4 py-3 text-slate-100 text-sm focus:outline-none" />
+          </div>
+
+          <div v-if="editCoverageChanged && editHasPayslips"
+               class="rounded-xl border border-amber-500/25 bg-amber-500/[0.06] px-4 py-3 text-xs text-amber-200">
+            This period already has payslips. Moving the coverage changes the tax bracket date and the
+            attendance window, so recompute the payroll after saving.
+          </div>
+
+          <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-900">
+            <button type="button" @click="editModalOpen = false"
+                    class="text-xs font-semibold px-4 py-2.5 border border-slate-850 hover:border-slate-700 bg-slate-900/50 rounded-xl cursor-pointer">Cancel</button>
+            <button type="submit" :disabled="editForm.processing"
+                    class="text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-xl shadow-md cursor-pointer disabled:opacity-50">
+              {{ editForm.processing ? 'Saving…' : 'Save changes' }}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
 

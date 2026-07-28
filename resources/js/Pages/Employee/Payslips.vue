@@ -70,6 +70,13 @@ const statusClass = (s) => STATUS[s] ?? STATUS.draft;
             <div class="flex justify-between"><span class="text-slate-500">Taxable income</span><span class="font-mono text-slate-200">{{ money(p.taxable_income) }}</span></div>
             <div class="flex justify-between"><span class="text-slate-500">Income tax</span><span class="font-mono text-rose-400">−{{ money(p.income_tax) }}</span></div>
             <div class="flex justify-between"><span class="text-slate-500">Pension (7%)</span><span class="font-mono text-rose-400">−{{ money(p.employee_pension) }}</span></div>
+            <div v-if="Number(p.absence_deduction) > 0" class="flex justify-between">
+              <span class="text-slate-500">
+                Unpaid absence<span v-if="p.absent_days"> ({{ p.absent_days }} day{{ p.absent_days === 1 ? '' : 's' }})</span>
+                <span class="block text-[10px] text-slate-600">Withheld after tax</span>
+              </span>
+              <span class="font-mono text-rose-400">−{{ money(p.absence_deduction) }}</span>
+            </div>
             <div class="flex justify-between border-t border-slate-900 pt-2"><span class="text-slate-400 font-semibold">Total deductions</span><span class="font-mono text-rose-400">−{{ money(p.total_deductions) }}</span></div>
             <div class="flex justify-between border-t border-slate-900 pt-2"><span class="text-white font-bold">Net pay</span><span class="font-mono text-emerald-400 font-bold">{{ money(p.net_pay) }}</span></div>
           </div>

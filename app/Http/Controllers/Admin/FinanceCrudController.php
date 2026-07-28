@@ -45,6 +45,62 @@ class FinanceCrudController extends Controller
         return redirect()->back()->with('success', "Payroll Period created successfully.");
     }
 
+    /**
+     * Edit a payroll period's name, coverage and payment date.
+     *
+     * The range must stay a full calendar month: PayrollPeriod::scopeMonthly()
+     * selects periods by start-day 1 / end-day 28–31, and every payroll, permission
+     * and config screen lists periods through it — a period outside that shape
+     * silently disappears from all of them. The UI derives the dates from a month
+     * picker for that reason, so "dynamic" means auto-filled, not unconstrained.
+     */
+    public function updatePeriod(Request $request, PayrollPeriod $period)
+    {
+        if ($period->isLocked()) {
+            return redirect()->back()->with('error', 'A locked or paid period cannot be edited.');
+        }
+
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'start_date' => ['required', 'date'],
+            'end_date' => ['required', 'date', 'after_or_equal:start_date'],
+            'payment_date' => ['nullable', 'date'],
+        ]);
+
+        $start = Carbon::parse($data['start_date']);
+        $end = Carbon::parse($data['end_date']);
+
+        if ($start->day !== 1 || ! $end->isSameDay($start->copy()->endOfMonth())) {
+            return redirect()->back()->with('error', 'A payroll period must cover a full calendar month.');
+        }
+
+        // Another period already covering this month would make the month ambiguous
+        // for attendance, permissions and the variance comparison.
+        $clash = PayrollPeriod::whereKeyNot($period->id)
+            ->whereDate('start_date', $start->toDateString())
+            ->whereDate('end_date', $end->toDateString())
+            ->exists();
+
+        if ($clash) {
+            return redirect()->back()->with('error', 'Another payroll period already covers that month.');
+        }
+
+        $datesChanged = ! $start->isSameDay($period->start_date) || ! $end->isSameDay($period->end_date);
+
+        $period->update($data);
+
+        // The period end drives the effective-dated tax bracket and the loan
+        // ledger's paid_on, so an existing run no longer reflects the new range.
+        if ($datesChanged && $period->payslips()->exists()) {
+            return redirect()->back()->with(
+                'success',
+                "{$period->name} updated. The coverage changed — recompute the payroll so tax and absence match the new range."
+            );
+        }
+
+        return redirect()->back()->with('success', "{$period->name} updated.");
+    }
+
     public function lockPeriod(PayrollPeriod $period)
     {
         if ($period->status === 'paid') {

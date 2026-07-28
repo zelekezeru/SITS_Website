@@ -205,6 +205,7 @@ Route::middleware(['auth', 'active', 'password.fresh'])->group(function () {
 
         // Finance CRUD routes
         Route::post('/admin/payroll/periods', [FinanceCrudController::class, 'storePeriod'])->name('admin.payroll.periods.store');
+        Route::put('/admin/payroll/periods/{period}', [FinanceCrudController::class, 'updatePeriod'])->name('admin.payroll.periods.update');
         Route::post('/admin/payroll/periods/{period}/lock', [FinanceCrudController::class, 'lockPeriod'])->name('admin.payroll.periods.lock');
         Route::post('/admin/payroll/periods/{period}/pay', [FinanceCrudController::class, 'markPeriodPaid'])->name('admin.payroll.periods.pay');
         Route::post('/admin/payroll/run', [FinanceCrudController::class, 'runPayroll'])->name('admin.payroll.run.execute');

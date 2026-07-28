@@ -102,7 +102,7 @@ const selectedPayslip = ref(null);
               <p class="mt-1">Staff ID: <span class="font-semibold text-slate-200 font-mono">{{ selectedPayslip.employee?.staff_no }}</span></p>
             </div>
             <div class="text-right">
-              <p>Employment Type: <span class="font-semibold text-slate-200 capitalize">{{ selectedPayslip.employee?.employment_type.replace('_', ' ') }}</span></p>
+              <p>Employment Type: <span class="font-semibold text-slate-200 capitalize">{{ (selectedPayslip.employee?.employment_type || '—').replace('_', ' ') }}</span></p>
               <p class="mt-1">Date: <span class="font-semibold text-slate-200">{{ new Date(selectedPayslip.created_at).toLocaleDateString() }}</span></p>
             </div>
           </div>
@@ -119,7 +119,7 @@ const selectedPayslip = ref(null);
                 <span class="font-medium" :class="line.type === 'earning' ? 'text-slate-200' : 'text-slate-400'">
                   {{ line.label }}
                 </span>
-                <span class="font-mono font-bold" :class="line.type === 'earning' ? 'text-emerald-400' : 'text-rose-455'">
+                <span class="font-mono font-bold" :class="line.type === 'earning' ? 'text-emerald-400' : 'text-rose-400'">
                   {{ line.type === 'earning' ? '+' : '-' }}{{ Number(line.amount).toLocaleString() }} ETB
                 </span>
               </div>
@@ -132,9 +132,17 @@ const selectedPayslip = ref(null);
               <span>Gross Earnings:</span>
               <span class="font-mono font-medium text-slate-200">{{ Number(selectedPayslip.gross).toLocaleString() }} ETB</span>
             </div>
+            <div v-if="Number(selectedPayslip.absence_deduction) > 0" class="flex justify-between text-slate-400">
+              <span>
+                Attendance Deduction
+                <span v-if="selectedPayslip.absent_days" class="text-amber-400">({{ selectedPayslip.absent_days }} absent day(s))</span>
+                <span class="block text-[10px] text-slate-600">Withheld after tax</span>
+              </span>
+              <span class="font-mono font-medium text-rose-400">-{{ Number(selectedPayslip.absence_deduction).toLocaleString() }} ETB</span>
+            </div>
             <div class="flex justify-between text-slate-400">
               <span>Total Deductions:</span>
-              <span class="font-mono font-medium text-rose-455">-{{ Number(selectedPayslip.total_deductions).toLocaleString() }} ETB</span>
+              <span class="font-mono font-medium text-rose-400">-{{ Number(selectedPayslip.total_deductions).toLocaleString() }} ETB</span>
             </div>
             <div class="flex justify-between text-sm font-bold text-white pt-2 border-t border-slate-900">
               <span>NET TAKE HOME PAY:</span>

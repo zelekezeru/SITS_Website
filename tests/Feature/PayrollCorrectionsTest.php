@@ -271,6 +271,37 @@ class PayrollCorrectionsTest extends TestCase
         $this->assertArrayNotHasKey('absent_days', $columns);
     }
 
+    /**
+     * The payslip PDF view must exist and render — both the admin and the employee
+     * self-service download go through it, and it must show the absence deduction.
+     */
+    public function test_payslip_pdf_renders_with_the_absence_deduction(): void
+    {
+        $period = $this->period();
+        $employee = $this->employee();
+
+        AttendanceRecord::create([
+            'employee_id' => $employee->id,
+            'payroll_period_id' => $period->id,
+            'absent_days' => 2,
+            'permitted_days' => 0,
+            'status' => 'verified',
+        ]);
+
+        (new PayrollRunService())->run($period);
+
+        $payslip = Payslip::where('employee_id', $employee->id)->firstOrFail();
+        $payslip->load(['employee.position', 'employee.department', 'payrollPeriod', 'lines']);
+
+        $this->assertTrue(view()->exists('pdf.payslip'), 'the payslip PDF view must exist');
+
+        $html = view('pdf.payslip', ['payslip' => $payslip])->render();
+
+        $this->assertStringContainsString('Unpaid absence', $html);
+        $this->assertStringContainsString('NET PAY', $html);
+        $this->assertStringContainsString(number_format(round(2 * (10000 / 26), 2), 2), $html);
+    }
+
     /** With absence present, both columns surface on the sheet. */
     public function test_absence_columns_appear_once_someone_is_absent(): void
     {
