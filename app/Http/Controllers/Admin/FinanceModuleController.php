@@ -157,7 +157,7 @@ class FinanceModuleController extends Controller
         }
 
         if ($routeName === 'admin.attendance-exemptions') {
-            $employees = Employee::with('department')
+            $employees = Employee::with(['department', 'attendanceExemptPeriod:id,name'])
                 ->orderByDesc('attendance_exempt')
                 ->orderBy('full_name_en')
                 ->get()
@@ -170,14 +170,21 @@ class FinanceModuleController extends Controller
                     'is_active' => (bool) $e->is_active,
                     'attendance_exempt' => (bool) $e->attendance_exempt,
                     'attendance_exempt_reason' => $e->attendance_exempt_reason,
+                    // null scope = permanent; otherwise the single month it covers.
+                    'exempt_period_id' => $e->attendance_exempt_period_id,
+                    'exempt_period' => $e->attendanceExemptPeriod?->name,
+                    'is_one_month' => (bool) $e->attendance_exempt && $e->attendance_exempt_period_id !== null,
                 ]);
 
             return Inertia::render('Admin/Finance/AttendanceExemptions/Index', $base + [
                 'employees' => $employees,
+                'periods' => PayrollPeriod::monthly()->forActiveYear()
+                    ->orderByDesc('start_date')->get(['id', 'name']),
                 'stats' => [
                     'total' => $employees->count(),
                     'exempt' => $employees->where('attendance_exempt', true)->count(),
                     'tracked' => $employees->where('attendance_exempt', false)->count(),
+                    'oneMonth' => $employees->where('is_one_month', true)->count(),
                 ],
             ]);
         }

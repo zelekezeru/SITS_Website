@@ -204,9 +204,12 @@ class PayrollConfigController extends Controller
             'attendance_exempt_reason' => ['nullable', 'string', 'max:255'],
         ]);
 
-        // The reason only makes sense while the exemption is on.
+        // The reason and the one-month scope only make sense while the exemption
+        // is on. Scoping to a single month is done on the Attendance Exemptions
+        // screen; toggling it on here grants it for every period.
         if (! $data['attendance_exempt']) {
             $data['attendance_exempt_reason'] = null;
+            $data['attendance_exempt_period_id'] = null;
         }
 
         $employee->update($data);

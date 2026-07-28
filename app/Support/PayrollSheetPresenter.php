@@ -63,7 +63,7 @@ class PayrollSheetPresenter
             // before that column existed fall back to the live attendance figure.
             $absentDays = $p->absent_days !== null
                 ? (int) $p->absent_days
-                : (($att && ! ($employee?->attendance_exempt))
+                : (($att && ! ($employee?->isAttendanceExemptFor($p->payroll_period_id)))
                     ? max((int) $att->absent_days - (int) $att->permitted_days, 0)
                     : 0);
 

@@ -47,6 +47,12 @@ class EmployeePayrollController extends Controller
             'attendance_exempt_reason' => ['nullable', 'string', 'max:255'],
         ]);
 
+        // Clearing the exemption also clears any one-month scope it carried.
+        if (! $data['attendance_exempt']) {
+            $data['attendance_exempt_reason'] = null;
+            $data['attendance_exempt_period_id'] = null;
+        }
+
         $employee->update($data);
 
         return response()->json(['message' => 'Payroll configuration updated.']);

@@ -372,6 +372,11 @@ Route::middleware(['auth', 'active', 'password.fresh'])->group(function () {
         ->middleware('can:create attendance permission')->name('finance.attendance-permissions');
     Route::post('/attendance-permissions', [AttendancePermissionController::class, 'store'])
         ->middleware('can:create attendance permission')->name('attendance-permissions.store');
+    Route::post('/attendance-permissions/{permission}', [AttendancePermissionController::class, 'update'])
+        ->middleware('can:create attendance permission')->name('attendance-permissions.update');
+    // Evidence can be attached later, including after approval.
+    Route::post('/attendance-permissions/{permission}/attachment', [AttendancePermissionController::class, 'attachFile'])
+        ->middleware('can:create attendance permission')->name('attendance-permissions.attachment');
     Route::post('/attendance-permissions/{permission}/approve', [AttendancePermissionController::class, 'approve'])
         ->middleware('can:approve attendance permission')->name('attendance-permissions.approve');
     Route::post('/attendance-permissions/{permission}/reject', [AttendancePermissionController::class, 'reject'])

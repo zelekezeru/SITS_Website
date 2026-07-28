@@ -182,16 +182,43 @@ class FinanceCrudController extends Controller
         $data = $request->validate([
             'attendance_exempt' => ['required', 'boolean'],
             'attendance_exempt_reason' => ['nullable', 'string', 'max:255'],
+            // 'permanent' exempts every period; 'period' exempts one month only and
+            // requires the payroll period it applies to.
+            'scope' => ['nullable', 'in:permanent,period'],
+            'payroll_period_id' => ['nullable', 'exists:payroll_periods,id'],
         ]);
+
+        $oneMonth = $data['attendance_exempt'] && ($data['scope'] ?? 'permanent') === 'period';
+
+        if ($oneMonth && empty($data['payroll_period_id'])) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'payroll_period_id' => 'Choose the month this exemption applies to.',
+            ]);
+        }
+
+        // A reason is mandatory for a one-month exemption — it is the audit trail
+        // for why this particular month was excused.
+        if ($oneMonth && blank($data['attendance_exempt_reason'] ?? null)) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'attendance_exempt_reason' => 'Give the reason for exempting this month.',
+            ]);
+        }
 
         $employee->update([
             'attendance_exempt' => $data['attendance_exempt'],
             'attendance_exempt_reason' => $data['attendance_exempt'] ? ($data['attendance_exempt_reason'] ?? null) : null,
+            'attendance_exempt_period_id' => $oneMonth ? $data['payroll_period_id'] : null,
         ]);
 
-        $verb = $data['attendance_exempt'] ? 'exempted from' : 'returned to';
+        if (! $data['attendance_exempt']) {
+            return redirect()->back()->with('success', "{$employee->full_name_en} returned to attendance tracking.");
+        }
 
-        return redirect()->back()->with('success', "{$employee->full_name_en} {$verb} attendance tracking.");
+        $scopeLabel = $oneMonth
+            ? PayrollPeriod::find($data['payroll_period_id'])?->name ?? 'the selected month'
+            : 'all periods';
+
+        return redirect()->back()->with('success', "{$employee->full_name_en} exempted from attendance tracking for {$scopeLabel}.");
     }
 
     // ==========================================

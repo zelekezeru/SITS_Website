@@ -34,6 +34,7 @@ class Employee extends Model
         'is_active',
         'attendance_exempt',
         'attendance_exempt_reason',
+        'attendance_exempt_period_id',
         'status',
     ];
 
@@ -110,6 +111,33 @@ class Employee extends Model
     public function componentAssignments(): HasMany
     {
         return $this->hasMany(PayrollComponentAssignment::class);
+    }
+
+    /** The single period a one-month attendance exemption is scoped to, if any. */
+    public function attendanceExemptPeriod(): BelongsTo
+    {
+        return $this->belongsTo(PayrollPeriod::class, 'attendance_exempt_period_id');
+    }
+
+    /**
+     * Is this employee exempt from absence deductions for the given period?
+     *
+     * A permanent exemption (no period scope) applies everywhere. A one-month
+     * exemption applies only to the period it was granted for — so an absent
+     * month either side is still charged.
+     */
+    public function isAttendanceExemptFor(?int $payrollPeriodId = null): bool
+    {
+        if (! $this->attendance_exempt) {
+            return false;
+        }
+
+        if ($this->attendance_exempt_period_id === null) {
+            return true;
+        }
+
+        return $payrollPeriodId !== null
+            && (int) $this->attendance_exempt_period_id === $payrollPeriodId;
     }
 
     public function payslips(): HasMany

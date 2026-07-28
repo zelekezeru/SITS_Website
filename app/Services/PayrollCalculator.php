@@ -118,7 +118,9 @@ class PayrollCalculator
         // as are the first `absence_grace_days` unpermitted days each month. The
         // ETB amount is worked out further down, once allowances are known — the
         // basis can be configured to include them.
-        $unpermittedDays = ($attendance && ! $employee->attendance_exempt && $this->config['absence_enabled'])
+        $exemptThisPeriod = $employee->isAttendanceExemptFor($attendance?->payroll_period_id);
+
+        $unpermittedDays = ($attendance && ! $exemptThisPeriod && $this->config['absence_enabled'])
             ? max(
                 (int) $attendance->absent_days
                 - (int) $attendance->permitted_days

@@ -1,0 +1,1 @@
+@media print{body *{display:none!important}body:before{content:"Printing is disabled for secure documents.";padding:20px;font-size:20px}}

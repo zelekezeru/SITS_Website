@@ -66,4 +66,25 @@ class AttendancePermission extends Model
     {
         return $this->status === AttendancePermissionStatus::Pending;
     }
+
+    public function isRejected(): bool
+    {
+        return $this->status === AttendancePermissionStatus::Rejected;
+    }
+
+    /** Whether a supporting document has been attached yet. */
+    public function hasEvidence(): bool
+    {
+        return filled($this->file_path);
+    }
+
+    /**
+     * Only a pending, individually-created request may have its details changed.
+     * Batch entries belong to their mass permission — editing one there would
+     * desync the batch, so they accept evidence but nothing else.
+     */
+    public function isEditable(): bool
+    {
+        return $this->isPending() && $this->mass_permission_id === null;
+    }
 }
