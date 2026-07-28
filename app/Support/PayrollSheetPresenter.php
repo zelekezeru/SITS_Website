@@ -67,8 +67,14 @@ class PayrollSheetPresenter
                     ? max((int) $att->absent_days - (int) $att->permitted_days, 0)
                     : 0);
 
-            $absenceLine = $p->lines->first(fn ($l) => str_starts_with($l->label, 'Unpaid Absence'));
-            $absenceDeduction = $absenceLine ? (float) $absenceLine->amount : 0.0;
+            // Prefer the stored column (added 2026-07-28), fall back to the
+            // payslip lines for records that predate the column.
+            if ($p->absence_deduction !== null && (float) $p->absence_deduction > 0) {
+                $absenceDeduction = (float) $p->absence_deduction;
+            } else {
+                $absenceLine = $p->lines->first(fn ($l) => str_starts_with($l->label, 'Unpaid Absence'));
+                $absenceDeduction = $absenceLine ? (float) $absenceLine->amount : 0.0;
+            }
 
             return [
                 'no' => $i + 1,

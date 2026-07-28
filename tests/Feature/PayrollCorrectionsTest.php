@@ -223,4 +223,73 @@ class PayrollCorrectionsTest extends TestCase
             round($rows[0]['absence_deduction'], 2),
         );
     }
+
+    /**
+     * The absence amount is stored on the payslip, not only reconstructed from the
+     * "Unpaid Absence" line. Without `absence_deduction` in $fillable the run would
+     * silently drop it and the column would sit at zero.
+     */
+    public function test_absence_deduction_is_stored_on_the_payslip(): void
+    {
+        $period = $this->period();
+        $employee = $this->employee();
+
+        AttendanceRecord::create([
+            'employee_id' => $employee->id,
+            'payroll_period_id' => $period->id,
+            'absent_days' => 2,
+            'permitted_days' => 0,
+            'status' => 'verified',
+        ]);
+
+        (new PayrollRunService())->run($period);
+
+        $payslip = Payslip::where('employee_id', $employee->id)->firstOrFail();
+        $expected = round(2 * (10000 / 26), 2);
+
+        $this->assertEquals($expected, round((float) $payslip->absence_deduction, 2));
+
+        // And it agrees with the itemised line it is derived from.
+        $line = $payslip->lines->first(fn ($l) => str_starts_with($l->label, 'Unpaid Absence'));
+        $this->assertNotNull($line);
+        $this->assertEquals($expected, round((float) $line->amount, 2));
+    }
+
+    /** No absence means a zero column, and the sheet hides it. */
+    public function test_absence_columns_are_hidden_when_nobody_is_absent(): void
+    {
+        $period = $this->period();
+        $this->employee();
+
+        (new PayrollRunService())->run($period);
+
+        $rows = PayrollSheetPresenter::rows($period);
+        $columns = PayrollSheetPresenter::activeColumns($rows);
+
+        $this->assertEquals(0.0, $rows[0]['absence_deduction']);
+        $this->assertArrayNotHasKey('absence_deduction', $columns);
+        $this->assertArrayNotHasKey('absent_days', $columns);
+    }
+
+    /** With absence present, both columns surface on the sheet. */
+    public function test_absence_columns_appear_once_someone_is_absent(): void
+    {
+        $period = $this->period();
+        $employee = $this->employee();
+
+        AttendanceRecord::create([
+            'employee_id' => $employee->id,
+            'payroll_period_id' => $period->id,
+            'absent_days' => 1,
+            'permitted_days' => 0,
+            'status' => 'verified',
+        ]);
+
+        (new PayrollRunService())->run($period);
+
+        $columns = PayrollSheetPresenter::activeColumns(PayrollSheetPresenter::rows($period));
+
+        $this->assertArrayHasKey('absent_days', $columns);
+        $this->assertArrayHasKey('absence_deduction', $columns);
+    }
 }

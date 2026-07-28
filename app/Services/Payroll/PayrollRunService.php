@@ -114,6 +114,7 @@ class PayrollRunService
                         'campus' => $employee->campusName(),
                         'working_days' => $result['working_days'],
                         'absent_days' => $result['unpermitted_days'],
+                        'absence_deduction' => $result['absence_deduction'],
                         'gross' => $result['gross'],
                         'overtime' => $result['overtime'],
                         'mobile_allowance' => $result['mobile_allowance'],
