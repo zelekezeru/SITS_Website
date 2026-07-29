@@ -20,10 +20,12 @@ class AiServiceManager
 
     public function __construct()
     {
+        // Claude is the only live provider. GoogleGeminiProAnalyzer still exists
+        // but is deliberately not registered — leaving it registered made it a
+        // silent fallback target for failed Claude calls.
         $enabled = (bool) Setting::get('ai_enabled', config('ai.enabled', false));
         if ($enabled) {
             $this->providers[AiProvider::ClaudePro->value] = new ClaudeProAnalyzer();
-            $this->providers[AiProvider::GeminiPro->value] = new GoogleGeminiProAnalyzer();
         }
 
         if (app()->environment('local', 'testing')) {
