@@ -73,6 +73,18 @@ return [
             'replace_placeholders' => true,
         ],
 
+        // AI analysis layer (App\Services\Ai). Kept off the main log so token
+        // usage and provider errors stay readable. Without this entry
+        // Log::channel('ai') silently falls back to the emergency logger and
+        // writes an extra "Unable to create configured logger" line per call.
+        'ai' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/ai.log'),
+            'level' => env('AI_LOG_LEVEL', 'info'),
+            'days' => env('AI_LOG_DAYS', 30),
+            'replace_placeholders' => true,
+        ],
+
         'slack' => [
             'driver' => 'slack',
             'url' => env('LOG_SLACK_WEBHOOK_URL'),

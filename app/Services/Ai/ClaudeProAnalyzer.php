@@ -28,20 +28,40 @@ class ClaudeProAnalyzer implements AiAnalysisContract
     protected int    $performanceMaxTokens;
     protected bool   $thinkingEnabled;
     protected string $effort;
+    protected string $lightEffort;
     protected int    $timeout;
     protected string $anthropicVersion;
 
     public function __construct()
     {
-        $this->apiKey               = (string) (Setting::get('claude_pro_api_key') ?? config('ai.providers.claude_pro.api_key') ?? '');
-        $this->apiUrl               = rtrim(Setting::get('claude_pro_api_url', config('ai.providers.claude_pro.api_url', 'https://api.anthropic.com/v1')), '/');
-        $this->model                = Setting::get('claude_pro_model', config('ai.providers.claude_pro.model', 'claude-opus-4-8'));
-        $this->maxTokens            = (int) Setting::get('claude_pro_max_tokens', config('ai.providers.claude_pro.max_tokens', 4096));
-        $this->performanceMaxTokens = (int) Setting::get('claude_pro_performance_max_tokens', config('ai.providers.claude_pro.performance_max_tokens', 16000));
+        $this->apiKey               = (string) self::setting('claude_pro_api_key', config('ai.providers.claude_pro.api_key', ''));
+        $this->apiUrl               = rtrim((string) self::setting('claude_pro_api_url', config('ai.providers.claude_pro.api_url', 'https://api.anthropic.com/v1')), '/');
+        $this->model                = (string) self::setting('claude_pro_model', config('ai.providers.claude_pro.model', 'claude-opus-5'));
+        $this->maxTokens            = (int) self::setting('claude_pro_max_tokens', config('ai.providers.claude_pro.max_tokens', 8192));
+        $this->performanceMaxTokens = (int) self::setting('claude_pro_performance_max_tokens', config('ai.providers.claude_pro.performance_max_tokens', 16000));
         $this->thinkingEnabled      = (bool) Setting::get('claude_pro_thinking', config('ai.providers.claude_pro.thinking', true));
-        $this->effort               = (string) Setting::get('claude_pro_effort', config('ai.providers.claude_pro.effort', 'high'));
-        $this->timeout              = (int) Setting::get('claude_pro_timeout', config('ai.providers.claude_pro.timeout', 120));
-        $this->anthropicVersion     = Setting::get('claude_pro_anthropic_version', config('ai.providers.claude_pro.anthropic_version', '2023-06-01'));
+        $this->effort               = (string) self::setting('claude_pro_effort', config('ai.providers.claude_pro.effort', 'high'));
+        $this->lightEffort          = (string) self::setting('claude_pro_light_effort', config('ai.providers.claude_pro.light_effort', 'low'));
+        $this->timeout              = (int) self::setting('claude_pro_timeout', config('ai.providers.claude_pro.timeout', 120));
+        $this->anthropicVersion     = (string) self::setting('claude_pro_anthropic_version', config('ai.providers.claude_pro.anthropic_version', '2023-06-01'));
+    }
+
+    /**
+     * Read a setting, falling back when the row is missing OR blank.
+     *
+     * Setting::get() returns the stored value, so a row saved as '' yields ''
+     * rather than null — a plain `??` against it never reaches the config
+     * fallback and the provider silently reports itself unavailable.
+     */
+    protected static function setting(string $key, mixed $fallback = null): mixed
+    {
+        $value = Setting::get($key);
+
+        if ($value === null || (is_string($value) && trim($value) === '')) {
+            return $fallback;
+        }
+
+        return $value;
     }
 
     // =========================================================================
@@ -215,11 +235,18 @@ class ClaudeProAnalyzer implements AiAnalysisContract
 
         // Adaptive thinking: Claude decides how deeply to reason per request.
         // The legacy {type:"enabled", budget_tokens:N} form is rejected with a
-        // 400 on Opus 4.8/4.7 — effort (low|medium|high|xhigh|max) tunes depth.
+        // 400 on Opus 5/4.8/4.7 — effort (low|medium|high|xhigh|max) tunes depth.
         // tool_choice stays "auto" (forcing a tool is incompatible with thinking).
-        if ($useThinking && $this->thinkingEnabled) {
+        //
+        // Thinking is left ON even for the light calls. Disabling it on Opus 5
+        // can make the model write a tool call into its visible text instead of
+        // emitting a tool_use block: the turn succeeds, the call never runs, and
+        // no error is raised. Depth is tuned with effort instead — the deep
+        // performance analysis gets the configured effort, the light extraction
+        // calls run at a cheaper level.
+        if ($this->thinkingEnabled) {
             $params['thinking']     = ['type' => 'adaptive'];
-            $params['outputConfig'] = ['effort' => $this->effort];
+            $params['outputConfig'] = ['effort' => $useThinking ? $this->effort : $this->lightEffort];
         }
 
         try {
