@@ -237,7 +237,7 @@ class PeopleCrudController extends Controller
                 ->map(fn ($t) => ['value' => $t->value, 'label' => $t->label()]),
             'credentials'       => $employee->user ? [
                 'password_changed' => $employee->user->password_changed,
-                'default_password' => $employee->user->password_changed ? null : $employee->user->default_password,
+                'default_password' => $employee->user->password_changed ? null : $employee->user->readableDefaultPassword(),
                 'reset_link_requested_at' => $employee->user->password_reset_requested_at,
             ] : null,
         ]);

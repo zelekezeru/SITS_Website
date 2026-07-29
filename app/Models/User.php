@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\Role;
+use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -83,6 +84,24 @@ class User extends Authenticatable
             'default_password' => 'encrypted',
             'password_reset_requested_at' => 'datetime',
         ];
+    }
+
+    /**
+     * Read the one-time default password, tolerating ciphertext this app can
+     * no longer decrypt.
+     *
+     * `default_password` is the only encrypted cast in the codebase, so rows
+     * written under a previous APP_KEY throw DecryptException ("The MAC is
+     * invalid") on every read. An unreadable convenience field must not take
+     * down the pages that surface it — treat it as absent instead.
+     */
+    public function readableDefaultPassword(): ?string
+    {
+        try {
+            return $this->default_password;
+        } catch (DecryptException) {
+            return null;
+        }
     }
 
     /**
