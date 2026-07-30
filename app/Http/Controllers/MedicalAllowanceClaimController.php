@@ -29,7 +29,12 @@ class MedicalAllowanceClaimController extends Controller
 
     public function index(Request $request)
     {
-        return Inertia::render('Admin/Finance/MedicalAllowance/Index', self::pageProps($request->user()));
+        $user = $request->user();
+        if ($user && ! $user->can('request medical allowance') && ! $user->can('approve medical allowance') && ! $user->can('configure payroll')) {
+            abort(403, 'Unauthorized to view medical allowance.');
+        }
+
+        return Inertia::render('Admin/Finance/MedicalAllowance/Index', self::pageProps($user));
     }
 
     /** Shared payload for the admin (ModuleController) and Finance views. */

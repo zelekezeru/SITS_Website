@@ -276,6 +276,8 @@ Route::middleware(['auth', 'active', 'password.fresh'])->group(function () {
     | Medical allowance claims (Finance requests, admin approves & pays)
     |----------------------------------------------------------------------
     */
+    Route::get('/admin/medical-allowance', [MedicalAllowanceClaimController::class, 'index'])->name('admin.medical-allowance');
+
     Route::middleware('can:request medical allowance')->group(function () {
         Route::post('/admin/medical-allowance', [MedicalAllowanceClaimController::class, 'store'])->name('admin.medical-allowance.store');
         Route::post('/admin/medical-allowance/{claim}/documents', [MedicalAllowanceClaimController::class, 'storeDocuments'])->name('admin.medical-allowance.documents.store');
@@ -393,7 +395,7 @@ Route::middleware(['auth', 'active', 'password.fresh'])->group(function () {
     Route::get('/finance/attendance-permissions', [AttendancePermissionController::class, 'index'])
         ->middleware('can:create attendance permission')->name('finance.attendance-permissions');
     Route::get('/finance/medical-allowance', [MedicalAllowanceClaimController::class, 'index'])
-        ->middleware('can:request medical allowance')->name('finance.medical-allowance');
+        ->name('finance.medical-allowance');
     Route::post('/attendance-permissions', [AttendancePermissionController::class, 'store'])
         ->middleware('can:create attendance permission')->name('attendance-permissions.store');
     Route::post('/attendance-permissions/{permission}', [AttendancePermissionController::class, 'update'])
