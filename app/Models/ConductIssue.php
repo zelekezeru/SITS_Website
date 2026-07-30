@@ -77,11 +77,6 @@ class ConductIssue extends Model
         return $this->hasMany(ConductIssueAnalysis::class);
     }
 
-    public function analyses(): HasMany
-    {
-        return $this->hasMany(ConductIssueAnalysis::class);
-    }
-
     public function documents(): MorphMany
     {
         return $this->morphMany(Document::class, 'documentable');
