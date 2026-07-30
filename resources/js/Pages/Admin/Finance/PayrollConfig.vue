@@ -78,6 +78,7 @@ const FILTERS = [
   { key: 'pf', label: 'Provident Fund' },
   { key: 'statutory_exempt', label: 'Statutory exempt' },
   { key: 'attendance_exempt', label: 'Attendance exempt' },
+  { key: 'medical_allowance', label: 'Medical allowance' },
   { key: 'assigned', label: 'Has assignments' },
 ];
 
@@ -92,6 +93,7 @@ const visibleEmployees = computed(() => {
       case 'pf': return e.has_provident_fund && !e.statutory_exempt && !e.scheme_excluded_by_type;
       case 'statutory_exempt': return e.statutory_exempt || e.scheme_excluded_by_type;
       case 'attendance_exempt': return e.attendance_exempt;
+      case 'medical_allowance': return e.medical_allowance_enabled;
       case 'assigned': return e.assignments.length > 0;
       default: return true;
     }
@@ -133,6 +135,7 @@ const expandedId = ref(null);
 
 const profileForm = useForm({
   grade: '', has_provident_fund: false, statutory_exempt: false,
+  medical_allowance_enabled: false,
   attendance_exempt: false, attendance_exempt_reason: '',
 });
 
@@ -151,6 +154,7 @@ const toggleRow = (e) => {
     grade: e.grade ?? '',
     has_provident_fund: e.has_provident_fund,
     statutory_exempt: e.statutory_exempt,
+    medical_allowance_enabled: e.medical_allowance_enabled,
     attendance_exempt: e.attendance_exempt,
     attendance_exempt_reason: e.attendance_exempt_reason ?? '',
   });
@@ -465,8 +469,9 @@ const needsEndPeriod = computed(() => assignForm.schedule_type === 'range');
                 </td>
                 <td class="p-3.5 text-center">
                   <span v-if="e.attendance_exempt" class="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded border mr-1" :class="toneClass('emerald')">No absence ded.</span>
-                  <span v-if="e.statutory_exempt" class="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded border" :class="toneClass('amber')">No pension/PF</span>
-                  <span v-if="!e.attendance_exempt && !e.statutory_exempt" class="text-slate-700 text-xs">—</span>
+                  <span v-if="e.statutory_exempt" class="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded border mr-1" :class="toneClass('amber')">No pension/PF</span>
+                  <span v-if="e.medical_allowance_enabled" class="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded border" :class="toneClass('rose')">Medical</span>
+                  <span v-if="!e.attendance_exempt && !e.statutory_exempt && !e.medical_allowance_enabled" class="text-slate-700 text-xs">—</span>
                 </td>
                 <td class="p-3.5 text-right text-slate-600">
                   <Icon :name="expandedId === e.id ? 'ChevronDown' : 'ChevronRight'" :size="16" />
@@ -502,6 +507,17 @@ const needsEndPeriod = computed(() => assignForm.schedule_type === 'range');
                         <span>
                           <span class="block text-sm font-bold text-slate-200">Statutory exempt</span>
                           <span class="block text-xs text-slate-500 mt-0.5">No pension and no provident fund on either side. Income tax still applies.</span>
+                        </span>
+                      </label>
+
+                      <label class="flex items-start gap-3 p-3.5 rounded-xl border border-slate-800 bg-slate-950/50 cursor-pointer hover:border-slate-700 transition-colors">
+                        <input type="checkbox" v-model="profileForm.medical_allowance_enabled" class="mt-0.5 rounded bg-slate-900 border-slate-700 text-rose-500 focus:ring-rose-500/50" />
+                        <span>
+                          <span class="block text-sm font-bold text-slate-200">Medical allowance enrolled</span>
+                          <span class="block text-xs text-slate-500 mt-0.5">
+                            Eligible to submit reimbursement claims — only takes effect while the employee is also full-time.
+                            <span v-if="e.employment_type !== 'full_time'" class="text-amber-400">Not full-time: currently has no effect.</span>
+                          </span>
                         </span>
                       </label>
 

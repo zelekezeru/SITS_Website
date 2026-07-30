@@ -294,6 +294,16 @@ const activeTab = ref('analyses');
               <p class="text-[11px] text-slate-500 mt-0.5">{{ fmtDate(analysis.created_at) }}</p>
             </div>
             <div class="flex items-center gap-2 shrink-0">
+              <!-- Analysis type badge: narrative (per-report) vs performance (whole evaluation) -->
+              <span
+                v-if="analysis.analysis_type"
+                class="text-[10px] font-semibold px-2 py-0.5 rounded border uppercase"
+                :class="analysis.analysis_type === 'performance'
+                  ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                  : 'bg-sky-500/10 text-sky-400 border-sky-500/20'"
+              >
+                {{ analysis.analysis_type }}
+              </span>
               <!-- Provider badge -->
               <span class="text-[10px] font-mono bg-indigo-500/10 text-indigo-400 px-2 py-0.5 rounded border border-indigo-500/20 uppercase">
                 {{ analysis.provider?.replace('_', ' ') }}

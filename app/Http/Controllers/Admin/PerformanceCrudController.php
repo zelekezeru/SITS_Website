@@ -597,9 +597,12 @@ class PerformanceCrudController extends Controller
         }
 
         // Return the freshly-created analysis so the Vue page can display
-        // it immediately without a full reload.
+        // it immediately without a full reload. Filtered by type — narrative
+        // and performance analyses now coexist per report, so ->latest()
+        // alone could return the wrong one.
         $analysis = AiAnalysis::with(['narrativeReport.employee', 'confirmedBy'])
             ->where('narrative_report_id', $report->id)
+            ->where('analysis_type', \App\Enums\AiAnalysisType::Narrative)
             ->latest()
             ->first();
 
@@ -629,6 +632,7 @@ class PerformanceCrudController extends Controller
         $analysis = $narrativeReport
             ? AiAnalysis::with(['narrativeReport.employee', 'confirmedBy'])
                 ->where('narrative_report_id', $narrativeReport->id)
+                ->where('analysis_type', \App\Enums\AiAnalysisType::Performance)
                 ->latest()->first()
             : null;
 

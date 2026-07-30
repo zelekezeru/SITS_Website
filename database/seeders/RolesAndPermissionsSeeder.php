@@ -33,6 +33,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'view executive reports', 'view department reports', 'export reports',
             'manage conduct issues', 'create conduct issues', 'manage department conduct', 'manage conduct decisions',
             'manage closed days', 'create mass permission', 'approve mass permission',
+            'request medical allowance', 'approve medical allowance',
         ];
 
         foreach ($permissions as $p) {
@@ -53,6 +54,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'manage conduct issues', 'manage conduct decisions',
             // A second authoriser so the two-person mass-permission rule is satisfiable.
             'approve attendance permission', 'approve mass permission',
+            'approve medical allowance',
         ]);
 
         $dean = Role::firstOrCreate(['name' => 'Dean of the Seminary']);
@@ -74,7 +76,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'validate attendance', 'create attendance permission',
             'manage payroll', 'prepare payroll', 'submit payroll', 'export payroll',
             'manage deductions', 'view payslips',
-            'create mass permission',
+            'create mass permission', 'request medical allowance',
         ]);
 
         // Finance Officer: a regular employee who additionally prepares payroll,
@@ -84,6 +86,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'view employees', 'view payslips',
             'manage payroll', 'prepare payroll', 'manage deductions', 'submit payroll', 'export payroll',
             'view strategic plan', 'create tasks', 'manage own tasks', 'comment tasks', 'view own evaluations',
+            'request medical allowance',
         ]);
 
         $head = Role::firstOrCreate(['name' => 'Department Head']);

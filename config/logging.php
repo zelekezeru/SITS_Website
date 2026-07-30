@@ -80,7 +80,10 @@ return [
         'ai' => [
             'driver' => 'daily',
             'path' => storage_path('logs/ai.log'),
-            'level' => env('AI_LOG_LEVEL', 'info'),
+            // ClaudeProAnalyzer logs each successful call at 'debug' (tool used,
+            // tokens spent). 'info' as a floor silently drops those — only
+            // warnings/errors would show, hiding normal successful activity.
+            'level' => env('AI_LOG_LEVEL', 'debug'),
             'days' => env('AI_LOG_DAYS', 30),
             'replace_placeholders' => true,
         ],

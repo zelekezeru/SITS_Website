@@ -122,11 +122,30 @@ class ConductController extends Controller
         Gate::authorize('view', $issue);
 
         return Inertia::render('Admin/Conduct/ConductIssueDetail', [
-            'issue' => $issue->load('employee.user', 'employee.department', 'createdBy', 'approvedBy', 'decision'),
+            'issue' => $issue->load('employee.user', 'employee.department', 'createdBy', 'approvedBy', 'decision', 'analyses.confirmedBy'),
             'canApprove' => auth()->user()->can('approve', $issue),
             'canReject' => auth()->user()->can('reject', $issue),
             'canDecide' => auth()->user()->can('create', ConductDecision::class),
         ]);
+    }
+
+    /**
+     * Trigger AI severity/risk analysis for a conduct issue.
+     */
+    public function analyze(ConductIssue $issue)
+    {
+        Gate::authorize('view', $issue);
+
+        // Local: run inline so the result is ready before the redirect reloads
+        // the page. Production: hand off to a queue worker.
+        if (app()->environment('local')) {
+            \App\Jobs\AnalyzeConductIssueJob::dispatchSync($issue);
+        } else {
+            \App\Jobs\AnalyzeConductIssueJob::dispatch($issue);
+        }
+
+        return redirect()->route('admin.conduct.show', $issue)
+            ->with('success', app()->environment('local') ? 'AI analysis complete.' : 'AI analysis queued.');
     }
 
     /**

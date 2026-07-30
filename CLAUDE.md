@@ -2,11 +2,16 @@
 
 Three applications in one Laravel repo for sits.edu.et: **public website**, **ERP** (HR, payroll, attendance, evaluation), and **Library ILS**. Laravel 12 + Inertia 2 + Vue 3 (Tailwind 4, Vite). **PHP 8.2** — no 8.3-only syntax.
 
-## ⚠️ Local environment is broken — read first
+## Local environment note
 
-`vendor/` is incomplete: only `breeze, framework, pint, prompts, sail, serializable-closure, tinker` are installed. Passport, Scout, Inertia and Spatie are in `composer.lock` but **not on disk**, so `php artisan` fails at boot with `Class "Laravel\Passport\Passport" not found` (`AppServiceProvider:43`) and **the test suite cannot run at all**.
-
-Likely cause: local PHP 8.2 has **no ext-sodium** (confirmed), which Passport needs — `docs/deploy-to-cpanel.md` references a local `--ignore-platform-req` workaround. Fix the install before trusting any local run; don't interpret the boot error as something you broke.
+If `php artisan` fails at boot with `Class "Laravel\Passport\Passport" not found`
+(`AppServiceProvider:43`), it means `vendor/` is incomplete because local PHP has no
+**ext-sodium**, which Passport requires. Fix: uncomment `extension=sodium` in `php.ini`
+(the DLL ships with XAMPP, just disabled by default), then `composer install`. Once
+sodium is enabled, a plain `composer install` pulls everything — no
+`--ignore-platform-req` hack needed. Verified working 2026-07-30: `php artisan about`
+boots clean, `php artisan test` runs (103 passing baseline; 2 pre-existing failures in
+`MoodleUserImportTest`, 1 in `ProfileTest`, unrelated to sodium/Passport).
 
 ## Layout
 

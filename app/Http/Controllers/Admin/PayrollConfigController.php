@@ -144,6 +144,7 @@ class PayrollConfigController extends Controller
                 'legal_daily_hour_limit' => (int) $e->legal_daily_hour_limit,
                 'has_provident_fund' => (bool) $e->has_provident_fund,
                 'statutory_exempt' => (bool) $e->statutory_exempt,
+                'medical_allowance_enabled' => (bool) $e->medical_allowance_enabled,
                 'attendance_exempt' => (bool) $e->attendance_exempt,
                 'attendance_exempt_reason' => $e->attendance_exempt_reason,
                 // Part-time and contract staff never contribute, whatever the flags say.
@@ -200,6 +201,7 @@ class PayrollConfigController extends Controller
             'grade' => ['nullable', 'string', 'max:50'],
             'has_provident_fund' => ['required', 'boolean'],
             'statutory_exempt' => ['required', 'boolean'],
+            'medical_allowance_enabled' => ['required', 'boolean'],
             'attendance_exempt' => ['required', 'boolean'],
             'attendance_exempt_reason' => ['nullable', 'string', 'max:255'],
         ]);

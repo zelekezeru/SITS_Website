@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Enums\AiAnalysisType;
 use App\Models\NarrativeReport;
 use App\Models\AiAnalysis;
 use App\Models\Setting;
@@ -59,6 +60,7 @@ class AnalyzeNarrativeReportJob implements ShouldQueue
             [
                 'narrative_report_id' => $this->narrativeReport->id,
                 'provider'            => $provider,
+                'analysis_type'       => AiAnalysisType::Narrative,
             ],
             [
                 'model'          => $model,

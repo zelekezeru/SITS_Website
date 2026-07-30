@@ -145,6 +145,9 @@ class AdminNavigation
                     self::item('Loans', 'admin.loans', '/admin/loans', 'Landmark',
                         'Employee salary loans auto-deducted from payroll at a fixed monthly amount until cleared.',
                         ['Fixed monthly deduction', 'Live balance & remaining months', 'Extra / lump-sum settlement', 'Blocks clearance until paid']),
+                    self::item('Medical Allowance', 'admin.medical-allowance', '/admin/medical-allowance', 'HeartPulse',
+                        'Tiered, non-taxable medical bill reimbursement: full coverage up to a cap, then shared coinsurance, requested by Finance and approved by admin.',
+                        ['Dynamic full-cover & coinsurance tiers', 'Multi-file bill uploads', 'Finance request → admin approval', 'Payments report & payslip visibility']),
                     self::item('Attendance', 'admin.attendance', '/admin/attendance', 'Clock',
                         'Attendance with raw → pending_review → verified → locked lifecycle.',
                         ['Device / Excel / manual sources', 'Overtime tiers (1.5×/2×/2.5×)', 'Late & absence tracking', 'Verification & lock'], [

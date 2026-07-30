@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Enums\PayrollStatus;
 use App\Enums\EmployeeLoanPaymentType;
 use App\Enums\EmployeeLoanStatus;
+use App\Enums\MedicalAllowanceClaimStatus;
 use App\Models\EmployeeLoanPayment;
 use App\Services\Payroll\EmployeeLoanService;
 use App\Services\PayrollCalculator;
@@ -45,6 +46,11 @@ class PayrollRunService
                 'loans' => fn ($q) => $q
                     ->where('status', EmployeeLoanStatus::Active)
                     ->orderBy('created_at'),
+                // Reimbursements disbursed outside payroll but attributed to this
+                // period for payslip visibility — see MedicalAllowanceClaim.
+                'medicalAllowanceClaims' => fn ($q) => $q
+                    ->where('payroll_period_id', $period->id)
+                    ->where('status', MedicalAllowanceClaimStatus::Paid),
             ])
             ->get();
 
@@ -107,6 +113,23 @@ class PayrollRunService
                     $result['net_pay'] = round((float) $result['net_pay'] - $loanDeduction, 2);
                 }
 
+                // --- Medical allowance reimbursements (non-taxable, post-tax addition) ---
+                // Disbursement happens outside payroll (Finance pays and records it
+                // directly), so this just re-derives the period's total from whichever
+                // paid claims are attributed to it — never gates or delays the run.
+                $medicalAllowance = 0.0;
+                foreach ($employee->medicalAllowanceClaims as $claim) {
+                    $medicalAllowance += (float) $claim->covered_amount;
+                    $result['lines'][] = [
+                        'type' => 'earning',
+                        'label' => 'Medical Allowance Reimbursement ('.$claim->reference.')',
+                        'amount' => (float) $claim->covered_amount,
+                    ];
+                }
+                if ($medicalAllowance > 0) {
+                    $result['net_pay'] = round((float) $result['net_pay'] + $medicalAllowance, 2);
+                }
+
                 $payslip = Payslip::updateOrCreate(
                     ['employee_id' => $employee->id, 'payroll_period_id' => $period->id],
                     [
@@ -131,6 +154,7 @@ class PayrollRunService
                         'kircha_deduction' => $result['kircha_deduction'],
                         'other_deduction' => $result['other_deduction'],
                         'loan_deduction' => $loanDeduction,
+                        'medical_allowance' => $medicalAllowance,
                         'total_deductions' => $result['total_deductions'],
                         'net_pay' => $result['net_pay'],
                         'status' => 'draft',

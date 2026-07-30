@@ -3,7 +3,8 @@
 namespace App\Jobs;
 
 use App\Models\ConductIssue;
-use App\Models\AiAnalysis;
+use App\Models\ConductIssueAnalysis;
+use App\Models\Setting;
 use App\Services\Ai\AiServiceManager;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -50,21 +51,34 @@ class AnalyzeConductIssueJob implements ShouldQueue
                 'error' => $result['error'],
             ]);
 
+            $this->fail(new \RuntimeException($result['error']));
             return;
         }
 
-        // Store analysis result
-        AiAnalysis::create([
-            'analysable_type' => ConductIssue::class,
-            'analysable_id' => $this->conductIssue->id,
-            'analysis_type' => 'conduct_assessment',
-            'result' => $result,
-            'provider' => config('ai.default'),
-            'tokens_used' => 0, // TODO: track actual token usage
-        ]);
+        $provider = $result['provider'] ?? Setting::get('ai_default_provider', config('ai.default', 'claude_pro'));
+        $model    = $result['model'] ?? Setting::get("{$provider}_model", config("ai.providers.{$provider}.model", ''));
+
+        ConductIssueAnalysis::updateOrCreate(
+            [
+                'conduct_issue_id' => $this->conductIssue->id,
+                'provider'         => $provider,
+            ],
+            [
+                'model'                   => $model,
+                'severity_assessment'     => $result['severity_assessment']    ?? null,
+                'confidence'              => $result['confidence']             ?? null,
+                'risk_level'              => $result['risk_level']             ?? null,
+                'suggested_actions'       => $result['suggested_actions']      ?? [],
+                'escalation_needed'       => $result['escalation_needed']      ?? false,
+                'investigation_required'  => $result['investigation_required'] ?? false,
+                'warnings'                => $result['warnings']               ?? [],
+                'human_confirmed'         => false,
+            ]
+        );
 
         Log::info('Conduct issue analyzed successfully', [
             'conduct_issue_id' => $this->conductIssue->id,
+            'provider'         => $provider,
         ]);
     }
 

@@ -7,6 +7,7 @@ use App\Http\Controllers\ClosedDayController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\EmployeeLoanController;
 use App\Http\Controllers\MassPermissionController;
+use App\Http\Controllers\MedicalAllowanceClaimController;
 use App\Models\AttendanceImport;
 use App\Models\AttendanceLog;
 use App\Models\AttendanceRecord;
@@ -70,6 +71,11 @@ class FinanceModuleController extends Controller
         if ($routeName === 'admin.loans') {
             return Inertia::render('Admin/Finance/Loans/Index',
                 $base + EmployeeLoanController::pageProps($request->user()));
+        }
+
+        if ($routeName === 'admin.medical-allowance') {
+            return Inertia::render('Admin/Finance/MedicalAllowance/Index',
+                $base + MedicalAllowanceClaimController::pageProps($request->user()));
         }
 
         if ($routeName === 'admin.attendance') {

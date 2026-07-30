@@ -34,6 +34,13 @@ class PayrollSettingsSeeder extends Seeder
             ['payroll', 'absence_deduction_rate', '1.00', 'decimal', 'Days of pay withheld per absent day (1.00 = one day)'],
             ['payroll', 'absence_grace_days', '0', 'decimal', 'Unpermitted absent days forgiven each month before deductions start'],
 
+            // Medical allowance — cumulative per employee per policy year. Bills up to
+            // the full-coverage limit are 100% covered; the coinsurance rate applies
+            // to the band between that and the max limit; nothing above the max.
+            ['payroll', 'medical_full_coverage_limit', '5000.00', 'decimal', 'Medical allowance — fully covered up to this amount per employee per year (ETB)'],
+            ['payroll', 'medical_max_coverage_limit', '10000.00', 'decimal', 'Medical allowance — coinsurance ceiling per employee per year (ETB); nothing covered above this'],
+            ['payroll', 'medical_coinsurance_rate', '50.00', 'decimal', 'Medical allowance — % of the band between the full-coverage and max limits paid by the institution'],
+
             ['scoring', 'weight_auto_score', '0.40', 'decimal', 'Evaluation blend — system/auto'],
             ['scoring', 'weight_manager_score', '0.40', 'decimal', 'Evaluation blend — manager/dept head'],
             ['scoring', 'weight_executive_score', '0.20', 'decimal', 'Evaluation blend — executive'],

@@ -126,6 +126,62 @@
             </div>
           </div>
 
+          <!-- AI Analysis -->
+          <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="text-lg font-semibold text-gray-900">AI Risk Analysis</h3>
+              <button
+                @click="triggerAnalysis"
+                :disabled="analyzing"
+                class="px-4 py-2 bg-slate-800 text-white rounded-md hover:bg-slate-900 disabled:bg-gray-400 transition text-sm"
+              >
+                {{ analyzing ? 'Analyzing…' : (latestAnalysis ? 'Re-analyze' : 'Analyze with AI') }}
+              </button>
+            </div>
+
+            <p v-if="!latestAnalysis && !analyzing" class="text-sm text-gray-500">
+              No AI analysis yet for this issue.
+            </p>
+
+            <div v-if="latestAnalysis" class="space-y-4">
+              <div class="flex flex-wrap gap-2">
+                <span v-if="latestAnalysis.severity_assessment" :class="severityBadgeClass(latestAnalysis.severity_assessment)" class="px-3 py-1 rounded-full text-sm font-medium">
+                  Severity: {{ formatEnum(latestAnalysis.severity_assessment) }}
+                </span>
+                <span v-if="latestAnalysis.risk_level" class="px-3 py-1 rounded-full text-sm font-medium bg-slate-100 text-slate-800">
+                  Risk: {{ formatEnum(latestAnalysis.risk_level) }}
+                </span>
+                <span v-if="latestAnalysis.confidence != null" class="px-3 py-1 rounded-full text-sm font-medium bg-slate-100 text-slate-600">
+                  {{ Math.round(latestAnalysis.confidence * 100) }}% confidence
+                </span>
+                <span v-if="latestAnalysis.escalation_needed" class="px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
+                  Escalation needed
+                </span>
+                <span v-if="latestAnalysis.investigation_required" class="px-3 py-1 rounded-full text-sm font-medium bg-orange-100 text-orange-800">
+                  Investigation required
+                </span>
+              </div>
+
+              <div v-if="latestAnalysis.suggested_actions?.length">
+                <p class="text-sm font-semibold text-gray-700 mb-1">Suggested Actions</p>
+                <ul class="list-disc list-inside text-sm text-gray-700 space-y-0.5">
+                  <li v-for="(action, i) in latestAnalysis.suggested_actions" :key="i">{{ action }}</li>
+                </ul>
+              </div>
+
+              <div v-if="latestAnalysis.warnings?.length">
+                <p class="text-sm font-semibold text-gray-700 mb-1">Warnings</p>
+                <ul class="list-disc list-inside text-sm text-red-700 space-y-0.5">
+                  <li v-for="(warning, i) in latestAnalysis.warnings" :key="i">{{ warning }}</li>
+                </ul>
+              </div>
+
+              <p class="text-xs text-gray-400">
+                {{ latestAnalysis.provider }} · {{ latestAnalysis.model || '—' }} · {{ formatDate(latestAnalysis.created_at) }}
+              </p>
+            </div>
+          </div>
+
           <!-- Make Decision Panel -->
           <div v-if="issue.status === 'approved' && !issue.decision && canDecide" class="bg-white rounded-lg shadow p-6 border-l-4 border-yellow-500">
             <h3 class="text-lg font-semibold text-gray-900 mb-4">Make a Conduct Decision</h3>
@@ -195,7 +251,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { Link, router } from '@inertiajs/vue3';
 
 const props = defineProps({
@@ -210,6 +266,22 @@ const showRejectForm = ref(false);
 const approvalNotes = ref('');
 const rejectionReason = ref('');
 const submitting = ref(false);
+const analyzing = ref(false);
+
+const latestAnalysis = computed(() => {
+  const analyses = props.issue.analyses || [];
+  return analyses.length ? analyses[analyses.length - 1] : null;
+});
+
+const triggerAnalysis = () => {
+  analyzing.value = true;
+  router.post(`/admin/conduct/${props.issue.id}/analyze`, {}, {
+    preserveScroll: true,
+    onFinish: () => {
+      analyzing.value = false;
+    },
+  });
+};
 
 const formatDate = (date) => {
   return new Date(date).toLocaleDateString('en-US', { 

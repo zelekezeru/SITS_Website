@@ -8,6 +8,7 @@ use App\Enums\ConductStatus;
 use App\Models\Concerns\Blameable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -69,6 +70,16 @@ class ConductIssue extends Model
     public function decision(): HasOne
     {
         return $this->hasOne(ConductDecision::class);
+    }
+
+    public function analyses(): HasMany
+    {
+        return $this->hasMany(ConductIssueAnalysis::class);
+    }
+
+    public function analyses(): HasMany
+    {
+        return $this->hasMany(ConductIssueAnalysis::class);
     }
 
     public function documents(): MorphMany

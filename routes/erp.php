@@ -27,6 +27,7 @@ use App\Http\Controllers\Finance\DashboardController as FinanceDashboardControll
 use App\Http\Controllers\Finance\PayrollController as FinancePayrollController;
 use App\Http\Controllers\Admin\PayrollConfigController;
 use App\Http\Controllers\AttendancePermissionController;
+use App\Http\Controllers\MedicalAllowanceClaimController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Support\AdminNavigation;
@@ -171,6 +172,7 @@ Route::middleware(['auth', 'active', 'password.fresh'])->group(function () {
         Route::get('/admin/conduct/create', [ConductController::class, 'create'])->name('admin.conduct.create');
         Route::post('/admin/conduct', [ConductController::class, 'store'])->name('admin.conduct.store');
         Route::get('/admin/conduct/{issue}', [ConductController::class, 'show'])->name('admin.conduct.show');
+        Route::post('/admin/conduct/{issue}/analyze', [ConductController::class, 'analyze'])->name('admin.conduct.analyze');
         Route::get('/admin/conduct/{issue}/edit', [ConductController::class, 'edit'])->name('admin.conduct.edit');
         Route::put('/admin/conduct/{issue}', [ConductController::class, 'update'])->name('admin.conduct.update');
         Route::post('/admin/conduct/{issue}/submit', [ConductController::class, 'submit'])->name('admin.conduct.submit');
@@ -268,6 +270,25 @@ Route::middleware(['auth', 'active', 'password.fresh'])->group(function () {
         Route::post('/admin/loans/{loan}/payments', [\App\Http\Controllers\EmployeeLoanController::class, 'payment'])->name('admin.loans.payments.store');
         Route::post('/admin/loans/{loan}/cancel', [\App\Http\Controllers\EmployeeLoanController::class, 'cancel'])->name('admin.loans.cancel');
     });
+
+    /*
+    |----------------------------------------------------------------------
+    | Medical allowance claims (Finance requests, admin approves & pays)
+    |----------------------------------------------------------------------
+    */
+    Route::middleware('can:request medical allowance')->group(function () {
+        Route::post('/admin/medical-allowance', [MedicalAllowanceClaimController::class, 'store'])->name('admin.medical-allowance.store');
+        Route::post('/admin/medical-allowance/{claim}/documents', [MedicalAllowanceClaimController::class, 'storeDocuments'])->name('admin.medical-allowance.documents.store');
+        Route::delete('/admin/medical-allowance/{claim}/documents/{document}', [MedicalAllowanceClaimController::class, 'destroyDocument'])->name('admin.medical-allowance.documents.destroy');
+        Route::post('/admin/medical-allowance/{claim}/cancel', [MedicalAllowanceClaimController::class, 'cancel'])->name('admin.medical-allowance.cancel');
+        Route::post('/admin/medical-allowance/{claim}/payment', [MedicalAllowanceClaimController::class, 'recordPayment'])->name('admin.medical-allowance.payment');
+    });
+    Route::middleware('can:approve medical allowance')->group(function () {
+        Route::post('/admin/medical-allowance/{claim}/approve', [MedicalAllowanceClaimController::class, 'approve'])->name('admin.medical-allowance.approve');
+        Route::post('/admin/medical-allowance/{claim}/reject', [MedicalAllowanceClaimController::class, 'reject'])->name('admin.medical-allowance.reject');
+    });
+    // Document download is shared: either side of the workflow needs to see the bill.
+    Route::get('/admin/medical-allowance/{claim}/documents/{document}', [MedicalAllowanceClaimController::class, 'downloadDocument'])->name('admin.medical-allowance.documents.download');
 
     Route::get('/finance/mass-permissions', [\App\Http\Controllers\MassPermissionController::class, 'index'])
         ->middleware('can:create mass permission')->name('finance.mass-permissions');
@@ -371,6 +392,8 @@ Route::middleware(['auth', 'active', 'password.fresh'])->group(function () {
     */
     Route::get('/finance/attendance-permissions', [AttendancePermissionController::class, 'index'])
         ->middleware('can:create attendance permission')->name('finance.attendance-permissions');
+    Route::get('/finance/medical-allowance', [MedicalAllowanceClaimController::class, 'index'])
+        ->middleware('can:request medical allowance')->name('finance.medical-allowance');
     Route::post('/attendance-permissions', [AttendancePermissionController::class, 'store'])
         ->middleware('can:create attendance permission')->name('attendance-permissions.store');
     Route::post('/attendance-permissions/{permission}', [AttendancePermissionController::class, 'update'])
@@ -402,6 +425,8 @@ Route::middleware(['auth', 'active', 'password.fresh'])->group(function () {
         Route::post('/admin/payroll/config/employees/{employee}', [PayrollConfigController::class, 'updateEmployee'])->name('admin.payroll.config.employee');
         Route::post('/admin/payroll/config/employees/{employee}/assignments', [PayrollConfigController::class, 'storeAssignment'])->name('admin.payroll.config.assignments.store');
         Route::delete('/admin/payroll/config/employees/{employee}/assignments/{assignment}', [PayrollConfigController::class, 'destroyAssignment'])->name('admin.payroll.config.assignments.destroy');
+
+        Route::post('/admin/medical-allowance/settings', [MedicalAllowanceClaimController::class, 'updateSettings'])->name('admin.medical-allowance.settings.update');
     });
 
     /*

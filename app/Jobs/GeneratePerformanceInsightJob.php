@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Enums\AiAnalysisType;
 use App\Models\Evaluation;
 use App\Models\NarrativeReport;
 use App\Models\AiAnalysis;
@@ -79,6 +80,7 @@ class GeneratePerformanceInsightJob implements ShouldQueue
             [
                 'narrative_report_id' => $report->id,
                 'provider'            => $provider,
+                'analysis_type'       => AiAnalysisType::Performance,
             ],
             [
                 'model'           => $model,

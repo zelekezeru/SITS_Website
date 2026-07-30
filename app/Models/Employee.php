@@ -29,6 +29,7 @@ class Employee extends Model
         'grade',
         'has_provident_fund',
         'statutory_exempt',
+        'medical_allowance_enabled',
         'legal_daily_hour_limit',
         'hired_at',
         'is_active',
@@ -44,6 +45,7 @@ class Employee extends Model
         'base_salary' => 'decimal:2',
         'has_provident_fund' => 'boolean',
         'statutory_exempt' => 'boolean',
+        'medical_allowance_enabled' => 'boolean',
         'legal_daily_hour_limit' => 'integer',
         'hired_at' => 'date',
         'is_active' => 'boolean',
@@ -191,5 +193,17 @@ class Employee extends Model
         return $this->loans()
             ->where('status', \App\Enums\EmployeeLoanStatus::Active)
             ->orderBy('created_at');
+    }
+
+    public function medicalAllowanceClaims(): HasMany
+    {
+        return $this->hasMany(MedicalAllowanceClaim::class);
+    }
+
+    /** Full-time and enrolled — the only employees who may submit medical allowance claims. */
+    public function isMedicalAllowanceEligible(): bool
+    {
+        return $this->medical_allowance_enabled
+            && $this->employment_type === EmploymentType::FullTime;
     }
 }

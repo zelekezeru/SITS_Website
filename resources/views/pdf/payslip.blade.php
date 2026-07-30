@@ -172,6 +172,12 @@
             @if ((float) $payslip->loan_deduction)
                 <tr><td>Loan repayment</td><td class="num">{{ $money($payslip->loan_deduction) }}</td></tr>
             @endif
+            @if ((float) $payslip->medical_allowance)
+                <tr>
+                    <td style="color:#047857;">Medical allowance reimbursement (non-taxable)</td>
+                    <td class="num" style="color:#047857;">+{{ $money($payslip->medical_allowance) }}</td>
+                </tr>
+            @endif
         </tbody>
     </table>
 
