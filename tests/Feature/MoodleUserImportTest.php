@@ -53,7 +53,8 @@ $CFG->prefix = "mdl_";
                 firstname VARCHAR(100),
                 lastname VARCHAR(100),
                 email VARCHAR(100),
-                deleted INTEGER DEFAULT 0
+                deleted INTEGER DEFAULT 0,
+                suspended INTEGER DEFAULT 0
             );
             CREATE TABLE mdl_role (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
