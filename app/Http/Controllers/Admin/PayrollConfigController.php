@@ -100,7 +100,7 @@ class PayrollConfigController extends Controller
      *
      * @return array<string, mixed>
      */
-    public static function pageProps(): array
+    public static function pageProps($user = null): array
     {
         $components = PayrollComponent::active()
             ->whereIn('kind', [PayrollComponentKind::Allowance, PayrollComponentKind::Deduction])
@@ -116,6 +116,8 @@ class PayrollConfigController extends Controller
                 'componentAssignments.component:id,name,kind',
                 'componentAssignments.startPeriod:id,name',
                 'componentAssignments.endPeriod:id,name',
+                'medicalAllowanceRequestedBy:id,name',
+                'medicalAllowanceReviewedBy:id,name',
             ])
             ->orderBy('full_name_en')
             ->get();
@@ -145,6 +147,13 @@ class PayrollConfigController extends Controller
                 'has_provident_fund' => (bool) $e->has_provident_fund,
                 'statutory_exempt' => (bool) $e->statutory_exempt,
                 'medical_allowance_enabled' => (bool) $e->medical_allowance_enabled,
+                'medical_allowance_requested' => (bool) $e->medical_allowance_requested,
+                'medical_allowance_status' => $e->medicalAllowanceStatus(),
+                'medical_allowance_requested_by' => $e->medicalAllowanceRequestedBy?->name,
+                'medical_allowance_requested_at' => $e->medical_allowance_requested_at?->toDateTimeString(),
+                'medical_allowance_reviewed_by' => $e->medicalAllowanceReviewedBy?->name,
+                'medical_allowance_reviewed_at' => $e->medical_allowance_reviewed_at?->toDateTimeString(),
+                'medical_allowance_rejection_reason' => $e->medical_allowance_rejection_reason,
                 'attendance_exempt' => (bool) $e->attendance_exempt,
                 'attendance_exempt_reason' => $e->attendance_exempt_reason,
                 // Part-time and contract staff never contribute, whatever the flags say.
@@ -166,6 +175,10 @@ class PayrollConfigController extends Controller
                 ->orderByDesc('start_date')->get(['id', 'name']),
             'scheduleTypes' => collect(ScheduleType::cases())
                 ->map(fn ($t) => ['value' => $t->value, 'label' => $t->label()]),
+            'can' => [
+                'requestMedicalAllowance' => (bool) $user?->can('request medical allowance'),
+                'approveMedicalAllowance' => (bool) $user?->can('approve medical allowance'),
+            ],
         ];
     }
 
@@ -201,7 +214,6 @@ class PayrollConfigController extends Controller
             'grade' => ['nullable', 'string', 'max:50'],
             'has_provident_fund' => ['required', 'boolean'],
             'statutory_exempt' => ['required', 'boolean'],
-            'medical_allowance_enabled' => ['required', 'boolean'],
             'attendance_exempt' => ['required', 'boolean'],
             'attendance_exempt_reason' => ['nullable', 'string', 'max:255'],
         ]);
@@ -217,6 +229,64 @@ class PayrollConfigController extends Controller
         $employee->update($data);
 
         return back()->with('success', "Payroll profile updated for {$employee->full_name_en}.");
+    }
+
+    /**
+     * Ask to enroll an employee in the medical allowance frame — unlike the
+     * other profile flags above, this doesn't take effect immediately. It
+     * stays pending until an admin approves or rejects it below, same
+     * maker/checker split as medical allowance claims themselves.
+     */
+    public function requestMedicalAllowance(Request $request, Employee $employee)
+    {
+        if ($employee->medical_allowance_enabled) {
+            return back()->with('error', "{$employee->full_name_en} is already enrolled.");
+        }
+        if ($employee->medical_allowance_requested) {
+            return back()->with('error', 'A request is already pending for this employee.');
+        }
+
+        $employee->requestMedicalAllowance($request->user());
+
+        return back()->with('success', "Medical allowance enrollment requested for {$employee->full_name_en} — awaiting admin approval.");
+    }
+
+    /** Approve a pending enrollment request — this is what actually makes the employee eligible. */
+    public function approveMedicalAllowance(Request $request, Employee $employee)
+    {
+        if (! $employee->medical_allowance_requested) {
+            return back()->with('error', 'This employee has no pending medical allowance request.');
+        }
+
+        $employee->approveMedicalAllowance($request->user());
+
+        return back()->with('success', "{$employee->full_name_en} is now enrolled in the medical allowance frame.");
+    }
+
+    /** Decline a pending enrollment request. */
+    public function rejectMedicalAllowance(Request $request, Employee $employee)
+    {
+        if (! $employee->medical_allowance_requested) {
+            return back()->with('error', 'This employee has no pending medical allowance request.');
+        }
+
+        $data = $request->validate(['reason' => ['nullable', 'string', 'max:1000']]);
+
+        $employee->rejectMedicalAllowance($request->user(), $data['reason'] ?? null);
+
+        return back()->with('success', "Enrollment request declined for {$employee->full_name_en}.");
+    }
+
+    /** Remove an already-enrolled employee from the frame. Takes effect immediately — no approval needed to revoke a benefit. */
+    public function removeMedicalAllowance(Employee $employee)
+    {
+        if (! $employee->medical_allowance_enabled) {
+            return back()->with('error', 'This employee is not currently enrolled.');
+        }
+
+        $employee->removeMedicalAllowance();
+
+        return back()->with('success', "{$employee->full_name_en} removed from the medical allowance frame.");
     }
 
     /** Attach a standing allowance/deduction to an employee. */

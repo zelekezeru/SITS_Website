@@ -30,6 +30,12 @@ class Employee extends Model
         'has_provident_fund',
         'statutory_exempt',
         'medical_allowance_enabled',
+        'medical_allowance_requested',
+        'medical_allowance_requested_by',
+        'medical_allowance_requested_at',
+        'medical_allowance_reviewed_by',
+        'medical_allowance_reviewed_at',
+        'medical_allowance_rejection_reason',
         'legal_daily_hour_limit',
         'hired_at',
         'is_active',
@@ -46,6 +52,9 @@ class Employee extends Model
         'has_provident_fund' => 'boolean',
         'statutory_exempt' => 'boolean',
         'medical_allowance_enabled' => 'boolean',
+        'medical_allowance_requested' => 'boolean',
+        'medical_allowance_requested_at' => 'datetime',
+        'medical_allowance_reviewed_at' => 'datetime',
         'legal_daily_hour_limit' => 'integer',
         'hired_at' => 'date',
         'is_active' => 'boolean',
@@ -200,10 +209,87 @@ class Employee extends Model
         return $this->hasMany(MedicalAllowanceClaim::class);
     }
 
+    public function medicalAllowanceRequestedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'medical_allowance_requested_by');
+    }
+
+    public function medicalAllowanceReviewedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'medical_allowance_reviewed_by');
+    }
+
     /** Full-time and enrolled — the only employees who may submit medical allowance claims. */
     public function isMedicalAllowanceEligible(): bool
     {
         return $this->medical_allowance_enabled
             && $this->employment_type === EmploymentType::FullTime;
+    }
+
+    /**
+     * Enrollment status for display: none (never requested), pending (awaiting
+     * admin decision), enrolled (approved and active), or rejected (declined,
+     * can be re-requested).
+     */
+    public function medicalAllowanceStatus(): string
+    {
+        return match (true) {
+            $this->medical_allowance_requested => 'pending',
+            $this->medical_allowance_enabled => 'enrolled',
+            $this->medical_allowance_reviewed_by !== null => 'rejected',
+            default => 'none',
+        };
+    }
+
+    /** Ask to enroll this employee — takes effect only once an admin approves it. */
+    public function requestMedicalAllowance(User $by): void
+    {
+        $this->update([
+            'medical_allowance_requested' => true,
+            'medical_allowance_requested_by' => $by->id,
+            'medical_allowance_requested_at' => now(),
+            'medical_allowance_rejection_reason' => null,
+        ]);
+    }
+
+    /** Approve a pending enrollment request — this is what actually flips eligibility on. */
+    public function approveMedicalAllowance(User $by): void
+    {
+        $this->update([
+            'medical_allowance_enabled' => true,
+            'medical_allowance_requested' => false,
+            'medical_allowance_reviewed_by' => $by->id,
+            'medical_allowance_reviewed_at' => now(),
+            'medical_allowance_rejection_reason' => null,
+        ]);
+    }
+
+    /** Decline a pending enrollment request. The employee stays ineligible. */
+    public function rejectMedicalAllowance(User $by, ?string $reason = null): void
+    {
+        $this->update([
+            'medical_allowance_enabled' => false,
+            'medical_allowance_requested' => false,
+            'medical_allowance_reviewed_by' => $by->id,
+            'medical_allowance_reviewed_at' => now(),
+            'medical_allowance_rejection_reason' => $reason,
+        ]);
+    }
+
+    /**
+     * Remove an already-enrolled employee from the medical allowance frame —
+     * takes effect immediately, no approval needed to revoke. Clears the
+     * review trail too, so the employee resets to a clean "none" status
+     * rather than misreporting as "rejected" from the earlier approval.
+     */
+    public function removeMedicalAllowance(): void
+    {
+        $this->update([
+            'medical_allowance_enabled' => false,
+            'medical_allowance_requested' => false,
+            'medical_allowance_reviewed_by' => null,
+            'medical_allowance_reviewed_at' => null,
+            'medical_allowance_rejection_reason' => null,
+        ]);
     }
 }

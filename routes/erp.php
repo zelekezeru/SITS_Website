@@ -429,6 +429,25 @@ Route::middleware(['auth', 'active', 'password.fresh'])->group(function () {
         Route::delete('/admin/payroll/config/employees/{employee}/assignments/{assignment}', [PayrollConfigController::class, 'destroyAssignment'])->name('admin.payroll.config.assignments.destroy');
 
         Route::post('/admin/medical-allowance/settings', [MedicalAllowanceClaimController::class, 'updateSettings'])->name('admin.medical-allowance.settings.update');
+
+        // Removing an already-enrolled employee is instant — no approval needed to revoke a benefit.
+        Route::post('/admin/payroll/config/employees/{employee}/medical-allowance/remove', [PayrollConfigController::class, 'removeMedicalAllowance'])->name('admin.payroll.config.medical-allowance.remove');
+    });
+
+    /*
+    |----------------------------------------------------------------------
+    | Medical allowance enrollment — the "Apply Medical Allowance" flag on
+    | the Payroll Config → Per Employee panel. Checking it only files a
+    | request; an admin must approve it before the employee is actually
+    | eligible, same maker/checker split as medical allowance claims.
+    |----------------------------------------------------------------------
+    */
+    Route::middleware('can:request medical allowance')->group(function () {
+        Route::post('/admin/payroll/config/employees/{employee}/medical-allowance/request', [PayrollConfigController::class, 'requestMedicalAllowance'])->name('admin.payroll.config.medical-allowance.request');
+    });
+    Route::middleware('can:approve medical allowance')->group(function () {
+        Route::post('/admin/payroll/config/employees/{employee}/medical-allowance/approve', [PayrollConfigController::class, 'approveMedicalAllowance'])->name('admin.payroll.config.medical-allowance.approve');
+        Route::post('/admin/payroll/config/employees/{employee}/medical-allowance/reject', [PayrollConfigController::class, 'rejectMedicalAllowance'])->name('admin.payroll.config.medical-allowance.reject');
     });
 
     /*

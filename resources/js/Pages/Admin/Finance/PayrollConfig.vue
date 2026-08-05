@@ -17,6 +17,7 @@ const props = defineProps({
   employees: { type: Array, default: () => [] },
   periods: { type: Array, default: () => [] },
   scheduleTypes: { type: Array, default: () => [] },
+  can: { type: Object, default: () => ({}) },
 });
 
 const TABS = [
@@ -79,6 +80,7 @@ const FILTERS = [
   { key: 'statutory_exempt', label: 'Statutory exempt' },
   { key: 'attendance_exempt', label: 'Attendance exempt' },
   { key: 'medical_allowance', label: 'Medical allowance' },
+  { key: 'medical_allowance_pending', label: 'Medical allowance pending' },
   { key: 'assigned', label: 'Has assignments' },
 ];
 
@@ -94,6 +96,7 @@ const visibleEmployees = computed(() => {
       case 'statutory_exempt': return e.statutory_exempt || e.scheme_excluded_by_type;
       case 'attendance_exempt': return e.attendance_exempt;
       case 'medical_allowance': return e.medical_allowance_enabled;
+      case 'medical_allowance_pending': return e.medical_allowance_requested;
       case 'assigned': return e.assignments.length > 0;
       default: return true;
     }
@@ -135,7 +138,6 @@ const expandedId = ref(null);
 
 const profileForm = useForm({
   grade: '', has_provident_fund: false, statutory_exempt: false,
-  medical_allowance_enabled: false,
   attendance_exempt: false, attendance_exempt_reason: '',
 });
 
@@ -154,7 +156,6 @@ const toggleRow = (e) => {
     grade: e.grade ?? '',
     has_provident_fund: e.has_provident_fund,
     statutory_exempt: e.statutory_exempt,
-    medical_allowance_enabled: e.medical_allowance_enabled,
     attendance_exempt: e.attendance_exempt,
     attendance_exempt_reason: e.attendance_exempt_reason ?? '',
   });
@@ -163,11 +164,43 @@ const toggleRow = (e) => {
   assignForm.reset();
   assignForm.clearErrors();
   assignFormOpen.value = false;
+  rejectFormOpen.value = false;
+  rejectForm.reset();
+  rejectForm.clearErrors();
 };
 
 const saveProfile = (e) => profileForm.post(`/admin/payroll/config/employees/${e.id}`, {
   preserveScroll: true, preserveState: true,
 });
+
+// ─── Medical allowance enrollment (request → admin approval) ─────────────────
+const requestMedicalAllowance = (e) => router.post(`/admin/payroll/config/employees/${e.id}/medical-allowance/request`, {}, {
+  preserveScroll: true, preserveState: true,
+});
+
+const approveMedicalAllowance = (e) => router.post(`/admin/payroll/config/employees/${e.id}/medical-allowance/approve`, {}, {
+  preserveScroll: true, preserveState: true,
+});
+
+const rejectFormOpen = ref(false);
+const rejectForm = useForm({ reason: '' });
+
+const submitRejectMedicalAllowance = (e) => rejectForm.post(`/admin/payroll/config/employees/${e.id}/medical-allowance/reject`, {
+  preserveScroll: true, preserveState: true,
+  onSuccess: () => { rejectFormOpen.value = false; rejectForm.reset(); },
+});
+
+const removeMedicalAllowance = async (e) => {
+  const ok = await confirm({
+    title: 'Remove Medical Allowance',
+    message: `Remove ${e.name} from the medical allowance frame? They will no longer be able to submit reimbursement claims until re-enrolled and re-approved.`,
+  });
+  if (ok) {
+    router.post(`/admin/payroll/config/employees/${e.id}/medical-allowance/remove`, {}, {
+      preserveScroll: true, preserveState: true,
+    });
+  }
+};
 
 const assignFormOpen = ref(false);
 
@@ -471,7 +504,8 @@ const needsEndPeriod = computed(() => assignForm.schedule_type === 'range');
                   <span v-if="e.attendance_exempt" class="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded border mr-1" :class="toneClass('emerald')">No absence ded.</span>
                   <span v-if="e.statutory_exempt" class="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded border mr-1" :class="toneClass('amber')">No pension/PF</span>
                   <span v-if="e.medical_allowance_enabled" class="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded border" :class="toneClass('rose')">Medical</span>
-                  <span v-if="!e.attendance_exempt && !e.statutory_exempt && !e.medical_allowance_enabled" class="text-slate-700 text-xs">—</span>
+                  <span v-else-if="e.medical_allowance_requested" class="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded border" :class="toneClass('amber')">Medical (pending)</span>
+                  <span v-if="!e.attendance_exempt && !e.statutory_exempt && !e.medical_allowance_enabled && !e.medical_allowance_requested" class="text-slate-700 text-xs">—</span>
                 </td>
                 <td class="p-3.5 text-right text-slate-600">
                   <Icon :name="expandedId === e.id ? 'ChevronDown' : 'ChevronRight'" :size="16" />
@@ -510,16 +544,66 @@ const needsEndPeriod = computed(() => assignForm.schedule_type === 'range');
                         </span>
                       </label>
 
-                      <label class="flex items-start gap-3 p-3.5 rounded-xl border border-slate-800 bg-slate-950/50 cursor-pointer hover:border-slate-700 transition-colors">
-                        <input type="checkbox" v-model="profileForm.medical_allowance_enabled" class="mt-0.5 rounded bg-slate-900 border-slate-700 text-rose-500 focus:ring-rose-500/50" />
-                        <span>
-                          <span class="block text-sm font-bold text-slate-200">Medical allowance enrolled</span>
-                          <span class="block text-xs text-slate-500 mt-0.5">
-                            Eligible to submit reimbursement claims — only takes effect while the employee is also full-time.
-                            <span v-if="e.employment_type !== 'full_time'" class="text-amber-400">Not full-time: currently has no effect.</span>
+                      <!-- Medical allowance: apply → admin approval, same shape as PF / Statutory / Attendance exempt but request-gated -->
+                      <div class="p-3.5 rounded-xl border border-slate-800 bg-slate-950/50 space-y-3">
+                        <div class="flex items-start justify-between gap-3">
+                          <span>
+                            <span class="block text-sm font-bold text-slate-200">Apply Medical Allowance</span>
+                            <span class="block text-xs text-slate-500 mt-0.5">
+                              Includes this employee in the medical allowance frame — but only once an admin approves the request.
+                              <span v-if="e.employment_type !== 'full_time'" class="text-amber-400">Not full-time: eligibility has no effect even once approved.</span>
+                            </span>
                           </span>
-                        </span>
-                      </label>
+                          <span class="shrink-0 text-[9px] font-bold uppercase px-2 py-1 rounded-full border"
+                                :class="{
+                                  enrolled: toneClass('rose'), pending: toneClass('amber'),
+                                  rejected: toneClass('slate'), none: toneClass('slate'),
+                                }[e.medical_allowance_status]">
+                            {{ { enrolled: 'Enrolled', pending: 'Pending approval', rejected: 'Rejected', none: 'Not enrolled' }[e.medical_allowance_status] }}
+                          </span>
+                        </div>
+
+                        <!-- Not enrolled / previously rejected: request it -->
+                        <button v-if="can.requestMedicalAllowance && (e.medical_allowance_status === 'none' || e.medical_allowance_status === 'rejected')"
+                                @click="requestMedicalAllowance(e)"
+                                class="text-[11px] font-bold px-3 py-1.5 rounded-lg border cursor-pointer transition-colors" :class="toneClass('rose')">
+                          Apply Medical Allowance
+                        </button>
+                        <p v-else-if="e.medical_allowance_status === 'none' || e.medical_allowance_status === 'rejected'" class="text-[11px] text-slate-600 italic">
+                          You don't have permission to request this.
+                        </p>
+                        <p v-if="e.medical_allowance_status === 'rejected' && e.medical_allowance_rejection_reason" class="text-[11px] text-slate-500">
+                          Last declined by {{ e.medical_allowance_reviewed_by }}: "{{ e.medical_allowance_rejection_reason }}"
+                        </p>
+
+                        <!-- Pending: requester info + admin approve/reject -->
+                        <div v-if="e.medical_allowance_status === 'pending'" class="space-y-2">
+                          <p class="text-[11px] text-slate-500">Requested by {{ e.medical_allowance_requested_by }} on {{ e.medical_allowance_requested_at }}.</p>
+                          <div v-if="can.approveMedicalAllowance" class="flex items-center gap-2">
+                            <button @click="approveMedicalAllowance(e)" class="text-[11px] font-bold px-3 py-1.5 rounded-lg border cursor-pointer transition-colors" :class="toneClass('emerald')">Approve</button>
+                            <button @click="rejectFormOpen = !rejectFormOpen" class="text-[11px] font-bold px-3 py-1.5 rounded-lg border cursor-pointer transition-colors" :class="toneClass('slate')">
+                              {{ rejectFormOpen ? 'Cancel' : 'Reject' }}
+                            </button>
+                          </div>
+                          <div v-if="rejectFormOpen" class="flex items-center gap-2">
+                            <input v-model="rejectForm.reason" type="text" maxlength="1000" placeholder="Reason (optional)…"
+                                   class="flex-1 bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-slate-200 text-xs focus:outline-none" />
+                            <button @click="submitRejectMedicalAllowance(e)" :disabled="rejectForm.processing"
+                                    class="text-[11px] font-bold px-3 py-2 rounded-lg border cursor-pointer disabled:opacity-50" :class="toneClass('rose')">
+                              Confirm reject
+                            </button>
+                          </div>
+                          <p v-if="!can.approveMedicalAllowance" class="text-[11px] text-slate-600 italic">Awaiting an admin's decision.</p>
+                        </div>
+
+                        <!-- Enrolled: instant remove -->
+                        <div v-if="e.medical_allowance_status === 'enrolled'" class="space-y-1">
+                          <p v-if="e.medical_allowance_reviewed_by" class="text-[11px] text-slate-500">Approved by {{ e.medical_allowance_reviewed_by }} on {{ e.medical_allowance_reviewed_at }}.</p>
+                          <button @click="removeMedicalAllowance(e)" class="text-[11px] font-bold px-3 py-1.5 rounded-lg border cursor-pointer transition-colors" :class="toneClass('slate')">
+                            Remove from frame
+                          </button>
+                        </div>
+                      </div>
 
                       <label class="flex items-start gap-3 p-3.5 rounded-xl border border-slate-800 bg-slate-950/50 cursor-pointer hover:border-slate-700 transition-colors">
                         <input type="checkbox" v-model="profileForm.attendance_exempt" class="mt-0.5 rounded bg-slate-900 border-slate-700 text-emerald-500 focus:ring-emerald-500/50" />

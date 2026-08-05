@@ -103,6 +103,17 @@ class CompositeScorerTest extends TestCase
         $this->assertSame('low', $result['confidence']);
     }
 
+    public function test_heavy_curly_smart_quotation_density_also_forces_low_confidence(): void
+    {
+        // Word/DOCX defaults to curly "smart quotes" — this is the common case
+        // for real submissions, not an edge case, so it must be detected too.
+        $quoteHeavyText = str_repeat("\u{201C}This whole sentence is quoted material from elsewhere.\u{201D} ", 30);
+
+        $result = $this->scorer->score($this->statisticalFixture(), $this->claudeFixture(), $quoteHeavyText, 400);
+
+        $this->assertSame('low', $result['confidence']);
+    }
+
     public function test_claude_unavailable_falls_back_to_statistical_only_with_low_confidence(): void
     {
         $result = $this->scorer->score(

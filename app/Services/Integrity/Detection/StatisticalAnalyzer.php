@@ -37,6 +37,11 @@ class StatisticalAnalyzer
 
     protected const NEUTRAL_ZSCORE_BAND = 0.5;
 
+    protected const PERSONAL_VOICE_MARKERS = [
+        'i think', 'i believe', 'in my experience', 'in my opinion', 'i feel',
+        ' i ', " i'm ", " i've ", ' my ', ' me ', ' myself ',
+    ];
+
     /**
      * @return array{signals: array<string, array{value: float, zscore_vs_baseline: float, direction: string}>, sentence_scores: list<array{index:int, text_hash:string, start:int, end:int, score:int, signals: list<string>}>}
      */
@@ -329,16 +334,38 @@ class StatisticalAnalyzer
             return 0.0;
         }
 
-        $lower = mb_strtolower($text);
-        $markers = ['i think', 'i believe', 'in my experience', 'in my opinion', 'i feel',
-            ' i ', " i'm ", " i've ", ' my ', ' me ', ' myself '];
+        // Padded so a document/sentence that STARTS with "I ..." still hits the
+        // space-anchored markers (' i ', " i'm ", ...) the same as a mid-text
+        // occurrence would — otherwise the single most common personal-voice
+        // opener ("I think...", "I'm not sure...") is undercounted whenever it
+        // happens to lead the text, which is common.
+        $padded = ' '.mb_strtolower($text).' ';
 
         $hits = 0;
-        foreach ($markers as $marker) {
-            $hits += substr_count($lower, $marker);
+        foreach (self::PERSONAL_VOICE_MARKERS as $marker) {
+            $hits += substr_count($padded, $marker);
         }
 
         return $hits / ($wordCount / 1000);
+    }
+
+    /**
+     * True if the (already-lowercased) text contains any personal-voice
+     * marker — same marker list and padding as personalVoiceMarkers(), used
+     * by per-sentence scoring so a sentence's personal-voice flag agrees
+     * with what the document-level signal would count.
+     */
+    protected function hasPersonalVoiceMarker(string $lowerText): bool
+    {
+        $padded = ' '.$lowerText.' ';
+
+        foreach (self::PERSONAL_VOICE_MARKERS as $marker) {
+            if (str_contains($padded, $marker)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     protected function listStructureDensity(string $text, int $wordCount): float
@@ -356,7 +383,12 @@ class StatisticalAnalyzer
             }
             if (preg_match('/^(\d+[\.\)]|[-*•])\s+/u', $trimmed)) {
                 $hits++;
-            } elseif (mb_strlen($trimmed) <= 60 && ! preg_match('/[.!?]$/u', $trimmed) && str_word_count($trimmed) <= 6) {
+            } elseif (mb_strlen($trimmed) <= 60 && ! preg_match('/[.!?\x{1362}\x{1367}\x{1368}]$/u', $trimmed) && count($this->splitWords($trimmed)) <= 6) {
+                // Sentence-ending punctuation check includes Ethiopic full stop
+                // (። U+1362) and question/exclamation marks (፧ ፨) — SITS is an
+                // Ethiopian institution and this signal must not mistake a
+                // short, complete Amharic sentence for a heading just because
+                // it doesn't end in a Latin period.
                 $hits++; // heuristic heading
             }
         }
@@ -442,11 +474,11 @@ class StatisticalAnalyzer
                 $flags[] = 'em_dash';
             }
 
-            if (! str_contains($lowerSentence, ' i ') && ! str_starts_with($lowerSentence, 'i ')) {
-                $score += 5;
-            } else {
+            if ($this->hasPersonalVoiceMarker($lowerSentence)) {
                 $score -= 15;
                 $flags[] = 'personal_voice';
+            } else {
+                $score += 5;
             }
 
             $score = max(0, min(100, $score));

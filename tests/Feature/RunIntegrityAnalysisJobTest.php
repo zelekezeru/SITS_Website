@@ -159,6 +159,42 @@ class RunIntegrityAnalysisJobTest extends TestCase
         $this->assertCount($expectedSentenceCount, $document->refresh()->report->sentence_scores);
     }
 
+    public function test_a_long_non_latin_script_document_is_still_chunked_correctly(): void
+    {
+        // str_word_count() is ASCII-only and returns ~0 for non-Latin script —
+        // if chunking used it, a long Amharic document would never be judged
+        // "long enough" to split, and would be sent to Claude as a single
+        // oversized request instead of being chunked like any other
+        // long document. Word count here is real (space-separated tokens),
+        // just not Latin script.
+        config(['integrity.chunk_trigger_words' => 6000, 'integrity.chunk_words' => 4000]);
+
+        // Chunking splits on paragraph boundaries (\n\n), so the fixture needs
+        // real paragraphs, not one continuous run — same as any real essay.
+        $amharicParagraph = implode(' ', array_fill(0, 500, 'ቃል'));
+        $longText = implode("\n\n", array_fill(0, 14, $amharicParagraph));
+
+        $driver = \Mockery::mock(ClaudeDetectionDriver::class.'[callClaude]');
+        $driver->shouldAllowMockingProtectedMethods();
+        $driver->shouldReceive('callClaude')
+            ->atLeast()->times(2) // must be split into more than one Claude call
+            ->andReturn($this->fakeMessage([
+                'overall_assessment' => 'mixed', 'probability' => 50, 'confidence' => 'medium',
+                'reasoning_summary' => '', 'sentence_flags' => [], 'style_observations' => [],
+            ]));
+        $this->app->instance(ClaudeDetectionDriver::class, $driver);
+
+        $document = IntegrityDocument::factory()->create([
+            'extracted_text' => $longText,
+            'word_count' => 7000,
+        ]);
+
+        $job = new RunIntegrityAnalysis($document);
+        $this->app->call([$job, 'handle']);
+
+        $this->assertSame(IntegrityDocumentStatus::COMPLETE, $document->refresh()->status);
+    }
+
     public function test_a_completed_analysis_writes_an_analyze_audit_row(): void
     {
         $this->bindFakeClaudeDriver($this->fakeMessage([

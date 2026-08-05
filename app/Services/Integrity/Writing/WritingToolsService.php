@@ -241,10 +241,18 @@ class WritingToolsService
         return ['success' => true, 'report' => $writingReport, 'payload' => $payload];
     }
 
+    /**
+     * Only retries the "Claude answered but didn't call the tool" case.
+     * Rate-limit/connection/status failures are NOT retried here — the SDK
+     * client already retries those internally (`maxRetries` in callClaude),
+     * so retrying again at this layer would just be a second wasted paid
+     * call stacked on top of retries that already happened and already
+     * failed.
+     */
     protected function callWithRetry(string $systemPrompt, string $userMessage, array $tool): array
     {
         $result = $this->attempt($systemPrompt, $userMessage, $tool);
-        if ($result['success']) {
+        if ($result['success'] || ! ($result['retryable'] ?? true)) {
             return $result;
         }
 
@@ -273,19 +281,19 @@ class WritingToolsService
         } catch (RateLimitException $e) {
             Log::channel('ai')->error('Writing tool rate limited', ['error' => $e->getMessage()]);
 
-            return ['success' => false, 'error' => 'Claude API rate limit reached — please retry shortly.'];
+            return ['success' => false, 'error' => 'Claude API rate limit reached — please retry shortly.', 'retryable' => false];
         } catch (APIConnectionException $e) {
             Log::channel('ai')->error('Writing tool connection error', ['error' => $e->getMessage()]);
 
-            return ['success' => false, 'error' => 'Could not reach the Claude API: '.$e->getMessage()];
+            return ['success' => false, 'error' => 'Could not reach the Claude API: '.$e->getMessage(), 'retryable' => false];
         } catch (APIStatusException $e) {
             Log::channel('ai')->error('Writing tool status error', ['error' => $e->getMessage()]);
 
-            return ['success' => false, 'error' => $e->getMessage()];
+            return ['success' => false, 'error' => $e->getMessage(), 'retryable' => false];
         } catch (\Throwable $e) {
             Log::channel('ai')->error('Writing tool exception', ['error' => $e->getMessage()]);
 
-            return ['success' => false, 'error' => $e->getMessage()];
+            return ['success' => false, 'error' => $e->getMessage(), 'retryable' => false];
         }
     }
 

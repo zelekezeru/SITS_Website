@@ -109,4 +109,41 @@ class StatisticalAnalyzerTest extends TestCase
         $this->assertSame([], $result['sentence_scores']);
         $this->assertArrayHasKey('signals', $result);
     }
+
+    public function test_personal_voice_marker_at_the_very_start_of_the_text_is_still_counted(): void
+    {
+        // The marker list is space-anchored (' i ', " i'm ", ...) so a document
+        // that OPENS with "I" has no leading space to match against unless the
+        // text is padded first — this used to silently undercount the single
+        // most common personal-voice opener.
+        $leading = "I'm not entirely sure how to start this paper.";
+        $result = $this->analyzer->analyze($leading);
+
+        $this->assertGreaterThan(0, $result['signals']['personal_voice_markers']['value']);
+    }
+
+    public function test_sentence_level_personal_voice_flag_catches_contracted_openers(): void
+    {
+        // "I'm ..." doesn't contain a standalone " i " token and doesn't match
+        // a literal "i " prefix check — it must still be flagged the same way
+        // the document-level signal already counts it, or the heatmap and the
+        // document-level signal disagree about the exact same sentence.
+        $text = "I'm not sure this argument holds up under scrutiny. Furthermore, this is a wholly separate point.";
+        $result = $this->analyzer->analyze($text);
+
+        $this->assertContains('personal_voice', $result['sentence_scores'][0]['signals']);
+    }
+
+    public function test_list_structure_density_does_not_misfire_on_short_non_latin_lines(): void
+    {
+        // str_word_count() is ASCII-only and returns ~0 for non-Latin script,
+        // which used to make every short non-Latin line look like a heading
+        // (word count <= 6 was always true). Amharic text of realistic length
+        // must not inflate this signal just because of the script it's in.
+        $amharic = "የመጀመሪያው አንቀጽ እዚህ አለ።\nሁለተኛው አንቀጽ ትንሽ ረዘም ያለ እና የተለያዩ ቃላትን ይዟል።\nሦስተኛው አንቀጽ የመጨረሻው ነው።";
+        $result = $this->analyzer->analyze($amharic);
+
+        // 3 short lines, none of which are genuine list/heading markup.
+        $this->assertSame(0.0, $result['signals']['list_structure_density']['value']);
+    }
 }

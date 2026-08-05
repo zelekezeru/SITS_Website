@@ -144,6 +144,19 @@ class WritingToolsServiceTest extends TestCase
         $this->assertDatabaseMissing('writing_reports', ['integrity_document_id' => $document->id, 'type' => 'summary']);
     }
 
+    public function test_an_api_exception_is_not_retried_locally_since_the_sdk_client_already_retries_internally(): void
+    {
+        $document = IntegrityDocument::factory()->create(['extracted_text' => str_repeat('word ', 400)]);
+
+        $service = \Mockery::mock(WritingToolsService::class.'[callClaude]');
+        $service->shouldAllowMockingProtectedMethods();
+        $service->shouldReceive('callClaude')->once()->andThrow(new \RuntimeException('network exploded'));
+
+        $result = $service->summarize($document);
+
+        $this->assertFalse($result['success']);
+    }
+
     public function test_returns_a_graceful_error_without_calling_claude_when_document_has_no_text(): void
     {
         $document = IntegrityDocument::factory()->create(['extracted_text' => '']);

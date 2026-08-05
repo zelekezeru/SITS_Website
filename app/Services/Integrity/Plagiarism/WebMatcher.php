@@ -98,6 +98,14 @@ class WebMatcher
         return Cache::remember($key, now()->addDays($ttlDays), fn () => $this->client->checkPassage($passage));
     }
 
+    protected const QUOTE_PAIRS = [
+        '"' => '"',
+        "\u{201C}" => "\u{201D}", // curly double quotes “ ”
+        "'" => "'",
+        "\u{2018}" => "\u{2019}", // curly single quotes ‘ ’
+        "\u{00AB}" => "\u{00BB}", // guillemets « »
+    ];
+
     /**
      * @return list<string>
      */
@@ -106,9 +114,32 @@ class WebMatcher
         $sentences = preg_split('/(?<=[.!?])\s+/u', trim($text)) ?: [];
 
         $passages = [];
+        $insideOpenQuote = false;
+
         foreach ($sentences as $sentence) {
             $sentence = trim($sentence);
-            if ($sentence === '' || $this->isQuoted($sentence) || $this->isScripture($sentence)) {
+            if ($sentence === '') {
+                continue;
+            }
+
+            if ($insideOpenQuote) {
+                // Still inside a quotation that opened in an earlier sentence
+                // and hasn't closed yet — a block quote split across sentence
+                // boundaries by the sentence splitter. Skip until it closes.
+                if ($this->endsQuote($sentence)) {
+                    $insideOpenQuote = false;
+                }
+
+                continue;
+            }
+
+            if ($this->isFullyQuoted($sentence) || $this->isScripture($sentence)) {
+                continue;
+            }
+
+            if ($this->opensUnclosedQuote($sentence)) {
+                $insideOpenQuote = true;
+
                 continue;
             }
 
@@ -133,19 +164,51 @@ class WebMatcher
         return $passages;
     }
 
-    protected function isQuoted(string $sentence): bool
+    /** A sentence entirely wrapped in one quote pair, e.g. "This whole thing." */
+    protected function isFullyQuoted(string $sentence): bool
     {
         $trimmed = trim($sentence, " \t\n\r\0\x0B.,;:");
 
-        $quotePairs = [
-            '"' => '"',
-            "\u{201C}" => "\u{201D}", // curly double quotes “ ”
-            "'" => "'",
-            "\u{2018}" => "\u{2019}", // curly single quotes ‘ ’
-            "\u{00AB}" => "\u{00BB}", // guillemets « »
-        ];
-        foreach ($quotePairs as $open => $close) {
+        foreach (self::QUOTE_PAIRS as $open => $close) {
             if (str_starts_with($trimmed, $open) && str_ends_with($trimmed, $close)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * A sentence that opens a quote whose closing mark never appears again
+     * in the rest of the sentence. Checking for the closer ANYWHERE after
+     * the opener (not just at the very end) matters because the naive
+     * sentence splitter doesn't break after "punctuation immediately
+     * followed by a closing quote mark" (e.g. `entirely."` doesn't split
+     * before the next sentence) — so a fully self-contained quote followed
+     * by more unrelated text often ends up merged into one "sentence" that
+     * doesn't literally END with the closing mark, even though the quote
+     * itself is already closed.
+     */
+    protected function opensUnclosedQuote(string $sentence): bool
+    {
+        foreach (self::QUOTE_PAIRS as $open => $close) {
+            if (! str_starts_with($sentence, $open)) {
+                continue;
+            }
+
+            $afterOpen = mb_substr($sentence, mb_strlen($open));
+
+            return ! str_contains($afterOpen, $close);
+        }
+
+        return false;
+    }
+
+    /** A sentence that contains a closing quote mark, closing an earlier-opened quote. */
+    protected function endsQuote(string $sentence): bool
+    {
+        foreach (self::QUOTE_PAIRS as $close) {
+            if (str_contains($sentence, $close)) {
                 return true;
             }
         }

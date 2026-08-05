@@ -72,6 +72,27 @@ class WebMatcherTest extends TestCase
         $this->assertSame(0, $result['passages_checked']);
     }
 
+    public function test_excludes_a_quotation_that_spans_multiple_sentences(): void
+    {
+        $client = $this->mockClient();
+        $client->shouldReceive('checkPassage')->once()->andReturn(['success' => true, 'found' => false, 'match_quality' => 'none']);
+
+        // The quote opens in "sentence" 1, doesn't close there, and closes
+        // partway through "sentence" 2 — a block quote split across the
+        // sentence splitter's boundaries. Sentence 3 is genuinely original
+        // and must still be picked up once the quote span closes.
+        $document = IntegrityDocument::factory()->create([
+            'extracted_text' => '"This is a long quotation that begins here and continues onward. '
+                .'It keeps going here too, still within the same quoted block, until" it finally closes '
+                .'right there in the middle of this very sentence, and now new content begins. '
+                .'This final sentence is completely original and should be checked against the web sources available today.',
+        ]);
+
+        $result = (new WebMatcher($client))->check($document);
+
+        $this->assertSame(1, $result['passages_checked']);
+    }
+
     public function test_excludes_scripture_citations(): void
     {
         $client = $this->mockClient();

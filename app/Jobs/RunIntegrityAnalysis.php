@@ -134,11 +134,26 @@ class RunIntegrityAnalysis implements ShouldQueue
         );
 
         $results = [];
+        $failedChunks = 0;
         foreach ($chunks as $chunk) {
             $chunkResult = $driver->analyze($chunk['text']);
             if ($chunkResult['success']) {
                 $results[] = ['result' => $chunkResult, 'word_count' => $chunk['word_count']];
+            } else {
+                $failedChunks++;
             }
+        }
+
+        if ($failedChunks > 0) {
+            // Not fatal as long as at least one chunk succeeded — but a partial
+            // failure quietly narrows how much of the document the score is
+            // actually based on, which is exactly the kind of thing that
+            // shouldn't fail silently for an advisory tool.
+            Log::channel('ai')->warning('Some Claude chunk analyses failed during integrity detection', [
+                'document_id' => $this->document->id,
+                'failed_chunks' => $failedChunks,
+                'total_chunks' => count($chunks),
+            ]);
         }
 
         if (empty($results)) {
@@ -160,14 +175,14 @@ class RunIntegrityAnalysis implements ShouldQueue
         $currentWordCount = 0;
 
         foreach ($paragraphs as $paragraph) {
-            $paragraphWordCount = str_word_count($paragraph);
+            $paragraphWordCount = $this->countWords($paragraph);
 
             if ($currentWordCount > 0 && $currentWordCount + $paragraphWordCount > $chunkWords) {
                 $chunks[] = implode("\n\n", $currentParagraphs);
 
                 $overlapText = $this->takeLastWords(implode("\n\n", $currentParagraphs), $overlapWords);
                 $currentParagraphs = $overlapText !== '' ? [$overlapText] : [];
-                $currentWordCount = str_word_count($overlapText);
+                $currentWordCount = $this->countWords($overlapText);
             }
 
             $currentParagraphs[] = $paragraph;
@@ -178,7 +193,7 @@ class RunIntegrityAnalysis implements ShouldQueue
             $chunks[] = implode("\n\n", $currentParagraphs);
         }
 
-        return array_map(fn ($chunkText) => ['text' => $chunkText, 'word_count' => str_word_count($chunkText)], $chunks);
+        return array_map(fn ($chunkText) => ['text' => $chunkText, 'word_count' => $this->countWords($chunkText)], $chunks);
     }
 
     protected function takeLastWords(string $text, int $n): string
@@ -186,6 +201,16 @@ class RunIntegrityAnalysis implements ShouldQueue
         $words = preg_split('/\s+/u', trim($text), -1, PREG_SPLIT_NO_EMPTY) ?: [];
 
         return implode(' ', array_slice($words, -$n));
+    }
+
+    /**
+     * str_word_count() is ASCII-only and returns ~0 for non-Latin script,
+     * which would badly mis-size chunks (and risk an oversized single
+     * "chunk" hitting Claude's context limit) for any non-English document.
+     */
+    protected function countWords(string $text): int
+    {
+        return count(preg_split('/\s+/u', trim($text), -1, PREG_SPLIT_NO_EMPTY) ?: []);
     }
 
     /**

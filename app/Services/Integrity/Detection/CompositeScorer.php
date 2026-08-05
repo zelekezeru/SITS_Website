@@ -106,7 +106,12 @@ class CompositeScorer
             return 0.0;
         }
 
-        preg_match_all('/"[^"]*"|"[^"]*"/u', $text, $matches);
+        // Straight quotes AND curly "smart quotes" — Word/DOCX defaults to the
+        // latter, so matching only straight quotes would silently miss most
+        // quote-heavy submissions and defeat this confidence safeguard for them.
+        $openCurly = "\u{201C}";
+        $closeCurly = "\u{201D}";
+        preg_match_all('/"[^"]*"|'.$openCurly.'[^'.$closeCurly.']*'.$closeCurly.'/u', $text, $matches);
         $quoted = array_sum(array_map('mb_strlen', $matches[0] ?? []));
 
         return $quoted / $length;
