@@ -10,6 +10,12 @@ return [
     'flag_threshold' => env('INTEGRITY_FLAG_THRESHOLD', 70),
     'min_words' => 150,
     'max_words' => 30000,
+
+    // Documents longer than this get split into chunk_words-sized pieces for
+    // the Claude pass only (token-limit/cost driven). The statistical pass is
+    // free local computation and always runs on the full document — chunking
+    // it would only fragment sentence indexing for no benefit.
+    'chunk_trigger_words' => 6000,
     'chunk_words' => 4000,
     'chunk_overlap_words' => 200,
 

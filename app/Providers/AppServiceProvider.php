@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Enums\Role;
 use App\Models\ConductDecision;
 use App\Models\ConductIssue;
 use App\Models\Deliverable;
@@ -29,7 +30,7 @@ class AppServiceProvider extends ServiceProvider
     {
         // ERP AI Service Manager (narrative + performance analysis).
         $this->app->singleton(AiServiceManager::class, function () {
-            return new AiServiceManager();
+            return new AiServiceManager;
         });
     }
 
@@ -48,9 +49,9 @@ class AppServiceProvider extends ServiceProvider
 
         // Define OAuth2 / OIDC scopes that external clients (Moodle) may request.
         Passport::tokensCan([
-            'openid'  => 'OpenID Connect identity',
+            'openid' => 'OpenID Connect identity',
             'profile' => 'Read your basic profile information (name)',
-            'email'   => 'Read your email address',
+            'email' => 'Read your email address',
         ]);
 
         // Stable morph aliases so polymorphic types survive class renames and
@@ -73,6 +74,14 @@ class AppServiceProvider extends ServiceProvider
         // SUPERADMIN role is handled by the role: middleware on website routes.
         Gate::before(function (User $user, string $ability) {
             return $user->hasRole('President / Super Admin') ? true : null;
+        });
+
+        // Academic Integrity Suite: Instructor + Admin only. Uses primaryRole()
+        // (not a raw Spatie role-name check) since this codebase's unified RBAC
+        // maps Spatie role names to this enum differently per legacy scheme
+        // (e.g. the Spatie role "TRAINER" is Role::INSTRUCTOR).
+        Gate::define('access-integrity-suite', function (User $user) {
+            return in_array($user->primaryRole(), [Role::INSTRUCTOR, Role::SUPER_ADMIN, Role::CAMPUS_ADMIN], true);
         });
 
         // ERP password-recovery email links point at the Inertia reset page.

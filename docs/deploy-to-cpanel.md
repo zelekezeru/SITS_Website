@@ -124,4 +124,44 @@ Assets are prebuilt in `public/build` (166 files, manifest present) — **no `np
 server.** If Meilisearch isn't running, keep `SCOUT_DRIVER=database` in `.env`; switch to
 `meilisearch` and run `php artisan scout:import "App\Models\Book"` later.
 
+---
+
+## Academic Integrity Suite — additive deploy notes
+
+Adds 8 new tables (see `database/migrations/2026_07_30_14*` through `2026_07_31_09*`),
+one new Vue/Inertia area mounted at `/integrity`, and reuses everything already wired up —
+no new API key, no new queue connection, no new search service.
+
+**Env** — all optional, sensible defaults ship in `config/integrity.php` if unset:
+```dotenv
+INTEGRITY_FLAG_THRESHOLD=70        # ai_probability that triggers flagged=true
+INTEGRITY_DAILY_QUOTA=50           # documents/day per instructor before a 429
+INTEGRITY_CLAUDE_MODEL=            # optional override; defaults to CLAUDE_PRO_MODEL
+```
+Reuses the existing `CLAUDE_PRO_API_KEY` — do **not** create a second Anthropic key.
+
+**Queue worker — this is the one deploy-affecting change.** `RunIntegrityAnalysis` and
+`RunWritingTool` dispatch onto a dedicated `integrity` queue name (so a slow AI-detection
+pass never head-of-line-blocks unrelated ERP jobs, and vice versa). Whatever process
+already drains `QUEUE_CONNECTION=database` on production must be told about the new queue
+name, or Integrity Suite jobs will sit in the `jobs` table forever:
+```bash
+php artisan queue:work database --queue=integrity,default --stop-when-empty
+```
+If there's no persistent worker on this host yet (shared cPanel hosting often has no
+Supervisor/systemd access), the shared-hosting-safe fallback is a cron entry alongside
+the existing `schedule:run` line that fires this every minute — `--stop-when-empty` exits
+cleanly once the queue drains instead of running forever:
+```
+* * * * * php /path/to/app/artisan queue:work database --queue=integrity,default --stop-when-empty >/dev/null 2>&1
+```
+If a real Supervisor/systemd daemon *is* available, prefer a long-running
+`queue:work database --queue=integrity,default` process over the cron fallback.
+
+**Assets** — the Integrity Suite's Vue pages build into the same `public/build` as
+everything else; a plain `npm run build` (done locally, before commit) covers it, same as
+every other frontend change per the top of this doc.
+
+---
+
 **Status:** DB strategy = option 1 (prod already ERP-merged) ✅ · `origin/main` up to date ✅

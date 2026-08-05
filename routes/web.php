@@ -1,22 +1,24 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\HikvisionWebhookController;
+use App\Http\Controllers\Admin\MoodleMigrationExecutorController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Auth\OidcUserInfoController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\ContactController;
-use App\Http\Controllers\TestimonialController;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\EventController;
+use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LibraryController;
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\ProgramController;
-use App\Http\Controllers\EventController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\TrainerController;
-use App\Http\Controllers\SubscriptionController;
-use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\MoodleController;
-use App\Http\Controllers\Auth\OidcUserInfoController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProgramController;
+use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\TestimonialController;
+use App\Http\Controllers\TrainerController;
+use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Route;
 
 // ── OIDC userinfo for Moodle SSO ──────────────────────────────────────────────
 // Moodle's auth_oauth2 plugin calls this with the Bearer token from /oauth/token
@@ -28,8 +30,6 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/home', [HomeController::class, 'index']);
 Route::get('/about', [HomeController::class, 'about'])->name('abouts.index');
 Route::get('/elements', [HomeController::class, 'elements'])->name('elements.index');
-
-
 
 // ─── Authenticated User Routes ────────────────────────────────────────────────
 // The unified portal hub (launch-pad for ERP / LMS / Library). The ERP owns the
@@ -49,7 +49,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/go/lms', [MoodleController::class, 'redirect'])->name('lms.redirect');
 
     // ── Library Portal (subscription-gated, handled inside controller) ───────
-    Route::get('/library/portal',    [LibraryController::class, 'portal'])->name('library.portal');
+    Route::get('/library/portal', [LibraryController::class, 'portal'])->name('library.portal');
     Route::post('/library/subscribe', [LibraryController::class, 'subscribe'])->name('library.subscribe');
 });
 
@@ -67,15 +67,15 @@ Route::middleware(['auth', 'role:SUPERADMIN|ADMIN|EDITOR'])->group(function () {
     Route::post('/ckfinder-upload', [BlogController::class, 'upload'])->name('ckeditor.blog.upload');
 
     // ── List/Index views (admin table pages)
-    Route::get('blogs/list',      [BlogController::class,     'list'])->name('blogs.list');
-    Route::get('courses/list',    [CourseController::class,   'list'])->name('courses.list');
-    Route::get('programs/list',   [ProgramController::class,  'list'])->name('programs.list');
-    Route::get('events/list',     [EventController::class,    'list'])->name('events.list');
-    Route::get('users/list',      [UserController::class,     'list'])->name('users.list');
-    Route::get('trainers/list',   [TrainerController::class,  'list'])->name('trainers.list');
-    Route::get('contacts/list',   [ContactController::class,  'list'])->name('contacts.list');
-    Route::get('libraries/list',  [LibraryController::class,  'list'])->name('libraries.list');
-    Route::get('galleries/list',  [GalleryController::class,  'list'])->name('galleries.list');
+    Route::get('blogs/list', [BlogController::class,     'list'])->name('blogs.list');
+    Route::get('courses/list', [CourseController::class,   'list'])->name('courses.list');
+    Route::get('programs/list', [ProgramController::class,  'list'])->name('programs.list');
+    Route::get('events/list', [EventController::class,    'list'])->name('events.list');
+    Route::get('users/list', [UserController::class,     'list'])->name('users.list');
+    Route::get('trainers/list', [TrainerController::class,  'list'])->name('trainers.list');
+    Route::get('contacts/list', [ContactController::class,  'list'])->name('contacts.list');
+    Route::get('libraries/list', [LibraryController::class,  'list'])->name('libraries.list');
+    Route::get('galleries/list', [GalleryController::class,  'list'])->name('galleries.list');
 
     // ── Library Subscription Management (Admin) ──────────────────────────────
     Route::get('library/subscriptions', [LibraryController::class, 'subscriptions'])->name('library.subscriptions');
@@ -83,42 +83,45 @@ Route::middleware(['auth', 'role:SUPERADMIN|ADMIN|EDITOR'])->group(function () {
 
     // ── User Management & Soft-delete Restore ──────────────────────────────
     Route::post('users/{id}/restore', [UserController::class, 'restore'])->name('users.restore');
-    Route::resource('users',         UserController::class);
-    Route::resource('blogs',         BlogController::class)->except(['index', 'show']);
-    Route::resource('contacts',      ContactController::class)->except(['index', 'store']);
-    Route::resource('testimonials',  TestimonialController::class);
-    Route::resource('courses',       CourseController::class)->except(['index', 'show']);
-    Route::resource('libraries',     LibraryController::class)->except(['index', 'show']);
-    Route::resource('admins',        AdminController::class);
-    Route::resource('programs',      ProgramController::class);
-    Route::resource('events',        EventController::class);
-    Route::resource('trainers',      TrainerController::class);
+    Route::resource('users', UserController::class);
+    Route::resource('blogs', BlogController::class)->except(['index', 'show']);
+    Route::resource('contacts', ContactController::class)->except(['index', 'store']);
+    Route::resource('testimonials', TestimonialController::class);
+    Route::resource('courses', CourseController::class)->except(['index', 'show']);
+    Route::resource('libraries', LibraryController::class)->except(['index', 'show']);
+    Route::resource('admins', AdminController::class);
+    Route::resource('programs', ProgramController::class);
+    Route::resource('events', EventController::class);
+    Route::resource('trainers', TrainerController::class);
     Route::resource('subscriptions', SubscriptionController::class);
-    Route::resource('galleries',     GalleryController::class);
+    Route::resource('galleries', GalleryController::class);
 
     // ── Moodle Migration & Sync Tools (SUPERADMIN only)
     Route::middleware('role:SUPERADMIN')->group(function () {
-        Route::get('/admin/moodle-tools', [\App\Http\Controllers\Admin\MoodleMigrationExecutorController::class, 'index'])->name('admin.moodle-tools.index');
-        Route::post('/admin/moodle-tools/run/{action}', [\App\Http\Controllers\Admin\MoodleMigrationExecutorController::class, 'runAction'])->name('admin.moodle-tools.run');
+        Route::get('/admin/moodle-tools', [MoodleMigrationExecutorController::class, 'index'])->name('admin.moodle-tools.index');
+        Route::post('/admin/moodle-tools/run/{action}', [MoodleMigrationExecutorController::class, 'runAction'])->name('admin.moodle-tools.run');
     });
 });
 
 // ─── Public Resource Routes (placed after admin list views to avoid interception) ──
-Route::resource('courses',       CourseController::class)->only(['index', 'show']);
-Route::resource('blogs',         BlogController::class)->only(['index', 'show']);
-Route::resource('libraries',     LibraryController::class)->only(['index', 'show']);
-Route::resource('contacts',      ContactController::class)->only(['index', 'store']);
-
+Route::resource('courses', CourseController::class)->only(['index', 'show']);
+Route::resource('blogs', BlogController::class)->only(['index', 'show']);
+Route::resource('libraries', LibraryController::class)->only(['index', 'show']);
+Route::resource('contacts', ContactController::class)->only(['index', 'store']);
 
 // ─── Hikvision Webhook Real-time Attendance Integration ───────────────────────
-Route::post('/hikvision/webhook', [\App\Http\Controllers\Admin\HikvisionWebhookController::class, 'handle'])->name('hikvision.webhook');
+Route::post('/hikvision/webhook', [HikvisionWebhookController::class, 'handle'])->name('hikvision.webhook');
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';
 
 // ─── SITS ERP (Performance Management System) ─────────────────────────────────
 // Inertia/Vue back-office, merged from the standalone PMS app.
-require __DIR__ . '/erp.php';
+require __DIR__.'/erp.php';
 
 // ─── SITS Library (Integrated Library System) ─────────────────────────────────
 // Inertia/Vue ILS, merged from the standalone sits-library. Mounted under /library.
-require __DIR__ . '/library.php';
+require __DIR__.'/library.php';
+
+// ─── Academic Integrity Suite ──────────────────────────────────────────────────
+// Instructor/Admin only. Mounted under /integrity.
+require __DIR__.'/integrity.php';

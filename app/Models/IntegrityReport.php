@@ -25,6 +25,7 @@ class IntegrityReport extends Model
         'review_status',
         'reviewed_by',
         'review_notes',
+        'student_meeting_date',
         'reviewed_at',
         'engine_version',
         'analyzed_at',
@@ -39,6 +40,7 @@ class IntegrityReport extends Model
         'sentence_scores' => 'array',
         'flagged' => 'boolean',
         'review_status' => IntegrityReviewStatus::class,
+        'student_meeting_date' => 'date',
         'reviewed_at' => 'datetime',
         'analyzed_at' => 'datetime',
     ];
