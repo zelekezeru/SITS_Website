@@ -6,6 +6,7 @@ import GlobalSearch from '@/Components/Library/GlobalSearch.vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import { useDarkMode } from '@/composables/useDarkMode';
 import LanguageSwitcher from '@/Components/Library/LanguageSwitcher.vue';
+import PortalSwitcher from '@/Components/PortalSwitcher.vue';
 import Icon from '@/Components/Icon.vue';
 
 const page = usePage();
@@ -34,16 +35,8 @@ const userAvatar = computed(() => {
 const initials = computed(() =>
     (auth.value?.user?.name ?? 'S').split(' ').map((p) => p[0]).slice(0, 2).join('').toUpperCase());
 
-const hasErpAccess = computed(() => {
-    const roles = (auth.value?.user?.roles ?? []).map(r => r.toLowerCase());
-    if (!roles.length) return false;
-    return !roles.includes('student');
-});
-
-const isWebsiteAdmin = computed(() => {
-    const roles = (auth.value?.user?.roles ?? []).map(r => r.toLowerCase());
-    return roles.some(r => ['superadmin', 'admin', 'editor'].includes(r));
-});
+// Portal links (ERP / JSTOR / LMS / Website Admin) come from the server via
+// PortalSwitcher — see App\Support\PortalDirectory.
 
 // ── Sidebar collapse + mobile drawer (persisted) ───────────────────────────
 const collapsed = ref(false);
@@ -326,6 +319,18 @@ watch(() => page.url, () => {
                 </div>
 
                 <div class="flex items-center gap-1.5 sm:gap-2">
+                    <!-- JSTOR gateway (route redirects out to JSTOR) -->
+                    <a
+                        :href="route('library.portal')"
+                        target="_blank"
+                        rel="noopener"
+                        :title="t('Open JSTOR — academic journals and primary sources')"
+                        class="hidden sm:flex items-center gap-2 h-9 pl-2 pr-3 rounded-lg border border-slate-200 dark:border-slate-800 hover:border-indigo-300 dark:hover:border-indigo-700 hover:bg-slate-50 dark:hover:bg-slate-900 transition"
+                    >
+                        <img :src="'/img/logos/jstor.svg'" alt="JSTOR" class="h-4 w-auto" />
+                        <Icon name="ExternalLink" :size="13" class="text-slate-400" />
+                    </a>
+
                     <GlobalSearch />
                     <LanguageSwitcher />
                     <NotificationBell />
@@ -362,18 +367,8 @@ watch(() => page.url, () => {
                                         <Icon name="User" :size="15" class="text-slate-400 dark:text-slate-500" /><span>{{ t('View Profile') }}</span>
                                     </Link>
                                     <div class="border-t border-slate-100 dark:border-slate-800/60 my-1"></div>
-                                    <Link v-if="hasErpAccess" :href="route('dashboard')" @click="userMenuOpen = false" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                                        <Icon name="LayoutDashboard" :size="15" class="text-slate-400 dark:text-slate-500" /><span>SITS ERP</span>
-                                    </Link>
-                                    <a href="https://lms.sits.edu.et" target="_blank" @click="userMenuOpen = false" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                                        <Icon name="GraduationCap" :size="15" class="text-slate-400 dark:text-slate-500" /><span>SITS LMS</span>
-                                    </a>
-                                    <a href="/go/lms" target="_blank" @click="userMenuOpen = false" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                                        <Icon name="Laptop" :size="15" class="text-slate-400 dark:text-slate-500" /><span>Moodle</span>
-                                    </a>
-                                    <a v-if="isWebsiteAdmin" :href="route('website.admin.dashboard')" @click="userMenuOpen = false" class="flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                                        <Icon name="Globe" :size="15" class="text-slate-400 dark:text-slate-500" /><span>Website Admin</span>
-                                    </a>
+                                    <!-- Cross-app portals — role-gated server-side -->
+                                    <PortalSwitcher current="library" variant="auto" @navigate="userMenuOpen = false" />
                                     <div class="border-t border-slate-100 dark:border-slate-800/60 my-1"></div>
                                     <Link :href="route('logout')" method="post" as="button" @click="userMenuOpen = false" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-left text-xs font-bold text-rose-500 hover:bg-rose-500/10 hover:text-rose-400 transition-colors cursor-pointer">
                                         <Icon name="LogOut" :size="15" /><span>{{ t('Sign out') }}</span>

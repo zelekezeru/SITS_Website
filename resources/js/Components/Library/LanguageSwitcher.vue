@@ -1,4 +1,4 @@
-﻿<script setup>
+<script setup>
 import { computed } from 'vue';
 import { usePage, router } from '@inertiajs/vue3';
 import Dropdown from '@/Components/Library/Dropdown.vue';
@@ -7,8 +7,8 @@ const page = usePage();
 const currentLocale = computed(() => page.props.locale || 'en');
 
 const locales = {
-    en: { name: 'English', flag: 'ðŸ‡¬ðŸ‡§' },
-    am: { name: 'áŠ áˆ›áˆ­áŠ›', flag: 'ðŸ‡ªðŸ‡¹' }
+    en: { name: 'English', flag: '🇬🇧' },
+    am: { name: 'አማርኛ', flag: '🇪🇹' }
 };
 
 const changeLocale = (locale) => {

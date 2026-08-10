@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use App\Http\Requests\LibraryStoreRequest;
 use App\Http\Requests\LibraryUpdateRequest;
 use Inertia\Inertia;
@@ -99,6 +100,45 @@ class LibraryController extends Controller
     {
         $targetUrl = config('services.jstore.url', 'https://www.jstor.org/');
         return redirect()->away($targetUrl);
+    }
+
+    /**
+     * EBSCOhost gateway.
+     *
+     * Same access policy as JSTOR above: authentication is the gate. The
+     * institutional EBSCO subscription covers every SITS account, so there is
+     * no per-user or per-role check here.
+     *
+     * When a shared credential is configured we hand off via EBSCO's
+     * `authtype=uid` scheme so the user lands signed in. The credential is read
+     * from .env at request time and never reaches the frontend as a prop — but
+     * it IS visible in the address bar of whoever follows this redirect, which
+     * authtype=uid cannot avoid. Each hand-off is logged so a leaked credential
+     * can be traced back to an account; rotate EBSCO_PASSWORD periodically.
+     *
+     * With no credential configured this degrades to a plain redirect, which is
+     * what referring-URL or IP authentication would need.
+     */
+    public function ebsco()
+    {
+        $ebsco = config('services.ebsco');
+        $target = $ebsco['url'];
+
+        if (! empty($ebsco['username'])) {
+            $target .= (str_contains($target, '?') ? '&' : '?').http_build_query([
+                'authtype' => 'uid',
+                'user'     => $ebsco['username'],
+                'password' => $ebsco['password'],
+                'profile'  => $ebsco['profile'],
+            ]);
+
+            Log::info('EBSCO gateway hand-off', [
+                'user_id' => Auth::id(),
+                'ip'      => request()->ip(),
+            ]);
+        }
+
+        return redirect()->away($target);
     }
 
     /**

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  JSTOR wordmark placeholder.
+
+  Drawn locally so the artwork never depends on an external host (production is
+  cPanel with no Node and a strict asset story). Replace this file with the
+  official asset from JSTOR's brand kit if/when marketing supplies it — nothing
+  else needs to change, the path is referenced from App\Support\PortalDirectory
+  and the Library layout.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 132 40" width="132" height="40" role="img" aria-label="JSTOR">
+  <rect width="132" height="40" rx="6" fill="#9E1B32"/>
+  <text x="66" y="27.5"
+        text-anchor="middle"
+        font-family="Georgia, 'Times New Roman', serif"
+        font-size="22"
+        font-weight="700"
+        letter-spacing="2.5"
+        fill="#ffffff">JSTOR</text>
+</svg>

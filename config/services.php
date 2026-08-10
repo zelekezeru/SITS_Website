@@ -45,8 +45,31 @@ return [
         'service' => env('MOODLE_SSO_SERVICE', 'sits_sso_service'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | External research databases (Library)
+    |--------------------------------------------------------------------------
+    | Gateway targets for the Library's subscribed databases. Both are plain
+    | redirects behind `auth` — any signed-in SITS user may use them, so the
+    | institutional entitlement (JSTOR Open Africa, the EBSCO subscription) is
+    | what does the authorising, not a per-user check on our side.
+    |
+    | EBSCO uses its `authtype=uid` scheme: the gateway appends the shared
+    | institutional credential to the login URL server-side. The credential
+    | lives ONLY in .env (untracked) and is never shared to the frontend — but
+    | note it is still visible in the address bar of whoever follows the
+    | redirect, which is inherent to authtype=uid. Rotate it periodically, and
+    | switch to referring-URL or IP authentication if EBSCO enables it.
+    */
     'jstore' => [
         'url' => env('JSTORE_URL', 'https://library.sits.edu.et'),
+    ],
+
+    'ebsco' => [
+        'url'      => env('EBSCO_URL', 'https://search.ebscohost.com/login.aspx'),
+        'username' => env('EBSCO_USERNAME'),
+        'password' => env('EBSCO_PASSWORD'),
+        'profile'  => env('EBSCO_PROFILE', 'ehost'),
     ],
 
     /*

@@ -1,6 +1,7 @@
 <script setup>
 import { Link, usePage } from '@inertiajs/vue3';
 import { computed, ref, watch, onMounted, onUnmounted } from 'vue';
+import PortalSwitcher from '@/Components/PortalSwitcher.vue';
 
 const page = usePage();
 const user = computed(() => page.props.auth.user);
@@ -11,37 +12,8 @@ const userAvatar = computed(() => {
   return img ? `/storage/${img}` : '/img/user.png';
 });
 
-const hasErpAccess = computed(() => {
-  const roles = (user.value?.roles ?? []).map(r => r.toLowerCase());
-  if (!roles.length) return false;
-  return !roles.includes('student');
-});
-
-const lmsLabel = computed(() => {
-  const roles = (user.value?.roles ?? []).map(r => r.toLowerCase());
-  if (roles.includes('student')) return 'Student Portal';
-  if (roles.includes('trainer')) return 'Instructor Portal';
-  return 'LMS Portal';
-});
-
-const lmsUrl = computed(() => {
-  const roles = (user.value?.roles ?? []).map(r => r.toLowerCase());
-  if (roles.includes('student') || roles.includes('trainer')) {
-    return '/go/lms';
-  }
-  return 'https://lms.sits.edu.et';
-});
-
-const hasLibraryAccess = computed(() => {
-  const roles = (user.value?.roles ?? []).map(r => r.toLowerCase());
-  const allowed = ['student', 'trainer', 'librarian', 'admin', 'superadmin', 'president / super admin', 'staff', 'editor'];
-  return roles.some(r => allowed.includes(r));
-});
-
-const isWebsiteAdmin = computed(() => {
-  const roles = (user.value?.roles ?? []).map(r => r.toLowerCase());
-  return roles.some(r => ['superadmin', 'admin', 'editor'].includes(r));
-});
+// Portal links (ERP / Library / JSTOR / LMS / Website Admin) come from the
+// server via PortalSwitcher — see App\Support\PortalDirectory.
 
 const userMenuOpen = ref(false);
 const userMenuRef = ref(null);
@@ -132,27 +104,18 @@ watch(() => page.props.flash, (flash) => {
             <!-- Dropdown -->
             <Transition enter-active-class="transition ease-out duration-150" enter-from-class="opacity-0 scale-95" enter-to-class="opacity-100 scale-100"
               leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100 scale-100" leave-to-class="opacity-0 scale-95">
-              <ul v-if="userMenuOpen" class="absolute right-0 mt-2 w-56 bg-slate-900/95 backdrop-blur-xl border border-slate-800 rounded-2xl shadow-2xl py-2 z-50">
-                <li class="px-4 py-2 border-b border-slate-800/60 mb-1 sm:hidden">
+              <div v-if="userMenuOpen" class="absolute right-0 mt-2 w-60 bg-slate-900/95 backdrop-blur-xl border border-slate-800 rounded-2xl shadow-2xl py-2 z-50">
+                <div class="px-4 py-2 border-b border-slate-800/60 mb-1 sm:hidden">
                   <p class="text-[10px] text-slate-500 uppercase tracking-wider">Logged in as</p>
                   <p class="text-xs font-semibold text-white truncate">{{ user.name }}</p>
-                </li>
-                <li><Link :href="route('portal')" class="block px-4 py-2.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800/40 transition">Dashboard Hub</Link></li>
-                <li><Link :href="route('profile.edit', { from: 'website' })" class="block px-4 py-2.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800/40 transition">View Profile</Link></li>
-                <li class="border-t border-slate-800/60 my-1"></li>
-                <li><a :href="lmsUrl" class="block px-4 py-2.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800/40 transition">{{ lmsLabel }}</a></li>
-                <li v-if="hasErpAccess"><Link :href="route('dashboard')" class="block px-4 py-2.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800/40 transition">ERP Portal</Link></li>
-                <li v-if="hasLibraryAccess"><Link :href="route('library.dashboard')" class="block px-4 py-2.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800/40 transition">Digital Library</Link></li>
-                <li v-if="isWebsiteAdmin">
-                  <a :href="route('website.admin.dashboard')" class="block px-4 py-2.5 text-xs text-slate-400 hover:text-white hover:bg-slate-800/40 transition">
-                    Website Admin
-                  </a>
-                </li>
-                <li class="border-t border-slate-800/60 my-1"></li>
-                <li>
-                  <Link :href="route('logout')" method="post" as="button" class="block w-full text-left px-4 py-2.5 text-xs text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition cursor-pointer">Sign Out</Link>
-                </li>
-              </ul>
+                </div>
+                <Link :href="route('portal')" class="block px-4 py-2 text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800/50 transition" @click="userMenuOpen = false">Dashboard Hub</Link>
+                <Link :href="route('profile.edit', { from: 'website' })" class="block px-4 py-2 text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800/50 transition" @click="userMenuOpen = false">View Profile</Link>
+                <div class="border-t border-slate-800/60 my-1"></div>
+                <PortalSwitcher @navigate="userMenuOpen = false" />
+                <div class="border-t border-slate-800/60 my-1"></div>
+                <Link :href="route('logout')" method="post" as="button" class="block w-full text-left px-4 py-2.5 text-xs font-bold text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition cursor-pointer">Sign Out</Link>
+              </div>
             </Transition>
           </div>
         </div>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  EBSCO wordmark placeholder.
+
+  Drawn locally for the same reason as jstor.svg — production is cPanel with no
+  Node, so the artwork must not depend on an external host. Replace this file
+  with the official asset from EBSCO's brand kit when SITS supplies it; the
+  path is all that's referenced (Library dashboard + topbar).
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 132 40" width="132" height="40" role="img" aria-label="EBSCO">
+  <rect width="132" height="40" rx="6" fill="#00558C"/>
+  <text x="66" y="27"
+        text-anchor="middle"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="20"
+        font-weight="700"
+        letter-spacing="2"
+        fill="#ffffff">EBSCO</text>
+</svg>

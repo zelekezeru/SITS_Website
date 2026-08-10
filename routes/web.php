@@ -48,8 +48,11 @@ Route::middleware('auth')->group(function () {
     // Authenticated users are redirected to Moodle with auto-login (SSO).
     Route::get('/go/lms', [MoodleController::class, 'redirect'])->name('lms.redirect');
 
-    // ── Library Portal (subscription-gated, handled inside controller) ───────
+    // ── External research databases ──────────────────────────────────────────
+    // Plain gateway redirects. The institutional subscription covers every SITS
+    // account, so `auth` above is the only gate. Targets are config-driven.
     Route::get('/library/portal', [LibraryController::class, 'portal'])->name('library.portal');
+    Route::get('/library/ebsco', [LibraryController::class, 'ebsco'])->name('library.ebsco');
     Route::post('/library/subscribe', [LibraryController::class, 'subscribe'])->name('library.subscribe');
 });
 

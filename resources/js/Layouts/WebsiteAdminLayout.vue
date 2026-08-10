@@ -2,6 +2,7 @@
 import { computed, ref, onMounted, onUnmounted } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import Icon from '@/Components/Icon.vue';
+import PortalSwitcher from '@/Components/PortalSwitcher.vue';
 import { useDarkMode } from '@/composables/useDarkMode';
 
 const page = usePage();
@@ -49,37 +50,8 @@ const links = [
 
 const isExact = (path) => page.url.split('?')[0] === path;
 
-const lmsLabel = computed(() => {
-  const roles = (user.value?.roles ?? []).map(r => r.toLowerCase());
-  if (roles.includes('student')) return 'Student Portal';
-  if (roles.includes('trainer')) return 'Instructor Portal';
-  return 'LMS Portal';
-});
-
-const lmsUrl = computed(() => {
-  const roles = (user.value?.roles ?? []).map(r => r.toLowerCase());
-  if (roles.includes('student') || roles.includes('trainer')) {
-    return '/go/lms';
-  }
-  return 'https://lms.sits.edu.et';
-});
-
-const hasLibraryAccess = computed(() => {
-  const roles = (user.value?.roles ?? []).map(r => r.toLowerCase());
-  const allowed = ['student', 'trainer', 'librarian', 'admin', 'superadmin', 'president / super admin', 'staff', 'editor'];
-  return roles.some(r => allowed.includes(r));
-});
-
-const hasErpAccess = computed(() => {
-  const roles = (user.value?.roles ?? []).map(r => r.toLowerCase());
-  const allowed = ['superadmin', 'admin', 'president / super admin', 'editor', 'trainer', 'staff', 'librarian', 'vice president', 'dean of the seminary', 'operational manager', 'finance officer', 'department head', 'registrar'];
-  return roles.some(r => allowed.includes(r));
-});
-
-const isWebsiteAdmin = computed(() => {
-  const roles = (user.value?.roles ?? []).map(r => r.toLowerCase());
-  return roles.some(r => ['superadmin', 'admin', 'editor'].includes(r));
-});
+// Portal links (ERP / Library / JSTOR / LMS / Website Admin) come from the
+// server via PortalSwitcher — see App\Support\PortalDirectory.
 </script>
 
 <template>
@@ -181,50 +153,44 @@ const isWebsiteAdmin = computed(() => {
             leave-from-class="opacity-100" 
             leave-to-class="opacity-0 -translate-y-1"
           >
-            <div v-if="userMenuOpen" class="absolute right-0 mt-2 w-64 rounded-2xl border border-slate-850 bg-slate-900/95 backdrop-blur-xl shadow-2xl z-50 overflow-hidden py-1">
-              <div class="px-4 py-3 border-b border-slate-800/60 mb-1">
+            <div v-if="userMenuOpen" class="absolute right-0 mt-2 w-64 rounded-2xl border border-slate-850 bg-slate-900/95 backdrop-blur-xl shadow-2xl z-50 overflow-hidden">
+              <div class="px-4 py-3 border-b border-slate-800/60">
                 <p class="text-[10px] text-slate-500 font-semibold uppercase tracking-wider">Logged In As</p>
                 <p class="text-sm font-bold text-white truncate">{{ user?.name }}</p>
+                <div class="mt-1 flex flex-wrap gap-1">
+                  <span
+                    v-for="r in user?.roles"
+                    :key="r"
+                    class="text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded bg-blue-500/10 border border-blue-500/20 text-blue-400"
+                  >
+                    {{ r }}
+                  </span>
+                </div>
               </div>
 
-              <Link href="/portal" class="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800/50 transition" @click="userMenuOpen = false">
-                <Icon name="LayoutDashboard" :size="15" class="text-slate-500" />
-                <span>Dashboard Hub</span>
-              </Link>
+              <div class="py-1">
+                <Link :href="route('portal')" class="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800/50 transition" @click="userMenuOpen = false">
+                  <Icon name="LayoutDashboard" :size="15" class="text-slate-500" />
+                  <span>Dashboard Hub</span>
+                </Link>
 
-              <a :href="route('profile.edit', { from: 'website' })" class="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800/50 transition" @click="userMenuOpen = false">
-                <Icon name="User" :size="15" class="text-slate-500" />
-                <span>View Profile</span>
-              </a>
+                <Link :href="route('profile.edit', { from: 'website' })" class="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800/50 transition" @click="userMenuOpen = false">
+                  <Icon name="User" :size="15" class="text-slate-500" />
+                  <span>View Profile</span>
+                </Link>
 
-              <div class="border-t border-slate-800/60 my-1"></div>
+                <div class="border-t border-slate-800/60 my-1"></div>
 
-              <a :href="lmsUrl" class="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800/50 transition" @click="userMenuOpen = false">
-                <Icon name="Briefcase" :size="15" class="text-slate-500" />
-                <span>{{ lmsLabel }}</span>
-              </a>
+                <!-- Cross-app portals — role-gated server-side -->
+                <PortalSwitcher current="website-admin" @navigate="userMenuOpen = false" />
 
-              <a v-if="hasErpAccess" :href="route('dashboard')" class="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800/50 transition" @click="userMenuOpen = false">
-                <Icon name="ShieldCheck" :size="15" class="text-slate-500" />
-                <span>ERP Portal</span>
-              </a>
+                <div class="border-t border-slate-800/60 my-1"></div>
 
-              <a v-if="hasLibraryAccess" :href="route('library.dashboard')" class="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800/50 transition" @click="userMenuOpen = false">
-                <Icon name="FolderOpen" :size="15" class="text-slate-500" />
-                <span>Digital Library</span>
-              </a>
-
-              <a v-if="isWebsiteAdmin" :href="route('website.admin.dashboard')" class="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800/50 transition" @click="userMenuOpen = false">
-                <Icon name="Globe" :size="15" class="text-slate-500" />
-                <span>Website Admin</span>
-              </a>
-
-              <div class="border-t border-slate-800/60 my-1"></div>
-
-              <Link :href="route('logout')" method="post" as="button" class="w-full flex items-center gap-2 px-4 py-2.5 text-left text-xs font-bold text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 transition-colors cursor-pointer" @click="userMenuOpen = false">
-                <Icon name="LogOut" :size="15" />
-                <span>Sign Out</span>
-              </Link>
+                <Link :href="route('logout')" method="post" as="button" class="w-full flex items-center gap-2 px-4 py-2.5 text-left text-xs font-bold text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 transition-colors cursor-pointer" @click="userMenuOpen = false">
+                  <Icon name="LogOut" :size="15" />
+                  <span>Sign Out</span>
+                </Link>
+              </div>
             </div>
           </Transition>
         </div>

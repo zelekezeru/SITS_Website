@@ -64,6 +64,9 @@ class HandleInertiaRequests extends Middleware
             'fiscalYear' => $isPresident ? \App\Support\FiscalYear::payload() : null,
             'nav' => $context['nav'],
             'portal' => $context['portal'],
+            // Cross-app switcher (ERP / Library / JSTOR / LMS / Website Admin).
+            // One role-gated list for every layout — see PortalDirectory.
+            'portals' => \App\Support\PortalDirectory::for($user),
             'flash' => [
                 'success' => $request->session()->get('success'),
                 'error' => $request->session()->get('error'),

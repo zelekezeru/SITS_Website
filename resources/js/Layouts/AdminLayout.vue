@@ -5,6 +5,7 @@ import Icon from '@/Components/Icon.vue';
 import CommandPalette from '@/Components/CommandPalette.vue';
 import ConfirmationModal from '@/Components/ConfirmationModal.vue';
 import LocaleToggle from '@/Components/LocaleToggle.vue';
+import PortalSwitcher from '@/Components/PortalSwitcher.vue';
 import { useTranslations } from '@/Composables/useTranslations';
 
 const { t } = useTranslations();
@@ -120,44 +121,8 @@ const initials = computed(() =>
 
 const userMenuOpen = ref(false);
 
-const lmsLabel = computed(() => {
-  const roles = user.value?.roles ?? [];
-  const rolesLower = roles.map(r => r.toLowerCase());
-  if (rolesLower.includes('student')) {
-    return 'Go to Student Learning Portal';
-  } else if (rolesLower.includes('trainer')) {
-    return 'Instructors Portal';
-  }
-  return 'LMS Portal';
-});
-
-const lmsUrl = computed(() => {
-  const roles = user.value?.roles ?? [];
-  const rolesLower = roles.map(r => r.toLowerCase());
-  if (rolesLower.includes('student') || rolesLower.includes('trainer')) {
-    return '/go/lms';
-  }
-  return 'https://lms.sits.edu.et';
-});
-
-const hasLibraryAccess = computed(() => {
-  const roles = user.value?.roles ?? [];
-  const rolesLower = roles.map(r => r.toLowerCase());
-  const allowed = ['student', 'trainer', 'librarian', 'admin', 'superadmin', 'president / super admin', 'staff', 'editor'];
-  return rolesLower.some(r => allowed.includes(r));
-});
-
-const hasErpAccess = computed(() => {
-  const roles = user.value?.roles ?? [];
-  const rolesLower = roles.map(r => r.toLowerCase());
-  const allowed = ['superadmin', 'admin', 'president / super admin', 'editor', 'trainer', 'staff', 'librarian', 'vice president', 'dean of the seminary', 'operational manager', 'finance officer', 'department head', 'registrar'];
-  return rolesLower.some(r => allowed.includes(r));
-});
-
-const isWebsiteAdmin = computed(() => {
-  const roles = user.value?.roles ?? [];
-  return roles.map(r => r.toLowerCase()).some(r => ['superadmin', 'admin', 'editor'].includes(r));
-});
+// Portal links (ERP / Library / JSTOR / Integrity / LMS / Website Admin) come
+// from the server via PortalSwitcher — see App\Support\PortalDirectory.
 
 watch(currentPath, () => {
   mobileOpen.value = false;
@@ -504,59 +469,8 @@ watch(currentPath, () => {
 
                 <div class="border-t border-slate-800/60 my-1"></div>
 
-                <!-- SITS ERP -->
-                <Link 
-                  v-if="hasErpAccess"
-                  :href="route('dashboard')" 
-                  class="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800/50 transition-colors"
-                  @click="userMenuOpen = false"
-                >
-                  <Icon name="LayoutDashboard" :size="15" class="text-slate-500" />
-                  <span>SITS ERP</span>
-                </Link>
-
-                <!-- Digital Library -->
-                <Link 
-                  :href="route('library.dashboard')" 
-                  class="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800/50 transition-colors"
-                  @click="userMenuOpen = false"
-                >
-                  <Icon name="BookOpen" :size="15" class="text-slate-500" />
-                  <span>Digital Library</span>
-                </Link>
-
-                <!-- SITS LMS -->
-                <a 
-                  href="https://lms.sits.edu.et" 
-                  target="_blank"
-                  class="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800/50 transition-colors"
-                  @click="userMenuOpen = false"
-                >
-                  <Icon name="GraduationCap" :size="15" class="text-slate-500" />
-                  <span>SITS LMS</span>
-                </a>
-
-                <!-- Moodle -->
-                <a 
-                  href="/go/lms" 
-                  target="_blank"
-                  class="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800/50 transition-colors"
-                  @click="userMenuOpen = false"
-                >
-                  <Icon name="Laptop" :size="15" class="text-slate-500" />
-                  <span>Moodle</span>
-                </a>
-
-                <!-- Website Admin Console -->
-                <a 
-                  v-if="isWebsiteAdmin"
-                  :href="route('website.admin.dashboard')" 
-                  class="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800/50 transition-colors"
-                  @click="userMenuOpen = false"
-                >
-                  <Icon name="Globe" :size="15" class="text-slate-500" />
-                  <span>Website Admin</span>
-                </a>
+                <!-- Cross-app portals — role-gated server-side -->
+                <PortalSwitcher current="erp" @navigate="userMenuOpen = false" />
 
                 <div class="border-t border-slate-800/60 my-1"></div>
 

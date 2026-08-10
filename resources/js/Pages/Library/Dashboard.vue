@@ -22,6 +22,26 @@ const searchCatalog = () => {
     }
 };
 
+// External research databases. Both are gateway redirects behind `auth` — the
+// institutional subscription is what authorises, so every signed-in user sees
+// both. Targets are config-driven server-side (services.jstore / services.ebsco).
+const researchDatabases = [
+    {
+        key: 'jstor',
+        name: 'JSTOR',
+        route: 'library.portal',
+        logo: '/img/logos/jstor.svg',
+        blurb: 'Academic journals, books and primary sources.',
+    },
+    {
+        key: 'ebsco',
+        name: 'EBSCO',
+        route: 'library.ebsco',
+        logo: '/img/logos/ebsco.svg',
+        blurb: 'Full-text databases, e-books and research indexes.',
+    },
+];
+
 const carouselRef = ref(null);
 const scrollCarousel = (direction) => {
     if (carouselRef.value) {
@@ -270,6 +290,35 @@ const iconTintMap = {
                     </p>
                 </div>
             </div>
+
+            <!-- External research databases — the institutional subscriptions
+                 cover every SITS account, so these are open to anyone signed in. -->
+            <section class="grid gap-4 md:grid-cols-2">
+                <a
+                    v-for="db in researchDatabases"
+                    :key="db.key"
+                    :href="route(db.route)"
+                    target="_blank"
+                    rel="noopener"
+                    class="group flex items-center justify-between gap-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 hover:border-indigo-400/60 dark:hover:border-indigo-600/60 hover:shadow-lg hover:shadow-indigo-500/5 transition"
+                >
+                    <div class="flex items-center gap-4 min-w-0">
+                        <!-- bound, not static: a literal src is resolved by Vite at build time -->
+                        <img :src="db.logo" :alt="db.name" class="h-9 w-auto shrink-0" />
+                        <div class="min-w-0">
+                            <p class="text-sm font-bold text-slate-900 dark:text-white">
+                                {{ __('Search :name', { name: db.name }) }}
+                            </p>
+                            <p class="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
+                                {{ __(db.blurb) }}
+                            </p>
+                        </div>
+                    </div>
+                    <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-900 dark:bg-indigo-600 text-white group-hover:bg-indigo-700 transition">
+                        <Icon name="ExternalLink" :size="15" />
+                    </span>
+                </a>
+            </section>
 
             <!-- Personal stat chips (everyone) -->
             <section>
