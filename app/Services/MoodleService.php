@@ -8,10 +8,13 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 /**
- * MoodleService — integrates sits.edu.et with lms.sits.edu.et via Moodle REST API.
+ * MoodleService — integrates sits.edu.et with learn.sits.edu.et via Moodle REST API.
+ *
+ * Secondary to the OIDC SSO (Passport → Moodle auth_oauth2), which is the primary
+ * login path. This auth_userkey route only runs when MOODLE_TOKEN is set.
  *
  * Requires in .env:
- *   MOODLE_URL=https://lms.sits.edu.et
+ *   MOODLE_URL=https://learn.sits.edu.et
  *   MOODLE_TOKEN=<admin webservice token>
  *   MOODLE_SSO_SERVICE=sits_sso_service
  */
@@ -44,11 +47,20 @@ class MoodleService
         // 1. Ensure Moodle user exists / sync profile
         $this->ensureMoodleUser($user);
 
-        // 2. Request login key
+        // 2. Request login key.
+        //
+        // auth_userkey matches the account on ONE configured field ("User mapping
+        // field" in the plugin settings). Send exactly that field — passing several
+        // at once leaves it ambiguous which account is being logged in as, and the
+        // plugin rejects a payload whose mapping field is missing. MOODLE_SSO_MAP
+        // must mirror the plugin setting.
+        $field = $this->mappingField();
+
         $response = $this->call('auth_userkey_request_login_url', [
             'user' => [
-                'username' => $this->toMoodleUsername($user),
-                'email'    => $user->email,
+                $field => $field === 'username'
+                    ? $this->toMoodleUsername($user)
+                    : $user->email,
             ],
         ]);
 
@@ -90,8 +102,10 @@ class MoodleService
                 'firstname' => $this->firstName($user->name),
                 'lastname'  => $this->lastName($user->name),
                 'email'     => $user->email,
-                'auth'      => 'userkey',               // auth_userkey plugin
-                'password'  => '',                      // not needed for userkey auth
+                // External auth: SITS holds the credential, Moodle never does.
+                // No password key at all — Moodle rejects an empty string, and
+                // sending one would also create a locally-guessable account.
+                'auth'      => 'userkey',
             ]],
         ]);
     }
@@ -155,6 +169,18 @@ class MoodleService
         return $response['users'][0] ?? null;
     }
 
+    /**
+     * The field auth_userkey matches accounts on. Only 'email' and 'username' are
+     * supported here; anything else falls back to email rather than silently
+     * sending a payload the plugin will reject.
+     */
+    protected function mappingField(): string
+    {
+        $field = (string) config('services.moodle.sso_mapping_field', 'email');
+
+        return in_array($field, ['email', 'username'], true) ? $field : 'email';
+    }
+
     protected function toMoodleUsername(User $user): string
     {
         // Use email prefix, sanitized — Moodle usernames must be lowercase alphanumeric
@@ -185,7 +211,11 @@ class MoodleService
     {
         $url = "{$this->baseUrl}/webservice/rest/server.php";
 
-        $response = Http::timeout(10)->post($url, array_merge([
+        // asForm() is required, not stylistic: Moodle's REST server reads its
+        // arguments out of $_POST. Laravel's default JSON body arrives as an
+        // unparsed request stream, so every call would fail as "invalid token".
+        // http_build_query also gives Moodle the users[0][email] shape it wants.
+        $response = Http::timeout(10)->asForm()->post($url, array_merge([
             'wstoken'       => $this->token,
             'wsfunction'    => $function,
             'moodlewsrestformat' => 'json',

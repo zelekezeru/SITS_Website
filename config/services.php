@@ -35,14 +35,25 @@ return [
     |--------------------------------------------------------------------------
     | Moodle LMS Integration
     |--------------------------------------------------------------------------
-    | Used for SSO (Single Sign-On) between sits.edu.et and lms.sits.edu.et.
+    | The live LMS is learn.sits.edu.et (old.sits.edu.et is the read-only
+    | archive). Primary SSO is OIDC — Moodle's auth_oauth2 consumes our Passport
+    | server; see docs/moodle-integration.md. These settings drive the *secondary*
+    | auth_userkey path used by /go/lms and the REST calls in MoodleService; with
+    | MOODLE_TOKEN unset that path degrades to a plain redirect, which is safe.
     | Generate the token in Moodle: Admin → Web Services → Manage Tokens.
-    | The auth_userkey plugin must be installed on the Moodle instance.
     */
     'moodle' => [
-        'url'     => env('MOODLE_URL', 'https://lms.sits.edu.et'),
+        'url'     => env('MOODLE_URL', 'https://learn.sits.edu.et'),
         'token'   => env('MOODLE_TOKEN', ''),
         'service' => env('MOODLE_SSO_SERVICE', 'sits_sso_service'),
+
+        // Must equal auth_userkey's "User mapping field" setting in Moodle.
+        'sso_mapping_field' => env('MOODLE_SSO_MAP', 'email'),
+
+        // Passport client id issued to Moodle (`php artisan moodle:oauth-client`).
+        // Setting it marks that client trusted, which skips the consent screen —
+        // so a signed-in SITS user reaches their courses without an extra click.
+        'oauth_client_id' => env('MOODLE_OAUTH_CLIENT_ID', ''),
     ],
 
     /*

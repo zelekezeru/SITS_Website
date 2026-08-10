@@ -43,6 +43,9 @@ class AppServiceProvider extends ServiceProvider
         // Uses resources/views/oauth/authorize.blade.php (no vendor:publish needed).
         Passport::authorizationView('oauth.authorize');
 
+        // Our own LMS skips that consent screen — see App\Models\OAuthClient.
+        Passport::useClientModel(\App\Models\OAuthClient::class);
+
         // Store client secrets in plain text so external OAuth2 consumers like
         // Moodle can authenticate without bcrypt comparison issues.
         // Note: Passport v13 stores secrets as plain text by default.

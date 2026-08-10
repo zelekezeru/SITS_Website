@@ -83,13 +83,14 @@ class PortalDirectory
         }
 
         // ── LMS (Moodle) ─────────────────────────────────────────────────────
-        // Students and trainers get the SSO hand-off; everyone else gets the
-        // plain Moodle URL, because the SSO bridge only provisions those two.
-        $ssoUser = array_intersect(['student', 'trainer'], $roles) !== [];
+        // Everyone signed in at SITS goes through the SSO hand-off — the bridge
+        // provisions a Moodle account by email for any role, and /go/lms falls
+        // back to the plain Moodle URL by itself when SSO is off or unreachable.
+        // Sending some roles straight to Moodle would make them log in twice.
         $entries[] = self::entry(
             key: 'lms',
             label: self::lmsLabel($roles),
-            href: $ssoUser ? route('lms.redirect') : config('services.moodle.url', 'https://lms.sits.edu.et'),
+            href: route('lms.redirect'),
             icon: 'GraduationCap',
             description: 'Courses, assignments and grades',
             external: true,
