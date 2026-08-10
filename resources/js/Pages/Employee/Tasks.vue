@@ -77,6 +77,21 @@ const remove = async (task) => {
   }
 };
 
+// Inline status flip via the lightweight progress endpoint — no modal round-trip.
+const busyId = ref(null);
+
+const setProgress = (task, status, completion_pct) => {
+  busyId.value = task.id;
+  router.post(`/dashboard/tasks/${task.id}/progress`, { status, completion_pct }, {
+    preserveScroll: true,
+    onFinish: () => (busyId.value = null),
+  });
+};
+
+const markDone = (task) => setProgress(task, 'completed', 100);
+// Reopening keeps the recorded percentage; the modal is there to fine-tune it.
+const reopen = (task) => setProgress(task, 'in_progress', Number(task.completion_pct));
+
 const TASK_BADGE = {
   completed: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400',
   in_progress: 'bg-blue-500/10 border-blue-500/20 text-blue-400',
@@ -156,6 +171,14 @@ const fmtDate = (d) => (d ? new Date(d).toLocaleDateString() : '—');
                 <span class="px-2 py-0.5 text-[10px] rounded-md font-bold uppercase tracking-wider border capitalize" :class="badge(t.status)">{{ label(t.status) }}</span>
               </td>
               <td class="py-4 text-right space-x-2 whitespace-nowrap">
+                <button v-if="t.status !== 'completed'" @click="markDone(t)" :disabled="busyId === t.id"
+                        class="text-[11px] font-bold px-3 py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 text-emerald-400 rounded-lg transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-wait">
+                  {{ busyId === t.id ? 'Saving…' : 'Done' }}
+                </button>
+                <button v-else @click="reopen(t)" :disabled="busyId === t.id"
+                        class="text-[11px] font-bold px-3 py-1.5 border border-slate-800 hover:border-slate-700 bg-slate-900/50 text-slate-400 hover:text-slate-200 rounded-lg transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-wait">
+                  {{ busyId === t.id ? 'Saving…' : 'Reopen' }}
+                </button>
                 <button @click="openEdit(t)" class="text-[11px] font-bold px-3 py-1.5 border border-slate-800 hover:border-slate-700 bg-slate-900/50 text-slate-300 rounded-lg transition-colors cursor-pointer">Edit</button>
                 <button @click="remove(t)" class="text-[11px] font-bold px-3 py-1.5 bg-slate-900 hover:bg-rose-950/20 border border-slate-800 hover:border-rose-900/20 text-slate-400 hover:text-rose-400 rounded-lg transition-colors cursor-pointer">Delete</button>
               </td>
