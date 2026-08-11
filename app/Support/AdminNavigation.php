@@ -176,6 +176,63 @@ class AdminNavigation
                 ],
             ],
             [
+                // Inventory & Asset Management. These leaves point at the routes
+                // owned by StoreNavigation (/store/*) rather than a duplicate
+                // /admin/inventory surface — see docs/inventory-management-design.md §3.
+                'label' => 'Store',
+                'items' => [
+                    self::item('Inventory Overview', 'store.dashboard', '/store', 'Warehouse',
+                        'Everything the Seminary owns: consumable stock and fixed assets, with a countable movement ledger behind every number.',
+                        ['Reorder alerts & stock valuation', 'Requisition approvals', 'Assets out on loan', 'Stocktake variances']),
+                    self::item('Items & Catalog', 'store.items', '/store/items', 'Package',
+                        'The catalog of materials and assets — photos, specifications, units of measure and reorder policy.',
+                        ['Consumables & fixed assets', 'Bilingual names', 'Photos & documents', 'Category tree'], [
+                            self::child('Items', 'store.items', '/store/items',
+                                'Every registered material and asset.'),
+                            self::child('Categories', 'store.categories', '/store/categories',
+                                'Category tree carrying tracking-mode and depreciation defaults.'),
+                            self::child('Suppliers', 'store.suppliers', '/store/suppliers',
+                                'Vendor register with TIN, contacts and delivery performance.'),
+                            self::child('Store Locations', 'store.locations', '/store/locations',
+                                'Campus → store → room → shelf → bin.'),
+                        ]),
+                    self::item('Stock Movement', 'store.receipts', '/store/receipts', 'PackagePlus',
+                        'Receiving, issuing, transfers and adjustments — every change to stock is an append-only ledger entry.',
+                        ['Goods-received notes', 'Issue vouchers & returns', 'Inter-location transfers', 'Approved adjustments only'], [
+                            self::child('Receive Stock (GRN)', 'store.receipts', '/store/receipts',
+                                'Supplier, quantity, unit cost, purchase & production dates, received by.'),
+                            self::child('Issue & Returns', 'store.issues', '/store/issues',
+                                'Release stock and assets to employees and departments.'),
+                            self::child('Requisitions', 'store.requests', '/store/requests',
+                                'Staff requests routed for approval before the store releases anything.'),
+                            self::child('Transfers', 'store.transfers', '/store/transfers',
+                                'Move stock between stores, rooms and campuses.'),
+                            self::child('Adjustments', 'store.adjustments', '/store/adjustments',
+                                'Post variance corrections — Operations and President only.'),
+                        ], 'maker-checker'),
+                    self::item('Asset Register', 'store.assets', '/store/assets', 'Boxes',
+                        'Serialized fixed assets with QR tags, custody chain, maintenance history and depreciation.',
+                        ['QR-printable asset tags', 'Who holds what, since when', 'Maintenance & downtime', 'Disposal with approval'], [
+                            self::child('Assets', 'store.assets', '/store/assets',
+                                'Every serialized asset, its condition and location.'),
+                            self::child('Custody & Assignments', 'store.assignments', '/store/assignments',
+                                'Assignment history with signed handover slips.'),
+                            self::child('Maintenance', 'store.maintenance', '/store/maintenance',
+                                'Preventive schedules, repairs, costs and downtime.'),
+                            self::child('Disposals', 'store.disposals', '/store/disposals',
+                                'Write-off, sale, donation or scrap — second approval required.'),
+                        ]),
+                    self::item('Stock Control', 'store.stocktakes', '/store/stocktakes', 'ClipboardCheck',
+                        'Physical counts and inventory reporting.',
+                        ['QR-assisted counting', 'Variance review', 'Valuation & consumption reports'], [
+                            self::child('Stocktake', 'store.stocktakes', '/store/stocktakes',
+                                'Count sessions; variances go to Operations to post.'),
+                            self::child('Inventory Reports', 'store.reports', '/store/reports',
+                                'On-hand & valuation, reorder, dead stock, expiry, custody, consumption.'),
+                        ]),
+                ],
+            ],
+            [
                 'label' => 'Insights',
                 'items' => [
                     self::item('Reports', 'admin.reports', '/admin/reports', 'PieChart',

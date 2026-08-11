@@ -19,6 +19,9 @@ import {
   // Payroll configuration & period actions
   SlidersHorizontal, ShieldAlert, CalendarX2, Calculator, Info, Loader2,
   RefreshCw, Sheet, Play,
+  // Store — inventory & asset management
+  Warehouse, Truck, Wrench, PackagePlus, PackageMinus, PackageCheck, Tags,
+  ShieldOff, Lock,
   // Referenced across the app but previously unmapped — these silently fell back
   // to the Dot placeholder wherever they were used.
   Activity, BadgeCheck, BarChart2, Calendar, CalendarCheck, CalendarPlus,
@@ -26,7 +29,8 @@ import {
   ExternalLink, GitMerge, GitPullRequest, Receipt, Sigma, Upload, UserCheck,
   UserCircle, Weight, XCircle, Zap,
   // Bookstore — printed-book store, QR shelving and distribution.
-  Store, Warehouse, Truck, Printer, Copy,
+  // (Warehouse and Truck already come in with the Store block above.)
+  Store, Printer, Copy,
 } from 'lucide-vue-next';
 
 const map = {
@@ -45,13 +49,16 @@ const map = {
   // Payroll configuration & period actions
   SlidersHorizontal, ShieldAlert, CalendarX2, Calculator, Info, Loader2,
   RefreshCw, Sheet, Play,
+  // Store — inventory & asset management
+  Warehouse, Truck, Wrench, PackagePlus, PackageMinus, PackageCheck, Tags,
+  ShieldOff, Lock,
   // Referenced across the app but previously unmapped — these silently fell back
   // to the Dot placeholder wherever they were used.
   Activity, BadgeCheck, BarChart2, Calendar, CalendarCheck, CalendarPlus,
   CalendarRange, CalendarX, Check, CheckCircle, ClipboardList, Compass, Cpu,
   ExternalLink, GitMerge, GitPullRequest, Receipt, Sigma, Upload, UserCheck,
   UserCircle, Weight, XCircle, Zap,
-  Store, Warehouse, Truck, Printer, Copy,
+  Store, Printer, Copy,
 };
 
 const props = defineProps({

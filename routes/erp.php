@@ -30,8 +30,11 @@ use App\Http\Controllers\AttendancePermissionController;
 use App\Http\Controllers\MedicalAllowanceClaimController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Store\DashboardController as StoreDashboardController;
+use App\Http\Controllers\Store\ModuleController as StoreModuleController;
 use App\Support\AdminNavigation;
 use App\Support\RoleLanding;
+use App\Support\StoreNavigation;
 use Illuminate\Support\Facades\Route;
 
 // Switch the UI language (11 supported languages); persisted in the session and a long-lived cookie.
@@ -55,6 +58,30 @@ Route::middleware(['auth', 'active', 'password.fresh'])->group(function () {
     Route::get('/password/force-change', [\App\Http\Controllers\Auth\ForcePasswordController::class, 'showForceChange'])->name('password.force-change');
     Route::post('/password/force-change', [\App\Http\Controllers\Auth\ForcePasswordController::class, 'forceChange'])->name('password.force-change.update');
 
+    /*
+    |----------------------------------------------------------------------
+    | Store — Inventory & Asset Management
+    |----------------------------------------------------------------------
+    | Registered before the admin block on purpose: the President's sidebar
+    | links to these very routes rather than a duplicate /admin/inventory
+    | surface, and the loop below skips any nav leaf whose route already
+    | exists. One controller, one page and one permission check per capability.
+    |
+    | Only the landing is role-gated (EnsureRole bounces others to their own
+    | dashboard and lets President / SUPERADMIN through). Every page below it is
+    | permission-gated, so Operations and Finance reach exactly what they're
+    | entitled to. See docs/inventory-management-design.md §3.
+    */
+    Route::middleware('role.landing:'.StoreNavigation::ROLE)->group(function () {
+        Route::get('/store', [StoreDashboardController::class, 'index'])->name('store.dashboard');
+    });
+
+    foreach (StoreNavigation::modules() as $module) {
+        Route::get($module['path'], StoreModuleController::class)
+            ->middleware('can:'.$module['permission'])
+            ->name($module['name']);
+    }
+
     // ---- President / Super Admin: full module navigation ------------------
     Route::middleware('role.landing:President / Super Admin')->group(function () {
         Route::get('/admin', [DashboardController::class, 'admin'])->name('admin.dashboard');
@@ -65,6 +92,17 @@ Route::middleware(['auth', 'active', 'password.fresh'])->group(function () {
                 continue; // a child that shares its parent's path (e.g. an "index" alias)
             }
             $seen[] = $module['path'];
+
+            // This loop owns the admin.* routes only. A leaf pointing anywhere
+            // else (e.g. the store.* routes registered above) is a *link* into
+            // another portal's surface — re-registering it here would silently
+            // override that route's controller and its can: gate with this
+            // group's. Note Route::has() can't be used for this: ->name() is
+            // applied after the route enters the collection, so the name lookup
+            // is still stale while this file is being loaded.
+            if (! str_starts_with($module['name'], 'admin.')) {
+                continue;
+            }
 
             Route::get($module['path'], ModuleController::class)->name($module['name']);
         }

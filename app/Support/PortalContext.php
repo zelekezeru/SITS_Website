@@ -51,6 +51,11 @@ class PortalContext
                 'portal' => self::portal('Operations Manager', '/operations', 'cyan'),
                 'notifications' => self::financeNotifications(),
             ],
+            'Store Keeper' => [
+                'nav' => StoreNavigation::sections($user),
+                'portal' => self::portal('Store · Inventory', '/store', 'amber'),
+                'notifications' => self::storeNotifications(),
+            ],
             'Vice President', 'Dean of the Seminary', 'Registrar' => [
                 'nav' => self::minimalNav($user),
                 'portal' => self::portal(RoleLanding::resolvedRole($user), RoleLanding::url($user), 'indigo'),
@@ -174,6 +179,19 @@ class PortalContext
         return [self::note('payroll-rejected', 'Payroll returned',
             $rejected.' payroll period'.self::s($rejected).' sent back for revision',
             $rejected, '/finance/payroll', 'Banknote', 'amber')];
+    }
+
+    /**
+     * Store alerts — reorder-level breaches, requisitions awaiting issue and
+     * overdue asset returns. The inventory tables arrive in Phase 1 (see
+     * docs/inventory-management-design.md §8); until then the store topbar is
+     * quiet rather than querying tables that don't exist.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private static function storeNotifications(): array
+    {
+        return [];
     }
 
     /** @return array<int, array<string, mixed>> */
