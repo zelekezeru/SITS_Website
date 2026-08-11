@@ -33,6 +33,17 @@
                 {{ link.label }}
               </Link>
             </li>
+            <!-- eLearning (Moodle). A plain anchor, not an Inertia <Link>: /go/lms
+                 ends in an external redirect, which XHR navigation cannot follow.
+                 Guests get it too — /go/lms is behind auth, so they are sent to
+                 login and then straight on to Moodle by the intended-URL. -->
+            <li>
+              <a href="/go/lms" target="_blank" rel="noopener"
+                class="px-3 py-2 rounded-lg transition hover:text-white hover:bg-slate-900/60 inline-flex items-center gap-1.5">
+                {{ t('lms', 'eLearning') }}
+                <svg class="w-3 h-3 opacity-50" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+              </a>
+            </li>
             <!-- Portals dropdown: SITS ERP, Digital Library, SITS LMS, Moodle -->
             <li v-if="auth.user" class="relative group">
               <button type="button"
@@ -123,6 +134,12 @@
               <component :is="'svg'" class="w-4 h-4 shrink-0" v-html="link.icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"></component>
               {{ link.label }}
             </Link>
+            <!-- eLearning (Moodle) — plain anchor, see the desktop nav for why. -->
+            <a href="/go/lms" target="_blank" rel="noopener" @click="mobileMenuOpen = false"
+              class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition text-slate-300 hover:bg-slate-900 hover:text-white">
+              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.42A12 12 0 0118 15.5a12 12 0 01-12 0 12 12 0 01.16-4.92L12 14z"/></svg>
+              {{ t('lms', 'eLearning') }}
+            </a>
             <!-- Portals: SITS ERP, Digital Library, SITS LMS, Moodle -->
             <template v-if="auth.user">
               <p class="px-4 pt-3 pb-1 text-[10px] text-slate-600 font-semibold uppercase tracking-widest">{{ t('portals', 'Portals') }}</p>
