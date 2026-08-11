@@ -19,6 +19,9 @@ import {
   // Payroll configuration & period actions
   SlidersHorizontal, ShieldAlert, CalendarX2, Calculator, Info, Loader2,
   RefreshCw, Sheet, Play,
+  // Store — inventory & asset management
+  Warehouse, Truck, Wrench, PackagePlus, PackageMinus, PackageCheck, Tags,
+  ShieldOff, Lock,
   // Referenced across the app but previously unmapped — these silently fell back
   // to the Dot placeholder wherever they were used.
   Activity, BadgeCheck, BarChart2, Calendar, CalendarCheck, CalendarPlus,
@@ -43,6 +46,9 @@ const map = {
   // Payroll configuration & period actions
   SlidersHorizontal, ShieldAlert, CalendarX2, Calculator, Info, Loader2,
   RefreshCw, Sheet, Play,
+  // Store — inventory & asset management
+  Warehouse, Truck, Wrench, PackagePlus, PackageMinus, PackageCheck, Tags,
+  ShieldOff, Lock,
   // Referenced across the app but previously unmapped — these silently fell back
   // to the Dot placeholder wherever they were used.
   Activity, BadgeCheck, BarChart2, Calendar, CalendarCheck, CalendarPlus,

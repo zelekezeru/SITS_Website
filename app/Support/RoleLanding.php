@@ -20,6 +20,12 @@ class RoleLanding
         'Dean of the Seminary' => 'dean.dashboard',
         'Operational Manager' => 'operations.dashboard',
         'Finance Officer' => 'finance.dashboard',
+        // A dedicated store keeper lands on the store portal. Because every
+        // /store/* page below the dashboard is permission-gated rather than
+        // role-gated, someone whose store duty is secondary to a more senior
+        // role can be granted the store permissions without being moved off
+        // their own portal. See docs/inventory-management-design.md §3.
+        'Store Keeper' => 'store.dashboard',
         'Department Head' => 'department.dashboard',
         'Registrar' => 'registrar.dashboard',
         'Employee' => 'dashboard',
