@@ -18,3 +18,8 @@ Schedule::command('queue:work --stop-when-empty --max-time=50 --tries=3')
     ->everyMinute()
     ->withoutOverlapping()
     ->runInBackground();
+
+// Bookstore low-stock sweep. Reports only titles that crossed their reorder
+// level since the previous run, so a standing shortage doesn't drown out a new
+// one. See App\Console\Commands\CheckBookstoreStock.
+Schedule::command('bookstore:check-stock')->dailyAt('07:00');

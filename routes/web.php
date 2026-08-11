@@ -125,6 +125,11 @@ require __DIR__.'/erp.php';
 // Inertia/Vue ILS, merged from the standalone sits-library. Mounted under /library.
 require __DIR__.'/library.php';
 
+// ─── SITS Bookstore (printed course-book inventory & distribution) ────────────
+// Bulk-printed textbooks: store rooms, QR shelving, request→payment→dispatch.
+// Distinct from the ILS above — see docs/books-inventory-system.md. Under /bookstore.
+require __DIR__.'/bookstore.php';
+
 // ─── Academic Integrity Suite ──────────────────────────────────────────────────
 // Instructor/Admin only. Mounted under /integrity.
 require __DIR__.'/integrity.php';
