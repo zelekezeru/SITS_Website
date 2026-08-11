@@ -71,9 +71,13 @@ class PrintRunController extends Controller
         $section = ShelfSection::findOrFail($validated['shelf_section_id']);
 
         $printRun = DB::transaction(function () use ($validated, $title, $section, $request) {
+            // `nullable` rules leave the key out entirely when it is not sent,
+            // so coalesce rather than indexing straight into $validated.
+            $batchNumber = $validated['batch_number'] ?? null;
+
             $printRun = PrintRun::create([
                 ...$validated,
-                'batch_number' => $validated['batch_number'] ?: $this->nextBatchNumber($title),
+                'batch_number' => $batchNumber ?: $this->nextBatchNumber($title),
                 'total_cost'   => round($validated['quantity'] * (float) $validated['unit_cost'], 2),
                 'received_by'  => $request->user()->id,
             ]);

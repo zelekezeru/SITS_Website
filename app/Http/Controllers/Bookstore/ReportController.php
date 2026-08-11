@@ -209,7 +209,9 @@ class ReportController extends Controller
             })
             ->join('centers', 'centers.id', '=', 'i.center_id')
             ->join('book_titles', 'book_titles.id', '=', 'i.book_title_id')
-            ->havingRaw('outstanding > 0')
+            // WHERE, not HAVING: both sides come from joined subqueries, so
+            // there is nothing to aggregate at this level.
+            ->whereRaw('i.issued - coalesce(r.returned, 0) > 0')
             ->orderBy('centers.name')
             ->get([
                 'centers.name as center',

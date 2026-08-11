@@ -47,8 +47,10 @@ class BookReturnController extends Controller
     {
         return Inertia::render('Bookstore/Returns/Create', [
             'options'  => $this->formOptions(),
+            // Arriving from a waybill pre-fills the lines and the centre.
             'dispatch' => $request->filled('dispatch')
-                ? BookDispatch::with('items.bookTitle:id,code,title')->find($request->integer('dispatch'))
+                ? BookDispatch::with(['items.bookTitle:id,code,title', 'bookRequest:id,center_id,campus_id'])
+                    ->find($request->integer('dispatch'))
                 : null,
         ]);
     }
@@ -70,7 +72,7 @@ class BookReturnController extends Controller
             'lines.*.remark'            => 'nullable|string|max:255',
         ]);
 
-        if (blank($validated['center_id']) && blank($validated['campus_id'])) {
+        if (blank($validated['center_id'] ?? null) && blank($validated['campus_id'] ?? null)) {
             return back()->withErrors(['center_id' => 'Say which centre or campus the books came back from.']);
         }
 

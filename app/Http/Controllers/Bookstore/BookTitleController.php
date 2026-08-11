@@ -145,14 +145,17 @@ class BookTitleController extends Controller
             'notes'            => 'nullable|string',
         ]);
 
+        // `nullable` rules omit the key entirely when nothing is sent, so read
+        // through ?? rather than indexing straight into $validated.
+
         // Keep the course code/name on the row: a book printed under an old
         // course code must still print correctly after the course is renamed.
         if (! empty($validated['course_id'])) {
             $course = Course::find($validated['course_id']);
-            $validated['course_name'] = $validated['course_name'] ?: $course?->title;
+            $validated['course_name'] = ($validated['course_name'] ?? null) ?: $course?->title;
         }
 
-        $validated['code'] = $validated['code'] ?: $this->generateCode($validated);
+        $validated['code'] = ($validated['code'] ?? null) ?: $this->generateCode($validated);
 
         return $validated;
     }

@@ -47,7 +47,14 @@ class BookPayment extends Model
         'verified_at' => 'datetime',
     ];
 
+    /**
+     * The path never reaches the client — the image is streamed through a
+     * controller so the private disk stays private. `has_receipt` is appended
+     * instead, so the UI can still decide whether to show the link.
+     */
     protected $hidden = ['receipt_image_path'];
+
+    protected $appends = ['has_receipt'];
 
     public function bookRequest(): BelongsTo
     {
@@ -67,6 +74,11 @@ class BookPayment extends Model
     public function hasReceiptImage(): bool
     {
         return filled($this->receipt_image_path);
+    }
+
+    public function getHasReceiptAttribute(): bool
+    {
+        return $this->hasReceiptImage();
     }
 
     public function isPending(): bool

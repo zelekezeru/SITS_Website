@@ -25,6 +25,8 @@ import {
   CalendarRange, CalendarX, Check, CheckCircle, ClipboardList, Compass, Cpu,
   ExternalLink, GitMerge, GitPullRequest, Receipt, Sigma, Upload, UserCheck,
   UserCircle, Weight, XCircle, Zap,
+  // Bookstore — printed-book store, QR shelving and distribution.
+  Store, Warehouse, Truck, Printer, Copy,
 } from 'lucide-vue-next';
 
 const map = {
@@ -49,6 +51,7 @@ const map = {
   CalendarRange, CalendarX, Check, CheckCircle, ClipboardList, Compass, Cpu,
   ExternalLink, GitMerge, GitPullRequest, Receipt, Sigma, Upload, UserCheck,
   UserCircle, Weight, XCircle, Zap,
+  Store, Warehouse, Truck, Printer, Copy,
 };
 
 const props = defineProps({

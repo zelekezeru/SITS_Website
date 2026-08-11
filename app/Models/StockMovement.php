@@ -65,6 +65,9 @@ class StockMovement extends Model
         return $this->morphTo();
     }
 
+    /** The bin card renders these directly, so they travel with the model. */
+    protected $appends = ['signed_quantity', 'quantity_received', 'quantity_issued'];
+
     /** Signed change this movement made to the section balance. */
     public function getSignedQuantityAttribute(): int
     {
