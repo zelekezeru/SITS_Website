@@ -32,6 +32,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Store\DashboardController as StoreDashboardController;
 use App\Http\Controllers\Store\ModuleController as StoreModuleController;
+use App\Http\Controllers\Store\ReferenceDataController as StoreReferenceController;
 use App\Support\AdminNavigation;
 use App\Support\RoleLanding;
 use App\Support\StoreNavigation;
@@ -76,7 +77,45 @@ Route::middleware(['auth', 'active', 'password.fresh'])->group(function () {
         Route::get('/store', [StoreDashboardController::class, 'index'])->name('store.dashboard');
     });
 
+    // Reference data — the category tree, suppliers and the location tree. These
+    // have to exist before an item can be catalogued or a receipt recorded, so
+    // they are the first pages to peel off the generic module placeholder.
+    Route::get('/store/categories', [StoreReferenceController::class, 'categories'])
+        ->middleware('can:view inventory')->name('store.categories');
+    Route::get('/store/suppliers', [StoreReferenceController::class, 'suppliers'])
+        ->middleware('can:view inventory')->name('store.suppliers');
+    Route::get('/store/locations', [StoreReferenceController::class, 'locations'])
+        ->middleware('can:view inventory')->name('store.locations');
+
+    Route::middleware('can:manage inventory catalog')->group(function () {
+        Route::post('/store/categories', [StoreReferenceController::class, 'storeCategory'])->name('store.categories.store');
+        Route::put('/store/categories/{category}', [StoreReferenceController::class, 'updateCategory'])->name('store.categories.update');
+        Route::delete('/store/categories/{category}', [StoreReferenceController::class, 'destroyCategory'])->name('store.categories.destroy');
+    });
+
+    Route::middleware('can:manage inventory suppliers')->group(function () {
+        Route::post('/store/suppliers', [StoreReferenceController::class, 'storeSupplier'])->name('store.suppliers.store');
+        Route::put('/store/suppliers/{supplier}', [StoreReferenceController::class, 'updateSupplier'])->name('store.suppliers.update');
+        Route::delete('/store/suppliers/{supplier}', [StoreReferenceController::class, 'destroySupplier'])->name('store.suppliers.destroy');
+    });
+
+    Route::middleware('can:manage inventory locations')->group(function () {
+        Route::post('/store/locations', [StoreReferenceController::class, 'storeLocation'])->name('store.locations.store');
+        Route::put('/store/locations/{location}', [StoreReferenceController::class, 'updateLocation'])->name('store.locations.update');
+        Route::delete('/store/locations/{location}', [StoreReferenceController::class, 'destroyLocation'])->name('store.locations.destroy');
+    });
+
+    // Remaining store nav leaves still render the module placeholder. Each one
+    // peels off into its own controller as its delivery phase lands; listing the
+    // built ones explicitly keeps this loop from clobbering them. (Route::has()
+    // can't do this job — see the note in the admin loop below.)
+    $storePagesBuilt = ['store.categories', 'store.suppliers', 'store.locations'];
+
     foreach (StoreNavigation::modules() as $module) {
+        if (in_array($module['name'], $storePagesBuilt, true)) {
+            continue;
+        }
+
         Route::get($module['path'], StoreModuleController::class)
             ->middleware('can:'.$module['permission'])
             ->name($module['name']);
