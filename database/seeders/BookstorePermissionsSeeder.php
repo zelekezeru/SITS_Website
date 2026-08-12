@@ -85,15 +85,22 @@ class BookstorePermissionsSeeder extends Seeder
             BookstorePermission::RECEIVE_BOOKS,
         ));
 
-        // Operational Manager — final approval and the variance sign-off.
+        // The approval layer. Granted to the ERP's Operational Manager where it
+        // exists, but also given its own role unconditionally: without a holder
+        // of approve_book_request every request deadlocks at the approval gate,
+        // and this seeder must not depend on another one having run first.
+        $approvalGrants = $p(
+            BookstorePermission::VIEW_BOOKSTORE,
+            BookstorePermission::APPROVE_BOOK_REQUEST,
+            BookstorePermission::APPROVE_PAYMENT_BYPASS,
+            BookstorePermission::APPROVE_STOCK_AUDIT,
+            BookstorePermission::VIEW_BOOK_REPORTS,
+        );
+
+        Role::firstOrCreate(['name' => 'Bookstore Approver'])->givePermissionTo($approvalGrants);
+
         if ($ops = Role::where('name', 'Operational Manager')->first()) {
-            $ops->givePermissionTo($p(
-                BookstorePermission::VIEW_BOOKSTORE,
-                BookstorePermission::APPROVE_BOOK_REQUEST,
-                BookstorePermission::APPROVE_PAYMENT_BYPASS,
-                BookstorePermission::APPROVE_STOCK_AUDIT,
-                BookstorePermission::VIEW_BOOK_REPORTS,
-            ));
+            $ops->givePermissionTo($approvalGrants);
         }
 
         $this->seedStudyModes();

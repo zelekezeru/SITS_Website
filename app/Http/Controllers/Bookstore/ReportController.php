@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\Bookstore;
 
-use App\Enums\BookPaymentStatus;
-use App\Enums\BookRequestStatus;
 use App\Enums\StockMovementType;
 use App\Http\Controllers\Controller;
 use App\Models\BookRequest;

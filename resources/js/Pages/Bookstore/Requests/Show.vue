@@ -73,7 +73,6 @@ const bypassApproveForm = useForm({ justification: '' });
 const bypassRejectForm = useForm({ reason: '' });
 
 const bypassColors = { pending: 'amber', approved: 'purple', rejected: 'red', settled: 'green' };
-const pendingBypass = computed(() => props.bypasses.find((b) => b.status === 'pending'));
 const activeBypass = computed(() =>
     props.bypasses.find((b) => b.status === 'approved' || b.status === 'settled'));
 

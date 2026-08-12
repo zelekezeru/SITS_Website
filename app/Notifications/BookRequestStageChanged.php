@@ -52,6 +52,8 @@ class BookRequestStageChanged extends Notification
     {
         return [
             'type'           => 'bookstore_request',
+            // The shared bell keys its icon and colour off `category`.
+            'category'       => $this->event->bellCategory(),
             'event'          => $this->event->value,
             'title'          => $this->event->subject(),
             'message'        => $this->event->callToAction(),

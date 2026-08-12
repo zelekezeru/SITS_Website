@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Bookstore;
 
 use App\Http\Controllers\Controller;
 use App\Models\Campus;
-use App\Models\Shelf;
 use App\Models\StoreRoom;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;

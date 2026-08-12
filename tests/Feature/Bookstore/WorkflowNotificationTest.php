@@ -16,6 +16,7 @@ use App\Models\User;
 use App\Notifications\BookRequestStageChanged;
 use App\Services\Bookstore\BookRequestWorkflow;
 use App\Services\Bookstore\StockLedger;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
 use Spatie\Permission\Models\Permission;
 
@@ -224,4 +225,61 @@ it('reports no waiting owner once the request is closed', function () {
     expect($fresh->status->awaitingPermission())->toBeNull()
         ->and($fresh->currentStageEnteredAt())->toBeNull()
         ->and($fresh->status->awaitingDescription())->toBe('Nothing — this request is closed');
+});
+
+// ── Transactional integrity of the notification hand-off ────────────────────
+
+it('sends nothing when the transition itself fails and rolls back', function () {
+    $request = $this->workflow->submit(($this->makeRequest)(), $this->coordinator);
+
+    // A second line makes the failure happen *after* the first has already been
+    // reserved, so this exercises a genuine mid-transaction rollback.
+    $second = BookTitle::create([
+        'code' => 'XX-01', 'title' => 'Hermeneutics', 'language' => 'am', 'unit_price' => 100,
+    ]);
+    $this->ledger->post($second, $this->section, StockMovementType::RECEIPT, 50, $this->storeKeeper);
+    $request->items()->create([
+        'book_title_id' => $second->id, 'quantity_requested' => 10,
+        'unit_price' => 100, 'line_total' => 1000,
+    ]);
+
+    $items = $request->fresh()->items;
+
+    Notification::fake();
+
+    // Over-approving the second line throws once the first is already reserved.
+    expect(fn () => $this->workflow->verify($request->fresh(), $this->storeKeeper, [
+        $items[0]->id => 90,
+        $items[1]->id => 999,
+    ]))->toThrow(App\Services\Bookstore\WorkflowException::class);
+
+    Notification::assertNothingSent();
+
+    // And the reservation from the first line was rolled back with it.
+    expect($this->title->fresh()->total_reserved)->toBe(0)
+        ->and($request->fresh()->status)->toBe(BookRequestStatus::SUBMITTED);
+});
+
+it('completes the transition even when the mail host is down', function () {
+    $request = $this->workflow->submit(($this->makeRequest)(), $this->coordinator);
+
+    // A dead mail host is an operational problem, not a reason to fail the step
+    // the user just completed.
+    Notification::shouldReceive('send')->andThrow(new RuntimeException('SMTP unreachable'));
+    Log::shouldReceive('error')->once();
+
+    $this->workflow->verify($request->fresh(), $this->storeKeeper);
+
+    expect($request->fresh()->status)->toBe(BookRequestStatus::AWAITING_PAYMENT)
+        ->and($this->title->fresh()->total_reserved)->toBe(90);
+});
+
+it('tags notifications with an icon bucket the shared bell understands', function () {
+    // The bell keys its glyph off data.category; an unknown value silently
+    // degrades to a generic bell, which is easy to ship and hard to notice.
+    $known = ['clock', 'alert', 'check', 'cash', 'truck', 'bell'];
+
+    foreach (App\Enums\BookRequestEvent::cases() as $event) {
+        expect($known)->toContain($event->bellCategory());
+    }
 });

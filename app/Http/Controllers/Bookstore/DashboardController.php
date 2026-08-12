@@ -7,6 +7,7 @@ use App\Enums\BookRequestStatus;
 use App\Enums\StockMovementType;
 use App\Http\Controllers\Controller;
 use App\Models\BookPayment;
+use App\Models\BookPaymentBypass;
 use App\Models\BookRequest;
 use App\Models\BookStock;
 use App\Models\BookTitle;
@@ -53,6 +54,14 @@ class DashboardController extends Controller
             'value_at_price'  => round((float) $valuation->at_price, 2),
             'open_requests'   => BookRequest::open()->count(),
             'pending_payments' => BookPayment::where('status', BookPaymentStatus::PENDING->value)->count(),
+            // Pay-later: what is awaiting a decision, and what is owed because
+            // somebody already decided yes.
+            'pending_bypasses' => BookPaymentBypass::pending()->count(),
+            'deferred_debt'    => round((float) BookPaymentBypass::outstanding()->sum('amount'), 2),
+            'overdue_bypasses' => BookPaymentBypass::outstanding()
+                ->whereNotNull('promised_on')
+                ->whereDate('promised_on', '<', now())
+                ->count(),
         ];
     }
 

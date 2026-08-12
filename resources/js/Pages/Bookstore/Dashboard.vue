@@ -34,6 +34,10 @@ const barHeight = (value) => `${Math.round((value / peak.value) * 100)}%`;
             <div class="flex items-center justify-between gap-3">
                 <h1 class="text-base font-semibold text-slate-900 dark:text-white">Bookstore</h1>
                 <div class="flex items-center gap-2">
+                    <Link :href="route('bookstore.pipeline')"
+                          class="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 dark:border-slate-700 px-3 py-1.5 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
+                        <Icon name="GitPullRequest" :size="15" /> Pipeline
+                    </Link>
                     <Link :href="route('bookstore.scan.index')"
                           class="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 dark:border-slate-700 px-3 py-1.5 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
                         <Icon name="QrCode" :size="15" /> Scan
@@ -59,6 +63,32 @@ const barHeight = (value) => `${Math.round((value / peak.value) * 100)}%`;
                 <Icon name="ArrowRight" :size="16" class="ml-auto text-amber-600 dark:text-amber-400" />
             </Link>
 
+            <!-- Money released on credit needs a person, not a report. -->
+            <Link v-if="stats.pending_bypasses || stats.overdue_bypasses"
+                  :href="route('bookstore.bypasses.index')"
+                  class="flex flex-wrap items-center gap-3 rounded-xl border px-4 py-3 transition"
+                  :class="stats.overdue_bypasses
+                      ? 'border-rose-300 dark:border-rose-800 bg-rose-50 dark:bg-rose-950/30 hover:bg-rose-100 dark:hover:bg-rose-950/50'
+                      : 'border-purple-300 dark:border-purple-800 bg-purple-50 dark:bg-purple-950/30 hover:bg-purple-100 dark:hover:bg-purple-950/50'">
+                <Icon :name="stats.overdue_bypasses ? 'AlertTriangle' : 'HandCoins'" :size="18"
+                      class="shrink-0"
+                      :class="stats.overdue_bypasses ? 'text-rose-600 dark:text-rose-400' : 'text-purple-600 dark:text-purple-400'" />
+                <p class="text-sm"
+                   :class="stats.overdue_bypasses ? 'text-rose-900 dark:text-rose-200' : 'text-purple-900 dark:text-purple-200'">
+                    <template v-if="stats.pending_bypasses">
+                        <strong>{{ stats.pending_bypasses }}</strong> pay-later deferral(s) awaiting authorisation.
+                    </template>
+                    <template v-if="stats.overdue_bypasses">
+                        <strong>{{ stats.overdue_bypasses }}</strong> past their promised date.
+                    </template>
+                    <template v-if="stats.deferred_debt > 0">
+                        {{ money(stats.deferred_debt) }} released on credit and still owed.
+                    </template>
+                </p>
+                <Icon name="ArrowRight" :size="16" class="ml-auto shrink-0"
+                      :class="stats.overdue_bypasses ? 'text-rose-600 dark:text-rose-400' : 'text-purple-600 dark:text-purple-400'" />
+            </Link>
+
             <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <StatCard label="Books on hand" :value="num(stats.on_hand)"
                           :sub="`${num(stats.available)} available · ${num(stats.reserved)} reserved`"
@@ -74,7 +104,13 @@ const barHeight = (value) => `${Math.round((value / peak.value) * 100)}%`;
 
             <!-- The pipeline: how much work sits at each stage and for how long. -->
             <div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5">
-                <h2 class="text-sm font-semibold text-slate-900 dark:text-white">Request pipeline</h2>
+                <div class="flex items-center justify-between">
+                    <h2 class="text-sm font-semibold text-slate-900 dark:text-white">Request pipeline</h2>
+                    <Link :href="route('bookstore.pipeline')"
+                          class="text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:underline">
+                        Full board
+                    </Link>
+                </div>
                 <p class="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
                     Where requests are waiting. The oldest figure is the one to act on.
                 </p>

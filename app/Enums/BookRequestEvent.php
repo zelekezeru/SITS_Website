@@ -92,6 +92,28 @@ enum BookRequestEvent: string
         ], true);
     }
 
+    /**
+     * Icon bucket understood by the shared notification bell
+     * (resources/js/Components/Library/NotificationBell.vue), so bookstore
+     * alerts get a meaningful glyph instead of the generic fallback.
+     */
+    public function bellCategory(): string
+    {
+        return match ($this) {
+            self::VERIFIED,
+            self::PAYMENT_RECORDED,
+            self::PAYMENT_VERIFIED,
+            self::BYPASS_REQUESTED,
+            self::BYPASS_APPROVED  => 'cash',
+            self::APPROVED,
+            self::DISPATCHED       => 'truck',
+            self::RECEIVED         => 'check',
+            self::REJECTED,
+            self::BYPASS_REJECTED  => 'alert',
+            default                => 'clock',
+        };
+    }
+
     public function badgeColor(): string
     {
         return match ($this) {
