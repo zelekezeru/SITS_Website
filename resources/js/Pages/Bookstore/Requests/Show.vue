@@ -11,6 +11,8 @@ const props = defineProps({
     actions: Object,
     stages: Array,
     financials: Object,
+    waiting: Object,
+    bypasses: { type: Array, default: () => [] },
 });
 
 const statusColors = {
@@ -62,6 +64,18 @@ const paymentForm = useForm({
 const showVerify = ref(false);
 const showReject = ref(false);
 const showPayment = ref(false);
+const showBypass = ref(false);
+const decidingBypass = ref(null);
+
+// Pay later: Finance states a reason, a different authoriser states a justification.
+const bypassForm = useForm({ reason: '', promised_on: '' });
+const bypassApproveForm = useForm({ justification: '' });
+const bypassRejectForm = useForm({ reason: '' });
+
+const bypassColors = { pending: 'amber', approved: 'purple', rejected: 'red', settled: 'green' };
+const pendingBypass = computed(() => props.bypasses.find((b) => b.status === 'pending'));
+const activeBypass = computed(() =>
+    props.bypasses.find((b) => b.status === 'approved' || b.status === 'settled'));
 
 const post = (name, form = noteForm) => form.post(route(name, props.request.id), { preserveScroll: true });
 
@@ -118,7 +132,23 @@ const label = 'block text-xs font-medium text-slate-600 dark:text-slate-400';
                 </ol>
             </div>
 
-            <div v-else class="rounded-xl border border-rose-300 dark:border-rose-800 bg-rose-50 dark:bg-rose-950/30 px-4 py-3">
+            <!-- Who owes the next action, and for how long they have owed it. -->
+            <div v-if="stepIndex >= 0 && waiting?.owners?.length"
+                 class="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3">
+                <Icon name="Clock" :size="16" class="text-slate-400 shrink-0" />
+                <p class="text-sm text-slate-700 dark:text-slate-300">
+                    Waiting on <strong>{{ waiting.description }}</strong>
+                    — {{ waiting.owners.join(', ') }}
+                </p>
+                <span v-if="waiting.age_hours !== null"
+                      class="text-xs tabular-nums"
+                      :class="waiting.age_hours > 72 ? 'font-semibold text-amber-600 dark:text-amber-400' : 'text-slate-500 dark:text-slate-400'">
+                    {{ waiting.age_hours >= 24 ? Math.floor(waiting.age_hours / 24) + 'd' : waiting.age_hours + 'h' }}
+                    at this stage
+                </span>
+            </div>
+
+            <div v-else-if="stepIndex < 0" class="rounded-xl border border-rose-300 dark:border-rose-800 bg-rose-50 dark:bg-rose-950/30 px-4 py-3">
                 <p class="text-sm font-medium text-rose-900 dark:text-rose-200">
                     This request was {{ request.status }}.
                 </p>
@@ -241,6 +271,21 @@ const label = 'block text-xs font-medium text-slate-600 dark:text-slate-400';
                             </div>
                         </form>
 
+                        <div v-if="activeBypass"
+                             class="mt-3 flex items-start gap-2 rounded-lg border border-purple-300 dark:border-purple-800 bg-purple-50 dark:bg-purple-950/30 px-3 py-2">
+                            <Icon name="HandCoins" :size="16" class="mt-0.5 shrink-0 text-purple-600 dark:text-purple-400" />
+                            <div class="text-xs text-purple-900 dark:text-purple-200">
+                                <p class="font-medium">
+                                    Released on pay-later deferral {{ activeBypass.reference }},
+                                    authorised by {{ activeBypass.decided_by?.name }}.
+                                </p>
+                                <p class="mt-0.5">{{ activeBypass.justification }}</p>
+                                <p v-if="activeBypass.status === 'approved'" class="mt-0.5">
+                                    {{ money(activeBypass.amount) }} still owed<template v-if="activeBypass.promised_on">, promised {{ activeBypass.promised_on }}</template>.
+                                </p>
+                            </div>
+                        </div>
+
                         <ul v-if="request.payments.length" class="mt-4 divide-y divide-slate-100 dark:divide-slate-800">
                             <li v-for="p in request.payments" :key="p.id" class="py-3 flex items-start justify-between gap-3">
                                 <div class="min-w-0">
@@ -260,6 +305,92 @@ const label = 'block text-xs font-medium text-slate-600 dark:text-slate-400';
                             </li>
                         </ul>
                         <p v-else class="mt-4 text-sm text-slate-500 dark:text-slate-400">No payment recorded yet.</p>
+                    </section>
+
+                    <!-- Pay-later deferrals -->
+                    <section v-if="bypasses.length || actions.request_bypass"
+                             class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h2 class="text-sm font-semibold text-slate-900 dark:text-white">Pay-later deferral</h2>
+                                <p class="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
+                                    Releases the payment gate on credit. Needs a reason from Finance and a justification from a separate authoriser.
+                                </p>
+                            </div>
+                            <button v-if="actions.request_bypass" type="button" @click="showBypass = !showBypass"
+                                    class="shrink-0 rounded-lg border border-slate-300 dark:border-slate-700 px-2.5 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
+                                Request deferral
+                            </button>
+                        </div>
+
+                        <form v-if="showBypass"
+                              @submit.prevent="bypassForm.post(route('bookstore.bypasses.store', request.id), { preserveScroll: true, onSuccess: () => { showBypass = false; bypassForm.reset(); } })"
+                              class="mt-4 space-y-3 rounded-lg border border-purple-200 dark:border-purple-900 p-3">
+                            <div>
+                                <label :class="label">Why is the payment being deferred? <span class="text-rose-500">*</span></label>
+                                <textarea v-model="bypassForm.reason" rows="2" :class="field" required
+                                          placeholder="e.g. The centre remits at the end of term; books are needed for registration."></textarea>
+                            </div>
+                            <div>
+                                <label :class="label">Payment promised by</label>
+                                <input v-model="bypassForm.promised_on" type="date" :class="field" />
+                                <p class="mt-1 text-[11px] text-slate-400">Used to flag the debt as overdue if it passes.</p>
+                            </div>
+                            <button type="submit" :disabled="bypassForm.processing"
+                                    class="w-full rounded-lg bg-purple-600 px-3 py-2 text-sm font-medium text-white hover:bg-purple-700 disabled:opacity-50">
+                                Send for authorisation
+                            </button>
+                        </form>
+
+                        <ul v-if="bypasses.length" class="mt-4 divide-y divide-slate-100 dark:divide-slate-800">
+                            <li v-for="b in bypasses" :key="b.id" class="py-3">
+                                <div class="flex flex-wrap items-start justify-between gap-2">
+                                    <div class="min-w-0">
+                                        <div class="flex items-center gap-2">
+                                            <span class="font-mono text-xs text-slate-500 dark:text-slate-400">{{ b.reference }}</span>
+                                            <StatusBadge :label="b.status" :color="bypassColors[b.status]" />
+                                        </div>
+                                        <p class="mt-0.5 text-sm font-medium text-slate-800 dark:text-slate-200">
+                                            {{ money(b.amount) }} · asked by {{ b.requested_by?.name }}
+                                        </p>
+                                        <p class="text-xs text-slate-600 dark:text-slate-400">{{ b.reason }}</p>
+                                        <p v-if="b.justification" class="mt-1 text-xs text-slate-600 dark:text-slate-400">
+                                            <strong>{{ b.decided_by?.name }}:</strong> {{ b.justification }}
+                                        </p>
+                                        <p v-if="b.rejection_reason" class="mt-1 text-xs text-rose-600 dark:text-rose-400">
+                                            <strong>{{ b.decided_by?.name }} declined:</strong> {{ b.rejection_reason }}
+                                        </p>
+                                    </div>
+                                    <button v-if="b.status === 'pending' && actions.decide_bypass" type="button"
+                                            @click="decidingBypass = decidingBypass === b.id ? null : b.id"
+                                            class="shrink-0 rounded-lg bg-indigo-600 px-2.5 py-1.5 text-xs font-medium text-white hover:bg-indigo-700 transition">
+                                        Decide
+                                    </button>
+                                </div>
+
+                                <div v-if="decidingBypass === b.id" class="mt-3 grid gap-3 sm:grid-cols-2">
+                                    <form @submit.prevent="bypassApproveForm.post(route('bookstore.bypasses.approve', b.id), { preserveScroll: true, onSuccess: () => { decidingBypass = null; bypassApproveForm.reset(); } })"
+                                          class="rounded-lg border border-emerald-200 dark:border-emerald-900 p-3">
+                                        <label :class="label">Justification <span class="text-rose-500">*</span></label>
+                                        <textarea v-model="bypassApproveForm.justification" rows="2" :class="field" required></textarea>
+                                        <p class="mt-1 text-[11px] text-slate-400">Accepting this debt is recorded against your name.</p>
+                                        <button type="submit" :disabled="bypassApproveForm.processing"
+                                                class="mt-2 w-full rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50">
+                                            Authorise
+                                        </button>
+                                    </form>
+                                    <form @submit.prevent="bypassRejectForm.post(route('bookstore.bypasses.reject', b.id), { preserveScroll: true, onSuccess: () => { decidingBypass = null; bypassRejectForm.reset(); } })"
+                                          class="rounded-lg border border-rose-200 dark:border-rose-900 p-3">
+                                        <label :class="label">Reason for declining <span class="text-rose-500">*</span></label>
+                                        <textarea v-model="bypassRejectForm.reason" rows="2" :class="field" required></textarea>
+                                        <button type="submit" :disabled="bypassRejectForm.processing"
+                                                class="mt-2 w-full rounded-lg bg-rose-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-rose-700 disabled:opacity-50">
+                                            Decline
+                                        </button>
+                                    </form>
+                                </div>
+                            </li>
+                        </ul>
                     </section>
 
                     <!-- Dispatches -->
@@ -402,6 +533,9 @@ const label = 'block text-xs font-medium text-slate-600 dark:text-slate-400';
                                     </p>
                                     <p class="text-xs text-slate-500 dark:text-slate-400">
                                         {{ a.actor?.name }} · {{ date(a.acted_at) }}
+                                    </p>
+                                    <p v-if="a.waited_for_humans" class="text-[11px] text-slate-400">
+                                        waited {{ a.waited_for_humans }} at this stage
                                     </p>
                                     <p v-if="a.note" class="mt-0.5 text-xs text-slate-600 dark:text-slate-400">{{ a.note }}</p>
                                 </div>

@@ -62,6 +62,12 @@ enum Permission: string
     case RECEIVE_BOOKS        = 'receive_books';
     case RECORD_BOOK_RETURN   = 'record_book_return';
 
+    // ── Bookstore: pay-later deferrals ─────────────────────────────────────
+    // Raising a deferral and authorising one are separate grants on purpose:
+    // Finance asks, somebody else accepts the debt.
+    case REQUEST_PAYMENT_BYPASS = 'request_payment_bypass';
+    case APPROVE_PAYMENT_BYPASS = 'approve_payment_bypass';
+
     // ── Bookstore: audit & reporting ───────────────────────────────────────
     case CONDUCT_STOCK_AUDIT  = 'conduct_stock_audit';
     case APPROVE_STOCK_AUDIT  = 'approve_stock_audit';
@@ -110,6 +116,8 @@ enum Permission: string
             Permission::DISPATCH_BOOKS        => 'Dispatch approved books out of the store',
             Permission::RECEIVE_BOOKS         => 'Confirm receipt of a dispatched consignment',
             Permission::RECORD_BOOK_RETURN    => 'Record books returned from a centre or campus',
+            Permission::REQUEST_PAYMENT_BYPASS => 'Ask for a book request to proceed before payment is received',
+            Permission::APPROVE_PAYMENT_BYPASS => 'Authorise a pay-later deferral, accepting the outstanding debt',
             Permission::CONDUCT_STOCK_AUDIT   => 'Start and record physical stock counts',
             Permission::APPROVE_STOCK_AUDIT   => 'Approve counted variances and post the corrections',
             Permission::VIEW_BOOK_REPORTS     => 'View and export bookstore reports',
@@ -133,6 +141,8 @@ enum Permission: string
             self::DISPATCH_BOOKS,
             self::RECEIVE_BOOKS,
             self::RECORD_BOOK_RETURN,
+            self::REQUEST_PAYMENT_BYPASS,
+            self::APPROVE_PAYMENT_BYPASS,
             self::CONDUCT_STOCK_AUDIT,
             self::APPROVE_STOCK_AUDIT,
             self::VIEW_BOOK_REPORTS,

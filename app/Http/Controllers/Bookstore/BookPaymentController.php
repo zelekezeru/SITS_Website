@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Bookstore;
 
 use App\Enums\BookPaymentMethod;
 use App\Enums\BookPaymentStatus;
+use App\Enums\BookRequestEvent;
 use App\Http\Controllers\Controller;
+use App\Services\Bookstore\WorkflowNotifier;
 use App\Models\BookPayment;
 use App\Models\BookRequest;
 use Illuminate\Http\RedirectResponse;
@@ -25,6 +27,10 @@ use Inertia\Response;
  */
 class BookPaymentController extends Controller
 {
+    public function __construct(private readonly WorkflowNotifier $notifier)
+    {
+    }
+
     public function index(Request $request): Response
     {
         $payments = BookPayment::query()
@@ -82,6 +88,14 @@ class BookPaymentController extends Controller
             'status'             => BookPaymentStatus::PENDING,
             'recorded_by'        => $request->user()->id,
         ]);
+
+        // Finance is the next pair of hands — tell them there is money to match.
+        $this->notifier->fire(
+            $bookRequest,
+            BookRequestEvent::PAYMENT_RECORDED,
+            $request->user(),
+            number_format((float) $validated['amount'], 2).' via '.$method->label(),
+        );
 
         return back()->with('success', 'Payment recorded. Finance will verify it against the bank record.');
     }

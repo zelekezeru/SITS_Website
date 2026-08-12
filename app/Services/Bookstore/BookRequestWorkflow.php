@@ -4,8 +4,10 @@ namespace App\Services\Bookstore;
 
 use App\Enums\ApprovalDecision;
 use App\Enums\BookPaymentStatus;
+use App\Enums\BookRequestEvent;
 use App\Enums\BookRequestStage;
 use App\Enums\BookRequestStatus;
+use App\Enums\Permission;
 use App\Models\BookRequest;
 use App\Models\BookRequestApproval;
 use App\Models\BookRequestItem;
@@ -25,8 +27,10 @@ use Illuminate\Support\Facades\DB;
  */
 class BookRequestWorkflow
 {
-    public function __construct(private readonly StockLedger $ledger)
-    {
+    public function __construct(
+        private readonly StockLedger $ledger,
+        private readonly WorkflowNotifier $notifier,
+    ) {
     }
 
     // ── 1. Submission ──────────────────────────────────────────────────────
@@ -49,7 +53,10 @@ class BookRequestWorkflow
 
             $this->recordApproval($request, BookRequestStage::SUBMISSION, $actor, ApprovalDecision::APPROVED);
 
-            return $request->refresh();
+            $request->refresh();
+            $this->notifier->fire($request, BookRequestEvent::SUBMITTED, $actor);
+
+            return $request;
         });
     }
 
@@ -91,39 +98,60 @@ class BookRequestWorkflow
 
             $this->recordApproval($request, BookRequestStage::VERIFICATION, $actor, ApprovalDecision::APPROVED, $note);
 
-            return $request->refresh();
+            $request->refresh();
+            $this->notifier->fire($request, BookRequestEvent::VERIFIED, $actor, $note);
+
+            return $request;
         });
     }
 
     // ── 3. Payment verification (finance) ──────────────────────────────────
 
+    /**
+     * The payment gate. It opens on one of two facts: the money is verifiably
+     * in, or somebody with the authority has signed a pay-later deferral and
+     * accepted the debt. Nothing else opens it.
+     */
     public function verifyPayment(BookRequest $request, User $actor, ?string $note = null): BookRequest
     {
         $this->assertTransition($request, BookRequestStatus::PAYMENT_VERIFIED);
         $this->assertPermission($actor, BookRequestStage::PAYMENT);
 
+        $request->load('paymentBypasses');
+
         $verified = (float) $request->payments()
             ->where('status', BookPaymentStatus::VERIFIED->value)
             ->sum('amount');
 
-        if ($verified + 0.009 < (float) $request->total_amount) {
+        $bypass = $request->activeBypass();
+
+        if ($bypass === null && $verified + 0.009 < (float) $request->total_amount) {
             throw new WorkflowException(sprintf(
-                'Verified payments total %s of %s. Verify the outstanding payment records first.',
+                'Verified payments total %s of %s. Verify the outstanding payment records, or raise a pay-later deferral for approval.',
                 number_format($verified, 2),
                 number_format((float) $request->total_amount, 2)
             ));
         }
 
-        return DB::transaction(function () use ($request, $actor, $note) {
+        return DB::transaction(function () use ($request, $actor, $note, $bypass) {
             $request->update([
                 'status'              => BookRequestStatus::PAYMENT_VERIFIED,
                 'payment_verified_by' => $actor->id,
                 'payment_verified_at' => now(),
             ]);
 
-            $this->recordApproval($request, BookRequestStage::PAYMENT, $actor, ApprovalDecision::APPROVED, $note);
+            // The trail must say *why* the gate opened — paid, or deferred under
+            // whose authority — because a year later that is the only question.
+            $trailNote = $bypass
+                ? trim(($note ? $note.' — ' : '')."Released on pay-later deferral {$bypass->reference}, authorised by ".($bypass->decidedBy?->name ?? 'an authoriser'))
+                : $note;
 
-            return $request->refresh();
+            $this->recordApproval($request, BookRequestStage::PAYMENT, $actor, ApprovalDecision::APPROVED, $trailNote);
+
+            $request->refresh();
+            $this->notifier->fire($request, BookRequestEvent::PAYMENT_VERIFIED, $actor, $trailNote);
+
+            return $request;
         });
     }
 
@@ -144,7 +172,10 @@ class BookRequestWorkflow
 
             $this->recordApproval($request, BookRequestStage::APPROVAL, $actor, ApprovalDecision::APPROVED, $note);
 
-            return $request->refresh();
+            $request->refresh();
+            $this->notifier->fire($request, BookRequestEvent::APPROVED, $actor, $note);
+
+            return $request;
         });
     }
 
@@ -173,7 +204,10 @@ class BookRequestWorkflow
 
             $this->recordApproval($request, BookRequestStage::DISPATCH, $actor, ApprovalDecision::APPROVED);
 
-            return $request->refresh();
+            $request->refresh();
+            $this->notifier->fire($request, BookRequestEvent::DISPATCHED, $actor);
+
+            return $request;
         });
     }
 
@@ -191,7 +225,10 @@ class BookRequestWorkflow
 
             $this->recordApproval($request, BookRequestStage::RECEIPT, $actor, ApprovalDecision::APPROVED, $note);
 
-            return $request->refresh();
+            $request->refresh();
+            $this->notifier->fire($request, BookRequestEvent::RECEIVED, $actor, $note);
+
+            return $request;
         });
     }
 
@@ -212,7 +249,10 @@ class BookRequestWorkflow
 
             $this->recordApproval($request, $stage, $actor, ApprovalDecision::REJECTED, $reason);
 
-            return $request->refresh();
+            $request->refresh();
+            $this->notifier->fire($request, BookRequestEvent::REJECTED, $actor, $reason);
+
+            return $request;
         });
     }
 
@@ -297,6 +337,13 @@ class BookRequestWorkflow
         }
     }
 
+    /**
+     * Append to the trail, and freeze how long this stage waited.
+     *
+     * The dwell time is measured from the previous action (or from creation for
+     * the first step), so "where is the lag" is a plain average over this column
+     * rather than a window function across the whole history.
+     */
     protected function recordApproval(
         BookRequest $request,
         BookRequestStage $stage,
@@ -304,12 +351,24 @@ class BookRequestWorkflow
         ApprovalDecision $decision,
         ?string $note = null
     ): BookRequestApproval {
+        $now = now();
+
+        $previousActedAt = $request->approvals()
+            ->orderByDesc('acted_at')
+            ->orderByDesc('id')
+            ->value('acted_at');
+
+        $enteredStageAt = $previousActedAt
+            ? \Illuminate\Support\Carbon::parse($previousActedAt)
+            : $request->created_at;
+
         return $request->approvals()->create([
-            'stage'    => $stage,
-            'actor_id' => $actor->id,
-            'decision' => $decision,
-            'note'     => $note,
-            'acted_at' => now(),
+            'stage'          => $stage,
+            'actor_id'       => $actor->id,
+            'decision'       => $decision,
+            'note'           => $note,
+            'acted_at'       => $now,
+            'waited_seconds' => max(0, (int) $enteredStageAt->diffInSeconds($now)),
         ]);
     }
 
@@ -328,7 +387,20 @@ class BookRequestWorkflow
             && (int) $request->verified_by !== $user->id
             && (int) $request->payment_verified_by !== $user->id;
 
+        $request->loadMissing('paymentBypasses');
+        $pendingBypass = $request->pendingBypass();
+
         return [
+            // Pay-later: Finance may ask while the request sits at the payment
+            // gate; a different person with the grant decides.
+            'request_bypass' => $status === BookRequestStatus::AWAITING_PAYMENT
+                                && $pendingBypass === null
+                                && $request->activeBypass() === null
+                                && $user->can(Permission::REQUEST_PAYMENT_BYPASS->value),
+            'decide_bypass'  => $pendingBypass !== null
+                                && $user->can(Permission::APPROVE_PAYMENT_BYPASS->value)
+                                && (int) $pendingBypass->requested_by !== $user->id,
+
             'edit'           => $status->isEditable() && (int) $request->requester_id === $user->id,
             'submit'         => $status === BookRequestStatus::DRAFT
                                 && (int) $request->requester_id === $user->id

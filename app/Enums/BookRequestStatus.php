@@ -77,6 +77,57 @@ enum BookRequestStatus: string
         return in_array($this, [self::RECEIVED, self::REJECTED, self::CANCELLED], true);
     }
 
+    /**
+     * The permission whose holders owe this request its next action.
+     *
+     * Drives both the notifications and the "who are we waiting on" column of
+     * the pipeline, so a stakeholder chasing a stalled request sees a name
+     * rather than a stage.
+     */
+    public function awaitingPermission(): ?Permission
+    {
+        return match ($this) {
+            self::DRAFT                => Permission::REQUEST_BOOKS,
+            self::SUBMITTED            => Permission::VERIFY_BOOK_REQUEST,
+            self::AWAITING_PAYMENT     => Permission::VERIFY_BOOK_PAYMENT,
+            self::PAYMENT_VERIFIED     => Permission::APPROVE_BOOK_REQUEST,
+            self::APPROVED,
+            self::PARTIALLY_DISPATCHED => Permission::DISPATCH_BOOKS,
+            self::DISPATCHED           => Permission::RECEIVE_BOOKS,
+            default                    => null,
+        };
+    }
+
+    /** Plain-language answer to "what is this request waiting for?" */
+    public function awaitingDescription(): string
+    {
+        return match ($this) {
+            self::DRAFT                => 'Requester to submit it',
+            self::SUBMITTED            => 'Store manager to check availability',
+            self::AWAITING_PAYMENT     => 'Finance to confirm the payment',
+            self::PAYMENT_VERIFIED     => 'Admin to give final approval',
+            self::APPROVED             => 'Store to dispatch',
+            self::PARTIALLY_DISPATCHED => 'Store to dispatch the balance',
+            self::DISPATCHED           => 'Receiver to confirm delivery',
+            default                    => 'Nothing — this request is closed',
+        };
+    }
+
+    /** The stage a request in this status is sitting at, for lag measurement. */
+    public function awaitingStage(): ?BookRequestStage
+    {
+        return match ($this) {
+            self::DRAFT                => BookRequestStage::SUBMISSION,
+            self::SUBMITTED            => BookRequestStage::VERIFICATION,
+            self::AWAITING_PAYMENT     => BookRequestStage::PAYMENT,
+            self::PAYMENT_VERIFIED     => BookRequestStage::APPROVAL,
+            self::APPROVED,
+            self::PARTIALLY_DISPATCHED => BookRequestStage::DISPATCH,
+            self::DISPATCHED           => BookRequestStage::RECEIPT,
+            default                    => null,
+        };
+    }
+
     /** Statuses whose reservations still hold stock back from other requests. */
     public function holdsReservation(): bool
     {

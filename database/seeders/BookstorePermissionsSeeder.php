@@ -45,7 +45,6 @@ class BookstorePermissionsSeeder extends Seeder
             BookstorePermission::MANAGE_BOOK_STOCK,
             BookstorePermission::MANAGE_PRINT_RUNS,
             BookstorePermission::MANAGE_CENTERS,
-            BookstorePermission::VERIFY_BOOK_REQUEST,
             BookstorePermission::CONDUCT_STOCK_AUDIT,
             BookstorePermission::VIEW_BOOK_REPORTS,
         ));
@@ -54,6 +53,8 @@ class BookstorePermissionsSeeder extends Seeder
         $storeManager = Role::firstOrCreate(['name' => 'Store Manager']);
         $storeManager->givePermissionTo($p(
             BookstorePermission::VIEW_BOOKSTORE,
+            // Availability is checked by whoever can see the shelves.
+            BookstorePermission::VERIFY_BOOK_REQUEST,
             BookstorePermission::MANAGE_STORE_ROOMS,
             BookstorePermission::MANAGE_BOOK_STOCK,
             BookstorePermission::MANAGE_PRINT_RUNS,
@@ -69,6 +70,9 @@ class BookstorePermissionsSeeder extends Seeder
             $finance->givePermissionTo($p(
                 BookstorePermission::VIEW_BOOKSTORE,
                 BookstorePermission::VERIFY_BOOK_PAYMENT,
+                // Finance may ask to defer a payment; authorising it is
+                // deliberately somebody else's grant.
+                BookstorePermission::REQUEST_PAYMENT_BYPASS,
                 BookstorePermission::VIEW_BOOK_REPORTS,
             ));
         }
@@ -86,6 +90,7 @@ class BookstorePermissionsSeeder extends Seeder
             $ops->givePermissionTo($p(
                 BookstorePermission::VIEW_BOOKSTORE,
                 BookstorePermission::APPROVE_BOOK_REQUEST,
+                BookstorePermission::APPROVE_PAYMENT_BYPASS,
                 BookstorePermission::APPROVE_STOCK_AUDIT,
                 BookstorePermission::VIEW_BOOK_REPORTS,
             ));

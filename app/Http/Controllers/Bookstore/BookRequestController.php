@@ -13,6 +13,7 @@ use App\Models\Center;
 use App\Services\Bookstore\BookRequestWorkflow;
 use App\Services\Bookstore\StockLedger;
 use App\Services\Bookstore\WorkflowException;
+use App\Services\Bookstore\WorkflowNotifier;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -29,6 +30,7 @@ class BookRequestController extends Controller
     public function __construct(
         private readonly BookRequestWorkflow $workflow,
         private readonly StockLedger $ledger,
+        private readonly WorkflowNotifier $notifier,
     ) {
     }
 
@@ -97,6 +99,8 @@ class BookRequestController extends Controller
             'payments.verifiedBy:id,name',
             'dispatches.items.bookTitle:id,code,title',
             'dispatches.items.shelfSection',
+            'paymentBypasses.requestedBy:id,name',
+            'paymentBypasses.decidedBy:id,name',
         ]);
 
         // Show the verifier what the shelves can actually cover, per line.
@@ -117,7 +121,18 @@ class BookRequestController extends Controller
                 'total'       => (float) $bookRequest->total_amount,
                 'paid'        => $bookRequest->paid_amount,
                 'outstanding' => $bookRequest->outstanding_amount,
+                'gate_open'   => $bookRequest->paymentGateIsOpen(),
             ],
+            // Who owes the next action, and how long they have owed it.
+            'waiting' => [
+                'description' => $bookRequest->status->awaitingDescription(),
+                'owners'      => $this->notifier->currentOwners($bookRequest)->pluck('name')->take(5)->values(),
+                'since'       => $bookRequest->currentStageEnteredAt()?->toIso8601String(),
+                'age_hours'   => $bookRequest->current_stage_age === null
+                    ? null
+                    : round($bookRequest->current_stage_age / 3600, 1),
+            ],
+            'bypasses' => $bookRequest->paymentBypasses,
         ]);
     }
 

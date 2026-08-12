@@ -108,6 +108,23 @@ class BookRequest extends Model
         return $this->hasMany(BookDispatch::class);
     }
 
+    public function paymentBypasses(): HasMany
+    {
+        return $this->hasMany(BookPaymentBypass::class)->orderByDesc('requested_at');
+    }
+
+    /** The deferral currently holding the payment gate open, if any. */
+    public function activeBypass(): ?BookPaymentBypass
+    {
+        return $this->paymentBypasses
+            ->first(fn (BookPaymentBypass $b) => $b->status->releasesPaymentGate());
+    }
+
+    public function pendingBypass(): ?BookPaymentBypass
+    {
+        return $this->paymentBypasses->first(fn (BookPaymentBypass $b) => $b->isPending());
+    }
+
     public function verifiedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'verified_by');
@@ -154,6 +171,45 @@ class BookRequest extends Model
     public function isFullySettled(): bool
     {
         return $this->outstanding_amount <= 0.009;
+    }
+
+    /**
+     * True when the payment gate may open: either the money is in, or somebody
+     * with the authority has accepted the debt on a pay-later deferral.
+     */
+    public function paymentGateIsOpen(): bool
+    {
+        return $this->isFullySettled() || $this->activeBypass() !== null;
+    }
+
+    // ── Stage timing ───────────────────────────────────────────────────────
+
+    /** When the request entered the stage it is sitting at now. */
+    public function currentStageEnteredAt(): ?\Illuminate\Support\Carbon
+    {
+        if ($this->status->isTerminal()) {
+            return null;
+        }
+
+        $last = $this->approvals->last();
+
+        return $last?->acted_at ?? $this->created_at;
+    }
+
+    /** How long the current stage has been waiting, in seconds. */
+    public function getCurrentStageAgeAttribute(): ?int
+    {
+        $since = $this->currentStageEnteredAt();
+
+        return $since ? (int) $since->diffInSeconds(now()) : null;
+    }
+
+    /** Total time from creation to close, or to now if still open. */
+    public function getTotalElapsedSecondsAttribute(): int
+    {
+        $end = $this->received_at ?? ($this->status->isTerminal() ? $this->updated_at : now());
+
+        return (int) $this->created_at->diffInSeconds($end);
     }
 
     /** True once every approved copy has left the store. */

@@ -161,10 +161,14 @@ const navGroups = computed(() => {
         groups.push({ label: t('Bookstore'), items: shopItems });
 
         const flowItems = [
+            // The shared board comes first: it is how a stakeholder answers
+            // "where is my request" without asking anybody.
+            { label: t('Pipeline'), route: 'bookstore.pipeline',       icon: 'GitPullRequest' },
             { label: t('Requests'), route: 'bookstore.requests.index', icon: 'ClipboardList' },
             { label: t('Centres'),  route: 'bookstore.centers.index',  icon: 'MapPin' },
         ];
         if (can('verify_book_payment')) flowItems.push({ label: t('Payments'),   route: 'bookstore.payments.index',   icon: 'HandCoins' });
+        flowItems.push({ label: t('Pay Later'), route: 'bookstore.bypasses.index', icon: 'Wallet' });
         flowItems.push({ label: t('Dispatches'), route: 'bookstore.dispatches.index', icon: 'Truck' });
         flowItems.push({ label: t('Returns'),    route: 'bookstore.returns.index',    icon: 'Undo2' });
         if (can('conduct_stock_audit')) flowItems.push({ label: t('Stock Audits'), route: 'bookstore.audits.index', icon: 'ClipboardCheck' });

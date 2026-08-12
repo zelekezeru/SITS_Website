@@ -8,6 +8,8 @@ use App\Http\Controllers\Bookstore\BookTitleController;
 use App\Http\Controllers\Bookstore\CenterController;
 use App\Http\Controllers\Bookstore\DashboardController;
 use App\Http\Controllers\Bookstore\LabelController;
+use App\Http\Controllers\Bookstore\PaymentBypassController;
+use App\Http\Controllers\Bookstore\PipelineController;
 use App\Http\Controllers\Bookstore\PrintRunController;
 use App\Http\Controllers\Bookstore\ReportController;
 use App\Http\Controllers\Bookstore\ScanController;
@@ -39,6 +41,10 @@ Route::middleware(['auth', 'permission:view_bookstore'])
     ->group(function () {
 
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
+        // The shared board. Open to every bookstore viewer on purpose: layered
+        // approval only works if stakeholders can watch the queue move.
+        Route::get('/pipeline', [PipelineController::class, 'index'])->name('pipeline');
 
         // ── Scanning ───────────────────────────────────────────────────────
         Route::get('/scan', [ScanController::class, 'index'])->name('scan.index');
@@ -145,6 +151,22 @@ Route::middleware(['auth', 'permission:view_bookstore'])
             Route::get('/payments', [BookPaymentController::class, 'index'])->name('payments.index');
             Route::post('/payments/{payment}/verify', [BookPaymentController::class, 'verify'])->name('payments.verify');
             Route::post('/payments/{payment}/reject', [BookPaymentController::class, 'reject'])->name('payments.reject');
+        });
+
+        // ── Pay-later deferrals ────────────────────────────────────────────
+        // Finance asks, a different grant authorises. The register is visible to
+        // every viewer so an unpaid release cannot sit quietly.
+        Route::get('/bypasses', [PaymentBypassController::class, 'index'])->name('bypasses.index');
+
+        Route::post('/requests/{bookRequest}/bypass', [PaymentBypassController::class, 'store'])
+            ->middleware('permission:request_payment_bypass')->name('bypasses.store');
+
+        Route::post('/bypasses/{bypass}/settle', [PaymentBypassController::class, 'settle'])
+            ->middleware('permission:verify_book_payment')->name('bypasses.settle');
+
+        Route::middleware('permission:approve_payment_bypass')->group(function () {
+            Route::post('/bypasses/{bypass}/approve', [PaymentBypassController::class, 'approve'])->name('bypasses.approve');
+            Route::post('/bypasses/{bypass}/reject', [PaymentBypassController::class, 'reject'])->name('bypasses.reject');
         });
 
         // ── Dispatch ───────────────────────────────────────────────────────

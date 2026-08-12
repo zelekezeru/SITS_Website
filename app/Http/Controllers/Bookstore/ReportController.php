@@ -36,6 +36,8 @@ class ReportController extends Controller
         'payments'            => 'Payments and CRV traceability',
         'audit_variance'      => 'Audit variance',
         'reprint_forecast'    => 'Reprint forecast',
+        'stage_lag'           => 'Approval stage lag',
+        'deferred_payments'   => 'Deferred payments (pay later)',
     ];
 
     public function index(Request $request): Response
@@ -94,6 +96,8 @@ class ReportController extends Controller
             'payments'            => $this->payments($filters),
             'audit_variance'      => $this->auditVariance(),
             'reprint_forecast'    => $this->reprintForecast(),
+            'stage_lag'           => $this->stageLag($filters),
+            'deferred_payments'   => $this->deferredPayments(),
             default               => collect(),
         };
     }
@@ -292,6 +296,59 @@ class ReportController extends Controller
                 DB::raw('(stock_audit_lines.counted_quantity - stock_audit_lines.system_quantity) as variance'),
                 DB::raw('coalesce(users.name, \'\') as counted_by'),
                 'stock_audit_lines.note as note',
+            ]);
+    }
+
+    /**
+     * How long each approval layer takes, and who is slowest.
+     *
+     * Reads the frozen dwell time off the approval trail, so the answer to
+     * "where is the lag" is a group-by rather than a reconstruction.
+     */
+    protected function stageLag(array $filters): Collection
+    {
+        return DB::table('book_request_approvals')
+            ->join('users', 'users.id', '=', 'book_request_approvals.actor_id')
+            ->whereNotNull('book_request_approvals.waited_seconds')
+            ->when($filters['from'] ?? null, fn ($q, $from) => $q->where('book_request_approvals.acted_at', '>=', $from))
+            ->when($filters['to'] ?? null, fn ($q, $to) => $q->where('book_request_approvals.acted_at', '<=', $to))
+            ->groupBy('book_request_approvals.stage', 'users.id', 'users.name')
+            ->orderByDesc(DB::raw('avg(book_request_approvals.waited_seconds)'))
+            ->get([
+                'book_request_approvals.stage as stage',
+                'users.name as actor',
+                DB::raw('count(*) as actions'),
+                DB::raw('round(avg(book_request_approvals.waited_seconds) / 3600.0, 1) as avg_hours_waiting'),
+                DB::raw('round(max(book_request_approvals.waited_seconds) / 3600.0, 1) as worst_hours_waiting'),
+            ]);
+    }
+
+    /**
+     * Books released before the money arrived: who authorised it, on what
+     * justification, and whether the promise has come due.
+     */
+    protected function deferredPayments(): Collection
+    {
+        return DB::table('book_payment_bypasses')
+            ->join('book_requests', 'book_requests.id', '=', 'book_payment_bypasses.book_request_id')
+            ->leftJoin('centers', 'centers.id', '=', 'book_requests.center_id')
+            ->leftJoin('campuses', 'campuses.id', '=', 'book_requests.campus_id')
+            ->leftJoin('users as requester', 'requester.id', '=', 'book_payment_bypasses.requested_by')
+            ->leftJoin('users as authoriser', 'authoriser.id', '=', 'book_payment_bypasses.decided_by')
+            ->orderByDesc('book_payment_bypasses.requested_at')
+            ->get([
+                'book_payment_bypasses.reference as reference',
+                'book_requests.request_number as request',
+                DB::raw('coalesce(centers.name, campuses.name, \'—\') as destination'),
+                'book_payment_bypasses.amount as amount_deferred',
+                'book_payment_bypasses.status as status',
+                'book_payment_bypasses.promised_on as promised_on',
+                DB::raw('coalesce(requester.name, \'\') as requested_by'),
+                'book_payment_bypasses.reason as reason',
+                DB::raw('coalesce(authoriser.name, \'\') as authorised_by'),
+                'book_payment_bypasses.justification as justification',
+                'book_payment_bypasses.decided_at as decided_at',
+                'book_payment_bypasses.settled_at as settled_at',
             ]);
     }
 

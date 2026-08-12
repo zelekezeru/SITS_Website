@@ -312,16 +312,57 @@ rules apply to the UI, the API and any future import. "Smooth, direct and predic
 means there is exactly one path and the UI only ever shows the button whose transition
 would succeed.
 
-**Stage → permission:**
+**Stage → permission → who actually does it:**
 
-| Stage | Permission | Typical role |
+| Stage | Permission | Who |
 |---|---|---|
 | submit | `request_books` | Centre coordinator, campus rep |
-| verify (availability & genuineness) | `verify_book_request` | Operations Manager / Bookstore Admin |
-| verify payment | `verify_book_payment` | Finance Officer |
-| final approval | `approve_book_request` | President / Super Admin |
+| verify availability | `verify_book_request` | **Store Manager** — availability is checked by whoever can see the shelves |
+| verify payment | `verify_book_payment` | Finance Manager |
+| final approval | `approve_book_request` | Admin / holder of the approve grant |
 | dispatch | `dispatch_books` | Store Manager |
 | confirm receipt | `receive_books` | Requester |
+
+### 3.2 Pay-later deferral
+
+Finance may release the payment gate before the money is in. That is the one path
+by which books leave the store unpaid, so it is deliberately the most constrained:
+
+```
+AWAITING_PAYMENT
+   │
+   ├── money verified ────────────────────────────► gate opens
+   │
+   └── Finance raises a deferral (REASON required)
+            │  request_payment_bypass
+            ▼
+        PENDING ──► authoriser decides (JUSTIFICATION required)
+            │           approve_payment_bypass — and never the same person
+            ├── approved ──► gate opens, debt stays outstanding
+            └── rejected ──► gate stays shut
+```
+
+Approving does **not** forgive the money. The amount remains on the request, the
+deferral shows on the *Deferred payments* report, and it goes overdue once the
+promised date passes — until somebody settles it. The approval trail records *why*
+the gate opened: paid, or deferred under whose authority, naming the reference.
+
+### 3.3 Notifications
+
+Each hand-off notifies the holders of the permission that owns the **next** stage —
+resolved from the permission itself, never from a role name or a configured list, so
+granting somebody `verify_book_payment` starts their alerts and revoking it stops
+them, with no second place to keep in step. The actor is never notified of their own
+action. Database + mail, surfacing in the existing notification bell.
+
+### 3.4 Stage timing and lag
+
+Every step carries `acted_at` and a frozen `waited_seconds` — how long that stage sat
+before somebody acted. Dwell time is therefore a plain average over one column rather
+than a reconstruction across history. The pipeline board shows, per open request, the
+stage, **who owes the next action by name**, how long it has waited, and total age;
+the *Approval stage lag* report shows average and worst dwell time per layer per
+person, which is the answer to "where is the lag".
 
 `verify_book_request` and `verify_book_payment` are deliberately **different**
 permissions from `approve_book_request`, so no single account can walk a request from
@@ -406,6 +447,9 @@ via dompdf):
 7. **Payments** — collected vs expected, by method, with CRV traceability.
 8. **Audit variance** — every count, every discrepancy, who signed.
 9. **Reprint forecast** — consumption rate per title × weeks of cover remaining.
+10. **Approval stage lag** — average and worst dwell time per layer per person.
+11. **Deferred payments** — every pay-later release, its reason, its authorisation
+    and whether the promise has come due.
 
 ---
 

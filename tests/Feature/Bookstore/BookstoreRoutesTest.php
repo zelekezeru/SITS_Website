@@ -25,6 +25,13 @@ function bookstoreUser(array $permissions = ['view_bookstore']): User
 }
 
 beforeEach(function () {
+    // Register the whole grant set, as BookstorePermissionsSeeder does in
+    // production: the permission middleware throws rather than 403s when a
+    // permission row is missing entirely.
+    foreach (App\Enums\Permission::bookstore() as $permission) {
+        Permission::firstOrCreate(['name' => $permission->value]);
+    }
+
     $store         = StoreRoom::create(['name' => 'Main Store', 'code' => 'MS']);
     $shelf         = Shelf::create(['store_room_id' => $store->id, 'code' => 'A', 'label' => 'Shelf A']);
     $this->store   = $store;
@@ -124,6 +131,8 @@ it('builds every report without error', function (string $report) {
     'payments',
     'audit_variance',
     'reprint_forecast',
+    'stage_lag',
+    'deferred_payments',
 ]);
 
 it('exports a report as CSV', function () {
@@ -228,4 +237,59 @@ it('will not archive a title that still has stock on the shelf', function () {
         ->assertRedirect();
 
     expect(BookTitle::find($this->title->id))->not->toBeNull();
+});
+
+// ── Pipeline & deferrals ────────────────────────────────────────────────────
+
+it('shows the pipeline board to any bookstore viewer', function () {
+    $this->actingAs(bookstoreUser())
+        ->get(route('bookstore.pipeline'))
+        ->assertOk();
+});
+
+it('shows the deferral register to any bookstore viewer', function () {
+    $this->actingAs(bookstoreUser())
+        ->get(route('bookstore.bypasses.index'))
+        ->assertOk();
+});
+
+it('keeps raising and authorising a deferral behind separate grants', function () {
+    $request = App\Models\BookRequest::create([
+        'request_number'   => App\Models\BookRequest::nextNumber(),
+        'requester_id'     => bookstoreUser()->id,
+        'destination_type' => App\Enums\RequestDestination::CENTER,
+        'center_id'        => Center::first()->id,
+        'status'           => App\Enums\BookRequestStatus::AWAITING_PAYMENT,
+    ]);
+
+    // A plain viewer can neither ask nor authorise.
+    $this->actingAs(bookstoreUser())
+        ->post(route('bookstore.bypasses.store', $request), ['reason' => 'Please'])
+        ->assertForbidden();
+
+    // Finance may ask.
+    $this->actingAs(bookstoreUser(['view_bookstore', 'request_payment_bypass']))
+        ->post(route('bookstore.bypasses.store', $request), ['reason' => 'Centre remits at term end.'])
+        ->assertRedirect();
+
+    $bypass = App\Models\BookPaymentBypass::firstOrFail();
+
+    // …but may not authorise their own ask.
+    $this->actingAs(bookstoreUser(['view_bookstore', 'request_payment_bypass']))
+        ->post(route('bookstore.bypasses.approve', $bypass), ['justification' => 'Fine'])
+        ->assertForbidden();
+});
+
+it('rejects a deferral request with no reason', function () {
+    $request = App\Models\BookRequest::create([
+        'request_number'   => App\Models\BookRequest::nextNumber(),
+        'requester_id'     => bookstoreUser()->id,
+        'destination_type' => App\Enums\RequestDestination::CENTER,
+        'center_id'        => Center::first()->id,
+        'status'           => App\Enums\BookRequestStatus::AWAITING_PAYMENT,
+    ]);
+
+    $this->actingAs(bookstoreUser(['view_bookstore', 'request_payment_bypass']))
+        ->post(route('bookstore.bypasses.store', $request), ['reason' => ''])
+        ->assertSessionHasErrors('reason');
 });
