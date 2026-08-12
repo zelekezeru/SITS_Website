@@ -64,9 +64,9 @@ class DashboardController extends Controller
     private const ROADMAP = [
         ['phase' => 'Phase 0', 'title' => 'Access & roles', 'status' => 'done',
             'detail' => 'Store Keeper role, 15 permissions, portal shell and permission-gated route surface.'],
-        ['phase' => 'Phase 1', 'title' => 'Foundation', 'status' => 'next',
-            'detail' => 'Locations, categories and suppliers; the 14-table schema and code generators.'],
-        ['phase' => 'Phase 2', 'title' => 'Catalog & receiving', 'status' => 'planned',
+        ['phase' => 'Phase 1', 'title' => 'Foundation', 'status' => 'done',
+            'detail' => 'The 14-table schema, 13 enums, models and code generators; categories, suppliers and locations are live.'],
+        ['phase' => 'Phase 2', 'title' => 'Catalog & receiving', 'status' => 'next',
             'detail' => 'Items with photos, goods-received notes, the movement ledger and reorder alerts.'],
         ['phase' => 'Phase 3', 'title' => 'Issue & requisition', 'status' => 'planned',
             'detail' => 'Requisition approval flow, issue vouchers, returns and inter-location transfers.'],

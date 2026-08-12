@@ -5,7 +5,8 @@ Finance. Scope: every physical thing the Seminary owns — from a box of chalk t
 minibus — registered once, tracked continuously, and reconciled against a countable
 ledger.
 
-Status: **Phase 0 (access layer) implemented.** Phases 1–6 specified below.
+Status: **Phase 0 (access layer) and Phase 1 (foundation) implemented.** Phases 2–6
+specified below.
 
 ---
 
@@ -328,8 +329,8 @@ Exports follow the existing Excel/PDF plumbing used by payroll.
 | Phase | Scope | Ships |
 |---|---|---|
 | **0 — Access** ✅ | `Store Keeper` role, 15 permissions, `StorePermission` enum + seeder, `StoreNavigation`, `/store` portal + dashboard, permission-gated route surface, President sidebar section, feature tests | *done* |
-| **1 — Foundation** | Migrations for all 14 tables, 12 enums, models + relations + factories, locations & categories & suppliers CRUD, code generators | catalog you can populate |
-| **2 — Catalog & receiving** | Items CRUD with image/document upload, GRN receiving, the movement ledger + `StockLedger` service, on-hand derivation, reorder alerts | "what do we own, how much, where" |
+| **1 — Foundation** ✅ | Migrations for all 14 tables, 13 enums, 14 models + relations + factories, `InventoryCodeGenerator`, categories / suppliers / locations CRUD | *done — a catalog you can populate* |
+| **2 — Catalog & receiving** | Items CRUD with image/document upload, GRN receiving, the `StockLedger` write service enforcing the negative-stock guard, reorder alerts on the dashboard | "what do we own, how much, where" |
 | **3 — Issue & requisition** | Requisition maker-checker flow, issue vouchers, returns, inter-location transfers, employee self-service request page | day-to-day store operations |
 | **4 — Assets** | Asset register, tag/QR generation, custody assign/return with handover slips, maintenance logs, depreciation schedule, disposal with approval | fixed-asset control |
 | **5 — Control & insight** | Stocktake sessions with QR counting, variance posting, the nine reports, Excel/PDF export, termination-clearance hook | audit-ready |
@@ -339,7 +340,46 @@ Each phase is independently shippable and leaves the module in a working state.
 
 ---
 
-## 9. Build & deploy note
+## 9. What Phase 1 shipped
+
+Migrations (4 files, 14 tables): `..._create_inventory_reference_tables`,
+`..._create_inventory_item_tables`, `..._create_inventory_asset_tables`,
+`..._create_inventory_movement_tables`.
+
+Enums (13): `InventoryTrackingMode`, `InventoryMovementType`, `InventoryUnitStatus`,
+`InventoryCondition`, `InventoryLocationType`, `InventoryItemStatus`,
+`InventoryRequestStatus`, `InventoryStocktakeStatus`, `InventoryDisposalMethod`,
+`InventoryDisposalStatus`, `InventoryMaintenanceType`, `DepreciationMethod`,
+`UnitOfMeasure`.
+
+Models (14), all with relations, scopes and derived accessors. The load-bearing ones:
+
+- `InventoryItem::onHand(?locationId)` — sums the signed ledger, optionally over a
+  location subtree; `scopeNeedingReorder()` resolves the same sum in SQL so the
+  dashboard doesn't load the catalog to find a handful of alerts.
+- `InventoryStockMovement` — `updating` and `deleting` both throw. The ledger is
+  append-only at the model level, so no controller, service or console command can
+  quietly rewrite history (invariant 4).
+- `InventoryUnit::bookValue()` / `accumulatedDepreciation()` — policy resolved
+  unit → item → category.
+- `InventoryStocktakeLine` — recomputes `variance` on every save, so a counted figure
+  and its variance can never disagree.
+
+`App\Support\Inventory\InventoryCodeGenerator` issues every identifier in §4. Sequences
+are read off the data under a lock rather than a counter table (a counter that drifts
+is worse than none), soft-deleted rows count toward the sequence because their unique
+code survives deletion, and codes sort by length first so `IT-00009` doesn't outrank
+`IT-00010`.
+
+Live pages: **Categories**, **Suppliers**, **Store Locations** — full CRUD, read gated
+by `view inventory`, writes by each entity's manage permission. Two protective
+behaviours worth noting: a supplier with receipts on file and a location with stock
+history are *deactivated*, never deleted, so the purchase and ledger history stay
+readable.
+
+Covered by `tests/Feature/InventoryFoundationTest.php` (24 tests).
+
+## 10. Build & deploy note
 
 `public/build` is committed (production cPanel has no Node). Every phase that touches
 `resources/` must ship `npm run build` output in the same commit — see
