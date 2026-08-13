@@ -6,16 +6,10 @@
         <i class="fa fa-chevron-down text-[10px] text-slate-500 hidden sm:inline-block transition-transform duration-200" id="userMenuChevron"></i>
     </button>
     @php
-        $user = Auth::user();
-        $lmsLabel = __('app.lms_portal');
-        $rolesLower = $user->roles->pluck('name')->map(fn($r) => strtolower($r));
-        if ($rolesLower->contains('student')) {
-            $lmsLabel = __('app.student_portal');
-        } elseif ($rolesLower->contains('trainer')) {
-            $lmsLabel = __('app.trainer_portal');
-        } elseif ($rolesLower->intersect(['staff', 'superadmin', 'admin', 'president / super admin', 'editor', 'librarian'])->isNotEmpty()) {
-            $lmsLabel = __('app.staff_portal');
-        }
+        // Cross-app portals: the same server-side list, order and role gating the
+        // Inertia layouts render through Components/PortalSwitcher.vue. Add a
+        // portal in App\Support\PortalDirectory, not here.
+        $portals = \App\Support\PortalDirectory::for(Auth::user());
     @endphp
     <ul id="userDropdown" class="absolute hidden bg-slate-900/95 backdrop-blur-xl border border-slate-800 text-xs font-semibold rounded-2xl shadow-2xl mt-2 right-0 w-56 py-2 z-50 animate-fade-in">
         <li class="px-4 py-2 border-b border-slate-800/60 mb-2 md:hidden">
@@ -25,15 +19,16 @@
         <li><a href="{{ route('portal') }}" class="block px-4 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800/40 transition">{{ __('app.dashboard') }}</a></li>
         <li><a href="{{ route('profile.edit', ['from' => 'website']) }}" class="block px-4 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800/40 transition">{{ __('app.view_profile') }}</a></li>
         <li class="border-t border-slate-800/60 my-1.5"></li>
-        @if ($user->hasAnyRole(['SUPERADMIN', 'ADMIN', 'EDITOR', 'TRAINER', 'STAFF', 'LIBRARIAN']))
-            <li><a href="/dashboard" class="flex items-center px-4 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800/40 transition"><i class="fa fa-dashboard w-4 mr-2 text-slate-500"></i> SITS ERP</a></li>
-        @endif
-        <li><a href="/library/portal" class="flex items-center px-4 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800/40 transition"><i class="fa fa-book w-4 mr-2 text-slate-500"></i> Digital Library</a></li>
-        <li><a href="https://lms.sits.edu.et" target="_blank" class="flex items-center px-4 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800/40 transition"><i class="fa fa-graduation-cap w-4 mr-2 text-slate-500"></i> SITS LMS</a></li>
-        <li><a href="/go/lms" target="_blank" class="flex items-center px-4 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800/40 transition"><i class="fa fa-laptop w-4 mr-2 text-slate-500"></i> Moodle</a></li>
-        @if ($user->hasAnyRole(['SUPERADMIN', 'ADMIN', 'EDITOR']))
-            <li><a href="{{ route('website.admin.dashboard') }}" class="flex items-center px-4 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800/40 transition"><i class="fa fa-globe w-4 mr-2 text-slate-500"></i> Website Admin</a></li>
-        @endif
+        @foreach ($portals as $portal)
+            <li>
+                <a href="{{ $portal['href'] }}"
+                   title="{{ $portal['description'] }}"
+                   @if ($portal['target']) target="{{ $portal['target'] }}" rel="noopener" @endif
+                   class="flex items-center px-4 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800/40 transition">
+                    <i class="fa {{ $portal['icon_fa'] }} w-4 mr-2 text-slate-500"></i> {{ $portal['label'] }}
+                </a>
+            </li>
+        @endforeach
         <li class="border-t border-slate-800/60 my-1.5"></li>
         <li>
             <form method="POST" action="{{ route('logout') }}">
