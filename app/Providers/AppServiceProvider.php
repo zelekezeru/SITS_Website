@@ -46,6 +46,18 @@ class AppServiceProvider extends ServiceProvider
         // Our own LMS skips that consent screen — see App\Models\OAuthClient.
         Passport::useClientModel(\App\Models\OAuthClient::class);
 
+        // Force a default/recovery password to be retired before SSO can hand
+        // the user on to Moodle. /go/lms carries this in its route definition,
+        // but Moodle's "Log in with SITS" button enters at /oauth/authorize,
+        // which Passport registers itself — so the middleware is attached to
+        // that route here rather than by re-declaring Passport's routes.
+        $this->app->booted(function () {
+            $route = \Illuminate\Support\Facades\Route::getRoutes()
+                ->getByName('passport.authorizations.authorize');
+
+            $route?->middleware('password.fresh');
+        });
+
         // Store client secrets in plain text so external OAuth2 consumers like
         // Moodle can authenticate without bcrypt comparison issues.
         // Note: Passport v13 stores secrets as plain text by default.

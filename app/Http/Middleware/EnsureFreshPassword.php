@@ -25,6 +25,14 @@ class EnsureFreshPassword
         $routeName = $request->route()?->getName();
 
         if ($user && ! $user->password_changed && ! in_array($routeName, self::EXEMPT_ROUTES, true)) {
+            // Remember where they were going so the change hands them straight
+            // back. Matters most for the Moodle SSO hop: Moodle sends them to
+            // /oauth/authorize, and without this they would change their
+            // password only to land on the portal and have to start over.
+            if ($request->isMethod('GET') && ! $request->expectsJson()) {
+                $request->session()->put('url.intended', $request->fullUrl());
+            }
+
             return redirect()->route('password.force-change');
         }
 

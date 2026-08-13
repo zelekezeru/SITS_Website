@@ -46,7 +46,15 @@ Route::middleware('auth')->group(function () {
 
     // ── Moodle SSO Redirect ──────────────────────────────────────────────────
     // Authenticated users are redirected to Moodle with auto-login (SSO).
-    Route::get('/go/lms', [MoodleController::class, 'redirect'])->name('lms.redirect');
+    //
+    // `password.fresh` matters here specifically: one SITS login is what opens
+    // Moodle, so a user still on a default/recovery password must retire it
+    // before that single sign-on can carry them into their courses. Moodle's own
+    // "Log in with SITS" button enters at /oauth/authorize instead, which is
+    // gated the same way — see AppServiceProvider.
+    Route::get('/go/lms', [MoodleController::class, 'redirect'])
+        ->middleware('password.fresh')
+        ->name('lms.redirect');
 
     // ── External research databases ──────────────────────────────────────────
     // Plain gateway redirects. The institutional subscription covers every SITS

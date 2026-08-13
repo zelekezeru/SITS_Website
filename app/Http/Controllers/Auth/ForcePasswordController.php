@@ -26,7 +26,16 @@ class ForcePasswordController extends Controller
     public function forceChange(Request $request)
     {
         $request->validate([
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            // Proving knowledge of the current password is what makes this a
+            // *change* rather than a takeover: without it, anyone who reached a
+            // session on a shared default could claim the account outright.
+            'current_password' => ['required', 'string', 'current_password'],
+            // Refusing the old value stops "change" being a no-op that leaves a
+            // known default in place.
+            'password' => ['required', 'string', 'min:8', 'confirmed', 'different:current_password'],
+        ], [
+            'current_password.current_password' => 'That is not your current password.',
+            'password.different' => 'Your new password must be different from your current one.',
         ]);
 
         /** @var User $user */
@@ -38,8 +47,15 @@ class ForcePasswordController extends Controller
             'default_password' => null,
         ]);
 
+        // New session id after a credential change, and re-hash the remembered
+        // session so the user is not logged out by the password swap.
         $request->session()->regenerate();
+        Auth::setUser($user);
 
-        return redirect(RoleLanding::url($user))->with('success', 'Password updated. Welcome aboard!');
+        // Resume whatever they were doing — for the LMS this is the Moodle SSO
+        // handshake they were pushed out of, so the password change costs them
+        // one form and drops them where they were headed.
+        return redirect()->intended(RoleLanding::url($user))
+            ->with('success', 'Password updated. Welcome aboard!');
     }
 }

@@ -45,6 +45,9 @@ it('walks the full authorization code flow and returns OIDC claims to Moodle', f
         'name'              => 'Abebe Bikila',
         'email'             => 'abebe@sits.edu.et',
         'email_verified_at' => now(),
+        // SSO is gated on retiring the default password — see
+        // ForcePasswordChangeBeforeSsoTest for that gate itself.
+        'password_changed'  => true,
     ]);
     Role::findOrCreate('STUDENT');
     $user->assignRole('STUDENT');
@@ -120,7 +123,7 @@ it('skips the consent screen for the trusted LMS client', function () {
     // go straight back to Moodle with a code — no "Authorize" button in between.
     config(['services.moodle.oauth_client_id' => (string) $this->client->getKey()]);
 
-    $response = actingAs(User::factory()->create())->get('/oauth/authorize?'.http_build_query([
+    $response = actingAs(User::factory()->create(['password_changed' => true]))->get('/oauth/authorize?'.http_build_query([
         'client_id'     => $this->client->getKey(),
         'redirect_uri'  => $this->client->redirect_uris[0],
         'response_type' => 'code',
@@ -137,7 +140,7 @@ it('skips the consent screen for the trusted LMS client', function () {
 it('still asks for consent for a client that is not the trusted LMS', function () {
     config(['services.moodle.oauth_client_id' => 'some-other-client']);
 
-    actingAs(User::factory()->create())->get('/oauth/authorize?'.http_build_query([
+    actingAs(User::factory()->create(['password_changed' => true]))->get('/oauth/authorize?'.http_build_query([
         'client_id'     => $this->client->getKey(),
         'redirect_uri'  => $this->client->redirect_uris[0],
         'response_type' => 'code',
@@ -174,7 +177,7 @@ it('refuses userinfo without a bearer token', function () {
 it('sends /go/lms straight to Moodle when no web-service token is configured', function () {
     config(['services.moodle.token' => '', 'services.moodle.url' => 'https://learn.sits.edu.et']);
 
-    actingAs(User::factory()->create())
+    actingAs(User::factory()->create(['password_changed' => true]))
         ->get('/go/lms')
         ->assertRedirect('https://learn.sits.edu.et');
 });
