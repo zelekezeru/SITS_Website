@@ -109,6 +109,27 @@ it('rotates the rest even when a row has undecryptable ciphertext', function () 
         ->and($poisoned->fresh()->readableDefaultPassword())->not->toBeNull();
 });
 
+it('still exports pending passwords when there is nothing left to rotate', function () {
+    // After a successful rotation the database is the only place these
+    // passwords exist, so asking for the list must keep working.
+    $user = User::factory()->create([
+        'email' => 'already@sits.edu.et',
+        'password' => Hash::make('AlreadyIssued1'),
+        'default_password' => 'AlreadyIssued1',
+        'password_changed' => false,
+    ]);
+
+    $csv = tempnam(sys_get_temp_dir(), 'otp_').'.csv';
+
+    artisan('users:rotate-shared-defaults', ['--csv' => $csv])->assertSuccessful();
+
+    $contents = file_get_contents($csv);
+    @unlink($csv);
+
+    expect($contents)->toContain('already@sits.edu.et')
+        ->and($contents)->toContain('AlreadyIssued1');
+});
+
 it('changes nothing on a dry run', function () {
     $shared = OneTimePassword::legacySharedDefault();
 

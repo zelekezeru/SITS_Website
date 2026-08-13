@@ -46,7 +46,14 @@ class RotateSharedDefaultPasswords extends Command
         $affected = $candidates->filter(fn (User $u) => Hash::check($shared, $u->password));
 
         if ($affected->isEmpty()) {
-            $this->info('No account is using the shared default. Nothing to do.');
+            $this->info('No account is using the shared default. Nothing to rotate.');
+
+            // The export still has to run: once everything has been rotated the
+            // only copy of those passwords is in the database, and an admin
+            // asking for the list is the normal case, not an error.
+            if ($csvPath && ! $dryRun) {
+                $this->exportPending($csvPath);
+            }
 
             return self::SUCCESS;
         }
@@ -96,31 +103,7 @@ class RotateSharedDefaultPasswords extends Command
         }
 
         if ($csvPath) {
-            // Export every account still awaiting its first login, not just the
-            // ones rotated in this run: an earlier interrupted run may have
-            // issued passwords that were never written down, and those exist
-            // nowhere but the database.
-            $pending = User::where('password_changed', false)->get()
-                ->map(fn (User $u) => [$u->email, $u->readableDefaultPassword()])
-                ->filter(fn (array $r) => $r[1] !== null)
-                ->values();
-
-            // Written before anything else can read it: these are live
-            // credentials, and the file exists only to be distributed and deleted.
-            $handle = fopen($csvPath, 'w');
-            chmod($csvPath, 0600);
-            fputcsv($handle, ['email', 'one_time_password']);
-            foreach ($pending as $row) {
-                fputcsv($handle, $row);
-            }
-            fclose($handle);
-
-            $this->newLine();
-            $this->info("Exported {$pending->count()} pending one-time passwords.");
-
-            $this->newLine();
-            $this->warn("Credentials written to {$csvPath} (mode 0600).");
-            $this->warn('Distribute them, then DELETE that file — it is a list of working passwords.');
+            $this->exportPending($csvPath);
         } else {
             $this->newLine();
             $this->line('No --csv given. Read each password back per user from the admin UI,');
@@ -128,5 +111,34 @@ class RotateSharedDefaultPasswords extends Command
         }
 
         return self::SUCCESS;
+    }
+
+    /**
+     * Write the one-time password of every account still awaiting first login.
+     *
+     * Deliberately not limited to accounts rotated in this run: once rotated,
+     * the database is the only place those passwords exist, so an admin needs to
+     * be able to ask for the list at any time.
+     */
+    private function exportPending(string $csvPath): void
+    {
+        $pending = User::where('password_changed', false)->get()
+            ->map(fn (User $u) => [$u->email, $u->readableDefaultPassword()])
+            ->filter(fn (array $row) => $row[1] !== null)
+            ->values();
+
+        // Locked down before anything is written into it: this is a list of
+        // working credentials that exists only to be distributed and deleted.
+        $handle = fopen($csvPath, 'w');
+        chmod($csvPath, 0600);
+        fputcsv($handle, ['email', 'one_time_password']);
+        foreach ($pending as $row) {
+            fputcsv($handle, $row);
+        }
+        fclose($handle);
+
+        $this->newLine();
+        $this->info("Exported {$pending->count()} pending one-time passwords to {$csvPath} (mode 0600).");
+        $this->warn('Distribute them, then DELETE that file — it is a list of working passwords.');
     }
 }
