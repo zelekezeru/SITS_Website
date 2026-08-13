@@ -5,6 +5,8 @@ namespace App\Console\Commands;
 use App\Models\User;
 use App\Support\OneTimePassword;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 /**
@@ -59,32 +61,62 @@ class RotateSharedDefaultPasswords extends Command
         }
 
         $rows = [];
+        $failed = [];
 
         foreach ($affected as $user) {
             $oneTime = OneTimePassword::generate();
 
-            $user->forceFill([
-                'password' => Hash::make($oneTime),
-                'default_password' => $oneTime,
-                // Still not their own choice, so the forced change stands.
-                'password_changed' => false,
-            ])->save();
+            try {
+                // Written through the query builder, not the model, on purpose.
+                // Saving via Eloquent makes it decrypt the PREVIOUS
+                // default_password to diff it, and rows encrypted under an older
+                // APP_KEY throw "The MAC is invalid" — which aborts the whole
+                // run partway, leaving some accounts rotated and unrecorded.
+                // Encrypting by hand sidesteps reading the old value at all.
+                DB::table($user->getTable())->where('id', $user->getKey())->update([
+                    'password' => Hash::make($oneTime),
+                    'default_password' => Crypt::encryptString($oneTime),
+                    // Still not their own choice, so the forced change stands.
+                    'password_changed' => false,
+                ]);
 
-            $rows[] = [$user->email, $oneTime];
+                $rows[] = [$user->email, $oneTime];
+            } catch (\Throwable $e) {
+                // One unwritable row must not cost everyone else their rotation.
+                $failed[] = [$user->email, $e->getMessage()];
+            }
         }
 
-        $this->info("Rotated {$affected->count()} passwords.");
+        $this->info('Rotated '.count($rows).' passwords.');
+
+        if ($failed !== []) {
+            $this->newLine();
+            $this->error(count($failed).' accounts could not be rotated:');
+            $this->table(['email', 'error'], $failed);
+        }
 
         if ($csvPath) {
+            // Export every account still awaiting its first login, not just the
+            // ones rotated in this run: an earlier interrupted run may have
+            // issued passwords that were never written down, and those exist
+            // nowhere but the database.
+            $pending = User::where('password_changed', false)->get()
+                ->map(fn (User $u) => [$u->email, $u->readableDefaultPassword()])
+                ->filter(fn (array $r) => $r[1] !== null)
+                ->values();
+
             // Written before anything else can read it: these are live
             // credentials, and the file exists only to be distributed and deleted.
             $handle = fopen($csvPath, 'w');
             chmod($csvPath, 0600);
             fputcsv($handle, ['email', 'one_time_password']);
-            foreach ($rows as $row) {
+            foreach ($pending as $row) {
                 fputcsv($handle, $row);
             }
             fclose($handle);
+
+            $this->newLine();
+            $this->info("Exported {$pending->count()} pending one-time passwords.");
 
             $this->newLine();
             $this->warn("Credentials written to {$csvPath} (mode 0600).");

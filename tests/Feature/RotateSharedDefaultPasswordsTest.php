@@ -11,6 +11,7 @@
 
 use App\Models\User;
 use App\Support\OneTimePassword;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 use function Pest\Laravel\artisan;
@@ -72,6 +73,40 @@ it('leaves alone an unchanged password that is not the shared default', function
     artisan('users:rotate-shared-defaults')->assertSuccessful();
 
     expect(Hash::check('SomeOtherIssued1', $user->fresh()->password))->toBeTrue();
+});
+
+it('rotates the rest even when a row has undecryptable ciphertext', function () {
+    // default_password is encrypted, and rows written under a previous APP_KEY
+    // throw "The MAC is invalid" on read. Saving through Eloquent decrypts the
+    // old value to diff it, which aborted a real run partway and left accounts
+    // rotated but unrecorded. The command must survive such a row.
+    $shared = OneTimePassword::legacySharedDefault();
+
+    $poisoned = User::factory()->create([
+        'email' => 'poisoned@sits.edu.et',
+        'password' => Hash::make($shared),
+        'password_changed' => false,
+    ]);
+
+    // Ciphertext this app cannot decrypt, written past the model's cast.
+    DB::table('users')->where('id', $poisoned->getKey())
+        ->update(['default_password' => 'eyJpdiI6ImJvZ3VzIiwidmFsdWUiOiJib2d1cyIsIm1hYyI6ImJvZ3VzIn0=']);
+
+    $healthy = User::factory()->create([
+        'email' => 'healthy@sits.edu.et',
+        'password' => Hash::make($shared),
+        'password_changed' => false,
+    ]);
+
+    artisan('users:rotate-shared-defaults')->assertSuccessful();
+
+    // Neither account may be left on the shared password.
+    expect(Hash::check($shared, $healthy->fresh()->password))->toBeFalse()
+        ->and(Hash::check($shared, $poisoned->fresh()->password))->toBeFalse();
+
+    // And both replacements are readable for distribution.
+    expect($healthy->fresh()->readableDefaultPassword())->not->toBeNull()
+        ->and($poisoned->fresh()->readableDefaultPassword())->not->toBeNull();
 });
 
 it('changes nothing on a dry run', function () {
