@@ -3,7 +3,7 @@ import { computed, ref, onMounted, onUnmounted } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import Icon from '@/Components/Icon.vue';
 import PortalSwitcher from '@/Components/PortalSwitcher.vue';
-import { useDarkMode } from '@/composables/useDarkMode';
+import { useDarkMode } from '@/Composables/useDarkMode';
 
 const page = usePage();
 const user = computed(() => page.props.auth?.user);

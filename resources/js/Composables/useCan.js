@@ -6,7 +6,7 @@ import { usePage } from '@inertiajs/vue3'
  * Permission composable.
  *
  * Usage in any Vue component:
- *   import { useCan } from '@/composables/useCan'
+ *   import { useCan } from '@/Composables/useCan'
  *   const can = useCan()
  *
  *   // Template:  v-if="can('approve_transfer')"

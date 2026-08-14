@@ -1,7 +1,7 @@
 ﻿<script setup>
 import ApplicationLogo from '@/Components/Library/ApplicationLogo.vue';
 import { Link } from '@inertiajs/vue3';
-import { useDarkMode } from '@/composables/useDarkMode';
+import { useDarkMode } from '@/Composables/useDarkMode';
 import LanguageSwitcher from '@/Components/Library/LanguageSwitcher.vue';
 import Icon from '@/Components/Icon.vue';
 

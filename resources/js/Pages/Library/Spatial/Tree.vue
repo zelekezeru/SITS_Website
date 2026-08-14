@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/Library/AuthenticatedLayout.vue';
-import { useCan } from '@/composables/useCan';
+import { useCan } from '@/Composables/useCan';
 
 const props = defineProps({
     campus: Object,

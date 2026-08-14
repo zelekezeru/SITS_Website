@@ -1,7 +1,7 @@
 ﻿<script setup>
 import { Head, Link } from '@inertiajs/vue3';
 import ApplicationLogo from '@/Components/Library/ApplicationLogo.vue';
-import { useDarkMode } from '@/composables/useDarkMode';
+import { useDarkMode } from '@/Composables/useDarkMode';
 import LanguageSwitcher from '@/Components/Library/LanguageSwitcher.vue';
 
 const { isDark, toggle: toggleDarkMode } = useDarkMode();

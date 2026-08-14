@@ -2,7 +2,7 @@
 import { ref, watch } from 'vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/Library/AuthenticatedLayout.vue';
-import { useCan } from '@/composables/useCan';
+import { useCan } from '@/Composables/useCan';
 import debounce from 'lodash/debounce';
 
 const props = defineProps({

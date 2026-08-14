@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,                  // Website roles (SUPERADMIN, ADMIN, …)
             LibraryPermissionsSeeder::class,    // Library ILS permissions → unified SITS roles
             StorePermissionsSeeder::class,      // Inventory/Store role + permissions (layers onto ERP roles)
+            BookstorePermissionsSeeder::class,  // Bookstore layers + study modes (Store Manager verifies, Finance pays, Admin approves)
 
             // ---- ERP reference data ----
             // OrganizationSeeder::class,          // campuses, departments, positions

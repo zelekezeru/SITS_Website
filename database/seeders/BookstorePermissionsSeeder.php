@@ -1,0 +1,157 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Enums\Permission as BookstorePermission;
+use App\Models\StudyMode;
+use App\Support\StoreNavigation;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Artisan;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
+
+/**
+ * Bookstore permissions, the roles that hold them, and the study modes the
+ * catalogue starts with.
+ *
+ * The three verification grants are deliberately given to three different roles:
+ * whoever checks availability is not whoever checks the money, and neither of
+ * them gives final approval.
+ */
+class BookstorePermissionsSeeder extends Seeder
+{
+    public function run(): void
+    {
+        Artisan::call('permission:cache-reset');
+
+        foreach (BookstorePermission::bookstore() as $permission) {
+            Permission::firstOrCreate(['name' => $permission->value]);
+        }
+
+        $p = fn (BookstorePermission ...$cases) => array_map(fn ($c) => $c->value, $cases);
+
+        // Super admin: everything, and by name rather than by luck.
+        //
+        // These roles do already end up holding the bookstore grants when the
+        // full DatabaseSeeder runs — but only as a side effect of the bookstore
+        // permissions living in the same App\Enums\Permission enum that
+        // LibraryPermissionsSeeder syncs wholesale to SUPERADMIN. Rolling this
+        // seeder out on its own (which is the documented way to add the module
+        // to a live database) would otherwise leave the super admin without a
+        // single bookstore grant. Both super-admin role names are listed because
+        // the codebase treats them as equivalent — see User::getRiskyDataDetails()
+        // and DatabaseSeeder's admin bootstrap.
+        foreach (['SUPERADMIN', 'President / Super Admin', 'Super Admin'] as $name) {
+            if ($role = Role::where('name', $name)->first()) {
+                $role->givePermissionTo($p(...BookstorePermission::bookstore()));
+            }
+        }
+
+        // Bookstore Admin — runs the catalogue, the stores and the availability check.
+        $bookstoreAdmin = Role::firstOrCreate(['name' => 'Bookstore Admin']);
+        $bookstoreAdmin->givePermissionTo($p(
+            BookstorePermission::VIEW_BOOKSTORE,
+            BookstorePermission::MANAGE_BOOK_TITLES,
+            BookstorePermission::MANAGE_STORE_ROOMS,
+            BookstorePermission::MANAGE_BOOK_STOCK,
+            BookstorePermission::MANAGE_PRINT_RUNS,
+            BookstorePermission::MANAGE_CENTERS,
+            BookstorePermission::CONDUCT_STOCK_AUDIT,
+            BookstorePermission::VIEW_BOOK_REPORTS,
+        ));
+
+        // Store Manager — holds the keys; dispatches and counts, nothing financial.
+        $storeManager = Role::firstOrCreate(['name' => 'Store Manager']);
+        $storeManager->givePermissionTo($p(
+            BookstorePermission::VIEW_BOOKSTORE,
+            // Availability is checked by whoever can see the shelves.
+            BookstorePermission::VERIFY_BOOK_REQUEST,
+            BookstorePermission::MANAGE_STORE_ROOMS,
+            BookstorePermission::MANAGE_BOOK_STOCK,
+            BookstorePermission::MANAGE_PRINT_RUNS,
+            BookstorePermission::DISPATCH_BOOKS,
+            BookstorePermission::RECORD_BOOK_RETURN,
+            BookstorePermission::CONDUCT_STOCK_AUDIT,
+            BookstorePermission::VIEW_BOOK_REPORTS,
+        ));
+
+        // Finance — the money only. No dispatch, no final approval.
+        foreach (['Finance Officer', 'Finance Admin'] as $name) {
+            $finance = Role::firstOrCreate(['name' => $name]);
+            $finance->givePermissionTo($p(
+                BookstorePermission::VIEW_BOOKSTORE,
+                BookstorePermission::VERIFY_BOOK_PAYMENT,
+                // Finance may ask to defer a payment; authorising it is
+                // deliberately somebody else's grant.
+                BookstorePermission::REQUEST_PAYMENT_BYPASS,
+                BookstorePermission::VIEW_BOOK_REPORTS,
+            ));
+        }
+
+        // The Store Keeper — the inventory module's custodian role, which is the
+        // portal a store person actually lands on (RoleLanding::MAP). Without
+        // these grants the bookstore section of their sidebar filters down to
+        // nothing and the module is reachable only by typing the URL.
+        //
+        // The grants mirror Store Manager above, and stop in the same places:
+        // the custodian holds the keys and counts the shelves, but touches
+        // neither the money nor the final approval.
+        if ($storeKeeper = Role::where('name', StoreNavigation::ROLE)->first()) {
+            $storeKeeper->givePermissionTo($p(
+                BookstorePermission::VIEW_BOOKSTORE,
+                BookstorePermission::VERIFY_BOOK_REQUEST,
+                BookstorePermission::MANAGE_STORE_ROOMS,
+                BookstorePermission::MANAGE_BOOK_STOCK,
+                BookstorePermission::MANAGE_PRINT_RUNS,
+                BookstorePermission::DISPATCH_BOOKS,
+                BookstorePermission::RECORD_BOOK_RETURN,
+                BookstorePermission::CONDUCT_STOCK_AUDIT,
+                BookstorePermission::VIEW_BOOK_REPORTS,
+            ));
+        }
+
+        // Centre coordinators and campus representatives raise and receive requests.
+        $coordinator = Role::firstOrCreate(['name' => 'Center Coordinator']);
+        $coordinator->givePermissionTo($p(
+            BookstorePermission::VIEW_BOOKSTORE,
+            BookstorePermission::REQUEST_BOOKS,
+            BookstorePermission::RECEIVE_BOOKS,
+        ));
+
+        // The approval layer. Granted to the ERP's Operational Manager where it
+        // exists, but also given its own role unconditionally: without a holder
+        // of approve_book_request every request deadlocks at the approval gate,
+        // and this seeder must not depend on another one having run first.
+        $approvalGrants = $p(
+            BookstorePermission::VIEW_BOOKSTORE,
+            BookstorePermission::APPROVE_BOOK_REQUEST,
+            BookstorePermission::APPROVE_PAYMENT_BYPASS,
+            BookstorePermission::APPROVE_STOCK_AUDIT,
+            BookstorePermission::VIEW_BOOK_REPORTS,
+        );
+
+        Role::firstOrCreate(['name' => 'Bookstore Approver'])->givePermissionTo($approvalGrants);
+
+        if ($ops = Role::where('name', 'Operational Manager')->first()) {
+            $ops->givePermissionTo($approvalGrants);
+        }
+
+        $this->seedStudyModes();
+    }
+
+    /** The modes already in use; an admin can add more without a deploy. */
+    protected function seedStudyModes(): void
+    {
+        $modes = [
+            ['name' => 'Regular',  'code' => 'REG', 'sort_order' => 1],
+            ['name' => 'Distance', 'code' => 'DST', 'sort_order' => 2],
+            ['name' => 'Evening',  'code' => 'EVE', 'sort_order' => 3],
+            ['name' => 'Weekend',  'code' => 'WKD', 'sort_order' => 4],
+            ['name' => 'Online',   'code' => 'ONL', 'sort_order' => 5],
+        ];
+
+        foreach ($modes as $mode) {
+            StudyMode::firstOrCreate(['code' => $mode['code']], $mode);
+        }
+    }
+}

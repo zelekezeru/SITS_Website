@@ -107,6 +107,12 @@ class StoreNavigation
                         StorePermission::VIEW_REPORTS),
                 ],
             ],
+            // The printed-book store. Its own permissions, its own routes, its
+            // own tree — appended here so a store role holder reaches it from
+            // the portal they already land on, rather than by typing a URL.
+            // filterFor() below drops the whole block for a store keeper who
+            // holds no bookstore grant.
+            ...BookstoreNavigation::sections(),
             ...FinanceNavigation::selfServiceSections(),
         ];
 
@@ -153,7 +159,14 @@ class StoreNavigation
 
         foreach (self::sections() as $section) {
             foreach ($section['items'] as $item) {
-                // Self-service leaves belong to EmployeeNavigation and are already routed.
+                // This tree now carries leaves that belong to other modules:
+                // self-service links owned by EmployeeNavigation, and bookstore.*
+                // links owned by routes/bookstore.php. Both are already routed
+                // with their own controllers and gates, so registering them here
+                // would silently override both. Only store.* is ours.
+                //
+                // Note "bookstore." does not start with "store." — the prefixes
+                // are distinct, which is what makes this check sufficient.
                 if (! str_starts_with($item['name'], 'store.')) {
                     continue;
                 }

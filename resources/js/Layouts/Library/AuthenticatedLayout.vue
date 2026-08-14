@@ -4,7 +4,7 @@ import NotificationBell from '@/Components/Library/NotificationBell.vue';
 import Toast from '@/Components/Library/Toast.vue';
 import GlobalSearch from '@/Components/Library/GlobalSearch.vue';
 import { Link, usePage } from '@inertiajs/vue3';
-import { useDarkMode } from '@/composables/useDarkMode';
+import { useDarkMode } from '@/Composables/useDarkMode';
 import LanguageSwitcher from '@/Components/Library/LanguageSwitcher.vue';
 import PortalSwitcher from '@/Components/PortalSwitcher.vue';
 import Icon from '@/Components/Icon.vue';
@@ -144,6 +144,36 @@ const navGroups = computed(() => {
             label: t('Digital Archive'),
             items: [{ label: t('Archive'), route: 'library.archive.index', icon: 'Archive' }],
         });
+    }
+
+    // ── Bookstore (printed course books) ───────────────────────────────────
+    // Shares this shell with the ILS but is a separate module: bulk-printed
+    // stock, store rooms and centre distribution. See routes/bookstore.php.
+    if (can('view_bookstore')) {
+        const shopItems = [
+            { label: t('Bookstore'),   route: 'bookstore.dashboard',    icon: 'Store' },
+            { label: t('Book Titles'), route: 'bookstore.titles.index', icon: 'BookCopy' },
+            { label: t('Stock'),       route: 'bookstore.stock.index',  icon: 'Boxes' },
+            { label: t('Store Rooms'), route: 'bookstore.stores.index', icon: 'Warehouse' },
+            { label: t('Scan'),        route: 'bookstore.scan.index',   icon: 'QrCode' },
+        ];
+        if (can('manage_print_runs')) shopItems.push({ label: t('Print Runs'), route: 'bookstore.print-runs.index', icon: 'Printer' });
+        groups.push({ label: t('Bookstore'), items: shopItems });
+
+        const flowItems = [
+            // The shared board comes first: it is how a stakeholder answers
+            // "where is my request" without asking anybody.
+            { label: t('Pipeline'), route: 'bookstore.pipeline',       icon: 'GitPullRequest' },
+            { label: t('Requests'), route: 'bookstore.requests.index', icon: 'ClipboardList' },
+            { label: t('Centres'),  route: 'bookstore.centers.index',  icon: 'MapPin' },
+        ];
+        if (can('verify_book_payment')) flowItems.push({ label: t('Payments'),   route: 'bookstore.payments.index',   icon: 'HandCoins' });
+        flowItems.push({ label: t('Pay Later'), route: 'bookstore.bypasses.index', icon: 'Wallet' });
+        flowItems.push({ label: t('Dispatches'), route: 'bookstore.dispatches.index', icon: 'Truck' });
+        flowItems.push({ label: t('Returns'),    route: 'bookstore.returns.index',    icon: 'Undo2' });
+        if (can('conduct_stock_audit')) flowItems.push({ label: t('Stock Audits'), route: 'bookstore.audits.index', icon: 'ClipboardCheck' });
+        if (can('view_book_reports'))   flowItems.push({ label: t('Book Reports'), route: 'bookstore.reports.index', icon: 'BarChart3' });
+        groups.push({ label: t('Distribution'), items: flowItems });
     }
 
     const adminItems = [];
