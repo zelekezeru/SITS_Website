@@ -21,13 +21,34 @@ use App\Models\User;
  *   - Integrity      → the `access-integrity-suite` Gate (AppServiceProvider)
  *   - ERP / Library  → `auth` only; scoped by role below to keep the menu honest
  *
+ * Both front-ends render this list verbatim — the Inertia layouts via the
+ * `portals` prop, the Blade layouts via `layouts.user-dropdown` — so a portal
+ * is added here and nowhere else.
+ *
  * @see \App\Http\Middleware\HandleInertiaRequests::share()
  * @see resources/js/Components/PortalSwitcher.vue
+ * @see resources/views/layouts/user-dropdown.blade.php
  */
 class PortalDirectory
 {
     /** Roles allowed into the Website Admin console — mirrors its route middleware. */
     private const WEBSITE_ADMIN_ROLES = ['superadmin', 'admin', 'editor'];
+
+    /**
+     * Lucide icon name → Font Awesome 6 class.
+     *
+     * The Vue switcher draws `icon` with Components/Icon.vue (lucide); the Blade
+     * partial has no lucide, only the FA6 sheet those layouts already load. So
+     * every entry carries both names and each side reads the one it can render.
+     * An unmapped icon falls back to a neutral arrow rather than a blank glyph.
+     */
+    private const FA_ICONS = [
+        'ShieldCheck' => 'fa-shield-halved',
+        'LibraryBig' => 'fa-book',
+        'ShieldAlert' => 'fa-shield',
+        'GraduationCap' => 'fa-graduation-cap',
+        'Globe' => 'fa-globe',
+    ];
 
     /**
      * The portals a user may switch to, in menu order.
@@ -71,17 +92,6 @@ class PortalDirectory
         // listed here — they live on the Library dashboard and topbar, where
         // they belong, rather than cluttering the cross-app switcher.
 
-        // ── Academic Integrity Suite ─────────────────────────────────────────
-        if ($user->can('access-integrity-suite')) {
-            $entries[] = self::entry(
-                key: 'integrity',
-                label: 'Academic Integrity',
-                href: route('integrity.dashboard'),
-                icon: 'ShieldAlert',
-                description: 'Plagiarism checks and writing tools',
-            );
-        }
-
         // ── LMS (Moodle) ─────────────────────────────────────────────────────
         // Everyone signed in at SITS goes through the SSO hand-off — the bridge
         // provisions a Moodle account by email for any role, and /go/lms falls
@@ -92,10 +102,21 @@ class PortalDirectory
             label: self::lmsLabel($roles),
             href: route('lms.redirect'),
             icon: 'GraduationCap',
-            description: 'Courses, assignments and grades',
+            description: 'Courses, assignments and grades on Moodle',
             external: true,
             target: '_blank',
         );
+
+        // ── Academic Integrity Suite ─────────────────────────────────────────
+        if ($user->can('access-integrity-suite')) {
+            $entries[] = self::entry(
+                key: 'integrity',
+                label: 'Academic Integrity',
+                href: route('integrity.dashboard'),
+                icon: 'ShieldAlert',
+                description: 'Plagiarism checks and writing tools',
+            );
+        }
 
         // ── Website Admin console ────────────────────────────────────────────
         if (array_intersect(self::WEBSITE_ADMIN_ROLES, $roles) !== []) {
@@ -148,6 +169,15 @@ class PortalDirectory
         bool $external = false,
         ?string $target = null,
     ): array {
-        return compact('key', 'label', 'href', 'icon', 'description', 'external', 'target');
+        return [
+            'key' => $key,
+            'label' => $label,
+            'href' => $href,
+            'icon' => $icon,
+            'icon_fa' => self::FA_ICONS[$icon] ?? 'fa-arrow-right',
+            'description' => $description,
+            'external' => $external,
+            'target' => $target,
+        ];
     }
 }

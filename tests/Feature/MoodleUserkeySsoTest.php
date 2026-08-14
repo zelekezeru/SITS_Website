@@ -27,7 +27,7 @@ beforeEach(function () {
 });
 
 it('logs the user straight into Moodle with a one-time key', function () {
-    $user = User::factory()->create(['name' => 'Abebe Bikila', 'email' => 'abebe@sits.edu.et']);
+    $user = User::factory()->create(['name' => 'Abebe Bikila', 'email' => 'abebe@sits.edu.et', 'password_changed' => true]);
 
     Http::fake(function ($request) {
         $body = [];
@@ -59,7 +59,7 @@ it('logs the user straight into Moodle with a one-time key', function () {
 });
 
 it('provisions a missing Moodle account before logging in', function () {
-    $user = User::factory()->create(['name' => 'Tirunesh Dibaba', 'email' => 'tirunesh@sits.edu.et']);
+    $user = User::factory()->create(['name' => 'Tirunesh Dibaba', 'email' => 'tirunesh@sits.edu.et', 'password_changed' => true]);
 
     Http::fake(function ($request) {
         $body = [];
@@ -92,7 +92,7 @@ it('falls back to the Moodle login page when the API errors', function () {
     // able to press "Log in with SITS", never see a SITS stack trace.
     Http::fake(fn () => Http::response(['exception' => 'moodle_exception', 'message' => 'Invalid token'], 200));
 
-    actingAs(User::factory()->create())->get('/go/lms')
+    actingAs(User::factory()->create(['password_changed' => true]))->get('/go/lms')
         ->assertRedirect('https://learn.sits.edu.et');
 });
 

@@ -3,9 +3,9 @@
 namespace App\Console\Commands;
 
 use App\Models\User;
+use App\Support\OneTimePassword;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
 
 class ImportMoodleUsers extends Command
@@ -124,7 +124,6 @@ class ImportMoodleUsers extends Command
             }
         }
 
-        $defaultPassword = Hash::make('ChangeMe@2026');
         $imported = 0;
         $updated = 0;
         $skipped = 0;
@@ -165,15 +164,22 @@ class ImportMoodleUsers extends Command
                     $name = $row['username'];
                 }
 
+                // One-time password per account, never a shared constant: a
+                // single default would mean one leaked string opens every
+                // imported account that has not logged in yet. Admins read the
+                // value back per user; `password_changed => false` forces it to
+                // be retired on first login.
+                $oneTime = OneTimePassword::generate();
+
                 $user = User::create([
                     'name'              => $name,
                     'email'             => $email,
-                    'password'          => $defaultPassword,
+                    'password'          => Hash::make($oneTime),
                     'role'              => $targetRole,
                     'is_approved'       => true,
                     'is_active'         => true,
                     'password_changed'  => false,
-                    'default_password'  => 'ChangeMe@2026',
+                    'default_password'  => $oneTime,
                 ]);
                 $imported++;
             } else {

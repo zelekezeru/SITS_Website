@@ -1,0 +1,1 @@
+import{A as o}from"./AdminLayout-B06VP55t.js";import{x as a,p as r,L as e,o as s}from"./app-Ce0vElmW.js";const u={__name:"PortalLayout",setup(l){return(t,n)=>(s(),a(o,null,{default:r(()=>[e(t.$slots,"default")]),_:3}))}};export{u as _};
