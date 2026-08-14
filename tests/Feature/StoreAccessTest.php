@@ -150,7 +150,7 @@ it('registers every store nav leaf as a real permission-gated route', function (
 it('keeps the admin nav loop from re-registering store routes', function () {
     // AdminNavigation links to /store/* rather than duplicating the pages; a
     // second registration would silently override the controller + can: gate.
-    $storeRoute = Route::getRoutes()->getByName('store.issues');
+    $storeRoute = Route::getRoutes()->getByName('store.assets');
 
     expect($storeRoute->getActionName())
         ->toBe(App\Http\Controllers\Store\ModuleController::class);
