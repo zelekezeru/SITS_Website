@@ -5,8 +5,8 @@ Finance. Scope: every physical thing the Seminary owns — from a box of chalk t
 minibus — registered once, tracked continuously, and reconciled against a countable
 ledger.
 
-Status: **Phase 0 (access layer) and Phase 1 (foundation) implemented.** Phases 2–6
-specified below.
+Status: **Phases 0–2 implemented** (access layer, foundation, catalog & receiving).
+Phases 3–6 specified below.
 
 ---
 
@@ -330,7 +330,7 @@ Exports follow the existing Excel/PDF plumbing used by payroll.
 |---|---|---|
 | **0 — Access** ✅ | `Store Keeper` role, 15 permissions, `StorePermission` enum + seeder, `StoreNavigation`, `/store` portal + dashboard, permission-gated route surface, President sidebar section, feature tests | *done* |
 | **1 — Foundation** ✅ | Migrations for all 14 tables, 13 enums, 14 models + relations + factories, `InventoryCodeGenerator`, categories / suppliers / locations CRUD | *done — a catalog you can populate* |
-| **2 — Catalog & receiving** | Items CRUD with image/document upload, GRN receiving, the `StockLedger` write service enforcing the negative-stock guard, reorder alerts on the dashboard | "what do we own, how much, where" |
+| **2 — Catalog & receiving** | Items (photo, tracking mode, reorder level), supplier invoices/documents, GRN receiving, dashboard reorder alerts. | *done* — "what do we own, how much, where" |
 | **3 — Issue & requisition** | Requisition maker-checker flow, issue vouchers, returns, inter-location transfers, employee self-service request page | day-to-day store operations |
 | **4 — Assets** | Asset register, tag/QR generation, custody assign/return with handover slips, maintenance logs, depreciation schedule, disposal with approval | fixed-asset control |
 | **5 — Control & insight** | Stocktake sessions with QR counting, variance posting, the nine reports, Excel/PDF export, termination-clearance hook | audit-ready |
@@ -378,6 +378,24 @@ history are *deactivated*, never deleted, so the purchase and ledger history sta
 readable.
 
 Covered by `tests/Feature/InventoryFoundationTest.php` (24 tests).
+
+## 9a. What Phase 2 shipped
+
+`App\Services\Inventory\StockLedger` — the one place `inventory_stock_movements` rows
+are created from application code. `receive()` posts a GRN: for a consumable item it
+posts one inward movement; for an asset-tracked item it creates one `InventoryUnit` (with
+its own generated asset tag) and one movement per unit received, so invariant 2 (an
+asset-mode item never gets a bare quantity movement) holds from the first receipt onward.
+The negative-stock guard (invariant 1) is written once here, under a locked read, so every
+later phase's outward movement (issue, transfer, write-off, disposal) inherits it rather
+than re-implementing it.
+
+Live pages: **Items** (full CRUD, photo + document upload, category-driven tracking-mode
+default) and **Receive Stock / GRN** (posts through `StockLedger`, branches automatically
+on the selected item's tracking mode). The store dashboard's reorder-alert tile is wired
+to `InventoryItem::needingReorder()` from Phase 1.
+
+Covered by `tests/Feature/InventoryCatalogReceivingTest.php`.
 
 ## 10. Build & deploy note
 

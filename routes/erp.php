@@ -33,6 +33,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Store\DashboardController as StoreDashboardController;
 use App\Http\Controllers\Store\ModuleController as StoreModuleController;
 use App\Http\Controllers\Store\ReferenceDataController as StoreReferenceController;
+use App\Http\Controllers\Store\CatalogController as StoreCatalogController;
+use App\Http\Controllers\Store\ReceivingController as StoreReceivingController;
 use App\Support\AdminNavigation;
 use App\Support\RoleLanding;
 use App\Support\StoreNavigation;
@@ -99,6 +101,26 @@ Route::middleware(['auth', 'active', 'password.fresh'])->group(function () {
         Route::delete('/store/suppliers/{supplier}', [StoreReferenceController::class, 'destroySupplier'])->name('store.suppliers.destroy');
     });
 
+    // Items — the catalog. Reading needs only `view inventory`; every write needs
+    // `manage inventory catalog`.
+    Route::get('/store/items', [StoreCatalogController::class, 'items'])
+        ->middleware('can:view inventory')->name('store.items');
+
+    Route::middleware('can:manage inventory catalog')->group(function () {
+        Route::post('/store/items', [StoreCatalogController::class, 'storeItem'])->name('store.items.store');
+        Route::put('/store/items/{item}', [StoreCatalogController::class, 'updateItem'])->name('store.items.update');
+        Route::delete('/store/items/{item}', [StoreCatalogController::class, 'destroyItem'])->name('store.items.destroy');
+        Route::post('/store/items/{item}/documents', [StoreCatalogController::class, 'storeItemDocument'])->name('store.items.documents.store');
+        Route::delete('/store/items/{item}/documents/{document}', [StoreCatalogController::class, 'destroyItemDocument'])->name('store.items.documents.destroy');
+    });
+
+    // Receiving (GRN). Both reading and posting a receipt need `receive inventory`.
+    // Finance/Operations see past receipts via Reports, not the entry portal.
+    Route::middleware('can:receive inventory')->group(function () {
+        Route::get('/store/receipts', [StoreReceivingController::class, 'index'])->name('store.receipts');
+        Route::post('/store/receipts', [StoreReceivingController::class, 'store'])->name('store.receipts.store');
+    });
+
     Route::middleware('can:manage inventory locations')->group(function () {
         Route::post('/store/locations', [StoreReferenceController::class, 'storeLocation'])->name('store.locations.store');
         Route::put('/store/locations/{location}', [StoreReferenceController::class, 'updateLocation'])->name('store.locations.update');
@@ -109,7 +131,7 @@ Route::middleware(['auth', 'active', 'password.fresh'])->group(function () {
     // peels off into its own controller as its delivery phase lands; listing the
     // built ones explicitly keeps this loop from clobbering them. (Route::has()
     // can't do this job — see the note in the admin loop below.)
-    $storePagesBuilt = ['store.categories', 'store.suppliers', 'store.locations'];
+    $storePagesBuilt = ['store.categories', 'store.suppliers', 'store.locations', 'store.items', 'store.receipts'];
 
     foreach (StoreNavigation::modules() as $module) {
         if (in_array($module['name'], $storePagesBuilt, true)) {

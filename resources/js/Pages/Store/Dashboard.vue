@@ -13,6 +13,8 @@ const props = defineProps({
   capabilities: { type: Array, default: () => [] },
   sections: { type: Array, default: () => [] },
   roadmap: { type: Array, default: () => [] },
+  reorderAlerts: { type: Array, default: () => [] },
+  reorderAlertsTotal: { type: Number, default: 0 },
 });
 
 const granted = computed(() => props.capabilities.filter((c) => c.granted));
@@ -80,6 +82,28 @@ const PHASE = {
         posting a stocktake variance and approving a disposal all require a second signature from
         Operations or the President. This is what makes the store auditable.
       </p>
+    </div>
+
+    <!-- Reorder alerts -->
+    <div v-if="reorderAlertsTotal" class="rounded-2xl border border-amber-500/20 bg-amber-500/[0.03] p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-sm font-bold uppercase tracking-wider text-amber-400/90 flex items-center gap-2">
+          <Icon name="AlertTriangle" :size="15" /> Reorder Alerts
+        </h3>
+        <Link href="/store/items" class="text-[11px] font-bold text-amber-400 hover:text-amber-300">
+          {{ reorderAlertsTotal }} item{{ reorderAlertsTotal === 1 ? '' : 's' }} — view catalog
+        </Link>
+      </div>
+      <ul class="space-y-2">
+        <li v-for="a in reorderAlerts" :key="a.id" class="flex items-center justify-between text-xs">
+          <div class="min-w-0">
+            <span class="font-mono text-amber-400/80">{{ a.code }}</span>
+            <span class="text-slate-300 ml-2">{{ a.name_en }}</span>
+            <span v-if="a.category" class="text-slate-600 ml-1">· {{ a.category }}</span>
+          </div>
+          <span class="font-mono text-slate-400 shrink-0 ml-4">{{ a.on_hand }} / {{ a.reorder_level }}</span>
+        </li>
+      </ul>
     </div>
 
     <!-- Store areas -->
