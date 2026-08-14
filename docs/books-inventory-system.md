@@ -323,6 +323,19 @@ would succeed.
 | dispatch | `dispatch_books` | Store Manager |
 | confirm receipt | `receive_books` | Requester |
 
+### 3.1 Availability check at verification
+
+At verification the system computes, per line:
+
+```
+available = Σ book_stocks.quantity − Σ book_stocks.reserved_quantity   (across all sections)
+```
+
+and refuses to reserve more than is available. The verifier may reduce
+`quantity_approved` below `quantity_requested` (partial approval) — the paper form
+already does this informally. A sanity warning fires when
+`quantity_requested > student_count` for a centre, because the request is per-student.
+
 ### 3.2 Pay-later deferral
 
 Finance may release the payment gate before the money is in. That is the one path
@@ -368,19 +381,6 @@ person, which is the answer to "where is the lag".
 permissions from `approve_book_request`, so no single account can walk a request from
 submission to dispatch. Segregation of duties is a hard requirement for anything that
 touches money.
-
-### 3.1 Availability check at verification
-
-At verification the system computes, per line:
-
-```
-available = Σ book_stocks.quantity − Σ book_stocks.reserved_quantity   (across all sections)
-```
-
-and refuses to reserve more than is available. The verifier may reduce
-`quantity_approved` below `quantity_requested` (partial approval) — the paper form
-already does this informally. A sanity warning fires when
-`quantity_requested > student_count` for a centre, because the request is per-student.
 
 ---
 
@@ -483,6 +483,22 @@ Pest feature tests, `RefreshDatabase`, one file per phase under
   (idempotency on `dispatch_number`);
 - an audit posts corrections only on approval, and only for non-zero variance;
 - QR hash resolves to the right model type and 404s on an unknown hash.
+
+Verified 2026-08-14 against **MySQL** — the connection `phpunit.xml` actually
+pins (`mysql` / `sits_testing`), not just SQLite: **396 Feature passing (1
+skipped) and 60 Unit**. `migrate:fresh --seed` completes clean on MySQL, and the
+seeded approval layers come out as intended, each gate on a different role:
+
+| Role | Gate held |
+|---|---|
+| Store Manager | `verify_book_request` |
+| Finance Officer | `verify_book_payment` |
+| Bookstore Approver | `approve_book_request` |
+| Center Coordinator | `request_books` |
+
+Worth re-running on MySQL rather than SQLite whenever the schema changes: SQLite
+is permissive about column types, strict mode and foreign-key timing in ways that
+hide real portability faults until production.
 
 ### 6.2 Deployment note
 
