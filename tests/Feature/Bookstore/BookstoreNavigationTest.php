@@ -133,6 +133,52 @@ it('never lets a nav tree re-register a bookstore route', function () {
         ->toBeEmpty();
 });
 
+it('reaches the bookstore roles on whatever portal they land on', function () {
+    // These roles are not in RoleLanding::MAP, so they land on the employee
+    // self-service portal. Binding the bookstore to one nav tree would leave
+    // the workflow's own participants unable to see the module they run.
+    $bookstoreLinks = function (string $role) {
+        $user = ($this->asRole)($role);
+
+        return collect(\App\Support\PortalContext::for($user)['nav'])
+            ->pluck('items')->flatten(1)->pluck('name')
+            ->filter(fn ($n) => str_starts_with((string) $n, 'bookstore.'));
+    };
+
+    expect($bookstoreLinks('Center Coordinator'))->toContain('bookstore.requests.index')
+        ->and($bookstoreLinks('Bookstore Approver'))->toContain('bookstore.pipeline')
+        ->and($bookstoreLinks('Store Manager'))->toContain('bookstore.dispatches.index')
+        // Finance lands on its own portal, which has no bookstore section of its own.
+        ->and($bookstoreLinks('Finance Officer'))->toContain('bookstore.payments.index');
+});
+
+it('leaves portals alone for anyone with no bookstore grant', function () {
+    // No role at all — the self-service portal, which is where the bulk of
+    // accounts live and where a stray bookstore link would be noise.
+    $employee = User::factory()->create();
+
+    $names = collect(\App\Support\PortalContext::for($employee)['nav'])
+        ->pluck('items')->flatten(1)->pluck('name');
+
+    expect($names->filter(fn ($n) => str_starts_with((string) $n, 'bookstore.')))->toBeEmpty()
+        ->and($names)->not->toBeEmpty(); // their own portal is untouched
+});
+
+it('never shows the same bookstore link twice on one portal', function () {
+    // The President's tree and the store keeper's already carry bookstore
+    // links; the cross-portal append has to notice that and stay out.
+    foreach (['SUPERADMIN', 'President / Super Admin', 'Store Keeper', 'Center Coordinator'] as $role) {
+        Role::firstOrCreate(['name' => $role]);
+        (new BookstorePermissionsSeeder)->run();
+
+        $names = collect(\App\Support\PortalContext::for(($this->asRole)($role))['nav'])
+            ->pluck('items')->flatten(1)->pluck('name')
+            ->filter(fn ($n) => str_starts_with((string) $n, 'bookstore.'));
+
+        expect($names->count())->toBe($names->unique()->count(), "[{$role}] sees a duplicated bookstore link");
+    }
+});
+
 it('keeps the bookstore routes gated after the nav links to them', function () {
     // The sidebar showing a link must never be what grants access.
     $nobody = User::factory()->create();

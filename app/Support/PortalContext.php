@@ -30,7 +30,7 @@ class PortalContext
             return ['nav' => [], 'portal' => null, 'notifications' => []];
         }
 
-        return match (RoleLanding::resolvedRole($user)) {
+        $context = match (RoleLanding::resolvedRole($user)) {
             'President / Super Admin' => [
                 'nav' => AdminNavigation::sections(),
                 'portal' => self::portal('President · Super Admin', '/admin', 'blue'),
@@ -68,6 +68,40 @@ class PortalContext
                 'notifications' => self::employeeNotifications($user),
             ],
         };
+
+        $context['nav'] = self::withBookstore($context['nav'], $user);
+
+        return $context;
+    }
+
+    /**
+     * The bookstore cuts across portals: the people who run it are a centre
+     * coordinator on the employee portal, a finance officer on the finance
+     * portal, an approver with no ERP role at all. Binding it to one tree would
+     * leave most of the workflow's own participants unable to see it.
+     *
+     * Appending it everywhere is safe by construction — BookstoreNavigation
+     * filters every leaf against the viewer's permissions and collapses to an
+     * empty array for anyone holding no bookstore grant, which is almost
+     * everybody. Trees that already carry bookstore links (the President's, and
+     * the store keeper's via StoreNavigation) are left alone rather than shown
+     * the same links twice; that check is on the links themselves, so it keeps
+     * holding if either tree is rearranged.
+     *
+     * @param  array<int, mixed>  $nav
+     * @return array<int, mixed>
+     */
+    private static function withBookstore(array $nav, User $user): array
+    {
+        foreach ($nav as $section) {
+            foreach ($section['items'] ?? [] as $item) {
+                if (str_starts_with((string) ($item['name'] ?? ''), 'bookstore.')) {
+                    return $nav;
+                }
+            }
+        }
+
+        return [...$nav, ...BookstoreNavigation::sections($user)];
     }
 
     /** @return array<string, mixed> */
