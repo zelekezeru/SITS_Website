@@ -233,6 +233,71 @@ class AdminNavigation
                 ],
             ],
             [
+                // Printed course books. A separate surface from the Store above:
+                // that one tracks assets and supplies the Seminary consumes, this
+                // one tracks priced, course-linked books it prints and distributes
+                // to centres — see docs/books-inventory-system.md.
+                //
+                // Like the Store block, these leaves link into another portal's
+                // routes (bookstore.*), already registered by routes/bookstore.php
+                // with their own permission gates. The module loop below owns
+                // admin.* only and skips these.
+                'label' => 'Bookstore',
+                'items' => [
+                    self::item('Book Store', 'bookstore.dashboard', '/bookstore', 'BookOpen',
+                        'Printed course books held in store and distributed to centres and campuses, with a movement ledger behind every number.',
+                        ['Stock by title, shelf and section', 'Low-stock alerts per title', 'Requests in flight', 'QR-labelled shelving']),
+                    self::item('Titles & Centres', 'bookstore.titles.index', '/bookstore/titles', 'BookText',
+                        'The printed catalogue and the centres it is distributed to.',
+                        ['Course code & name as printed', 'Programme, language, study mode', 'Unit price & reorder level', 'Verified student counts'], [
+                            self::child('Book Titles', 'bookstore.titles.index', '/bookstore/titles',
+                                'Every printed title with its course, language and study mode.'),
+                            self::child('Print Runs', 'bookstore.print-runs.index', '/bookstore/print-runs',
+                                'Printing batches received into the store.'),
+                            self::child('Centres & Campuses', 'bookstore.centers.index', '/bookstore/centers',
+                                'Distribution points with their verified student counts.'),
+                        ]),
+                    self::item('Store Rooms & Shelves', 'bookstore.stores.index', '/bookstore/stores', 'Warehouse',
+                        'Store room → shelf → section, each QR-labelled so a scan lands on the exact shelf.',
+                        ['QR label per room, shelf and section', 'Stock held per section', 'Scan to locate', 'Printable label sheets'], [
+                            self::child('Store Rooms', 'bookstore.stores.index', '/bookstore/stores',
+                                'The warehouse tree, with stock per section.'),
+                            self::child('Stock on Hand', 'bookstore.stock.index', '/bookstore/stock',
+                                'Quantity per title per section, with the bin card behind it.'),
+                            self::child('Low Stock', 'bookstore.stock.low', '/bookstore/stock/low',
+                                'Titles at or below their reorder level.'),
+                            self::child('Scan a Label', 'bookstore.scan.index', '/bookstore/scan',
+                                'Open the record behind any bookstore QR code.'),
+                            self::child('Print Labels', 'bookstore.labels.sheet', '/bookstore/labels/sheet',
+                                'QR label sheets, each with its name underneath.'),
+                        ]),
+                    self::item('Requests & Payments', 'bookstore.requests.index', '/bookstore/requests', 'ClipboardCheck',
+                        'The request chain: raised by a centre, availability verified by the store, money verified by finance, approved, dispatched, receipted.',
+                        ['Six stages, six separate grants', 'Stock reserved at verification', 'CRV number & receipt image', 'Pay-later deferrals with justification'], [
+                            self::child('Book Requests', 'bookstore.requests.index', '/bookstore/requests',
+                                'Every request from submission through to confirmed receipt.'),
+                            self::child('Approval Pipeline', 'bookstore.pipeline', '/bookstore/pipeline',
+                                'Who owes the next action, and how long it has waited.'),
+                            self::child('Payments', 'bookstore.payments.index', '/bookstore/payments',
+                                'Transaction reference, CRV number and receipt image per payment.'),
+                            self::child('Deferred Payments', 'bookstore.bypasses.index', '/bookstore/bypasses',
+                                'Pay-later deferrals and the debt still outstanding.'),
+                        ], 'segregated'),
+                    self::item('Distribution & Audit', 'bookstore.dispatches.index', '/bookstore/dispatches', 'Truck',
+                        'Books leaving the store, coming back, and the counts that prove the shelves are right.',
+                        ['QR-stamped waybill PDF', 'Receipt confirmed by the receiver', 'Blind counting', 'Corrections only on approval'], [
+                            self::child('Dispatches', 'bookstore.dispatches.index', '/bookstore/dispatches',
+                                'Waybills in the handover-form layout.'),
+                            self::child('Returns', 'bookstore.returns.index', '/bookstore/returns',
+                                'Books coming back onto a shelf section.'),
+                            self::child('Stock Audits', 'bookstore.audits.index', '/bookstore/audits',
+                                'Blind counts with a variance report.'),
+                            self::child('Bookstore Reports', 'bookstore.reports.index', '/bookstore/reports',
+                                'Stock, distribution, payments, debt and approval lag.'),
+                        ]),
+                ],
+            ],
+            [
                 'label' => 'Insights',
                 'items' => [
                     self::item('Reports', 'admin.reports', '/admin/reports', 'PieChart',
