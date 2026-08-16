@@ -3,11 +3,13 @@
 namespace App\Services\Inventory;
 
 use App\Enums\InventoryCondition;
+use App\Enums\InventoryDisposalMethod;
 use App\Enums\InventoryMovementType;
 use App\Enums\InventoryRequestStatus;
 use App\Enums\InventoryUnitStatus;
 use App\Models\InventoryAssetAssignment;
 use App\Models\InventoryBatch;
+use App\Models\InventoryDisposal;
 use App\Models\InventoryItem;
 use App\Models\InventoryLocation;
 use App\Models\InventoryRequest;
@@ -30,12 +32,156 @@ use Illuminate\Validation\ValidationException;
  * §5). InventoryMovementType::direction() is the only authority on the sign —
  * nothing here decides it independently.
  *
- * Phase 2 ships receive(). issue()/transfer()/adjust()/disposeOf() land with
- * Phases 3–5 as thin wrappers that validate their own preconditions and then call
- * the same postMovement() primitive, so the guard can't be bypassed later.
+ * Phase 2 shipped receive(); Phase 3 added issue()/returnStock()/transfer(); Phase 4
+ * adds disposeOf() and Phase 5 adjust(). Every one of them is a thin wrapper that
+ * validates its own preconditions and then calls the same postMovement() primitive,
+ * so the guard can't be bypassed.
  */
 class StockLedger
 {
+    /**
+     * Post the ledger side of an approved disposal — the movement that finally
+     * takes the asset or lot off the books.
+     *
+     * Deliberately takes an InventoryDisposal rather than an array: the approval
+     * record *is* the authorisation, so there is no way to write a disposal
+     * movement without one existing first (invariant 7).
+     */
+    public function disposeOf(InventoryDisposal $disposal, User $performedBy): InventoryStockMovement
+    {
+        return DB::transaction(function () use ($disposal, $performedBy) {
+            $unit = $disposal->unit_id
+                ? $this->lockForUpdate(InventoryUnit::query()->where('id', $disposal->unit_id))->firstOrFail()
+                : null;
+
+            $itemId = $unit?->item_id ?? $disposal->item_id;
+            $item = $this->lockForUpdate(InventoryItem::query()->where('id', $itemId))->firstOrFail();
+
+            // A unit already gone accepts nothing further, so a double-post can't
+            // drive stock negative through the disposal path.
+            if ($unit && ! $unit->acceptsMovements()) {
+                throw ValidationException::withMessages([
+                    'unit_id' => "Asset {$unit->asset_tag} is already {$unit->status->label()} and cannot be disposed again.",
+                ]);
+            }
+
+            $quantity = $unit ? 1.0 : (float) ($disposal->quantity ?? 0);
+
+            if ($quantity <= 0) {
+                throw ValidationException::withMessages([
+                    'quantity' => 'Disposal quantity must be greater than zero.',
+                ]);
+            }
+
+            // A loss event is a write-off; everything else physically leaves as a
+            // disposal. Both are outward, so both meet the negative-stock guard.
+            $type = $disposal->method->isLossEvent()
+                ? InventoryMovementType::WriteOff
+                : InventoryMovementType::Disposal;
+
+            $locationId = $disposal->location_id ?? $unit?->current_location_id;
+
+            $movement = $this->postMovement(
+                item: $item,
+                batch: $unit?->batch ?? $disposal->batch,
+                type: $type,
+                quantity: $quantity,
+                fromLocationId: $locationId,
+                toLocationId: null,
+                unitCost: $unit?->purchase_cost ?? $disposal->batch?->unit_cost,
+                performedBy: $performedBy,
+                occurredAt: now(),
+                unit: $unit,
+                reference: $disposal->reference,
+                reason: $disposal->reason,
+                notes: $disposal->notes,
+                disposalId: $disposal->id,
+            );
+
+            if ($unit) {
+                // Lost is its own terminal state — an auditor reads "lost" and
+                // "scrapped" very differently, so the register keeps them apart.
+                $unit->update([
+                    'status' => $disposal->method === InventoryDisposalMethod::Lost
+                        ? InventoryUnitStatus::Lost
+                        : InventoryUnitStatus::Disposed,
+                    'current_location_id' => null,
+                    'assigned_to_employee_id' => null,
+                    'assigned_at' => null,
+                ]);
+
+                // Custody can't outlive the asset: close any open assignment so
+                // the holder is not still shown as responsible for it.
+                $unit->openAssignment?->update([
+                    'returned_at' => now(),
+                    'received_back_by' => $performedBy->id,
+                    'notes' => trim(($unit->openAssignment->notes ?? '')."\nClosed by disposal {$disposal->reference}."),
+                ]);
+            }
+
+            return $movement;
+        });
+    }
+
+    /**
+     * Post a stock correction. The only movement type whose sign the caller
+     * supplies, because a variance can go either way.
+     *
+     * Callers must hold StorePermission::ADJUST — checked at the route, not here,
+     * so a stocktake posting and a standalone correction share one code path.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    public function adjust(array $data, User $performedBy): InventoryStockMovement
+    {
+        return DB::transaction(function () use ($data, $performedBy) {
+            $item = $this->lockForUpdate(InventoryItem::query()->where('id', $data['item_id']))->firstOrFail();
+            $quantity = (float) $data['quantity'];
+
+            if (abs($quantity) < 1e-9) {
+                throw ValidationException::withMessages([
+                    'quantity' => 'An adjustment of zero changes nothing — enter the difference to post.',
+                ]);
+            }
+
+            if (empty($data['reason'])) {
+                throw ValidationException::withMessages([
+                    'reason' => 'Adjustments must state a reason — it is the only record of why stock changed.',
+                ]);
+            }
+
+            $unit = null;
+            if ($item->isSerialized() && ! empty($data['unit_id'])) {
+                $unit = $this->lockForUpdate(InventoryUnit::query()->where('id', $data['unit_id']))->firstOrFail();
+            }
+
+            $locationId = $data['location_id'] ?? null;
+
+            // A negative adjustment removes stock, so it faces the same guard as
+            // an issue. postMovement() only checks types whose direction is -1,
+            // and an adjustment's is 0, so the check is made explicitly here.
+            if ($quantity < 0) {
+                $this->assertSufficientStock($item, $locationId, abs($quantity));
+            }
+
+            return $this->postMovement(
+                item: $item,
+                batch: null,
+                type: InventoryMovementType::Adjustment,
+                quantity: $quantity,
+                fromLocationId: $quantity < 0 ? $locationId : null,
+                toLocationId: $quantity > 0 ? $locationId : null,
+                unitCost: $unit?->purchase_cost ?? $item->averageUnitCost(),
+                performedBy: $performedBy,
+                occurredAt: $data['occurred_at'] ?? now(),
+                unit: $unit,
+                reference: $data['reference'] ?? null,
+                reason: $data['reason'],
+                notes: $data['notes'] ?? null,
+            );
+        });
+    }
+
     /**
      * Record one goods-received event. Creates the InventoryBatch, posts the
      * inward ledger movement(s), and — for asset-tracked items — creates one
@@ -240,8 +386,9 @@ class StockLedger
                         'employee_id' => $employeeId,
                         'issued_by' => $performedBy->id,
                         'issued_at' => $data['occurred_at'] ?? now(),
-                        'expected_return_at' => $data['expected_return_at'] ?? null,
-                        'condition_on_issue' => $unit->condition,
+                        'due_at' => $data['due_at'] ?? $data['expected_return_at'] ?? null,
+                        'condition_out' => $unit->condition,
+                        'purpose' => $data['purpose'] ?? $data['reason'] ?? null,
                         'notes' => $data['notes'] ?? null,
                     ]);
                 }
@@ -317,7 +464,8 @@ class StockLedger
                 if ($openAssignment) {
                     $openAssignment->update([
                         'returned_at' => $data['occurred_at'] ?? now(),
-                        'condition_on_return' => $condition ?? $unit->condition,
+                        'condition_in' => $condition ?? $unit->condition,
+                        'received_back_by' => $performedBy->id,
                     ]);
                 }
 
@@ -444,6 +592,7 @@ class StockLedger
         ?int $employeeId = null,
         ?int $requestId = null,
         ?string $notes = null,
+        ?int $disposalId = null,
     ): InventoryStockMovement {
         $signed = $type->isSignedByCaller() ? $quantity : abs($quantity) * $type->direction();
 
@@ -461,6 +610,7 @@ class StockLedger
             'to_location_id' => $toLocationId,
             'employee_id' => $employeeId,
             'request_id' => $requestId,
+            'disposal_id' => $disposalId,
             'reference' => $reference,
             'unit_cost' => $unitCost,
             'occurred_at' => $occurredAt ?? now(),
