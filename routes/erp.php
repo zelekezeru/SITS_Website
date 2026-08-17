@@ -33,6 +33,11 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Store\DashboardController as StoreDashboardController;
 use App\Http\Controllers\Store\ModuleController as StoreModuleController;
 use App\Http\Controllers\Store\ReferenceDataController as StoreReferenceController;
+use App\Http\Controllers\Store\CatalogController as StoreCatalogController;
+use App\Http\Controllers\Store\ReceivingController as StoreReceivingController;
+use App\Http\Controllers\Store\RequisitionController as StoreRequisitionController;
+use App\Http\Controllers\Store\IssueController as StoreIssueController;
+use App\Http\Controllers\Store\TransferController as StoreTransferController;
 use App\Support\AdminNavigation;
 use App\Support\RoleLanding;
 use App\Support\StoreNavigation;
@@ -99,6 +104,54 @@ Route::middleware(['auth', 'active', 'password.fresh'])->group(function () {
         Route::delete('/store/suppliers/{supplier}', [StoreReferenceController::class, 'destroySupplier'])->name('store.suppliers.destroy');
     });
 
+    // Items — the catalog. Reading needs only `view inventory`; every write needs
+    // `manage inventory catalog`.
+    Route::get('/store/items', [StoreCatalogController::class, 'items'])
+        ->middleware('can:view inventory')->name('store.items');
+
+    Route::middleware('can:manage inventory catalog')->group(function () {
+        Route::post('/store/items', [StoreCatalogController::class, 'storeItem'])->name('store.items.store');
+        Route::put('/store/items/{item}', [StoreCatalogController::class, 'updateItem'])->name('store.items.update');
+        Route::delete('/store/items/{item}', [StoreCatalogController::class, 'destroyItem'])->name('store.items.destroy');
+        Route::post('/store/items/{item}/documents', [StoreCatalogController::class, 'storeItemDocument'])->name('store.items.documents.store');
+        Route::delete('/store/items/{item}/documents/{document}', [StoreCatalogController::class, 'destroyItemDocument'])->name('store.items.documents.destroy');
+    });
+
+    // Receiving (GRN). Both reading and posting a receipt need `receive inventory`.
+    // Finance/Operations see past receipts via Reports, not the entry portal.
+    Route::middleware('can:receive inventory')->group(function () {
+        Route::get('/store/receipts', [StoreReceivingController::class, 'index'])->name('store.receipts');
+        Route::post('/store/receipts', [StoreReceivingController::class, 'store'])->name('store.receipts.store');
+    });
+
+    // Requisitions (maker-checker). Any employee with `request inventory` or `view inventory`
+    // can view the page; approval and issuance are strictly segregated.
+    Route::get('/store/requests', [StoreRequisitionController::class, 'index'])
+        ->middleware('can:view inventory')->name('store.requests');
+
+    Route::middleware('can:request inventory')->group(function () {
+        Route::post('/store/requests', [StoreRequisitionController::class, 'store'])->name('store.requests.store');
+        Route::post('/store/requests/{inventoryRequest}/submit', [StoreRequisitionController::class, 'submit'])->name('store.requests.submit');
+        Route::post('/store/requests/{inventoryRequest}/cancel', [StoreRequisitionController::class, 'cancel'])->name('store.requests.cancel');
+    });
+
+    Route::middleware('can:approve inventory requests')->group(function () {
+        Route::post('/store/requests/{inventoryRequest}/approve', [StoreRequisitionController::class, 'approve'])->name('store.requests.approve');
+        Route::post('/store/requests/{inventoryRequest}/reject', [StoreRequisitionController::class, 'reject'])->name('store.requests.reject');
+    });
+
+    Route::middleware('can:issue inventory')->group(function () {
+        Route::post('/store/requests/{inventoryRequest}/issue', [StoreRequisitionController::class, 'issueStock'])->name('store.requests.issue');
+        Route::get('/store/issues', [StoreIssueController::class, 'index'])->name('store.issues');
+        Route::post('/store/issues', [StoreIssueController::class, 'store'])->name('store.issues.store');
+        Route::post('/store/returns', [StoreIssueController::class, 'storeReturn'])->name('store.returns.store');
+    });
+
+    Route::middleware('can:transfer inventory')->group(function () {
+        Route::get('/store/transfers', [StoreTransferController::class, 'index'])->name('store.transfers');
+        Route::post('/store/transfers', [StoreTransferController::class, 'store'])->name('store.transfers.store');
+    });
+
     Route::middleware('can:manage inventory locations')->group(function () {
         Route::post('/store/locations', [StoreReferenceController::class, 'storeLocation'])->name('store.locations.store');
         Route::put('/store/locations/{location}', [StoreReferenceController::class, 'updateLocation'])->name('store.locations.update');
@@ -107,9 +160,17 @@ Route::middleware(['auth', 'active', 'password.fresh'])->group(function () {
 
     // Remaining store nav leaves still render the module placeholder. Each one
     // peels off into its own controller as its delivery phase lands; listing the
-    // built ones explicitly keeps this loop from clobbering them. (Route::has()
-    // can't do this job — see the note in the admin loop below.)
-    $storePagesBuilt = ['store.categories', 'store.suppliers', 'store.locations'];
+    // built ones explicitly keeps this loop from clobbering them.
+    $storePagesBuilt = [
+        'store.categories',
+        'store.suppliers',
+        'store.locations',
+        'store.items',
+        'store.receipts',
+        'store.requests',
+        'store.issues',
+        'store.transfers',
+    ];
 
     foreach (StoreNavigation::modules() as $module) {
         if (in_array($module['name'], $storePagesBuilt, true)) {

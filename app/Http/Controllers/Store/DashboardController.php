@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Store;
 
 use App\Enums\StorePermission;
 use App\Http\Controllers\Controller;
+use App\Models\InventoryItem;
 use App\Support\StoreNavigation;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -32,6 +33,20 @@ class DashboardController extends Controller
         return Inertia::render('Store/Dashboard', [
             'nav' => StoreNavigation::sections($user),
             'can' => $can,
+            'reorderAlerts' => InventoryItem::needingReorder()
+                ->with('category:id,name_en')
+                ->orderBy('name_en')
+                ->limit(8)
+                ->get()
+                ->map(fn (InventoryItem $i) => [
+                    'id' => $i->id,
+                    'code' => $i->code,
+                    'name_en' => $i->name_en,
+                    'category' => $i->category?->name_en,
+                    'on_hand' => $i->onHand(),
+                    'reorder_level' => (float) $i->reorder_level,
+                ]),
+            'reorderAlertsTotal' => InventoryItem::needingReorder()->count(),
             // The capability list drives the "what you can do here" panel, so it
             // always matches the permissions actually granted — no second copy.
             'capabilities' => collect(StorePermission::cases())
@@ -66,11 +81,11 @@ class DashboardController extends Controller
             'detail' => 'Store Keeper role, 15 permissions, portal shell and permission-gated route surface.'],
         ['phase' => 'Phase 1', 'title' => 'Foundation', 'status' => 'done',
             'detail' => 'The 14-table schema, 13 enums, models and code generators; categories, suppliers and locations are live.'],
-        ['phase' => 'Phase 2', 'title' => 'Catalog & receiving', 'status' => 'next',
+        ['phase' => 'Phase 2', 'title' => 'Catalog & receiving', 'status' => 'done',
             'detail' => 'Items with photos, goods-received notes, the movement ledger and reorder alerts.'],
-        ['phase' => 'Phase 3', 'title' => 'Issue & requisition', 'status' => 'planned',
+        ['phase' => 'Phase 3', 'title' => 'Issue & requisition', 'status' => 'done',
             'detail' => 'Requisition approval flow, issue vouchers, returns and inter-location transfers.'],
-        ['phase' => 'Phase 4', 'title' => 'Assets', 'status' => 'planned',
+        ['phase' => 'Phase 4', 'title' => 'Assets', 'status' => 'next',
             'detail' => 'Asset register with QR tags, custody handover, maintenance and disposal.'],
         ['phase' => 'Phase 5', 'title' => 'Control & insight', 'status' => 'planned',
             'detail' => 'Stocktake sessions, variance posting, nine reports and the clearance hook.'],
