@@ -526,3 +526,66 @@ hide real portability faults until production.
 6. **Segregation of duties enforced by distinct permissions**, not by convention.
 7. **QR payload is a URL.** Bare hashes require our scanner app; URLs work with the
    camera every coordinator already has.
+
+---
+
+## 8. Who sees it: permissions and navigation
+
+### 8.1 Seeded roles
+
+`BookstorePermissionsSeeder` layers onto whatever roles already exist rather than
+replacing them, so it can be run alone on a live database to roll the module out.
+
+| Role | Holds | Deliberately does not hold |
+|---|---|---|
+| Center Coordinator | `request_books`, `receive_books` | anything that moves stock |
+| Store Keeper / Store Manager | `verify_book_request`, `manage_book_stock`, `manage_store_rooms`, `manage_print_runs`, `dispatch_books`, `record_book_return`, `conduct_stock_audit` | the money, the final approval |
+| Finance Officer / Finance Admin | `verify_book_payment`, `request_payment_bypass` | dispatch, approval, authorising a deferral |
+| Bookstore Approver | `approve_book_request`, `approve_payment_bypass`, `approve_stock_audit` | raising anything it would then approve |
+| Bookstore Admin | the catalogue, stores, print runs, centres | every workflow gate |
+| SUPERADMIN, President / Super Admin | everything | — |
+
+Two of these are load-bearing and are asserted in tests rather than left to
+review: **no role holds two workflow gates** (`EndToEndJourneyTest`), and the
+super-admin grants are handed over **by name** (`BookstoreNavigationTest`).
+The latter matters because the bookstore permissions live in the same
+`App\Enums\Permission` enum that `LibraryPermissionsSeeder` syncs wholesale to
+SUPERADMIN — so on a full `db:seed` the super admin would appear to have access
+even if this seeder never mentioned them, and a standalone rollout would then
+silently lock them out.
+
+### 8.2 Navigation
+
+`BookstoreNavigation` is the tree. Every leaf declares the permission it needs,
+and `sections($user)` filters against the viewer, so nobody is shown a link that
+would bounce them.
+
+The bookstore **cuts across portals**: the people who run it are a centre
+coordinator on the self-service portal, a finance officer on the finance portal,
+an approver with no ERP landing role at all. Binding the tree to one portal
+therefore leaves most of the workflow's own participants unable to see the module
+they operate. `PortalContext::withBookstore()` appends it to whichever nav the
+viewer resolves to, which is safe because the tree collapses to an empty array for
+anyone holding no bookstore grant. Trees that already carry bookstore links — the
+President's `AdminNavigation` section and the store keeper's via `StoreNavigation`
+— are skipped so nothing renders twice; the check looks for the links themselves,
+not for a role name, so it survives either tree being rearranged.
+
+What each role ends up seeing, measured against a seeded database:
+
+| Role | Links |
+|---|---|
+| SUPERADMIN / President | 17 |
+| Store Keeper / Store Manager / Bookstore Admin | 16 |
+| Finance Officer | 15 |
+| Bookstore Approver | 14 |
+| Center Coordinator | 13 |
+| Employee, Department Head | 0 |
+
+**The sidebar is not the gate.** Every `/bookstore/*` route carries its own
+permission middleware; the nav only decides what is offered. `BookstoreNavigation`
+has no `modules()` helper on purpose — `routes/bookstore.php` owns these routes,
+and a nav tree that registers routes (as `StoreNavigation::modules()` does) would
+otherwise override their controllers and their gates. That hazard is pinned by a
+test, because the two prefixes `store.` and `bookstore.` are one careless
+`str_starts_with` apart.
